@@ -1,0 +1,20 @@
+﻿################################################################################
+# この .gitignore ファイルは Microsoft(R) Visual Studio によって自動的に作成されました。
+################################################################################
+
+/.vs
+*.user
+bin/
+obj/
+/RedmineTimePuncher/FodyWeavers.xsd
+/packages
+/Setup/Release
+/Setup/Debug
+*.zip
+/redmine-net-api/.vs
+/TimePuncher/Setup/Release
+/TimePuncher/Setup/Debug
+/TimePuncher/Setup/Output
+/WikiPageCounter/FodyWeavers.xsd
+/TableEditor/Setup/Output/
+/GoogleAnalytics.Core/project.lock.json
