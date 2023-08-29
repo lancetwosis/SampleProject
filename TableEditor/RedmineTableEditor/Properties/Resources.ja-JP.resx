@@ -1,0 +1,370 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="enumIssuePropertyTypeSubject" xml:space="preserve">
+    <value>題名</value>
+  </data>
+  <data name="enumIssuePropertyTypeStatus" xml:space="preserve">
+    <value>ステータス</value>
+  </data>
+  <data name="enumIssuePropertyTypeAssignedTo" xml:space="preserve">
+    <value>担当</value>
+  </data>
+  <data name="enumIssuePropertyTypePriority" xml:space="preserve">
+    <value>優先度</value>
+  </data>
+  <data name="enumIssuePropertyTypeCategory" xml:space="preserve">
+    <value>カテゴリ</value>
+  </data>
+  <data name="enumIssuePropertyTypeStartDate" xml:space="preserve">
+    <value>開始日</value>
+  </data>
+  <data name="enumIssuePropertyTypeDueDate" xml:space="preserve">
+    <value>期日</value>
+  </data>
+  <data name="enumIssuePropertyTypeDoneRatio" xml:space="preserve">
+    <value>進捗率</value>
+  </data>
+  <data name="enumIssuePropertyTypeEstimatedHours" xml:space="preserve">
+    <value>予定</value>
+  </data>
+  <data name="enumIssuePropertyTypeSpentHours" xml:space="preserve">
+    <value>実績</value>
+  </data>
+  <data name="enumIssuePropertyTypeTotalSpentHours" xml:space="preserve">
+    <value>合計作業時間</value>
+  </data>
+  <data name="enumIssuePropertyTypeTotalEstimatedHours" xml:space="preserve">
+    <value>合計予想工数</value>
+  </data>
+  <data name="enumIssuePropertyTypeId" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="enumIssuePropertyTypeMySpentHours" xml:space="preserve">
+    <value>担当実績</value>
+  </data>
+  <data name="enumIssuePropertyTypeDiffEstimatedSpent" xml:space="preserve">
+    <value>残り工数</value>
+  </data>
+  <data name="enumIssuePropertyTypeFixedVersion" xml:space="preserve">
+    <value>対象バージョン</value>
+  </data>
+  <data name="errInvalidSettings" xml:space="preserve">
+    <value>設定が未完了です。
+設定ダイアログから、設定を実施してください。</value>
+  </data>
+  <data name="enumStatusCompareTypeEquals" xml:space="preserve">
+    <value>等しい</value>
+  </data>
+  <data name="enumStatusCompareTypeNotEquals" xml:space="preserve">
+    <value>等しくない</value>
+  </data>
+  <data name="msgErrUnsetRedminSettings" xml:space="preserve">
+    <value>Redmine の接続情報が未設定です。
+設定画面より正しく設定してください。</value>
+  </data>
+  <data name="enumIssuePropertyTypeTracker" xml:space="preserve">
+    <value>トラッカー</value>
+  </data>
+  <data name="RibbonCmdOpen" xml:space="preserve">
+    <value>開く</value>
+  </data>
+  <data name="RibbonCmdNew" xml:space="preserve">
+    <value>新規作成</value>
+  </data>
+  <data name="RibbonCmdSave" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="RibbonCmdSaveAs" xml:space="preserve">
+    <value>名前を付けて
+保存</value>
+  </data>
+  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+  <data name="new_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\new_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="open_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\open_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="saveas_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\saveas_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="save_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\save_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RibbonGroupCondition" xml:space="preserve">
+    <value>表示条件</value>
+  </data>
+  <data name="RibbonTabHome" xml:space="preserve">
+    <value>ホーム</value>
+  </data>
+  <data name="RibbonCmdApply" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="RibbonCmdUpdate" xml:space="preserve">
+    <value>内容更新</value>
+  </data>
+  <data name="RibbonCmdSaveRedmine" xml:space="preserve">
+    <value>Redmineに
+反映</value>
+  </data>
+  <data name="RibbonGroupTickets" xml:space="preserve">
+    <value>チケット一覧</value>
+  </data>
+  <data name="FileSettingsParentIssue" xml:space="preserve">
+    <value>親チケット</value>
+  </data>
+  <data name="FileSettingsChildIssue" xml:space="preserve">
+    <value>子チケット</value>
+  </data>
+  <data name="FileSettingsBackground" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="FileSettingsDisplayFIelds" xml:space="preserve">
+    <value>表示するフィールド</value>
+  </data>
+  <data name="ParentIssueCustomQuery" xml:space="preserve">
+    <value>カスタムクエリ</value>
+  </data>
+  <data name="ParentIssueCustomQueryMsg" xml:space="preserve">
+    <value>親チケットを指定するためのカスタムクエリを選択してください。</value>
+  </data>
+  <data name="SubIssueConditions" xml:space="preserve">
+    <value>子チケットの条件</value>
+  </data>
+  <data name="SubIssueConditionsMsg" xml:space="preserve">
+    <value>表示したい子チケットの条件を設定してください。</value>
+  </data>
+  <data name="SubIssueConditionsColEnable" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="SubIssueConditionsColColName" xml:space="preserve">
+    <value>列名</value>
+  </data>
+  <data name="SubIssueConditionsColTracker" xml:space="preserve">
+    <value>トラッカー</value>
+  </data>
+  <data name="SubIssueConditionsColSubject" xml:space="preserve">
+    <value>題名</value>
+  </data>
+  <data name="SubIssueConditionsColSubjectCondition" xml:space="preserve">
+    <value>題名(条件)</value>
+  </data>
+  <data name="SubIssueConditionsColStatus" xml:space="preserve">
+    <value>ステータス</value>
+  </data>
+  <data name="SubIssueConditionsColStatusCondition" xml:space="preserve">
+    <value>ステータス(条件)</value>
+  </data>
+  <data name="BackgroundLinkSentting" xml:space="preserve">
+    <value>連動設定</value>
+  </data>
+  <data name="BackgroundLinkToStatus" xml:space="preserve">
+    <value>ステータスに連動</value>
+  </data>
+  <data name="BackgroundLinkToAssignedTo" xml:space="preserve">
+    <value>担当者と連動</value>
+  </data>
+  <data name="BackgroundLinkToNone" xml:space="preserve">
+    <value>連動しない</value>
+  </data>
+  <data name="BackgroundColStatus" xml:space="preserve">
+    <value>ステータス</value>
+  </data>
+  <data name="BackgroundColColor" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="BackgroundColAssignedTo" xml:space="preserve">
+    <value>担当</value>
+  </data>
+  <data name="BackgroundLinkToStatusClosed" xml:space="preserve">
+    <value>終了チケットはステータスに連動する</value>
+  </data>
+  <data name="ExpanderDisplayCondition" xml:space="preserve">
+    <value>表示条件</value>
+  </data>
+  <data name="ExpanderPivotTable" xml:space="preserve">
+    <value>ピボットテーブル</value>
+  </data>
+  <data name="IssuesCmdGoToTicket" xml:space="preserve">
+    <value>チケットを表示</value>
+  </data>
+  <data name="IssuesCmdUpdateTicket" xml:space="preserve">
+    <value>チケットを読込</value>
+  </data>
+  <data name="RedmineTableEditorFileFormat" xml:space="preserve">
+    <value>チケット表編集 ファイル(*.eit)|*.eit|全てのファイル(*.*)|*.*</value>
+  </data>
+  <data name="FileNew" xml:space="preserve">
+    <value>(新規)</value>
+  </data>
+  <data name="FileUpdated" xml:space="preserve">
+    <value>(更新)</value>
+  </data>
+  <data name="ErrMsgFailedUpdateIssues" xml:space="preserve">
+    <value>以下のチケットの書き込みに失敗しました。
+
+{0}</value>
+  </data>
+  <data name="ErrMsgFailedReadIssues" xml:space="preserve">
+    <value>以下のチケットの読み込みに失敗しました。
+
+{0}</value>
+  </data>
+  <data name="ErrMsgFailedOpenSettingsFile" xml:space="preserve">
+    <value>設定ファイルを開けませんでした。ファイルを確認してください。
+
+{0}</value>
+  </data>
+  <data name="ErrMsgNotFoundPreviousFile" xml:space="preserve">
+    <value>前回の設定ファイルが見つかりませんでした。
+
+{0}</value>
+  </data>
+  <data name="MsgConfirmToSave" xml:space="preserve">
+    <value>チケット表編集の設定が更新されています。保存しますか？</value>
+  </data>
+  <data name="ErrMsgSetRemineSetting" xml:space="preserve">
+    <value>Redmineの設定をしてください。</value>
+  </data>
+  <data name="ErrMsgSetAdminApiKey" xml:space="preserve">
+    <value>システム管理者のAPIキーを設定してください。</value>
+  </data>
+  <data name="ErrMsgSelectCustomQuery" xml:space="preserve">
+    <value>カスタムクエリを選択してください。</value>
+  </data>
+  <data name="ErrMsgSelectFieldsToDisplay" xml:space="preserve">
+    <value>親チケットの表示するフィールドを選択してください。</value>
+  </data>
+  <data name="ParentIssueIssueIdMsg" xml:space="preserve">
+    <value>親チケットのチケット番号を指定してください。</value>
+  </data>
+  <data name="ParentIssueIssueId" xml:space="preserve">
+    <value>チケット番号</value>
+  </data>
+  <data name="ParentIssueIssueRecoursiveMsg" xml:space="preserve">
+    <value>再帰的に子チケットを取得する</value>
+  </data>
+  <data name="ParentIssueHowToSpecify" xml:space="preserve">
+    <value>指定方法</value>
+  </data>
+  <data name="ErrMsgSelectIssueId" xml:space="preserve">
+    <value>チケット番号を指定してください。</value>
+  </data>
+</root>

@@ -1,0 +1,8 @@
+<project outputDir="..\Confused"
+         baseDir=".\RedmineTimePuncher\bin\Release"
+         xmlns="http://confuser.codeplex.com">
+  <rule pattern="true" preset="maximum" inherit="false">
+    <protection id="rename" action="remove" />
+  </rule>
+  <module path="RedmineTimePuncher.exe" />
+</project>

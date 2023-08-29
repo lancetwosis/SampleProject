@@ -1,0 +1,36 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.Controls.Charts.FilterLabelView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+             xmlns:controls="clr-namespace:RedmineTimePuncher.ViewModels.Input.Controls"
+             xmlns:controls1="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:converters1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
+             xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerikEx="clr-namespace:TelerikEx.Behaviors;assembly=TelerikEx"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Visualize.Filters"
+             d:DataContext="{d:DesignInstance {x:Type vm:FilterGroupViewModelBase},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+
+    <Border Margin="0,3,0,3"
+            Background="{Binding Background}"
+            BorderBrush="LightGray"
+            BorderThickness="1"
+            CornerRadius="5"
+            ToolTip="{Binding Tooltip.Value}">
+        <TextBlock Margin="5,0,5,0"
+                   VerticalAlignment="Center"
+                   Foreground="DimGray"
+                   Text="{Binding Label.Value}" />
+    </Border>
+</UserControl>

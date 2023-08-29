@@ -1,0 +1,879 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{13F5CEB2-3824-48D7-A4E0-BB94FA248211}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>RedmineTimePuncher</RootNamespace>
+    <AssemblyName>RedmineTimePuncher</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;net48</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>RedmineTimePuncher.ico</ApplicationIcon>
+    <AllowedReferenceRelatedFileExtensions>
+      *.xml;
+      *.pdb
+    </AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.Composition" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression.FileSystem" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Chart, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Chart.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.DataVisualization, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.DataVisualization.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.GridView, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.GridView.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Input, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Input.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Navigation.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.RibbonView, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.RibbonView.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.ScheduleView, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.ScheduleView.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Data, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Themes.Office2019, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Themes.Office2019.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </ApplicationDefinition>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Behaviors\WindowMaximizedAdjustmentMaxSizeBehavior.cs" />
+    <Compile Include="Behaviors\DraggedAppointment.cs" />
+    <Compile Include="Behaviors\MyListBoxDragDropBehavior.cs" />
+    <Compile Include="Behaviors\MyReadOnlyBehavior.cs" />
+    <Compile Include="Behaviors\RadScheduleViewSelectedAppointmentsBehavior.cs" />
+    <Compile Include="Converters\AppointmentTypeToOpacityConverter.cs" />
+    <Compile Include="Converters\SliderValueToVisibilityConverter.cs" />
+    <Compile Include="Converters\PeriodToIsEnabledConverter.cs" />
+    <Compile Include="Converters\BoolToFontBoldConverter.cs" />
+    <Compile Include="Converters\BoolToFontItalicConverter.cs" />
+    <Compile Include="Converters\EnumerableToStringConverter.cs" />
+    <Compile Include="Converters\DeleteConfirmMessageConverter.cs" />
+    <Compile Include="Converters\IntToMargineConverter.cs" />
+    <Compile Include="Enums\ApplicationMode.cs" />
+    <Compile Include="Enums\CreateTicketMode.cs" />
+    <Compile Include="Enums\CustomFieldFormat.cs" />
+    <Compile Include="Enums\ExportItems.cs" />
+    <Compile Include="Enums\FilterPeriodType.cs" />
+    <Compile Include="Enums\FilterType.cs" />
+    <Compile Include="Enums\GroupingType.cs" />
+    <Compile Include="Enums\LocaleType.cs" />
+    <Compile Include="Enums\HeaderLevel.cs" />
+    <Compile Include="Enums\OutputTargetTypes.cs" />
+    <Compile Include="Enums\PersonHourReportContentType.cs" />
+    <Compile Include="Enums\ReportPeriodType.cs" />
+    <Compile Include="Enums\TeamsStatus.cs" />
+    <Compile Include="Enums\TimeEntryType.cs" />
+    <Compile Include="Extentions\ActivityModelExtentions.cs" />
+    <Compile Include="Extentions\IDataSpanExtentions.cs" />
+    <Compile Include="Extentions\MarkupLangExtensions.cs" />
+    <Compile Include="Extentions\SearchPatern.cs" />
+    <Compile Include="Helpers\TabVisibleHelper.cs" />
+    <Compile Include="Helpers\SpecialSlotTooltipHelper.cs" />
+    <Compile Include="Interfaces\IAutoUpdateSetting.cs" />
+    <Compile Include="Interfaces\IPeriod.cs" />
+    <Compile Include="Interfaces\ISettingsModel.cs" />
+    <Compile Include="Models\IdName.cs" />
+    <Compile Include="Models\Managers\DebugDataManager.cs" />
+    <Compile Include="Models\Managers\TeamsManager.cs" />
+    <Compile Include="Models\MyCustomFieldPossibleValue.cs" />
+    <Compile Include="Models\MyCustomField.cs" />
+    <Compile Include="Models\MyProject.cs" />
+    <Compile Include="Models\MyTracker.cs" />
+    <Compile Include="Models\MyPriority.cs" />
+    <Compile Include="Models\MyTimeEntry.cs" />
+    <Compile Include="Models\MyUser.cs" />
+    <Compile Include="Models\MyWikiPage.cs" />
+    <Compile Include="Models\Visualize\TicketModel.cs" />
+    <Compile Include="Models\Visualize\ResultModel.cs" />
+    <Compile Include="Models\Visualize\ChartSettingsModel.cs" />
+    <Compile Include="Models\Visualize\TicketFiltersModel.cs" />
+    <Compile Include="Models\Visualize\FactorModel.cs" />
+    <Compile Include="Models\Visualize\PersonHourModel.cs" />
+    <Compile Include="Models\Visualize\PersonHourReportModel.cs" />
+    <Compile Include="Models\Settings\AppointmentMyWorksSettingsModel.cs" />
+    <Compile Include="Models\Settings\AppointmentOutlookSettingsModel.cs" />
+    <Compile Include="Models\Settings\AppointmentRedmineSettingsModel.cs" />
+    <Compile Include="Models\Settings\AppointmentSettingsModel.cs" />
+    <Compile Include="Models\Settings\AppointmentTeamsSettingsModel.cs" />
+    <Compile Include="Models\Settings\Bases\AppointmentResouceIgnoreSettingsModelBase.cs" />
+    <Compile Include="Models\Settings\Bases\AppointmentResouceSettingsModelBase.cs" />
+    <Compile Include="Models\Settings\Bases\CustomFieldSettingModelBase.cs" />
+    <Compile Include="Models\Settings\CalendarSettingsModel.cs" />
+    <Compile Include="Models\Settings\PersonHourReportSettingModel.cs" />
+    <Compile Include="Models\Settings\CreateTicketSettingsModel.cs" />
+    <Compile Include="Models\Settings\OutputCsvExportSettingsModel.cs" />
+    <Compile Include="Models\Settings\OutputExtToolSettingsModel.cs" />
+    <Compile Include="Models\Settings\QuerySettingsModel.cs" />
+    <Compile Include="Models\Settings\RequestWorkSettingsModel.cs" />
+    <Compile Include="Models\Settings\ReviewDetectionProcessSettingModel.cs" />
+    <Compile Include="Models\Settings\ReviewIsRequiredSettingModel.cs" />
+    <Compile Include="Models\Settings\ReviewNeedsFaceToFaceSettingModel.cs" />
+    <Compile Include="Models\Settings\ReviewSaveReviewerSettingModel.cs" />
+    <Compile Include="Models\Settings\PersonHourReportSettingsModel.cs" />
+    <Compile Include="Models\Settings\TranscribeSettingModel.cs" />
+    <Compile Include="Models\Settings\TranscribeSettingItemModel.cs" />
+    <Compile Include="Models\Settings\TranscribeSettingsModel.cs" />
+    <Compile Include="Models\Settings\UserSettingsModel.cs" />
+    <Compile Include="Models\TicketTreeItemModel.cs" />
+    <Compile Include="Models\WikiLine.cs" />
+    <Compile Include="ViewModels\Bases\FunctionViewModelBase.cs" />
+    <Compile Include="ViewModels\CountWikiPage\CountWikiPageViewModel.cs" />
+    <Compile Include="ViewModels\CountWikiPage\CountResultViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CreateTicketViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\MemberViewModel.cs" />
+    <Compile Include="ViewModels\Input\Controls\CustomScheduleViewDialogHostFactory.cs" />
+    <Compile Include="ViewModels\Input\MembersViewModel.cs" />
+    <Compile Include="ViewModels\Input\MyWorksViewModel.cs" />
+    <Compile Include="ViewModels\Input\OutlookTeamsViewModel.cs" />
+    <Compile Include="ViewModels\Input\Bases\ResourceViewModelBase.cs" />
+    <Compile Include="ViewModels\Input\InputViewModel.cs" />
+    <Compile Include="ViewModels\Input\ReportsViewModel.cs" />
+    <Compile Include="ViewModels\Input\RedmineViewModel.cs" />
+    <Compile Include="ViewModels\Input\Report\PersonHourReportViewModel.cs" />
+    <Compile Include="ViewModels\Input\Report\TimesAreaViewModel.cs" />
+    <Compile Include="ViewModels\Input\Resources\ResourceSettingViewModel.cs" />
+    <Compile Include="ViewModels\Input\Resources\Bases\ResourceUpdater.cs" />
+    <Compile Include="ViewModels\Input\Resources\MemberResource.cs" />
+    <Compile Include="ViewModels\Settings\AppointmentTeamsSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\AppointmentMyWorksSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\AppointmentOutlookSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\AppointmentRedmineSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\AppointmentSettingsViewModel.cs" />
+    <Compile Include="Models\Settings\Bases\SettingsModelBase.cs" />
+    <Compile Include="Selectors\MyGroupHeaderContentTemplateSelector.cs" />
+    <Compile Include="Selectors\MyIssueStyleSelector.cs" />
+    <Compile Include="Converters\StringEmptyToNullConverter.cs" />
+    <Compile Include="Enums\AndOrType.cs" />
+    <Compile Include="Enums\AssignToType.cs" />
+    <Compile Include="Enums\TermInputValidationType.cs" />
+    <Compile Include="Models\MyAppointmentSave.cs" />
+    <Compile Include="Models\MyQuery.cs" />
+    <Compile Include="Models\Settings\OutputDataSettingsModel.cs" />
+    <Compile Include="Selectors\MyTimeIndicatorStyleSelector.cs" />
+    <Compile Include="Selectors\MySpecialSlotStyleSelector .cs" />
+    <Compile Include="ViewModels\Input\Controls\CategoryListBoxViewModel.cs" />
+    <Compile Include="ViewModels\Input\Controls\TicketGridViewModel.cs" />
+    <Compile Include="Models\TicketTreeModel.cs" />
+    <Compile Include="ViewModels\Input\Controls\MyTimeIndicator.cs" />
+    <Compile Include="ViewModels\MainWindowViewModel.cs" />
+    <Compile Include="ViewModels\Input\Resources\Bases\MyResourceBase.cs" />
+    <Compile Include="ViewModels\Input\Resources\MyWorksResource.cs" />
+    <Compile Include="ViewModels\Input\Resources\OutlookTeamsResource.cs" />
+    <Compile Include="ViewModels\Input\Resources\RedmineResource.cs" />
+    <Compile Include="ViewModels\Settings\AssignRuleViewModel.cs" />
+    <Compile Include="ViewModels\Settings\Bases\AppointmentResouceIgnoreSettingsViewModelBase.cs" />
+    <Compile Include="ViewModels\Settings\Bases\AppointmentResouceSettingsModelBase.cs" />
+    <Compile Include="ViewModels\Settings\Bases\SettingsViewModelBase.cs" />
+    <Compile Include="ViewModels\Settings\PersonHourReportSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CategorySettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CategorySettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicketSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CustomFieldSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\NeedsRestartSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\OutputCsvExportSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\OutputDataSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\OutputExtToolSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\QuerySettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\RedmineSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\RequestWorkSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CalendarSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\TranscribeSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\TranscribeSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\ScheduleSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\TermViewModel.cs" />
+    <Compile Include="ViewModels\Settings\UserSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Input\Slots\ResourceSlot.cs" />
+    <Compile Include="ViewModels\ShowTimeEntry\ShowTimeEntryViewModel.cs" />
+    <Compile Include="ViewModels\TableEditor\TableEditorViewModel.cs" />
+    <Compile Include="ViewModels\VersionDialogViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Charts\ChartViewModelBase.cs" />
+    <Compile Include="ViewModels\Visualize\Charts\TreeMapViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Charts\PieChartViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Enums\ViewType.cs" />
+    <Compile Include="ViewModels\Visualize\Enums\FactorType.cs" />
+    <Compile Include="ViewModels\Visualize\TotalLabelViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Filters\SpecifyUsersViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\ResultViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\FactorTypeViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Filters\SpecifyPeriodViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Filters\SpecifyParentIssueViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Filters\FilterGroupViewModelBase.cs" />
+    <Compile Include="ViewModels\Visualize\Filters\TicketFiltersViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\TicketViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\SeriesViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\PointViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Charts\BarChartViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\TreeMapItems\GroupingItemViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\TreeMapItems\MyCutomMapping.cs" />
+    <Compile Include="ViewModels\Visualize\TreeMapItems\TicketItemViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\TreeMapItems\TreeMapItemViewModelBase.cs" />
+    <Compile Include="ViewModels\Visualize\VisualizeViewModel.cs" />
+    <Compile Include="Views\Controls\Charts\TotalLabelView.xaml.cs">
+      <DependentUpon>TotalLabelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\Charts\FilterLabelView.xaml.cs">
+      <DependentUpon>FilterLabelView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\Charts\TreeMapView.xaml.cs">
+      <DependentUpon>TreeMapView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\Charts\PieChartView.xaml.cs">
+      <DependentUpon>PieChartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\Charts\BarChartView.xaml.cs">
+      <DependentUpon>BarChartView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\ResourceSettingListBox.xaml.cs">
+      <DependentUpon>ResourceSettingListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\CategoryListBox.xaml.cs">
+      <DependentUpon>CategoryListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\MyDayViewDefinition.cs" />
+    <Compile Include="ViewModels\Input\Slots\TeamsStatusSlot.cs" />
+    <Compile Include="Views\Controls\Charts\FactorSelectorView.xaml.cs">
+      <DependentUpon>FactorSelectorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\TicketGridView.xaml.cs">
+      <DependentUpon>TicketGridView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\ReportItemsControl.xaml.cs">
+      <DependentUpon>ReportItemsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\TicketTree.xaml.cs">
+      <DependentUpon>TicketTree.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\PersonHourReportSettingsView.xaml.cs">
+      <DependentUpon>PersonHourReportSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\CreateTicketDescriptionSettingsView.xaml.cs">
+      <DependentUpon>CreateTicketDescriptionSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\RequestWorkSettingsView.xaml.cs">
+      <DependentUpon>RequestWorkSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\CreateTicketSettingsView.xaml.cs">
+      <DependentUpon>CreateTicketSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\AppointmentTeamsSettingsView.xaml.cs">
+      <DependentUpon>AppointmentTeamsSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\AppointmentMyWorksSettingsView.xaml.cs">
+      <DependentUpon>AppointmentMyWorksSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\AppointmentOutlookSettingsView.xaml.cs">
+      <DependentUpon>AppointmentOutlookSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\AppointmentRedmineSettingsView.xaml.cs">
+      <DependentUpon>AppointmentRedmineSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\CalendarSettingsView.xaml.cs">
+      <DependentUpon>CalendarSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\UserSettingsView.xaml.cs">
+      <DependentUpon>UserSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\QuerySettingsView.xaml.cs">
+      <DependentUpon>QuerySettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\CategorySettingsView.xaml.cs">
+      <DependentUpon>CategorySettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\OutputDataSettingsView.xaml.cs">
+      <DependentUpon>OutputDataSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\AppointmentSettingsView.xaml.cs">
+      <DependentUpon>AppointmentSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\RedmineSettingsView.xaml.cs">
+      <DependentUpon>RedmineSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\ScheduleSettingsView.xaml.cs">
+      <DependentUpon>ScheduleSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\SettingsDialog.xaml.cs">
+      <DependentUpon>SettingsDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\InputView.xaml.cs">
+      <DependentUpon>InputView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CountWikiPageView.xaml.cs">
+      <DependentUpon>CountWikiPageView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateTicketView.xaml.cs">
+      <DependentUpon>CreateTicketView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VisualizeView.xaml.cs">
+      <DependentUpon>VisualizeView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ShowEntryView.xaml.cs">
+      <DependentUpon>ShowEntryView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\VersionDialog.xaml.cs">
+      <DependentUpon>VersionDialog.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Behaviors\MyGridViewDragDropBehavior.cs" />
+    <Compile Include="Behaviors\MyScheduleViewDragDropBehavior.cs" />
+    <Compile Include="Converters\DateTimeToBackColorConverter.cs" />
+    <Compile Include="Converters\TickConverter.cs" />
+    <Compile Include="Enums\AppointmentType.cs" />
+    <Compile Include="Enums\TickLengthType.cs" />
+    <Compile Include="Models\Managers\OutlookManager.cs" />
+    <Compile Include="Models\Managers\RedmineManager.cs" />
+    <Compile Include="Models\MyAppointment.cs" />
+    <Compile Include="Models\MyCategory.cs" />
+    <Compile Include="Models\MyIssue.cs" />
+    <Compile Include="Models\Settings\AssignRuleModel.cs" />
+    <Compile Include="Models\Settings\CategorySettingModel.cs" />
+    <Compile Include="Models\Settings\CategorySettingsModel.cs" />
+    <Compile Include="Models\Settings\Encryption.cs" />
+    <Compile Include="Models\Settings\RedmineSettingsModel.cs" />
+    <Compile Include="Models\Settings\ScheduleSettingsModel.cs" />
+    <Compile Include="Models\Settings\SettingsModel.cs" />
+    <Compile Include="Models\Settings\TermModel.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <Resource Include="RedmineTimePuncher.ico" />
+    <EmbeddedResource Include="Properties\Resources.ja-JP.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Resource Include="Images\More_colors.png" />
+    <Resource Include="FodyWeavers.xml" />
+    <Resource Include="Images\rtp256.png" />
+    <None Include="Properties\app.manifest" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\GridView\IssueRowStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\GridView\MyGridViewSearchPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\RibbonView\MyRadRibbonSplitButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ScheduleView\MyDeleteAppointmentConfirmDialogStyle.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ScheduleView\TimeIndicatorStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ScheduleView\SpecialSlotStyles.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ScheduleView\MyAppointmentItemVerticalControlTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ScheduleView\MyGroupHeaderContentTemplateSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ScheduleView\MyRadScheduleViewControlTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ScheduleView\MyTimeRulerItemTemplateSelector.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\ScheduleView\MyTooltipTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\GroupingTypeDefinitions.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\SearchTypeToolTipText.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Settings\HelpTextBlockStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\Charts\TotalLabelView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\Charts\FilterLabelView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\Charts\TreeMapView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\Charts\PieChartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\Charts\BarChartView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\ResourceSettingListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\CategoryListBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Controls\Charts\FactorSelectorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\TicketGridView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\ReportItemsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\TicketTree.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\PersonHourReportSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\CreateTicketDescriptionSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\RequestWorkSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\CreateTicketSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\AppointmentTeamsSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\AppointmentMyWorksSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\AppointmentOutlookSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\AppointmentRedmineSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\CalendarSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\UserSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\QuerySettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\CategorySettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\OutputDataSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Settings\AppointmentSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\RedmineSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\ScheduleSettingsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\SettingsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\InputView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CountWikiPageView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicketView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\VisualizeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ShowEntryView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\VersionDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <BootstrapperPackage Include=".NETFramework,Version=v4.8">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.8 %28x86 および x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="IWshRuntimeLibrary">
+      <Guid>{F935DC20-1CF0-11D0-ADB9-00C04FD58A0B}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>0</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </COMReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\LibRedminePower\LibRedminePower.csproj">
+      <Project>{a9931b14-7abc-4b1d-b006-296920e40150}</Project>
+      <Name>LibRedminePower</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ObservableCollectionSync\ObservableCollectionSync.csproj">
+      <Project>{7e6c3ed2-65e5-42c1-9a5b-a731f7f82144}</Project>
+      <Name>ObservableCollectionSync</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\redmine-net-api\src\redmine-net-api\redmine-net-api.csproj">
+      <Project>{21d76532-ea08-4687-91a1-81238819bf5e}</Project>
+      <Name>redmine-net-api</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TableEditor\RedmineTableEditor\RedmineTableEditor.csproj">
+      <Project>{7e0c6450-d517-43da-853e-c7d202755079}</Project>
+      <Name>RedmineTableEditor</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\TelerikEx\TelerikEx.csproj">
+      <Project>{68c08bd6-5469-4dba-8c7d-513bd46fb67c}</Project>
+      <Name>TelerikEx</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AngleSharp">
+      <Version>0.16.0</Version>
+    </PackageReference>
+    <PackageReference Include="AutoMapper">
+      <Version>10.1.1</Version>
+    </PackageReference>
+    <PackageReference Include="Costura.Fody">
+      <Version>5.4.0</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="FastEnum">
+      <Version>1.6.1</Version>
+    </PackageReference>
+    <PackageReference Include="NetOfficeFw.Outlook">
+      <Version>1.8.1</Version>
+    </PackageReference>
+    <PackageReference Include="NLog.Config">
+      <Version>4.7.13</Version>
+    </PackageReference>
+    <PackageReference Include="NLog.Extensions.Logging">
+      <Version>1.7.3</Version>
+    </PackageReference>
+    <PackageReference Include="ProcessX">
+      <Version>1.5.5</Version>
+    </PackageReference>
+    <PackageReference Include="PropertyChanged.Fody">
+      <Version>3.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveProperty.WPF">
+      <Version>8.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="SimpleExec">
+      <Version>8.0.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.DispatchProxy">
+      <Version>4.7.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.Json">
+      <Version>6.0.2</Version>
+    </PackageReference>
+    <PackageReference Include="WindowsAPICodePack-Shell">
+      <Version>1.1.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\outlook16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\teams16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\redmine16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\work16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\today32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\next32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\back32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\redmine16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-save-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-settings-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-info-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-linking-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-assignment-return-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\remove-task.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\arrange.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-select-all-files-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-view-headline-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-add-user-group-man-man-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-checked-radio-button-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\reload.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-user-account-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-banned-remove-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\save-w.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-sort-by-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\splashScreen_redminetimepunhcer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\redmimetimepuncher.png" />
+    <Resource Include="Resources\redminepower.png" />
+    <Resource Include="Images\export-excel.png" />
+    <Resource Include="Images\export-tool.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\export-tool-w.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\export-excel-w.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-info-16_mod.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-rename-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-count.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-review.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-calendar-48_mod.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-cut-paper-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\rtp32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\rte32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-analytics-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-database_down-48.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

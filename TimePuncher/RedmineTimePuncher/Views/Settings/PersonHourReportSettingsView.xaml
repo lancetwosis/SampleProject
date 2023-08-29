@@ -1,0 +1,160 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.Settings.PersonHourReportSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:controls="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+             xmlns:converters1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:enums="clr-namespace:RedmineTimePuncher.Enums"
+             xmlns:enumsLib="clr-namespace:LibRedminePower.Enums;assembly=LibRedminePower"
+             xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
+             xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings"
+             d:DataContext="{d:DesignInstance {x:Type vm:PersonHourReportSettingsViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters1:BooleanToInvertBooleanConverter x:Key="BooleanToInvertBooleanConverter" />
+        <converters:PeriodToIsEnabledConverter x:Key="PeriodToIsEnabledConverter" />
+        <Style BasedOn="{StaticResource MyGridViewSearchPanelStyle}"
+               TargetType="grid:GridViewSearchPanel" />
+    </UserControl.Resources>
+    <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <TextBlock Style="{StaticResource SettingHelpTextBlockStyle}"
+                           Text="{x:Static props:Resources.SettingsPersMsg}" />
+                <Grid Grid.Row="1"
+                      Margin="0,5,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="AUTO" />
+                    </Grid.ColumnDefinitions>
+                    <telerik:RadGridView behaviors:RowReorderBehavior.IsEnabled="True"
+                                         AutoGenerateColumns="False"
+                                         CanUserDeleteRows="True"
+                                         CanUserFreezeColumns="False"
+                                         CanUserInsertRows="True"
+                                         GroupRenderMode="Flat"
+                                         IsFilteringAllowed="False"
+                                         IsReadOnly="False"
+                                         ItemsSource="{Binding Items}"
+                                         RowIndicatorVisibility="Collapsed"
+                                         SelectedItem="{Binding Items.SelectedItem.Value}"
+                                         ShowGroupPanel="False">
+                        <telerik:RadGridView.RowStyle>
+                            <Style BasedOn="{StaticResource GridViewRowStyle}"
+                                   TargetType="telerik:GridViewRow">
+                                <Setter Property="telerik:DragDropManager.AllowDrag" Value="True" />
+                                <Setter Property="telerik:DragDropManager.TouchDragTrigger" Value="TapAndHold" />
+                            </Style>
+                        </telerik:RadGridView.RowStyle>
+
+                        <telerik:RadGridView.Columns>
+                            <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding Period}"
+                                                            EditTriggers="CellClick"
+                                                            Header="{x:Static props:Resources.SettingsPersPeriod}"
+                                                            IsFilterable="False"
+                                                            IsSortable="False"
+                                                            ItemsSourceBinding="{Binding Source={extensions:EnumBindingSource {x:Type enums:ReportPeriodType}}}" />
+
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding OnTimes}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SettingsPersColOnTime}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding OnTimes, Mode=TwoWay}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding OnTimesRemaining}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SettingsPersColOnTimeRemaining}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding OnTimesRemaining,
+                                                                      Mode=TwoWay}"
+                                                  IsEnabled="{Binding Period,
+                                                                      Converter={StaticResource PeriodToIsEnabledConverter},
+                                                                      ConverterParameter=OnTimesRemaining}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding OverTimeAppointment}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SettingsPersColOverTimesAppintment}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding OverTimeAppointment, Mode=TwoWay}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding ActualTimes}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SettingsPersColActualTimes}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding ActualTimes,
+                                                                      Mode=TwoWay}"
+                                                  IsEnabled="{Binding Period,
+                                                                      Converter={StaticResource PeriodToIsEnabledConverter},
+                                                                      ConverterParameter=ActualTimes}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+
+                        </telerik:RadGridView.Columns>
+                    </telerik:RadGridView>
+                    <controls:GridViewEditButtonPanel Grid.Column="1"
+                                                      DataContext="{Binding Items}" />
+                </Grid>
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <Button Width="80"
+                            Margin="0,0,10,0"
+                            Command="{Binding ImportCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                                      Mode=FindAncestor}}"
+                            Content="{x:Static props:Resources.SettingsCmdImport}" />
+                    <Button Width="80"
+                            Command="{Binding ExportCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                                      Mode=FindAncestor}}"
+                            Content="{x:Static props:Resources.SettingsCmdExport}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </libCont:OverwrapMessage>
+</UserControl>

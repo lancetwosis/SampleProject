@@ -1,0 +1,62 @@
+﻿<telerik:RadWindow x:Class="LibRedminePower.Views.EditColorsWindow"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:local="clr-namespace:LibRedminePower.Views"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                   xmlns:vm="clr-namespace:LibRedminePower.ViewModels"
+                   d:DataContext="{d:DesignInstance {x:Type vm:EditColorsViewModel},
+                                                    IsDesignTimeCreatable=True}"
+                   d:DesignHeight="340"
+                   d:DesignWidth="400"
+                   Header="色の設定"
+                   ResizeMode="NoResize"
+                   WindowStartupLocation="CenterOwner"
+                   mc:Ignorable="d">
+    <telerik:RadWindow.Style>
+        <Style BasedOn="{StaticResource RadWindowStyle}"
+               TargetType="telerik:RadWindow" />
+    </telerik:RadWindow.Style>
+    <telerik:RadWindow.IconTemplate>
+        <DataTemplate>
+            <Image Width="18"
+                   Height="18"
+                   Margin="5,0,0,0"
+                   Source="../../../Images/More_colors.png" />
+        </DataTemplate>
+    </telerik:RadWindow.IconTemplate>
+    <telerik:RadWindow.Resources>
+        <telerik:Windows8Colors x:Key="colors" />
+    </telerik:RadWindow.Resources>
+
+    <Grid x:Name="LayoutRoot"
+          Background="White">
+        <StackPanel>
+            <telerik:RadColorEditor x:Name="colorEditor"
+                                    Width="400"
+                                    Height="260"
+                                    SelectedColor="{Binding EditedColor,
+                                                            Mode=TwoWay}" />
+            <Grid>
+                <Rectangle Height="1"
+                           HorizontalAlignment="Stretch"
+                           VerticalAlignment="Top"
+                           Fill="#FFD6D6D6" />
+                <StackPanel HorizontalAlignment="Right"
+                            Orientation="Horizontal">
+                    <telerik:RadButton Margin="0,6,10,3"
+                                       Command="{Binding OkCommand}"
+                                       CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                 AncestorType={x:Type telerik:RadWindow}}}"
+                                       Content="OK" />
+                    <telerik:RadButton Margin="0,6,5,3"
+                                       Command="{Binding CancelCommand}"
+                                       CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                 AncestorType={x:Type telerik:RadWindow}}}"
+                                       Content="キャンセル" />
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </Grid>
+</telerik:RadWindow>

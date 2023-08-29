@@ -1,0 +1,11 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls">
+
+    <Style BasedOn="{StaticResource RadButtonStyle}"
+           TargetType="telerik:RadButton">
+        <Setter Property="MinHeight" Value="25" />
+        <Setter Property="MinWidth" Value="75" />
+    </Style>
+</ResourceDictionary>

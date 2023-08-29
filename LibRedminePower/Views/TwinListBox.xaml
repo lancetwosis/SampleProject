@@ -1,0 +1,83 @@
+﻿<UserControl x:Class="LibRedminePower.Views.TwinListBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:controls="clr-namespace:LibRedminePower.Views.Controls"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:LibRedminePower.Views"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:LibRedminePower.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:vm="clr-namespace:LibRedminePower.ViewModels"
+             d:DataContext="{d:DesignInstance {x:Type vm:TwinListBoxViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="250"
+             d:DesignWidth="300"
+             mc:Ignorable="d">
+
+    <Grid IsSharedSizeScope="True">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"
+                              SharedSizeGroup="ListBoxSize" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto"
+                              SharedSizeGroup="ListBoxSize" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0"
+                       Margin="0,0,0,5"
+                       Text="{x:Static props:Resources.ItemsAll}" />
+
+            <controls:FilterTextBox Grid.Row="1"
+                                    MaxWidth="99999"
+                                    ClearTextCommand="{Binding ClearFromFilterCommand}"
+                                    Text="{Binding FromFilter,
+                                                   Mode=TwoWay,
+                                                   UpdateSourceTrigger=PropertyChanged}" />
+            <telerik:RadListBox x:Name="fromListBox"
+                                Grid.Row="2"
+                                telerik:ListBoxSelectedItemsBehavior.SelectedItemsSource="{Binding FromSelectedItems,
+                                                                                                   Mode=TwoWay}"
+                                ItemsSource="{Binding FromItemsCVS}"
+                                SelectionMode="Extended">
+                <telerik:EventToCommandBehavior.EventBindings>
+                    <telerik:EventBinding Command="{Binding AddFromSelectedItems}"
+                                          EventName="MouseDoubleClick" />
+                </telerik:EventToCommandBehavior.EventBindings>
+            </telerik:RadListBox>
+        </Grid>
+
+        <local:TwinListBoxAddRemoveCommands Grid.Column="1" />
+
+        <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition />
+            </Grid.RowDefinitions>
+            <TextBlock Grid.Row="0"
+                       Margin="0,0,0,5"
+                       Text="{x:Static props:Resources.ItemsSelected}" />
+            <telerik:RadListBox Grid.Row="1"
+                                telerik:ListBoxSelectedItemsBehavior.SelectedItemsSource="{Binding ToSelectedItems,
+                                                                                                   Mode=TwoWay}"
+                                ItemsSource="{Binding ToItemsCVS}"
+                                SelectionMode="Extended">
+                <telerik:EventToCommandBehavior.EventBindings>
+                    <telerik:EventBinding Command="{Binding RemoveFromSelectedItems}"
+                                          EventName="MouseDoubleClick" />
+                </telerik:EventToCommandBehavior.EventBindings>
+            </telerik:RadListBox>
+        </Grid>
+
+        <local:TwinListBoxSortCommands Grid.Column="3"
+                                       Margin="0,20,0,0" />
+
+    </Grid>
+</UserControl>

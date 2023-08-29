@@ -1,0 +1,241 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+                    xmlns:dragDrop="clr-namespace:Telerik.Windows.DragDrop;assembly=Telerik.Windows.Controls"
+                    xmlns:mat="clr-namespace:Telerik.Windows.Controls.MaterialControls;assembly=Telerik.Windows.Controls"
+                    xmlns:selectors="clr-namespace:RedmineTimePuncher.Selectors"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+                    xmlns:telerikScheduleView="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.ScheduleView">
+    <Style x:Key="MyDeleteButtonStyle"
+           BasedOn="{StaticResource DeleteButtonStyle}"
+           TargetType="telerik:RadButton">
+        <Setter Property="Margin" Value="0" />
+    </Style>
+
+    <converters:BoolToFontBoldConverter x:Key="BoolToFontBoldConverter" />
+    <converters:BoolToFontItalicConverter x:Key="BoolToFontItalicConverter" />
+    <converters:AppointmentTypeToOpacityConverter x:Key="AppointmentTypeToOpacityConverter" />
+
+    <ControlTemplate x:Key="MyAppointmentItemVerticalControlTemplate"
+                     TargetType="telerik:AppointmentItem">
+        <Grid x:Name="Root"
+              Opacity="{Binding Appointment.ApoType,
+                                Converter={StaticResource AppointmentTypeToOpacityConverter}}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!--  Small appointment rendering visual  -->
+            <Grid Margin="0,1">
+                <Border x:Name="PART_TimeMarker"
+                        Width="5"
+                        Margin="{TemplateBinding DurationMarkerMargin}"
+                        Background="{Binding Path=TimeMarker.TimeMarkerBrush}"
+                        BorderBrush="Transparent"
+                        BorderThickness="0"
+                        Visibility="{Binding Path=TimeMarker,
+                                             Converter={StaticResource NullToVisibilityConverter}}" />
+            </Grid>
+            <Grid Grid.Column="1"
+                  Margin="0,1">
+                <Grid.InputBindings>
+                    <MouseBinding Command="telerikScheduleView:RadScheduleViewCommands.EditAppointment"
+                                  MouseAction="LeftDoubleClick" />
+                </Grid.InputBindings>
+                <Border x:Name="BackgroundBorder"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}" />
+                <Border x:Name="MouseOverVisual"
+                        Background="{telerik1:Office2019Resource ResourceKey=AccentMouseOverBackgroundBrush}"
+                        BorderBrush="{x:Null}"
+                        IsHitTestVisible="False"
+                        Opacity="0" />
+                <Border x:Name="SelectionVisual"
+                        Background="{telerik1:Office2019Resource ResourceKey=AccentBackgroundBrush}"
+                        Opacity="0" />
+                <Border x:Name="PART_Category"
+                        Background="{Binding Path=Category.CategoryBrush}" />
+                <Border x:Name="Border"
+                        BorderBrush="{telerik1:Office2019Resource ResourceKey=AccentMouseOverBorderBrush}"
+                        BorderThickness="0" />
+                <Border x:Name="ReadOnlyVisual"
+                        Background="{StaticResource ReadOnlyAppointmentBackground}"
+                        Opacity="0" />
+                <Border x:Name="DisabledVisual"
+                        Background="{telerik1:Office2019Resource ResourceKey=ButtonBackgroundBrush}"
+                        Opacity="0" />
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <telerik:RadGlyph x:Name="ExtendedArrowStart"
+                                      Grid.Row="0"
+                                      Grid.ColumnSpan="2"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Top"
+                                      FontSize="{StaticResource ScheduleViewGlyphSize}"
+                                      Glyph="{StaticResource GlyphArrow60Up}"
+                                      Visibility="{TemplateBinding StartIndicatorVisibility}" />
+                    <StackPanel Grid.Row="1"
+                                Grid.Column="0"
+                                VerticalAlignment="Top"
+                                Orientation="Horizontal">
+                        <ContentControl Margin="2,0,1,0"
+                                        Style="{StaticResource ImportanceMarkContentControlStyle}"
+                                        Template="{StaticResource HighImportanceMarkTemplate}"
+                                        Visibility="{Binding Appointment.IsError.Value,
+                                                             Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <ToolTipService.ToolTip>
+                                <ToolTip Content="{Binding Appointment.ErrorMessage.Value}" />
+                            </ToolTipService.ToolTip>
+                        </ContentControl>
+                    </StackPanel>
+                    <ContentPresenter x:Name="Content"
+                                      Grid.Row="1"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      TextBlock.FontStyle="{Binding Path=Category.Model.IsItalic,
+                                                                    Converter={StaticResource BoolToFontItalicConverter}}"
+                                      TextBlock.FontWeight="{Binding Path=Category.Model.IsBold,
+                                                                     Converter={StaticResource BoolToFontBoldConverter}}"
+                                      TextBlock.Foreground="{Binding Path=Category.ForeBrush}" />
+                    <telerik:RadGlyph x:Name="ExtendedArrowEnd"
+                                      Grid.Row="2"
+                                      Grid.ColumnSpan="2"
+                                      HorizontalAlignment="Center"
+                                      VerticalAlignment="Bottom"
+                                      FontSize="{StaticResource ScheduleViewGlyphSize}"
+                                      Glyph="{StaticResource GlyphArrow60Down}"
+                                      Visibility="{TemplateBinding EndIndicatorVisibility}" />
+                </Grid>
+                <Grid x:Name="MouseOverGrid"
+                      Opacity="0">
+                    <Border x:Name="PART_StartResizeGrip"
+                            Height="6"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Top"
+                            dragDrop:DragDropManager.AllowDrag="True"
+                            telerik:TouchManager.DragStartTrigger="TouchMove"
+                            Background="Transparent"
+                            Cursor="{TemplateBinding ResizeCursor}"
+                            Visibility="{Binding Appointment.CanResize.Value,
+                                                 Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <Border x:Name="PART_EndResizeGrip"
+                            Height="6"
+                            HorizontalAlignment="Stretch"
+                            VerticalAlignment="Bottom"
+                            dragDrop:DragDropManager.AllowDrag="True"
+                            telerik:TouchManager.DragStartTrigger="TouchMove"
+                            Background="Transparent"
+                            Cursor="{TemplateBinding ResizeCursor}"
+                            Visibility="{Binding Appointment.CanResize.Value,
+                                                 Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <StackPanel HorizontalAlignment="Right"
+                                Orientation="Horizontal">
+                        <telerik:RadButton x:Name="DeleteButton"
+                                           ClickMode="Release"
+                                           Command="{x:Static telerikScheduleView:RadScheduleViewCommands.DeleteAppointment}"
+                                           CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                           Foreground="{Binding RelativeSource={RelativeSource TemplatedParent},
+                                                                Path=Foreground}"
+                                           IsTabStop="False"
+                                           Style="{StaticResource MyDeleteButtonStyle}"
+                                           Visibility="{Binding Appointment.CanDelete.Value,
+                                                                Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </StackPanel>
+                </Grid>
+                <telerik:RadButton Padding="0"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Bottom"
+                                   Background="{telerik1:Office2019Resource ResourceKey=AccentBackgroundBrush}"
+                                   ClickMode="Press"
+                                   Command="{Binding Appointment.GotoTicketCommand}"
+                                   Foreground="{telerik1:Office2019Resource ResourceKey=CheckedForegroundBrush}"
+                                   Style="{StaticResource GotoTicketButtonStyle}" />
+            </Grid>
+        </Grid>
+        <ControlTemplate.Triggers>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsReadOnly" Value="True" />
+                    <Condition Property="IsEnabled" Value="True" />
+                </MultiTrigger.Conditions>
+                <Setter TargetName="BackgroundBorder" Property="Opacity" Value="0" />
+                <Setter TargetName="ReadOnlyVisual" Property="Opacity" Value="1" />
+            </MultiTrigger>
+            <MultiTrigger>
+                <MultiTrigger.Conditions>
+                    <Condition Property="IsReadOnly" Value="False" />
+                    <Condition Property="IsInInlineEditingMode" Value="False" />
+                    <Condition Property="IsMouseOver" Value="True" />
+                    <Condition Property="IsEnabled" Value="True" />
+                </MultiTrigger.Conditions>
+                <MultiTrigger.EnterActions>
+                    <BeginStoryboard Storyboard="{StaticResource MouseOverEnterStoryboard}" />
+                </MultiTrigger.EnterActions>
+                <MultiTrigger.ExitActions>
+                    <BeginStoryboard Storyboard="{StaticResource MouseOverExitStoryboard}" />
+                </MultiTrigger.ExitActions>
+                <Setter Property="Foreground" Value="{telerik1:Office2019Resource ResourceKey=HighlightedForegroundBrush}" />
+                <Setter TargetName="MouseOverVisual" Property="Opacity" Value="1" />
+            </MultiTrigger>
+            <Trigger Property="IsSelected" Value="True">
+                <Setter Property="Foreground" Value="{telerik1:Office2019Resource ResourceKey=CheckedForegroundBrush}" />
+                <Setter TargetName="PART_Category" Property="Opacity" Value="0.8" />
+                <Setter TargetName="Border" Property="BorderThickness" Value="2" />
+
+            </Trigger>
+            <!--<Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="{telerik1:Office2019Resource ResourceKey=HighlightedForegroundBrush}" />
+                <Setter TargetName="Content" Property="Opacity" Value="{telerik1:Office2019Resource ResourceKey=DisabledOpacity}" />
+                <Setter TargetName="MarksWrapper" Property="Opacity" Value="{telerik1:Office2019Resource ResourceKey=DisabledOpacity}" />
+                <Setter TargetName="PART_TimeMarker" Property="Opacity" Value="{telerik1:Office2019Resource ResourceKey=DisabledOpacity}" />
+                <Setter TargetName="ExtendedArrowStart" Property="Opacity" Value="{telerik1:Office2019Resource ResourceKey=DisabledOpacity}" />
+                <Setter TargetName="ExtendedArrowEnd" Property="Opacity" Value="{telerik1:Office2019Resource ResourceKey=DisabledOpacity}" />
+                <Setter TargetName="DisabledVisual" Property="Opacity" Value="1" />
+            </Trigger>-->
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <DataTemplate x:Key="MyInlineEditTemplate">
+        <TextBox Margin="0"
+                 Padding="2,0"
+                 VerticalAlignment="Center"
+                 VerticalContentAlignment="Stretch"
+                 Background="{Binding Appointment.Category.CategoryBrush}"
+                 Foreground="{Binding Appointment.Category.ForeBrush}"
+                 Text="{Binding Appointment.Subject,
+                                Mode=TwoWay}"
+                 TextWrapping="Wrap" />
+    </DataTemplate>
+
+    <Style x:Key="MyResizeHighlightStyle"
+           BasedOn="{StaticResource ResizeHighlightStyle}"
+           TargetType="telerikScheduleView:HighlightItem">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Border BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                        <Grid>
+                            <Border Background="{TemplateBinding Background}"
+                                    Opacity="0.2" />
+                            <!--  Telerik らしさを減らすために開始と終了の時刻のラベルを表示する処理を削除  -->
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

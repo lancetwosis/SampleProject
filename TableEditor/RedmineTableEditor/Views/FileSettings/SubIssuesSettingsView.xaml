@@ -1,0 +1,124 @@
+﻿<UserControl x:Class="RedmineTableEditor.Views.FileSettings.SubIssuesSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:controls="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:enums="clr-namespace:RedmineTableEditor.Enums"
+             xmlns:enumsLib="clr-namespace:LibRedminePower.Enums;assembly=LibRedminePower"
+             xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
+             xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTableEditor.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:tf="clr-namespace:RedmineTableEditor.Models.TicketFields.Standard"
+             xmlns:vm="clr-namespace:RedmineTableEditor.ViewModels.FileSettings"
+             d:DataContext="{d:DesignInstance {x:Type vm:SubIssueSettingsViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <StackPanel Orientation="Horizontal">
+        <GroupBox Margin="5,5,5,0"
+                  Background="AliceBlue"
+                  Header="{x:Static props:Resources.SubIssueConditions}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="AUTO" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="AUTO" />
+                </Grid.ColumnDefinitions>
+                <TextBlock Margin="0,5,0,5"
+                           Text="{x:Static props:Resources.SubIssueConditionsMsg}" />
+                <telerik:RadGridView Grid.Row="1"
+                                     Margin="5"
+                                     b:RowReorderBehavior.IsEnabled="True"
+                                     AutoGenerateColumns="False"
+                                     CanUserDeleteRows="True"
+                                     CanUserFreezeColumns="False"
+                                     CanUserInsertRows="True"
+                                     GroupRenderMode="Flat"
+                                     IsFilteringAllowed="False"
+                                     IsReadOnly="False"
+                                     ItemsSource="{Binding Items}"
+                                     RowIndicatorVisibility="Collapsed"
+                                     SelectedItem="{Binding Items.SelectedItem.Value}"
+                                     ShowGroupPanel="False">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Drop">
+                            <i:InvokeCommandAction Command="{Binding RowDropCommand}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <telerik:RadGridView.RowStyle>
+                        <Style BasedOn="{StaticResource GridViewRowStyle}"
+                               TargetType="telerik:GridViewRow">
+                            <Setter Property="telerik:DragDropManager.AllowDrag" Value="True" />
+                            <Setter Property="telerik:DragDropManager.TouchDragTrigger" Value="TapAndHold" />
+                        </Style>
+                    </telerik:RadGridView.RowStyle>
+                    <telerik:RadGridView.Columns>
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding IsEnabled.Value}"
+                                                    EditTriggers="CellClick"
+                                                    Header="{x:Static props:Resources.SubIssueConditionsColEnable}"
+                                                    IsReadOnly="True"
+                                                    IsSortable="False">
+                            <telerik:GridViewDataColumn.CellTemplate>
+                                <DataTemplate>
+                                    <CheckBox IsChecked="{Binding IsEnabled.Value, Mode=TwoWay}" />
+                                </DataTemplate>
+                            </telerik:GridViewDataColumn.CellTemplate>
+                        </telerik:GridViewDataColumn>
+                        <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding TrackerId.Value}"
+                                                        DisplayMemberPath="Name"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SubIssueConditionsColTracker}"
+                                                        IsComboBoxEditable="True"
+                                                        IsFilterable="True"
+                                                        ItemsSource="{Binding Trackers.Value}"
+                                                        SelectedValueMemberPath="Id" />
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Title.Value,
+                                                                                Mode=TwoWay}"
+                                                    EditTriggers="CellClick"
+                                                    Header="{x:Static props:Resources.SubIssueConditionsColColName}" />
+                        <telerik:GridViewDataColumn DataMemberBinding="{Binding Subject.Value,
+                                                                                Mode=TwoWay}"
+                                                    EditTriggers="CellClick"
+                                                    Header="{x:Static props:Resources.SubIssueConditionsColSubject}" />
+                        <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding SubjectCompare.Value,
+                                                                                    Mode=TwoWay}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SubIssueConditionsColSubjectCondition}"
+                                                        ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enumsLib:StringCompareType}}}" />
+                        <libCont:MultiSelectionGridViewComboBoxColumn DataMemberBinding="{Binding SelectedStatuses}"
+                                                                      DisplayMemberPath="Name"
+                                                                      EditTriggers="CellClick"
+                                                                      Header="{x:Static props:Resources.SubIssueConditionsColStatus}"
+                                                                      IsFilterable="True"
+                                                                      ItemsSource="{Binding Statuses.Value}" />
+                        <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding StatusCompare.Value,
+                                                                                    Mode=TwoWay}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SubIssueConditionsColStatusCondition}"
+                                                        ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enums:StatusCompareType}}}" />
+                    </telerik:RadGridView.Columns>
+                </telerik:RadGridView>
+                <controls:GridViewEditButtonPanel Grid.Row="1"
+                                                  Grid.Column="1"
+                                                  DataContext="{Binding Items}" />
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Margin="5,5,0,0"
+                  HorizontalAlignment="Left"
+                  Background="Honeydew"
+                  Header="{x:Static props:Resources.FileSettingsDisplayFIelds}">
+            <controls:TwinListBox Margin="5"
+                                  VerticalAlignment="top"
+                                  DataContext="{Binding VisibleProps}" />
+        </GroupBox>
+    </StackPanel>
+</UserControl>

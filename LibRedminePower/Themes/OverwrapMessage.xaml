@@ -1,0 +1,49 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:cont="clr-namespace:LibRedminePower.Views.Controls"
+                    xmlns:conv="clr-namespace:LibRedminePower.Converters"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls">
+
+    <conv:RelayValueConverterGroup x:Key="StringIsNullOrEmptyToBoolNegative">
+        <conv:StringIsNullOrEmptyToBooleanConverter />
+        <conv:BooleanToInvertBooleanConverter />
+        <BooleanToVisibilityConverter />
+    </conv:RelayValueConverterGroup>
+
+    <Style TargetType="{x:Type cont:OverwrapMessage}">
+        <Setter Property="IsTabStop" Value="False" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type cont:OverwrapMessage}">
+                    <Grid>
+                        <Grid x:Name="progress"
+                              Panel.ZIndex="2"
+                              Visibility="{TemplateBinding Message,
+                                                           Converter={StaticResource StringIsNullOrEmptyToBoolNegative}}">
+                            <Rectangle Fill="Gray"
+                                       Opacity="0.3" />
+                            <TextBlock HorizontalAlignment="Center"
+                                       VerticalAlignment="Center"
+                                       FontSize="20"
+                                       FontWeight="Bold"
+                                       Foreground="{telerik1:Office2019Resource ResourceKey=AccentBorderBrush}"
+                                       Text="{TemplateBinding Message}"
+                                       TextWrapping="Wrap" />
+                        </Grid>
+                        <ContentPresenter x:Name="contents"
+                                          Panel.ZIndex="1" />
+                    </Grid>
+
+                    <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding Path=Visibility,
+                                                       ElementName=progress}"
+                                     Value="Visible">
+                            <Setter TargetName="contents" Property="KeyboardNavigation.TabNavigation" Value="None" />
+                        </DataTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

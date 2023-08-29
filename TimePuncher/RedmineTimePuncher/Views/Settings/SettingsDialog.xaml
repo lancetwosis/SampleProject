@@ -1,0 +1,148 @@
+﻿<telerik:RadWindow x:Class="RedmineTimePuncher.Views.Settings.SettingsDialog"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:local="clr-namespace:RedmineTimePuncher.Views.Settings"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:myHelpers="clr-namespace:RedmineTimePuncher.Helpers"
+                   xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+                   xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                   xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings"
+                   Width="800"
+                   Height="700"
+                   d:DataContext="{d:DesignInstance {x:Type vm:SettingsViewModel},
+                                                    IsDesignTimeCreatable=True}"
+                   Header="{x:Static props:Resources.SettingsDialog}"
+                   ResizeMode="CanResizeWithGrip"
+                   WindowStartupLocation="CenterOwner"
+                   mc:Ignorable="d">
+    <telerik:RadWindow.Style>
+        <Style BasedOn="{StaticResource RadWindowStyle}"
+               TargetType="telerik:RadWindow" />
+    </telerik:RadWindow.Style>
+
+    <Grid>
+        <Grid.Resources>
+            <Style BasedOn="{StaticResource MyTextBlockStyle}"
+                   TargetType="TextBlock" />
+        </Grid.Resources>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="5" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <telerik:RadTabControl Grid.Row="0">
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryGeneral}"
+                                IsSelected="True">
+                <local:RedmineSettingsView Margin="5"
+                                           DataContext="{Binding}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
+                                Header="{x:Static props:Resources.SettingsCategorySchedule}">
+                <local:ScheduleSettingsView Margin="5"
+                                            DataContext="{Binding Schedule}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
+                                Header="{x:Static props:Resources.SettingsCategoryCalendar}">
+                <local:CalendarSettingsView Margin="5"
+                                            DataContext="{Binding Calendar}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
+                                Header="{x:Static props:Resources.SettingsCategoryCategory}">
+                <local:CategorySettingsView Margin="5"
+                                            DataContext="{Binding Category}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
+                                Header="{x:Static props:Resources.SettingsCategoryAppointments}">
+                <local:AppointmentSettingsView Margin="5"
+                                               DataContext="{Binding Appointment}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
+                                Header="{x:Static props:Resources.SettingsCategoryIssueLists}">
+                <local:QuerySettingsView Margin="5"
+                                         DataContext="{Binding Query}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher,EntryViewer"
+                                Header="{x:Static props:Resources.SettingsCategoryUsers}">
+                <local:UserSettingsView Margin="5"
+                                        DataContext="{Binding User}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
+                                Header="{x:Static props:Resources.SettingsCategoryExport}">
+                <local:OutputDataSettingsView Margin="5"
+                                              DataContext="{Binding OutputData}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
+                                Header="{x:Static props:Resources.SettingsCategoryReport}">
+                <local:PersonHourReportSettingsView Margin="5"
+                                                    DataContext="{Binding PersonHourReport}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
+                                Header="{x:Static props:Resources.SettingsCategoryReview}">
+                <local:CreateTicketSettingsView Margin="5"
+                                                DataContext="{Binding CreateTicket}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
+                                Header="{x:Static props:Resources.SettingsCategoryReviewDescription}">
+                <local:CreateTicketDescriptionSettingsView Margin="5"
+                                                           DataContext="{Binding CreateTicket.TranscribeDescription}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
+                                Header="{x:Static props:Resources.SettingsCategoryRequestWork}">
+                <local:RequestWorkSettingsView Margin="5"
+                                               DataContext="{Binding RequestWork}" />
+            </telerik:RadTabItem>
+        </telerik:RadTabControl>
+        <Grid Grid.Row="2"
+              Margin="9,0,9,10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="5" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    MinWidth="105"
+                    Margin="0,0,5,0"
+                    Command="{Binding ImportAllCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                              Mode=FindAncestor}}"
+                    Content="{x:Static props:Resources.SettingsCmdImportAll}" />
+            <Button Grid.Column="2"
+                    MinWidth="105"
+                    Command="{Binding ExportAllCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                              Mode=FindAncestor}}"
+                    Content="{x:Static props:Resources.SettingsCmdExportAll}" />
+            <Button Grid.Column="4"
+                    Margin="0,0,5,0"
+                    telerik:RadWindow.ResponseButton="Accept"
+                    Command="{Binding OkCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                              Mode=FindAncestor}}"
+                    Content="OK"
+                    Style="{StaticResource StdButtonStyle}" />
+            <Button Grid.Column="6"
+                    telerik:RadWindow.ResponseButton="Cancel"
+                    Command="{Binding CancelCommand}"
+                    CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                              Mode=FindAncestor}}"
+                    Content="{x:Static props:Resources.CommonCmdCancel}"
+                    Style="{StaticResource StdButtonStyle}" />
+        </Grid>
+    </Grid>
+</telerik:RadWindow>

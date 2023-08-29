@@ -1,0 +1,239 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
+  
+  <PropertyGroup Label="Build">
+    <TargetFrameworks>net48</TargetFrameworks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <RootNamespace>Redmine.Net.Api</RootNamespace>
+    <AssemblyName>redmine-net-api</AssemblyName>
+    <Deterministic>False</Deterministic>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <DefineConstants>TRACE</DefineConstants>
+    <Configurations>Debug;Release;DebugJson</Configurations>
+    <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
+    <LangVersion>7.3</LangVersion>
+    <NoWarn>
+      NU5105;
+      CA1303;
+      CA1056;
+      CA1062;
+      CA1707;
+      CA1716;
+      CA1724;
+      CA1806;
+      CA2227;
+    </NoWarn>
+    <DebugType Condition="'$(Configuration)'=='DEBUG'">full</DebugType>
+    <DebugType Condition="'$(Configuration)'=='Release'">none</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net20'">
+    <DefineConstants>NET20;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net40'">
+    <DefineConstants>NET40;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net45'">
+    <DefineConstants>NET45;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net451'">
+    <DefineConstants>NET451;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net452'">
+    <DefineConstants>NET452;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net46'">
+    <DefineConstants>NET46;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net461'">
+    <DefineConstants>NET461;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net462'">
+    <DefineConstants>NET462;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net47'">
+    <DefineConstants>NET47;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net471'">
+    <DefineConstants>NET471;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net472'">
+    <DefineConstants>NET472;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'net48'">
+    <DefineConstants>NET48;NETFULL</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.3'">
+    <DefineConstants>NETSTANDARD13;NETSTANDARD</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.0'">
+    <DefineConstants>NETSTANDARD20;NETSTANDARD</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard2.1'">
+    <DefineConstants>NETSTANDARD21;NETSTANDARD</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net20|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net40|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net45|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net451|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net452|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net46|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net461|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net462|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net47|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net471|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net472|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net48|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.0|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|netstandard2.1|AnyCPU'">
+    <Optimize>False</Optimize>
+  </PropertyGroup>
+
+  <ItemGroup Label="Package References">
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="3.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net20' " Label=".NET 2.0 Package References">
+    <Reference Include="System.Web" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' " Label=".NET 4.0 Package References">
+    <Reference Include="System.Net" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net45' " Label=".NET 4.5 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' " Label=".NET 4.5.1 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' " Label=".NET 4.5.2 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net46' " Label=".NET 4.6 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net461' " Label=".NET 4.6.1 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net462' " Label=".NET 4.6.2 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net47' " Label=".NET 4.7 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net471' " Label=".NET 4.7.1 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net472' " Label=".NET 4.7.2 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net48' " Label=".NET 4.8 Package References">
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Remove="Logging\**" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="Extensions\LoggerExtensions.cs" />
+    <Compile Remove="Logging\**" />
+    <None Remove="Logging\**" />
+    <None Include="..\..\redmine-net-api.snk">
+      <Link>redmine-net-api.snk</Link>
+    </None>
+    <None Include="..\..\logo.png" Pack="true" PackagePath="\" />
+    <None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup Label="Internals Visible To">
+    <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
+      <_Parameter1 Condition="'$(Sign)' == '' OR '$(Sign)' == 'false'">$(MSBuildProjectName).Tests</_Parameter1>
+      <_Parameter1 Condition="'$(Sign)' == 'true'">$(MSBuildProjectName).Tests, PublicKey=0024000004800000940000000602000000240000525341310004000001000100678670c10a958cde6b74892d5207885bd2ab375255b85fd7794d60ff01ba1cf81aaff13f54d8a08a8f8c7816ef4fc0138de7941031e47b5b0c5d51f58cbfe6c5652e11cfa0865e2d0a860f47f73b701e6758e3e381665f7664f938462c9eb9bdc17312621e984981227fd9d38dbec5288e269d42836b9c8fc4c8ebd0282ca4d3
+      </_Parameter1>
+    </AssemblyAttribute>
+  </ItemGroup>
+
+</Project>

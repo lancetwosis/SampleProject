@@ -1,0 +1,297 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.Settings.ScheduleSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:controls="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:enums="clr-namespace:RedmineTimePuncher.Enums"
+             xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
+             xmlns:interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings"
+             d:DataContext="{d:DesignInstance {x:Type vm:ScheduleSettingsViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        <Grid Grid.IsSharedSizeScope="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Vertical">
+                <Grid Margin="0,0,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          SharedSizeGroup="FirstColumn" />
+                        <ColumnDefinition Width="10"
+                                          SharedSizeGroup="SecondColumn" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Row="0"
+                               Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Text="{x:Static props:Resources.SettingsScheInputUnit}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Text=" :" />
+                    <ComboBox Grid.Row="0"
+                              Grid.Column="2"
+                              ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enums:TickLengthType}}}"
+                              SelectedItem="{Binding TickLength.Value,
+                                                     Mode=TwoWay}" />
+                </Grid>
+                <Grid Margin="0,0,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          SharedSizeGroup="FirstColumn" />
+                        <ColumnDefinition Width="10"
+                                          SharedSizeGroup="SecondColumn" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Text="{x:Static props:Resources.SettingsScheDayStartTime}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Text=" :" />
+                    <telerik:RadTimeSpanPicker Grid.Column="2"
+                                               StringFormat="hh\:mm"
+                                               TimeSpanWatermarkContent="{x:Static props:Resources.TimePickerWatermark}"
+                                               Value="{Binding DayStartTime.Value,
+                                                               UpdateSourceTrigger=PropertyChanged,
+                                                               Mode=TwoWay}">
+                        <telerik:RadTimeSpanPicker.TimeSpanComponents>
+                            <telerik:HourTimeSpanComponent Header="{x:Static props:Resources.TimePickerHour}"
+                                                           Maximum="23"
+                                                           Minimum="0" />
+                            <telerik:MinuteTimeSpanComponent Header="{x:Static props:Resources.TimePickerMinite}"
+                                                             Step="{Binding DataContext.TickLengthValue.Value,
+                                                                            RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                           AncestorType=UserControl},
+                                                                            Mode=OneWay}" />
+                        </telerik:RadTimeSpanPicker.TimeSpanComponents>
+                    </telerik:RadTimeSpanPicker>
+                </Grid>
+                <Grid Margin="0,0,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          SharedSizeGroup="FirstColumn" />
+                        <ColumnDefinition Width="10"
+                                          SharedSizeGroup="SecondColumn" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Text="{x:Static props:Resources.SettingsScheWorkStartTime}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Text=" :" />
+                    <telerik:RadTimeSpanPicker Grid.Column="2"
+                                               StringFormat="hh\:mm"
+                                               TimeSpanWatermarkContent="{x:Static props:Resources.TimePickerWatermark}"
+                                               Value="{Binding WorkStartTime.Value,
+                                                               UpdateSourceTrigger=PropertyChanged,
+                                                               Mode=TwoWay}">
+                        <telerik:RadTimeSpanPicker.TimeSpanComponents>
+                            <telerik:HourTimeSpanComponent Header="{x:Static props:Resources.TimePickerHour}"
+                                                           Maximum="23"
+                                                           Minimum="0" />
+                            <telerik:MinuteTimeSpanComponent Header="{x:Static props:Resources.TimePickerMinite}"
+                                                             Step="{Binding DataContext.TickLengthValue.Value,
+                                                                            RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                           AncestorType=UserControl},
+                                                                            Mode=OneWay}" />
+                        </telerik:RadTimeSpanPicker.TimeSpanComponents>
+                    </telerik:RadTimeSpanPicker>
+                </Grid>
+                <Grid Margin="0,0,0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          SharedSizeGroup="FirstColumn" />
+                        <ColumnDefinition Width="10"
+                                          SharedSizeGroup="SecondColumn" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox Grid.Column="0"
+                              VerticalAlignment="Center"
+                              Content="{x:Static props:Resources.SettingsScheUseFlexTime}"
+                              IsChecked="{Binding UseFlexTime.Value}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Text=" :" />
+                    <TextBlock Grid.Column="2"
+                               Style="{StaticResource SettingHelpTextBlockStyle}"
+                               Text="{x:Static props:Resources.SettingsScheUseFlexTimeMsg}" />
+                </Grid>
+
+            </StackPanel>
+
+            <Grid Grid.Row="1"
+                  Margin="0,0,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"
+                                      SharedSizeGroup="FirstColumn" />
+                    <ColumnDefinition Width="10"
+                                      SharedSizeGroup="SecondColumn" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Grid.Column="0"
+                           VerticalAlignment="Top"
+                           Text="{x:Static props:Resources.SettingsScheTimesSettings}" />
+                <TextBlock Grid.Column="1"
+                           VerticalAlignment="Top"
+                           Text=" :" />
+                <Grid Grid.Column="2">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="AUTO" />
+                        </Grid.ColumnDefinitions>
+
+                        <telerik:RadGridView x:Name="gridView"
+                                             behaviors:RowReorderBehavior.IsEnabled="True"
+                                             AutoGenerateColumns="False"
+                                             CanUserDeleteRows="True"
+                                             CanUserFreezeColumns="False"
+                                             CanUserInsertRows="True"
+                                             GroupRenderMode="Flat"
+                                             IsFilteringAllowed="False"
+                                             IsReadOnly="False"
+                                             ItemsSource="{Binding SpecialTerms}"
+                                             RowIndicatorVisibility="Collapsed"
+                                             SelectedItem="{Binding SpecialTerms.SelectedItem.Value}"
+                                             ShowGroupPanel="False">
+                            <telerik:RadGridView.RowStyle>
+                                <Style BasedOn="{StaticResource GridViewRowStyle}"
+                                       TargetType="telerik:GridViewRow">
+                                    <Setter Property="telerik:DragDropManager.AllowDrag" Value="True" />
+                                    <Setter Property="telerik:DragDropManager.TouchDragTrigger" Value="TapAndHold" />
+                                </Style>
+                            </telerik:RadGridView.RowStyle>
+
+                            <telerik:RadGridView.Columns>
+                                <telerik:GridViewColumn Header="{x:Static props:Resources.SettingsScheColFrom}"
+                                                        IsFilterable="False"
+                                                        IsSortable="False">
+                                    <telerik:GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <telerik:RadTimeSpanPicker StringFormat="hh\:mm"
+                                                                       TimeSpanWatermarkContent="{x:Static props:Resources.TimePickerWatermark}"
+                                                                       Value="{Binding Start.Value,
+                                                                                       UpdateSourceTrigger=PropertyChanged,
+                                                                                       Mode=TwoWay}">
+                                                <telerik:RadTimeSpanPicker.TimeSpanComponents>
+                                                    <telerik:HourTimeSpanComponent Header="{x:Static props:Resources.TimePickerHour}"
+                                                                                   Maximum="23"
+                                                                                   Minimum="0" />
+                                                    <telerik:MinuteTimeSpanComponent Header="{x:Static props:Resources.TimePickerMinite}"
+                                                                                     Step="{Binding DataContext.TickLengthValue.Value,
+                                                                                                    RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                                                   AncestorType=UserControl},
+                                                                                                    Mode=OneWay}" />
+                                                </telerik:RadTimeSpanPicker.TimeSpanComponents>
+                                            </telerik:RadTimeSpanPicker>
+                                        </DataTemplate>
+                                    </telerik:GridViewColumn.CellTemplate>
+                                </telerik:GridViewColumn>
+                                <telerik:GridViewColumn Header="{x:Static props:Resources.SettingsScheColTo}"
+                                                        IsFilterable="False"
+                                                        IsSortable="False">
+                                    <telerik:GridViewColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <telerik:RadTimeSpanPicker StringFormat="hh\:mm"
+                                                                       TimeSpanWatermarkContent="{x:Static props:Resources.TimePickerWatermark}"
+                                                                       Value="{Binding End.Value,
+                                                                                       UpdateSourceTrigger=PropertyChanged,
+                                                                                       Mode=TwoWay}">
+                                                <telerik:RadTimeSpanPicker.TimeSpanComponents>
+                                                    <telerik:HourTimeSpanComponent Header="{x:Static props:Resources.TimePickerHour}"
+                                                                                   Maximum="23"
+                                                                                   Minimum="0" />
+                                                    <telerik:MinuteTimeSpanComponent Header="{x:Static props:Resources.TimePickerMinite}"
+                                                                                     Step="{Binding DataContext.TickLengthValue.Value,
+                                                                                                    RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                                                   AncestorType=UserControl},
+                                                                                                    Mode=OneWay}" />
+                                                </telerik:RadTimeSpanPicker.TimeSpanComponents>
+                                            </telerik:RadTimeSpanPicker>
+                                        </DataTemplate>
+                                    </telerik:GridViewColumn.CellTemplate>
+                                </telerik:GridViewColumn>
+                                <telerik:GridViewColumn CellTemplate="{StaticResource MyColorPickerTemplate}"
+                                                        Header="{x:Static props:Resources.SettingsScheColColor}"
+                                                        IsFilterable="False"
+                                                        IsSortable="False" />
+                                <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding ValidationType.Value}"
+                                                                EditTriggers="CellClick"
+                                                                Header="{x:Static props:Resources.SettingsScheColInputCheck}"
+                                                                IsFilterable="False"
+                                                                IsSortable="False"
+                                                                ItemsSourceBinding="{Binding Source={extensions:EnumBindingSource {x:Type enums:TermInputValidationType}}}" />
+                                <telerik:GridViewDataColumn DataMemberBinding="{Binding OnTime.Value}"
+                                                            EditTriggers="CellClick"
+                                                            Header="{x:Static props:Resources.SettingsScheColOnTime}"
+                                                            IsReadOnly="True"
+                                                            IsSortable="False">
+                                    <telerik:GridViewDataColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding OnTime.Value, Mode=TwoWay}" />
+                                        </DataTemplate>
+                                    </telerik:GridViewDataColumn.CellTemplate>
+                                </telerik:GridViewDataColumn>
+                                <telerik:GridViewDataColumn DataMemberBinding="{Binding IsCoreTime.Value}"
+                                                            EditTriggers="CellClick"
+                                                            Header="{x:Static props:Resources.SettingsScheColCoreTime}"
+                                                            IsReadOnly="True"
+                                                            IsSortable="False"
+                                                            IsVisible="{Binding UseFlexTime.Value}">
+                                    <telerik:GridViewDataColumn.CellTemplate>
+                                        <DataTemplate>
+                                            <CheckBox IsChecked="{Binding IsCoreTime.Value, Mode=TwoWay}" />
+                                        </DataTemplate>
+                                    </telerik:GridViewDataColumn.CellTemplate>
+                                </telerik:GridViewDataColumn>
+                            </telerik:RadGridView.Columns>
+                        </telerik:RadGridView>
+                        <controls:GridViewEditButtonPanel Grid.Column="1"
+                                                          DataContext="{Binding SpecialTerms}" />
+                    </Grid>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Grid Grid.Row="1"
+              HorizontalAlignment="Center">
+            <StackPanel Orientation="Horizontal">
+                <Button Width="80"
+                        Margin="0,0,10,0"
+                        Command="{Binding ImportCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                                  Mode=FindAncestor}}"
+                        Content="{x:Static props:Resources.SettingsCmdImport}" />
+                <Button Width="80"
+                        Command="{Binding ExportCommand}"
+                        CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                                  Mode=FindAncestor}}"
+                        Content="{x:Static props:Resources.SettingsCmdExport}" />
+            </StackPanel>
+        </Grid>
+    </Grid>
+
+</UserControl>

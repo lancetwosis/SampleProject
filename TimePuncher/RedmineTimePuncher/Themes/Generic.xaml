@@ -1,0 +1,20 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:RedmineTimePuncher">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/GridView/MyGridViewSearchPanel.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/GridView/IssueRowStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/RibbonView/MyRadRibbonSplitButton.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/MyAppointmentItemVerticalControlTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/MyDeleteAppointmentConfirmDialogStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/MyGroupHeaderContentTemplateSelector.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/MyRadScheduleViewControlTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/MyTimeRulerItemTemplateSelector.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/MyTooltipTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/SpecialSlotStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/TimeIndicatorStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/GroupingTypeDefinitions.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/Settings/HelpTextBlockStyle.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+</ResourceDictionary>

@@ -1,0 +1,173 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.Controls.TicketGridView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+             xmlns:controls="clr-namespace:RedmineTimePuncher.ViewModels.Input.Controls"
+             xmlns:controls1="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:converters1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
+             xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerikEx="clr-namespace:TelerikEx.Behaviors;assembly=TelerikEx"
+             d:DataContext="{d:DesignInstance {x:Type controls:TicketGridViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource TicketGridViewSearchPanelStyle}"
+               TargetType="grid:GridViewSearchPanel" />
+        <styleselectors:MyIssueStyleSelector x:Key="MyIssueStyleSelector" />
+        <converters1:RelayValueConverterGroup x:Key="StringToVisibilityConverter">
+            <converters1:StringIsNullOrEmptyToBooleanConverter />
+            <converters1:BooleanToInvertBooleanConverter />
+            <BooleanToVisibilityConverter />
+        </converters1:RelayValueConverterGroup>
+        <DataTemplate x:Key="DescriptionTooltip">
+            <Grid MaxWidth="500">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="{Binding Label}" />
+                <TextBlock Grid.Row="1"
+                           Margin="0,5,0,0"
+                           Text="{Binding LimitedDescription}"
+                           Visibility="{Binding LimitedDescription,
+                                                Converter={StaticResource StringToVisibilityConverter}}" />
+            </Grid>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <controls1:OverwrapMessage Message="{Binding ErrorMessage}">
+        <telerik:RadGridView AllowDrop="True"
+                             AlternateRowStyleSelector="{StaticResource MyIssueStyleSelector}"
+                             AlternationCount="2"
+                             AutoGenerateColumns="False"
+                             CanUserDeleteRows="False"
+                             CanUserFreezeColumns="False"
+                             CanUserInsertRows="False"
+                             CanUserSearch="False"
+                             IsBusy="{Binding IsBusy.IsBusy}"
+                             IsFilteringAllowed="False"
+                             IsReadOnly="True"
+                             ItemsSource="{Binding Items.Value}"
+                             MouseRightButtonUp="RadGridView_MouseRightButtonUp"
+                             RowHeight="18"
+                             RowIndicatorVisibility="Collapsed"
+                             RowLoaded="RadGridView_RowLoaded"
+                             RowStyleSelector="{StaticResource MyIssueStyleSelector}"
+                             SearchPanelCloseButtonVisibility="Collapsed"
+                             SelectedItem="{Binding SelectedItem.Value}"
+                             ShowGroupPanel="False"
+                             ShowSearchPanel="True">
+            <telerik:RadGridView.Resources>
+                <Style BasedOn="{StaticResource GridViewCellStyle}"
+                       TargetType="telerik:GridViewCell">
+                    <Style.Resources>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=IsClosed}"
+                                             Value="True">
+                                    <DataTrigger.Setters>
+                                        <Setter Property="Foreground" Value="DarkGray" />
+                                        <Setter Property="TextDecorations" Value="Strikethrough" />
+                                    </DataTrigger.Setters>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Style.Resources>
+                </Style>
+            </telerik:RadGridView.Resources>
+            <telerik:RadGridView.ContextMenu>
+                <ContextMenu>
+                    <MenuItem helpers:ButtonSetupHelper.Data="{Binding ReloadCommand}" />
+                    <Separator />
+                    <MenuItem helpers:ButtonSetupHelper.Data="{Binding GoToTicketCommand}" />
+                    <MenuItem helpers:ButtonSetupHelper.Data="{Binding CopyRefsCommand}" />
+                    <Separator />
+                    <MenuItem helpers:ButtonSetupHelper.Data="{Binding AddFavoritesCommand}" />
+                    <MenuItem helpers:ButtonSetupHelper.Data="{Binding RemoveFavoriteCommand}" />
+                </ContextMenu>
+            </telerik:RadGridView.ContextMenu>
+            <telerik:RadGridView.Columns>
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding IsFavorite}"
+                                            Header=""
+                                            IsResizable="False">
+                    <telerik:GridViewDataColumn.CellTemplate>
+                        <DataTemplate>
+                            <telerik:RadToggleButton IsChecked="{Binding IsFavorite}">
+                                <telerik:RadToggleButton.Template>
+                                    <ControlTemplate>
+                                        <Grid>
+                                            <telerik:RadGlyph Glyph="{StaticResource GlyphStar}"
+                                                              ToolTip="{x:Static props:Resources.IssueGridMsgRemoveFavorite}"
+                                                              Visibility="{Binding Path=IsChecked,
+                                                                                   RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                                  AncestorType=telerik:RadToggleButton},
+                                                                                   Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                            <telerik:RadGlyph Glyph="{StaticResource GlyphStarOutline}"
+                                                              ToolTip="{x:Static props:Resources.IssueGridMsgAddFavorite}"
+                                                              Visibility="{Binding Path=IsChecked,
+                                                                                   RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                                  AncestorType=telerik:RadToggleButton},
+                                                                                   Converter={StaticResource InvertBoolToVisConverter}}" />
+                                        </Grid>
+                                    </ControlTemplate>
+                                </telerik:RadToggleButton.Template>
+                            </telerik:RadToggleButton>
+                        </DataTemplate>
+                    </telerik:GridViewDataColumn.CellTemplate>
+                </telerik:GridViewDataColumn>
+                <telerik:GridViewHyperlinkColumn ContentBinding="{Binding Id}"
+                                                 DataMemberBinding="{Binding Url}"
+                                                 Header="#"
+                                                 ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Project.Name}"
+                                            Header="{x:Static props:Resources.IssueGridColProject}"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Tracker.Name}"
+                                            Header="{x:Static props:Resources.IssueGridColTracker}"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Priority.Name}"
+                                            Header="{x:Static props:Resources.IssueGridColPriority}"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn Width="250"
+                                            DataMemberBinding="{Binding Subject}"
+                                            Header="{x:Static props:Resources.IssueGridColSubject}"
+                                            ShowToolTipOnTrimmedText="True"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding FixedVersion.Name}"
+                                            Header="{x:Static props:Resources.IssueGridColTargetVersion}"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Category.Name}"
+                                            Header="{x:Static props:Resources.IssueGridColCategory}"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding Status.Name}"
+                                            Header="{x:Static props:Resources.IssueGridColStatus}"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding AssignedTo.Name}"
+                                            Header="{x:Static props:Resources.IssueGridColAssignee}"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding DueDate,
+                                                                        StringFormat=yyyy/MM/dd (ddd)}"
+                                            Header="{x:Static props:Resources.IssueGridColDueDate}"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+                <telerik:GridViewDataColumn DataMemberBinding="{Binding UpdatedOn,
+                                                                        StringFormat=yyyy/MM/dd (ddd)}"
+                                            Header="{x:Static props:Resources.IssueGridColUpdated}"
+                                            ToolTipTemplate="{StaticResource DescriptionTooltip}" />
+            </telerik:RadGridView.Columns>
+            <b:Interaction.Behaviors>
+                <behaviors:MyGridViewDragDropBehavior />
+                <telerikEx:RadGridViewPersistenceBehavior ColumnProperties="{Binding ColumnProperties}" />
+            </b:Interaction.Behaviors>
+        </telerik:RadGridView>
+    </controls1:OverwrapMessage>
+</UserControl>

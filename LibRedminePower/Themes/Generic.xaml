@@ -1,0 +1,25 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/ButtonStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/FilterTextBox.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/MyColorPickerTemplate.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/OverwrapMessage.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/RadButtonStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/RadWindowHelperStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/WatermarkTextBoxStyle.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/RadComboBoxStyle.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style BasedOn="{StaticResource GridViewRowCoreStyle}"
+           TargetType="telerik:GridViewRow" />
+    <Style BasedOn="{StaticResource GridViewCellCoreStyle}"
+           TargetType="telerik:GridViewCell" />
+
+    <Style BasedOn="{StaticResource GridViewHeaderCellStyle}"
+           TargetType="telerik:GridViewHeaderCell">
+        <Setter Property="Background" Value="WhiteSmoke" />
+    </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,310 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls">
+
+    <!--  WindowStyle  -->
+    <Style x:Key="ConfirmWindowStyle"
+           BasedOn="{StaticResource RadWindowStyle}"
+           TargetType="telerik:RadWindow">
+        <Setter Property="MinWidth" Value="380" />
+    </Style>
+
+    <!--  IconTemplate  -->
+    <DataTemplate x:Key="ConfirmInformationIconTemplate">
+        <Grid>
+            <Ellipse Width="48"
+                     Height="48"
+                     Fill="Transparent"
+                     Stroke="#106EBE"
+                     StrokeThickness="1" />
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontFamily="SegoeUI"
+                       FontSize="32"
+                       Foreground="#106EBE"
+                       Text="i" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ConfirmWarningIconTemplate">
+        <Grid>
+            <Path Width="48"
+                  Height="48"
+                  Data="M24,0 L48,40 0,40 z"
+                  Fill="#FFF5E546"
+                  Stroke="#FFF5E546"
+                  StrokeThickness="1" />
+            <TextBlock HorizontalAlignment="Center"
+                       VerticalAlignment="Center"
+                       FontFamily="SegoeUI"
+                       FontSize="32"
+                       Foreground="Black"
+                       Text="!" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ConfirmErrorIconTemplate">
+        <Grid>
+            <Ellipse Width="48"
+                     Height="48"
+                     Fill="#FFFB3E3E"
+                     Stroke="#FFFB3E3E"
+                     StrokeThickness="1" />
+            <Path Width="48"
+                  Height="48"
+                  Data="M12,12 L36,36"
+                  Fill="Transparent"
+                  Stroke="White"
+                  StrokeThickness="4" />
+            <Path Width="48"
+                  Height="48"
+                  Data="M36,12 L12,36"
+                  Fill="Transparent"
+                  Stroke="White"
+                  StrokeThickness="4" />
+        </Grid>
+    </DataTemplate>
+
+    <DataTemplate x:Key="ConfirmQuestionIconTemplate">
+        <Grid>
+            <Ellipse Width="48"
+                     Height="48"
+                     Fill="#106EBE"
+                     Stroke="#106EBE"
+                     StrokeThickness="1" />
+            <Ellipse Width="4"
+                     Height="4"
+                     Margin="0,0,18,12"
+                     Fill="White" />
+            <Path Width="48"
+                  Height="48"
+                  Data="M15,18 A1,1 0 1 1 33,18 L25,26 A7,7 20 0 0 24,31"
+                  Fill="Transparent"
+                  Stroke="White"
+                  StrokeThickness="4" />
+            <Path Width="48"
+                  Height="48"
+                  Data="M32,9 A1,2 0 0 1 30,24"
+                  Fill="Transparent"
+                  Stroke="#106EBE"
+                  StrokeThickness="0.6" />
+            <Ellipse Width="4"
+                     Height="4"
+                     Margin="0,33,0,20"
+                     Fill="White" />
+            <Ellipse Width="6"
+                     Height="6"
+                     Margin="0,33,0,4"
+                     Fill="White" />
+        </Grid>
+    </DataTemplate>
+
+    <!--  ContentStyle  -->
+    <Style x:Key="ConfirmOkContentStyle"
+           TargetType="telerik:RadConfirm">
+        <Setter Property="ContentAreaMargin" Value="0 0 10 0" />
+        <Setter Property="FontSize" Value="{telerik1:Office2019Resource ResourceKey=FontSize}" />
+        <Setter Property="FontFamily" Value="{telerik1:Office2019Resource ResourceKey=FontFamily}" />
+        <Setter Property="Foreground" Value="{telerik1:Office2019Resource ResourceKey=MainForegroundBrush}" />
+        <Setter Property="IsTabStop" Value="false" />
+        <Setter Property="MinWidth" Value="275" />
+        <Setter Property="MaxWidth" Value="500" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="IconTemplate" Value="{StaticResource ConfirmIconTemplate}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="telerik:RadConfirm">
+                    <Grid x:Name="LayoutRoot"
+                          Background="{TemplateBinding Background}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter x:Name="Icon"
+                                          Margin="10"
+                                          VerticalAlignment="Top"
+                                          ContentTemplate="{TemplateBinding IconTemplate}" />
+                        <ContentPresenter x:Name="ConfirmText"
+                                          Grid.Row="0"
+                                          Grid.Column="1"
+                                          Margin="0,8,10,5"
+                                          VerticalAlignment="Center">
+                            <ContentPresenter.Resources>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
+                        <StackPanel x:Name="DialogButtons"
+                                    Grid.Row="1"
+                                    Grid.ColumnSpan="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <telerik:RadButton x:Name="OK"
+                                               Margin="0,0,5,5"
+                                               HorizontalAlignment="Right"
+                                               telerik:LocalizationManager.ResourceKey="Ok"
+                                               telerik:RadWindow.ResponseButton="Accept"
+                                               Command="{x:Static telerik:WindowCommands.Confirm}" />
+                        </StackPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IconTemplate" Value="{x:Null}">
+                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ConfirmOkCancelContentStyle"
+           TargetType="telerik:RadConfirm">
+        <Setter Property="ContentAreaMargin" Value="0 0 10 0" />
+        <Setter Property="FontSize" Value="{telerik1:Office2019Resource ResourceKey=FontSize}" />
+        <Setter Property="FontFamily" Value="{telerik1:Office2019Resource ResourceKey=FontFamily}" />
+        <Setter Property="Foreground" Value="{telerik1:Office2019Resource ResourceKey=MainForegroundBrush}" />
+        <Setter Property="IsTabStop" Value="false" />
+        <Setter Property="MinWidth" Value="275" />
+        <Setter Property="MaxWidth" Value="500" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="IconTemplate" Value="{StaticResource ConfirmIconTemplate}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="telerik:RadConfirm">
+                    <Grid x:Name="LayoutRoot"
+                          Background="{TemplateBinding Background}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter x:Name="Icon"
+                                          Margin="10"
+                                          VerticalAlignment="Top"
+                                          ContentTemplate="{TemplateBinding IconTemplate}" />
+                        <ContentPresenter x:Name="ConfirmText"
+                                          Grid.Row="0"
+                                          Grid.Column="1"
+                                          Margin="0,8,10,5"
+                                          VerticalAlignment="Center">
+                            <ContentPresenter.Resources>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
+                        <StackPanel x:Name="DialogButtons"
+                                    Grid.Row="1"
+                                    Grid.ColumnSpan="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <telerik:RadButton x:Name="OK"
+                                               Margin="0,0,10,5"
+                                               HorizontalAlignment="Right"
+                                               telerik:LocalizationManager.ResourceKey="Ok"
+                                               telerik:RadWindow.ResponseButton="Accept"
+                                               Command="{x:Static telerik:WindowCommands.Confirm}" />
+                            <telerik:RadButton x:Name="Cancel"
+                                               Margin="0,0,5,5"
+                                               HorizontalAlignment="Right"
+                                               telerik:LocalizationManager.ResourceKey="Cancel"
+                                               telerik:RadWindow.ResponseButton="Cancel"
+                                               Command="{x:Static telerik:WindowCommands.Cancel}" />
+                        </StackPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IconTemplate" Value="{x:Null}">
+                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ConfirmYesNoCancelContentStyle"
+           TargetType="telerik:RadConfirm">
+        <Setter Property="ContentAreaMargin" Value="0 0 10 0" />
+        <Setter Property="FontSize" Value="{telerik1:Office2019Resource ResourceKey=FontSize}" />
+        <Setter Property="FontFamily" Value="{telerik1:Office2019Resource ResourceKey=FontFamily}" />
+        <Setter Property="Foreground" Value="{telerik1:Office2019Resource ResourceKey=MainForegroundBrush}" />
+        <Setter Property="IsTabStop" Value="false" />
+        <Setter Property="MinWidth" Value="275" />
+        <Setter Property="MaxWidth" Value="500" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="IconTemplate" Value="{StaticResource ConfirmIconTemplate}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="telerik:RadConfirm">
+                    <Grid x:Name="LayoutRoot"
+                          Background="{TemplateBinding Background}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <ContentPresenter x:Name="Icon"
+                                          Margin="10"
+                                          VerticalAlignment="Top"
+                                          ContentTemplate="{TemplateBinding IconTemplate}" />
+                        <ContentPresenter x:Name="ConfirmText"
+                                          Grid.Row="0"
+                                          Grid.Column="1"
+                                          Margin="0,8,10,5"
+                                          VerticalAlignment="Center">
+                            <ContentPresenter.Resources>
+                                <Style TargetType="{x:Type TextBlock}">
+                                    <Setter Property="TextWrapping" Value="Wrap" />
+                                </Style>
+                            </ContentPresenter.Resources>
+                        </ContentPresenter>
+                        <StackPanel x:Name="DialogButtons"
+                                    Grid.Row="1"
+                                    Grid.ColumnSpan="2"
+                                    HorizontalAlignment="Right"
+                                    VerticalAlignment="Center"
+                                    Orientation="Horizontal">
+                            <telerik:RadButton x:Name="Yes"
+                                               Margin="0,0,10,5"
+                                               HorizontalAlignment="Right"
+                                               telerik:RadWindow.ResponseButton="Accept"
+                                               Command="{x:Static telerik:WindowCommands.Confirm}"
+                                               Content="はい" />
+                            <telerik:RadButton x:Name="No"
+                                               Margin="0,0,10,5"
+                                               HorizontalAlignment="Right"
+                                               Command="{x:Static telerik:WindowCommands.Cancel}"
+                                               Content="いいえ" />
+                            <telerik:RadButton x:Name="Cancel"
+                                               Margin="0,0,5,5"
+                                               HorizontalAlignment="Right"
+                                               telerik:RadWindow.ResponseButton="Cancel"
+                                               Command="{x:Static telerik:WindowCommands.Close}"
+                                               Content="キャンセル" />
+                        </StackPanel>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IconTemplate" Value="{x:Null}">
+                            <Setter TargetName="Icon" Property="Visibility" Value="Collapsed" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

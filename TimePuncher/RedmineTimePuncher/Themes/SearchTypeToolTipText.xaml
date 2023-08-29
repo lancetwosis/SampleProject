@@ -1,0 +1,17 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <TextBlock x:Key="SearchTypeToolTipText">
+        [OR検索]<LineBreak />
+        語句を半角スペースでつなげます。例：検索文字1 検索文字2<LineBreak />
+        <LineBreak />
+        [AND検索]<LineBreak />
+        語句の前に「+」を付けます。。例：検索文字1 +検索文字2<LineBreak />
+        <LineBreak />
+        [検索から語句を除外する]<LineBreak />
+        除外する語句の前に「-」を付けます。例: ジャガー 速度 -自動車<LineBreak />
+        <LineBreak />
+        [完全一致を検索する]<LineBreak />
+        単語や語句を引用符で囲みます。例: &quot;世界一高い建築物&quot;</TextBlock>
+
+</ResourceDictionary>

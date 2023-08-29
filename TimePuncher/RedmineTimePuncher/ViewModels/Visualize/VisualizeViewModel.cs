@@ -1,0 +1,113 @@
+﻿using LibRedminePower.Extentions;
+using LibRedminePower.ViewModels;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Helpers;
+using Reactive.Bindings.Notifiers;
+using Redmine.Net.Api.Types;
+using RedmineTimePuncher.Enums;
+using RedmineTimePuncher.Models;
+using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.ViewModels.Bases;
+using RedmineTimePuncher.ViewModels.Visualize.Charts;
+using RedmineTimePuncher.ViewModels.Visualize.Enums;
+using RedmineTimePuncher.ViewModels.Visualize.Filters;
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.Linq;
+using System.Reactive.Disposables;
+using System.Reactive.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Threading.Tasks;
+using System.Windows;
+
+namespace RedmineTimePuncher.ViewModels.Visualize
+{
+    public class VisualizeViewModel : FunctionViewModelBase
+    {
+        public BusyNotifier IsBusy { get; set; }
+
+        public TicketFiltersViewModel Filters { get; set; }
+        public ResultViewModel Result { get; set; }
+
+        public AsyncCommandBase GetTimeEntriesCommand { get; set; }
+        public AsyncCommandBase UpdateTimeEntriesCommand { get; set; }
+
+        public MainWindowViewModel Parent { get; set; }
+
+        public VisualizeViewModel(MainWindowViewModel parent)
+            : base(ApplicationMode.Visualizer, parent)
+        {
+            this.Parent = parent;
+
+            IsBusy = new BusyNotifier();
+
+            Filters = new TicketFiltersViewModel(this).AddTo(disposables);
+
+            Result = new ResultViewModel(this).AddTo(disposables);
+
+            IsSelected.Where(a => a).Take(1).Subscribe(async _ =>
+            {
+                using (IsBusy.ProcessStart())
+                using (parent.IsBusy.ProcessStart(""))
+                {
+                    await Task.Run(() =>
+                    {
+                        App.Current.Dispatcher.Invoke(() =>
+                        {
+                            Result.LoadPreviousResult();
+                        });
+                    });
+                }
+            }).AddTo(disposables);
+
+            GetTimeEntriesCommand = new AsyncCommandBase(
+               "データ取得", Properties.Resources.icons8_database_down_48,
+               new[] { IsBusy.Select(i => i ? "" : null), Filters.IsValid }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
+               async () =>
+               {
+                   using (IsBusy.ProcessStart())
+                   using (parent.IsBusy.ProcessStart(""))
+                   {
+                       await Task.Run(() =>
+                       {
+                           return App.Current.Dispatcher.Invoke(async () =>
+                           {
+                               await Result.GetTimeEntriesAsync(Filters);
+                               Filters.IsExpanded.Value = false;
+                           });
+                       });
+                   }
+               }).AddTo(disposables);
+
+            UpdateTimeEntriesCommand = new AsyncCommandBase(
+               "再取得", Properties.Resources.reload,
+               new[] { IsBusy.Select(i => i ? "" : null), Result.ObserveProperty(a => a.Model.HasValue).Select(h => h ? null : "") }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
+               async () =>
+               {
+                   using (IsBusy.ProcessStart())
+                   using (parent.IsBusy.ProcessStart(""))
+                   {
+                       await Task.Run(() =>
+                       {
+                           return App.Current.Dispatcher.Invoke(async () =>
+                           {
+                               await Result.UpdateTimeEntriesAsync();
+                               Filters.IsExpanded.Value = false;
+                           });
+                       });
+                   }
+               }).AddTo(disposables);
+
+        }
+
+        public override void OnWindowClosed()
+        {
+            Filters.Save();
+            Result.Save();
+        }
+    }
+}

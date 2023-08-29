@@ -1,0 +1,27 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+                    xmlns:dragDrop="clr-namespace:Telerik.Windows.DragDrop;assembly=Telerik.Windows.Controls"
+                    xmlns:mat="clr-namespace:Telerik.Windows.Controls.MaterialControls;assembly=Telerik.Windows.Controls"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+                    xmlns:telerikScheduleView="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.ScheduleView">
+
+    <Style x:Key="MyTimeIndicatorStyle"
+           TargetType="telerik:TimeIndicatorItem">
+        <Setter Property="Canvas.ZIndex" Value="2" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Rectangle Height="10"
+                               MinWidth="2"
+                               Stroke="{Binding Brush}"
+                               StrokeDashArray="{Binding StrokeDashArray}"
+                               StrokeThickness="{Binding StrokeThickness}"
+                               ToolTip="{Binding ToolTip}" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+</ResourceDictionary>

@@ -1,0 +1,298 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{7E0C6450-D517-43DA-853E-C7D202755079}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>RedmineTableEditor</RootNamespace>
+    <AssemblyName>RedmineTableEditor</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>TableEditor.ico</ApplicationIcon>
+    <AllowedReferenceRelatedFileExtensions>
+      *.xml;
+      *.pdb
+    </AllowedReferenceRelatedFileExtensions>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Telerik.Pivot.Core, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Pivot.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Data, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Docking, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Docking.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.GridView, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.GridView.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Input, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Input.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Navigation.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Pivot, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Pivot.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.PivotFieldList, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.PivotFieldList.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.RibbonView, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.RibbonView.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Data, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Themes.Office2019, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Themes.Office2019.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Attachments\ExpanderAttachment.cs" />
+    <Compile Include="Behaviors\GridViewCurrentCellToMyIssueChildBehavior.cs" />
+    <Compile Include="Enums\FieldFormat.cs" />
+    <Compile Include="Enums\StatusCompareType.cs" />
+    <Compile Include="Extentions\CustomFieldExtentions.cs" />
+    <Compile Include="Models\Bases\MyIssueBase.cs" />
+    <Compile Include="Models\FileSettings\FieldModel.cs" />
+    <Compile Include="Models\FileSettings\FileSettingsModel.cs" />
+    <Compile Include="Models\FileSettings\IssueSettingsModelBase.cs" />
+    <Compile Include="Models\MyIssuePivot.cs" />
+    <Compile Include="Models\FileSettings\AssignedToColorModel.cs" />
+    <Compile Include="Models\FileSettings\AssignedToColorsModel.cs" />
+    <Compile Include="Models\FileSettings\AutoBackColorModel.cs" />
+    <Compile Include="Models\RedmineManager.cs" />
+    <Compile Include="Models\FileSettings\StatusColorsModel.cs" />
+    <Compile Include="Models\TicketFields\Custom\Bases\CfBase.cs" />
+    <Compile Include="Models\TicketFields\Custom\CfBool.cs" />
+    <Compile Include="Models\TicketFields\Custom\CfFloat.cs" />
+    <Compile Include="Models\TicketFields\Custom\CfInts.cs" />
+    <Compile Include="Models\TicketFields\Custom\CfInt.cs" />
+    <Compile Include="Models\TicketFields\Custom\CfDate.cs" />
+    <Compile Include="Models\TicketFields\Custom\CfStrings.cs" />
+    <Compile Include="Models\TicketFields\Standard\AssignedTo.cs" />
+    <Compile Include="Models\TicketFields\Standard\Tracker.cs" />
+    <Compile Include="Models\TicketFields\Bases\FieldBase.cs" />
+    <Compile Include="Models\TicketFields\Standard\Bases\FieldDate.cs" />
+    <Compile Include="Models\TicketFields\Standard\Bases\FieldDouble.cs" />
+    <Compile Include="Models\TicketFields\Standard\Bases\FieldText.cs" />
+    <Compile Include="Models\TicketFields\Standard\Bases\FieldList.cs" />
+    <Compile Include="Models\TicketFields\Standard\Category.cs" />
+    <Compile Include="Models\TicketFields\Custom\CfString.cs" />
+    <Compile Include="Models\TicketFields\Standard\DoneRatio.cs" />
+    <Compile Include="Models\TicketFields\Standard\DueDate.cs" />
+    <Compile Include="Models\TicketFields\Standard\EstimatedHours.cs" />
+    <Compile Include="Models\TicketFields\Standard\FixedVersion.cs" />
+    <Compile Include="Models\TicketFields\Standard\Priority.cs" />
+    <Compile Include="Models\TicketFields\Standard\StartDate.cs" />
+    <Compile Include="Models\TicketFields\Standard\Status.cs" />
+    <Compile Include="Models\TicketFields\Standard\Subject.cs" />
+    <Compile Include="ViewModels\FileSettings\FieldViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\FileSettingsViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\AssignedToColorsViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\AssignedToColorViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\AutoBackColorViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\IssueSettingsViewModelBase.cs" />
+    <Compile Include="ViewModels\FileSettings\SubIssueSettingsViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\ParentIssueSettingsViewModel.cs" />
+    <Compile Include="ViewModels\IssuesViewModel.cs" />
+    <Compile Include="ViewModels\MyIssueEditedListener.cs" />
+    <Compile Include="ViewModels\FileSettings\SubIssueSettingViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\StatusColorsViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\StatusColorViewModel.cs" />
+    <Compile Include="ViewModels\TableEditorViewModel.cs" />
+    <Compile Include="Views\TableEditorView.xaml.cs">
+      <DependentUpon>TableEditorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FileSettings\FileSettingsView.xaml.cs">
+      <DependentUpon>FileSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FileSettings\SubIssuesSettingsView.xaml.cs">
+      <DependentUpon>SubIssuesSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FileSettings\ParentIssuesSettingsView.xaml.cs">
+      <DependentUpon>ParentIssuesSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\FileSettings\AutoBackColorSettingsView.xaml.cs">
+      <DependentUpon>AutoBackColorSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TableEditorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FileSettings\FileSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Compile Include="Behaviors\GirdViewColumnsBehavior.cs" />
+    <Compile Include="Behaviors\GirdViewColumnGroupsBehavior.cs" />
+    <Compile Include="Converters\AutoCellBackColorConverter.cs" />
+    <Compile Include="Converters\IsEditedToRedColorConverter.cs" />
+    <Compile Include="Enums\IssuePropertyType.cs" />
+    <Compile Include="Models\MySubIssue.cs" />
+    <Compile Include="Models\MyIssue.cs" />
+    <Compile Include="Models\FileSettings\SubIssueSettingsModel.cs" />
+    <Compile Include="Models\FileSettings\ParentIssueSettingsModel.cs" />
+    <Compile Include="Models\FileSettings\StatusColorModel.cs" />
+    <Compile Include="Models\FileSettings\SubIssueSettingModel.cs" />
+    <Page Include="Views\FileSettings\SubIssuesSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FileSettings\ParentIssuesSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\FileSettings\AutoBackColorSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.ja-JP.resx" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <None Include="app.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>PublicSettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\LibRedminePower\LibRedminePower.csproj">
+      <Project>{a9931b14-7abc-4b1d-b006-296920e40150}</Project>
+      <Name>LibRedminePower</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ObservableCollectionSync\ObservableCollectionSync.csproj">
+      <Project>{7E6C3ED2-65E5-42C1-9A5B-A731F7F82144}</Project>
+      <Name>ObservableCollectionSync</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\redmine-net-api\src\redmine-net-api\redmine-net-api.csproj">
+      <Project>{21d76532-ea08-4687-91a1-81238819bf5e}</Project>
+      <Name>redmine-net-api</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Fody">
+      <Version>6.5.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="ParallelExtensionsExtras.NetFxStandard">
+      <Version>1.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="PropertyChanged.Fody">
+      <Version>3.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveProperty.WPF">
+      <Version>8.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.DispatchProxy">
+      <Version>4.7.1</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="TableEditor.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\splashScreen_tableEditor.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\new_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\open_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\save_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\saveas_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\apply_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\reload_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\save_redmine_icon.png" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

@@ -1,0 +1,66 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:cont="clr-namespace:LibRedminePower.Views.Controls"
+                    xmlns:props="clr-namespace:LibRedminePower.Properties"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls">
+    <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/Telerik.Windows.Themes.Office2019;component/Themes/Telerik.Windows.Controls.GridView.xaml" />
+    </ResourceDictionary.MergedDictionaries>
+
+    <Style TargetType="{x:Type cont:FilterTextBox}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type cont:FilterTextBox}">
+                    <Grid VerticalAlignment="Center">
+                        <telerik:RadWatermarkTextBox MinWidth="160"
+                                                     MaxWidth="200"
+                                                     Padding="3,0,15,0"
+                                                     VerticalAlignment="Center"
+                                                     telerik:TextBoxBehavior.UpdateTextOnEnter="True"
+                                                     Text="{Binding RelativeSource={RelativeSource TemplatedParent},
+                                                                    Mode=TwoWay,
+                                                                    Path=Text,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                     WatermarkContent="{x:Static props:Resources.msgEnterFilterKeyword}" />
+                        <telerik:RadButton x:Name="ClearButton"
+                                           Command="{TemplateBinding ClearTextCommand}"
+                                           IsTabStop="False"
+                                           Style="{StaticResource ClearSearchValueButtonStyle}"
+                                           Visibility="Collapsed" />
+                        <Grid.Triggers>
+                            <EventTrigger RoutedEvent="MouseEnter">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ClearButton"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Visible</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                            <EventTrigger RoutedEvent="MouseLeave">
+                                <BeginStoryboard>
+                                    <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ClearButton"
+                                                                       Storyboard.TargetProperty="Visibility">
+                                            <DiscreteObjectKeyFrame KeyTime="0">
+                                                <DiscreteObjectKeyFrame.Value>
+                                                    <Visibility>Collapsed</Visibility>
+                                                </DiscreteObjectKeyFrame.Value>
+                                            </DiscreteObjectKeyFrame>
+                                        </ObjectAnimationUsingKeyFrames>
+                                    </Storyboard>
+                                </BeginStoryboard>
+                            </EventTrigger>
+                        </Grid.Triggers>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

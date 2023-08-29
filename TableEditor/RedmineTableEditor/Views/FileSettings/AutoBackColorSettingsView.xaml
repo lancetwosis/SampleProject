@@ -1,0 +1,130 @@
+﻿<UserControl x:Class="RedmineTableEditor.Views.FileSettings.AutoBackColorSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:controls="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTableEditor.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:vm="clr-namespace:RedmineTableEditor.ViewModels.FileSettings"
+             d:DataContext="{d:DesignInstance {x:Type vm:AutoBackColorViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+
+    <Grid>
+        <GroupBox MinWidth="300"
+                  VerticalAlignment="Top"
+                  Background="AliceBlue"
+                  Header="{x:Static props:Resources.BackgroundLinkSentting}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="AUTO" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <StackPanel Margin="0,5,0,5"
+                            Orientation="Horizontal">
+                    <RadioButton x:Name="statusRadioButton"
+                                 Margin="5,0,0,0"
+                                 Content="{x:Static props:Resources.BackgroundLinkToStatus}"
+                                 GroupName="Request"
+                                 IsChecked="{Binding StatusColors.IsEnabled.Value}" />
+                    <RadioButton x:Name="asignedToRadioButton"
+                                 Margin="5,0,0,0"
+                                 Content="{x:Static props:Resources.BackgroundLinkToAssignedTo}"
+                                 GroupName="Request"
+                                 IsChecked="{Binding AssignedToColors.IsEnabled.Value}" />
+                    <RadioButton x:Name="notUseRadioButton"
+                                 Margin="5,0,0,0"
+                                 Content="{x:Static props:Resources.BackgroundLinkToNone}"
+                                 GroupName="Request"
+                                 IsChecked="{Binding NotUse.Value}" />
+                </StackPanel>
+                <Grid Grid.Row="1"
+                      Margin="10,5,0,0"
+                      Visibility="{Binding ElementName=statusRadioButton,
+                                           Path=IsChecked,
+                                           Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <telerik:RadGridView Grid.Row="1"
+                                         AllowDrop="True"
+                                         AutoGenerateColumns="False"
+                                         CanUserFreezeColumns="False"
+                                         CanUserSearch="False"
+                                         IsFilteringAllowed="False"
+                                         ItemsSource="{Binding StatusColors.Items}"
+                                         RowIndicatorVisibility="Collapsed"
+                                         ShowGroupPanel="False">
+                        <telerik:RadGridView.Columns>
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding Name}"
+                                                        Header="{x:Static props:Resources.BackgroundColStatus}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false" />
+
+                            <telerik:GridViewColumn CellTemplate="{StaticResource MyColorPickerTemplate}"
+                                                    Header="{x:Static props:Resources.BackgroundColColor}"
+                                                    IsSortable="false" />
+                        </telerik:RadGridView.Columns>
+                    </telerik:RadGridView>
+                </Grid>
+                <Grid Grid.Row="1"
+                      Margin="10,5,0,0"
+                      Visibility="{Binding ElementName=asignedToRadioButton,
+                                           Path=IsChecked,
+                                           Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <CheckBox Content="{x:Static props:Resources.BackgroundLinkToStatusClosed}"
+                              IsChecked="{Binding AssignedToColors.IsEnabledClosed.Value}" />
+                    <Grid Grid.Row="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="AUTO" />
+                        </Grid.ColumnDefinitions>
+                        <telerik:RadGridView Margin="0,5,0,0"
+                                             b:RowReorderBehavior.IsEnabled="True"
+                                             AllowDrop="True"
+                                             AutoGenerateColumns="False"
+                                             CanUserDeleteRows="True"
+                                             CanUserFreezeColumns="False"
+                                             CanUserInsertRows="True"
+                                             CanUserSearch="False"
+                                             GroupRenderMode="Flat"
+                                             IsFilteringAllowed="False"
+                                             IsReadOnly="False"
+                                             ItemsSource="{Binding AssignedToColors.Items}"
+                                             RowIndicatorVisibility="Collapsed"
+                                             SelectedItem="{Binding AssignedToColors.Items.SelectedItem.Value}"
+                                             ShowGroupPanel="False">
+                            <telerik:RadGridView.RowStyle>
+                                <Style BasedOn="{StaticResource GridViewRowStyle}"
+                                       TargetType="telerik:GridViewRow">
+                                    <Setter Property="telerik:DragDropManager.AllowDrag" Value="True" />
+                                    <Setter Property="telerik:DragDropManager.TouchDragTrigger" Value="TapAndHold" />
+                                </Style>
+                            </telerik:RadGridView.RowStyle>
+                            <telerik:RadGridView.Columns>
+                                <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding User.Value}"
+                                                                DisplayMemberPath="Name"
+                                                                EditTriggers="CellClick"
+                                                                Header="{x:Static props:Resources.BackgroundColAssignedTo}"
+                                                                IsComboBoxEditable="True"
+                                                                IsFilterable="True"
+                                                                ItemsSource="{Binding AssignedToColors.Users.Value}" />
+                                <telerik:GridViewColumn CellTemplate="{StaticResource MyColorPickerTemplate}"
+                                                        Header="{x:Static props:Resources.BackgroundColColor}"
+                                                        IsSortable="false" />
+                            </telerik:RadGridView.Columns>
+                        </telerik:RadGridView>
+                        <controls:GridViewEditButtonPanel Grid.Column="1"
+                                                          DataContext="{Binding AssignedToColors.Items}" />
+                    </Grid>
+                </Grid>
+
+            </Grid>
+        </GroupBox>
+    </Grid>
+</UserControl>

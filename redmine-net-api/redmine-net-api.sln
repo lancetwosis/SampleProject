@@ -1,0 +1,66 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{0DFF4758-5C19-4D8F-BA6C-76E618323F6A}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F3F4278D-6271-4F77-BA88-41555D53CBD1}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "redmine-net-api", "src\redmine-net-api\redmine-net-api.csproj", "{0E6B9B72-445D-4E71-8D29-48C4A009AB03}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "redmine-net-api.Tests", "tests\redmine-net-api.Tests\redmine-net-api.Tests.csproj", "{900EF0B3-0233-45DA-811F-4C59483E8452}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SolutionFolder", "SolutionFolder", "{E8C35EC2-DD90-46E8-9B63-84EFD5F2FDE3}"
+	ProjectSection(SolutionItems) = preProject
+		appveyor.yml = appveyor.yml
+		CHANGELOG.md = CHANGELOG.md
+		CONTRIBUTING.md = CONTRIBUTING.md
+		Directory.Build.props = Directory.Build.props
+		docker-compose.yml = docker-compose.yml
+		ISSUE_TEMPLATE.md = ISSUE_TEMPLATE.md
+		LICENSE = LICENSE
+		logo.png = logo.png
+		PULL_REQUEST_TEMPLATE.md = PULL_REQUEST_TEMPLATE.md
+		README.md = README.md
+		redmine-net-api.snk = redmine-net-api.snk
+		releasenotes.props = releasenotes.props
+		signing.props = signing.props
+		version.props = version.props
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		DebugJson|Any CPU = DebugJson|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0E6B9B72-445D-4E71-8D29-48C4A009AB03}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E6B9B72-445D-4E71-8D29-48C4A009AB03}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E6B9B72-445D-4E71-8D29-48C4A009AB03}.DebugJson|Any CPU.ActiveCfg = DebugJson|Any CPU
+		{0E6B9B72-445D-4E71-8D29-48C4A009AB03}.DebugJson|Any CPU.Build.0 = DebugJson|Any CPU
+		{0E6B9B72-445D-4E71-8D29-48C4A009AB03}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E6B9B72-445D-4E71-8D29-48C4A009AB03}.Release|Any CPU.Build.0 = Debug|Any CPU
+		{900EF0B3-0233-45DA-811F-4C59483E8452}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{900EF0B3-0233-45DA-811F-4C59483E8452}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{900EF0B3-0233-45DA-811F-4C59483E8452}.DebugJson|Any CPU.ActiveCfg = DebugJson|Any CPU
+		{900EF0B3-0233-45DA-811F-4C59483E8452}.DebugJson|Any CPU.Build.0 = DebugJson|Any CPU
+		{900EF0B3-0233-45DA-811F-4C59483E8452}.Release|Any CPU.ActiveCfg = Debug|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0E6B9B72-445D-4E71-8D29-48C4A009AB03} = {0DFF4758-5C19-4D8F-BA6C-76E618323F6A}
+		{900EF0B3-0233-45DA-811F-4C59483E8452} = {F3F4278D-6271-4F77-BA88-41555D53CBD1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {4AA87D90-ABD0-4793-BE47-955B35FAE2BB}
+	EndGlobalSection
+	GlobalSection(CodealikeProperties) = postSolution
+		SolutionGuid = 74da85cc-5a0d-4590-a976-666d0b2d41cb
+	EndGlobalSection
+	GlobalSection(TestCaseManagementSettings) = postSolution
+		CategoryFile = redmine-net-api.vsmdi
+	EndGlobalSection
+EndGlobal

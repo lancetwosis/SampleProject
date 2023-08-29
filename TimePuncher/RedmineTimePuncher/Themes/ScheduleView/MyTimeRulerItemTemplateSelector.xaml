@@ -1,0 +1,63 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation">
+
+    <converters:DateTimeToBackColorConverter x:Key="DateTimeToBackColorConverter" />
+    <converters:SliderValueToVisibilityConverter x:Key="SliderValueToVisibilityConverter" />
+
+    <telerik:TimeRulerItemTemplateSelector x:Key="MyTimeRulerItemTemplateSelector">
+        <telerik:TimeRulerItemTemplateSelector.VerticalDayMajorItemTemplate>
+            <DataTemplate>
+                <TextBlock MinWidth="50"
+                           FontSize="14"
+                           Foreground="Black"
+                           Text="{Binding FormattedValue}"
+                           TextAlignment="Right">
+                    <TextBlock.Background>
+                        <MultiBinding Converter="{StaticResource DateTimeToBackColorConverter}">
+                            <Binding Path="DateTime" />
+                            <Binding Path="DataContext.Input.ScheduleSettings.Value"
+                                     RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                     AncestorType=telerik:RadRibbonWindow}" />
+                        </MultiBinding>
+                    </TextBlock.Background>
+                </TextBlock>
+            </DataTemplate>
+        </telerik:TimeRulerItemTemplateSelector.VerticalDayMajorItemTemplate>
+        <telerik:TimeRulerItemTemplateSelector.VerticalDayMinorItemTemplate>
+            <DataTemplate>
+                <TextBlock MinWidth="50"
+                           Margin="10,0,0,0"
+                           Padding="0,1,0,1"
+                           FontSize="12"
+                           Foreground="DimGray"
+                           Text="{Binding FormattedValue}"
+                           TextAlignment="Right">
+                    <TextBlock.Background>
+                        <MultiBinding Converter="{StaticResource DateTimeToBackColorConverter}">
+                            <Binding Path="DateTime" />
+                            <Binding Path="DataContext.Input.ScheduleSettings.Value"
+                                     RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                     AncestorType=telerik:RadRibbonWindow}" />
+                            <Binding Path="DataContext.Input.ScalingSliderValue.Value"
+                                     RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                     AncestorType=telerik:RadRibbonWindow}" />
+                        </MultiBinding>
+                    </TextBlock.Background>
+                    <TextBlock.Visibility>
+                        <MultiBinding Converter="{StaticResource SliderValueToVisibilityConverter}">
+                            <Binding Path="DataContext.Input.ScalingSliderValue.Value"
+                                     RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                     AncestorType=telerik:RadRibbonWindow}" />
+                            <Binding Path="DataContext.Input.ScheduleSettings.Value"
+                                     RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                     AncestorType=telerik:RadRibbonWindow}" />
+                        </MultiBinding>
+                    </TextBlock.Visibility>
+                </TextBlock>
+            </DataTemplate>
+        </telerik:TimeRulerItemTemplateSelector.VerticalDayMinorItemTemplate>
+    </telerik:TimeRulerItemTemplateSelector>
+
+</ResourceDictionary>

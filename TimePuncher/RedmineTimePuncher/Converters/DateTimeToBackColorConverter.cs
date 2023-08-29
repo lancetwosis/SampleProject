@@ -1,0 +1,37 @@
+﻿using FastEnumUtility;
+using LibRedminePower.Extentions;
+using RedmineTimePuncher.Extentions;
+using RedmineTimePuncher.Models.Settings;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Data;
+using System.Windows.Media;
+
+namespace RedmineTimePuncher.Converters
+{
+    public class DateTimeToBackColorConverter : IMultiValueConverter
+    {
+        public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
+        {
+            var targetTime = values[0] as DateTime?;
+            var settings = values[1] as ScheduleSettingsModel;
+            if (!targetTime.HasValue || settings == null)
+                return null;
+
+            double? sliderValue = null;
+            if (values.Length == 3)
+                sliderValue = (double)values[2];
+
+            return settings.GetTickBackground(targetTime.Value, sliderValue);
+        }
+
+        public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+}

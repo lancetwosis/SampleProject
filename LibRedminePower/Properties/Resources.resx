@@ -1,0 +1,288 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="errRedmineConnectionError" xml:space="preserve">
+    <value>Redmine connection failed.</value>
+  </data>
+  <data name="ProgressBarProgresText" xml:space="preserve">
+    <value>{0} %</value>
+  </data>
+  <data name="msgErrExceedsLimitDate" xml:space="preserve">
+    <value>A new version has been released, so please get the latest version from our site.</value>
+  </data>
+  <data name="enumStringCompareContains" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="enumStringCompareEndWith" xml:space="preserve">
+    <value>EndWith</value>
+  </data>
+  <data name="enumStringCompareEquals" xml:space="preserve">
+    <value>Equals</value>
+  </data>
+  <data name="enumStringCompareStartWith" xml:space="preserve">
+    <value>StartWith</value>
+  </data>
+  <data name="errForbidden" xml:space="preserve">
+    <value>The API key you set does not have an access case.
+Please specify an API access key that has system administrator privileges.</value>
+  </data>
+  <data name="Automatic" xml:space="preserve">
+    <value>Automatic</value>
+  </data>
+  <data name="MoreColors" xml:space="preserve">
+    <value>More colors...</value>
+  </data>
+  <data name="RecentColors" xml:space="preserve">
+    <value> Recent colors</value>
+    <comment>コントロールに合わせて左側を半角スペースで空ける</comment>
+  </data>
+  <data name="StandardColors" xml:space="preserve">
+    <value>  Standard colors</value>
+    <comment>コントロールに合わせて左側を半角スペースで空ける</comment>
+  </data>
+  <data name="ThemeColors" xml:space="preserve">
+    <value>  Theme colors</value>
+    <comment>コントロールに合わせて左側を半角スペースで空ける</comment>
+  </data>
+  <data name="DisplayNameTimeEntry" xml:space="preserve">
+    <value>Time Entry</value>
+  </data>
+  <data name="DisplayNameIssue" xml:space="preserve">
+    <value>Issue</value>
+  </data>
+  <data name="DisplayNameCustomField" xml:space="preserve">
+    <value>Custom Field</value>
+  </data>
+  <data name="DisplayNameTracker" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="DisplayNameIssuePriority" xml:space="preserve">
+    <value>Issue Priority</value>
+  </data>
+  <data name="DisplayNameIssueStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="DisplayNameProject" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="DisplayNameUser" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="DisplayNameVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="DisplayNameProjectMembership" xml:space="preserve">
+    <value>Project Membership</value>
+  </data>
+  <data name="msgErrRedmineFailedToGet" xml:space="preserve">
+    <value>Failed to get {0}.</value>
+  </data>
+  <data name="msgErrRedmineFailedToGetCurrentUser" xml:space="preserve">
+    <value>Failed to get a current user.</value>
+  </data>
+  <data name="msgErrRedmineFailedToPost" xml:space="preserve">
+    <value>Failed to create {0}.</value>
+  </data>
+  <data name="msgErrRedmineFailedToPut" xml:space="preserve">
+    <value>Failed to update {0}.</value>
+  </data>
+  <data name="msgErrRedmineFailedToDelete" xml:space="preserve">
+    <value>Failed to delete {0}.</value>
+  </data>
+  <data name="ApiErrMsgTimeout" xml:space="preserve">
+    <value>No response was received during the time-out period for a request.</value>
+  </data>
+  <data name="ApiErrMsgNameResolutionFailure" xml:space="preserve">
+    <value>The name resolver service could not resolve the host name.</value>
+  </data>
+  <data name="ApiErrMsgUnauthorized" xml:space="preserve">
+    <value>You are not authenticated–either not authenticated at all or authenticated incorrectly. Please reauthenticate and try again.</value>
+  </data>
+  <data name="ApiErrMsgForbidden" xml:space="preserve">
+    <value>You do not have access to the specified resource.</value>
+  </data>
+  <data name="ApiErrMsgConflict" xml:space="preserve">
+    <value>Operation failed due to a conflict.</value>
+  </data>
+  <data name="ApiErrMsgNotFound" xml:space="preserve">
+    <value>The specified resource cannot be found.</value>
+  </data>
+  <data name="ApiErrMsgUnexpected" xml:space="preserve">
+    <value>Unexpected error occurred.</value>
+  </data>
+  <data name="DisplayNameQuery" xml:space="preserve">
+    <value>Query</value>
+  </data>
+  <data name="DisplayNameIssueCategory" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="DisplayNameTimeEntryActivity" xml:space="preserve">
+    <value>Time Entry Category</value>
+  </data>
+  <data name="msgEnterFilterKeyword" xml:space="preserve">
+    <value>Please enter search text.</value>
+  </data>
+  <data name="SplashScreenFooter" xml:space="preserve">
+    <value>Loading {0}...</value>
+  </data>
+  <data name="ItemsAll" xml:space="preserve">
+    <value>Available items</value>
+  </data>
+  <data name="ItemsSelected" xml:space="preserve">
+    <value>Selected items</value>
+  </data>
+  <data name="ExceptionMsgExit" xml:space="preserve">
+    <value>Exit {0} because a problem has occurred.
+
+If you were in the process of working on it, the information may have been lost.
+We apologize for any inconvenience caused.</value>
+  </data>
+  <data name="ExceptionMsgConfirm" xml:space="preserve">
+    <value>The following exception occurred. Would you like to continue running the application?
+
+{0}</value>
+  </data>
+  <data name="errLoginFailed" xml:space="preserve">
+    <value>Login failed.
+Please check your user name and password settings.</value>
+  </data>
+  <data name="errGetWebActivity" xml:space="preserve">
+    <value>Failed to load activity information page. ({0})
+{1}</value>
+  </data>
+  <data name="DisplayNameWikiPage" xml:space="preserve">
+    <value>Wiki Page</value>
+  </data>
+  <data name="errReadWebPageWithStatusCode" xml:space="preserve">
+    <value>Failed to read the web page. ({0})
+{1}</value>
+  </data>
+  <data name="errConfirmRedmineSettings" xml:space="preserve">
+    <value>{0}
+
+Please check the network status and Redmine connection settings.</value>
+  </data>
+  <data name="errReadWebPage" xml:space="preserve">
+    <value>Failed to read the web page. 
+{0}</value>
+  </data>
+  <data name="SettingsNotSpecified" xml:space="preserve">
+    <value>(Not specified)</value>
+  </data>
+</root>

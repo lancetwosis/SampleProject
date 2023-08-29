@@ -1,0 +1,47 @@
+﻿<UserControl x:Class="LibRedminePower.Views.GridViewEditButtonPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:libVM="clr-namespace:LibRedminePower.ViewModels"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             d:DataContext="{d:DesignInstance {x:Type libVM:EditableGridViewModel}}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             Background="Transparent"
+             mc:Ignorable="d">
+    <StackPanel Margin="1"
+                Orientation="Vertical">
+        <StackPanel.Resources>
+            <Style BasedOn="{StaticResource GlyphButtonStyle}"
+                   TargetType="Button" />
+        </StackPanel.Resources>
+        <Button Command="{Binding InsertCommand}"
+                Visibility="{Binding CanInsert,
+                                     Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button.Content>
+                <telerik:RadGlyph Foreground="Green"
+                                  Glyph="&#xe120;" />
+            </Button.Content>
+        </Button>
+        <Button Command="{Binding DeleteCommand}"
+                Visibility="{Binding CanDelete,
+                                     Converter={StaticResource BooleanToVisibilityConverter}}">
+            <Button.Content>
+                <telerik:RadGlyph Foreground="Red"
+                                  Glyph="&#xe123;" />
+            </Button.Content>
+        </Button>
+        <Button Command="{Binding MoveUpCommand}">
+            <Button.Content>
+                <telerik:RadGlyph Glyph="&#xe004;" />
+            </Button.Content>
+        </Button>
+        <Button Command="{Binding MoveDownCommand}">
+            <Button.Content>
+                <telerik:RadGlyph Glyph="&#xe006;" />
+            </Button.Content>
+        </Button>
+
+    </StackPanel>
+</UserControl>

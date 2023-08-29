@@ -1,0 +1,150 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.Controls.Charts.PieChartView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+             xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:chartVM="clr-namespace:RedmineTimePuncher.ViewModels.Visualize.Charts"
+             xmlns:controls="clr-namespace:RedmineTimePuncher.ViewModels.Input.Controls"
+             xmlns:controls1="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:conv="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:enums="clr-namespace:RedmineTimePuncher.Enums"
+             xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
+             xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
+             xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.Controls.Charts"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+             xmlns:telerikEx="clr-namespace:TelerikEx.Helpers;assembly=TelerikEx"
+             xmlns:treeMap="clr-namespace:Telerik.Windows.Controls.TreeMap;assembly=Telerik.Windows.Controls.DataVisualization"
+             xmlns:visualizeEnums="clr-namespace:RedmineTimePuncher.ViewModels.Visualize.Enums"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels"
+             d:DataContext="{d:DesignInstance {x:Type chartVM:PieChartViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <DataTemplate x:Key="PieChartToolTipTemplate">
+            <Border Background="White"
+                    BorderBrush="Gray"
+                    BorderThickness="1"
+                    Opacity="0.7">
+                <StackPanel Margin="5"
+                            Orientation="Horizontal">
+                    <TextBlock>
+                        <Run Text="{Binding DataItem.ToolTip.Label}" />
+                        <Run Text=" : " />
+                        <Run Text="{Binding DataItem.ToolTip.Hours}" />
+                        <Run Text=" h (" />
+                        <Run Text="{Binding DataItem.ToolTip.Percentage.Value, Mode=OneWay}" />
+                        <Run Text=" %)" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="AUTO" />
+        </Grid.ColumnDefinitions>
+        <telerik:RadPieChart x:Name="pieChart"
+                             HoverMode="FadeOtherItems">
+
+            <telerik:RadPieChart.Behaviors>
+                <telerik:ChartTooltipBehavior />
+            </telerik:RadPieChart.Behaviors>
+
+            <telerik:RadPieChart.Series>
+                <telerik:PieSeries ItemsSource="{Binding Series.Points}"
+                                   TooltipTemplate="{StaticResource PieChartToolTipTemplate}"
+                                   ValueBinding="Hours">
+                    <telerik:PieSeries.DefaultSliceStyle>
+                        <Style TargetType="Path">
+                            <Setter Property="Fill" Value="{Binding DataItem.Color}" />
+                        </Style>
+                    </telerik:PieSeries.DefaultSliceStyle>
+                    <telerik:PieSeries.LegendSettings>
+                        <telerik:DataPointLegendSettings TitleBinding="XLabel" />
+                    </telerik:PieSeries.LegendSettings>
+                    <telerik:PieSeries.LabelConnectorsSettings>
+                        <telerik:ChartSeriesLabelConnectorsSettings />
+                    </telerik:PieSeries.LabelConnectorsSettings>
+                    <telerik:PieSeries.AngleRange>
+                        <telerik:AngleRange StartAngle="-90"
+                                            SweepAngle="360" />
+                    </telerik:PieSeries.AngleRange>
+                    <telerik:PieSeries.LabelDefinitions>
+                        <telerik:ChartSeriesLabelDefinition Margin="-20">
+                            <telerik:ChartSeriesLabelDefinition.Template>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding DataItem.DisplayValue}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </telerik:ChartSeriesLabelDefinition.Template>
+                        </telerik:ChartSeriesLabelDefinition>
+                    </telerik:PieSeries.LabelDefinitions>
+                </telerik:PieSeries>
+            </telerik:RadPieChart.Series>
+        </telerik:RadPieChart>
+
+        <telerik:RadPieChart x:Name="secondPieChart"
+                             HoverMode="FadeOtherItems"
+                             Visibility="{Binding ShowSecondSeries.Value,
+                                                  Converter={StaticResource BooleanToVisibilityConverter}}">
+            <telerik:RadPieChart.Behaviors>
+                <telerik:ChartTooltipBehavior />
+            </telerik:RadPieChart.Behaviors>
+
+            <telerik:RadPieChart.Series>
+                <telerik:PieSeries ItemsSource="{Binding SecondSeries.Points}"
+                                   RadiusFactor="0.5"
+                                   TooltipTemplate="{StaticResource PieChartToolTipTemplate}"
+                                   ValueBinding="Hours">
+                    <telerik:PieSeries.DefaultSliceStyle>
+                        <Style TargetType="Path">
+                            <Setter Property="Fill" Value="{Binding DataItem.Color}" />
+                        </Style>
+                    </telerik:PieSeries.DefaultSliceStyle>
+                    <telerik:PieSeries.LegendSettings>
+                        <telerik:DataPointLegendSettings TitleBinding="XLabel" />
+                    </telerik:PieSeries.LegendSettings>
+                    <telerik:PieSeries.LabelConnectorsSettings>
+                        <telerik:ChartSeriesLabelConnectorsSettings />
+                    </telerik:PieSeries.LabelConnectorsSettings>
+                    <telerik:PieSeries.AngleRange>
+                        <telerik:AngleRange StartAngle="-90"
+                                            SweepAngle="360" />
+                    </telerik:PieSeries.AngleRange>
+                    <telerik:PieSeries.LabelDefinitions>
+                        <telerik:ChartSeriesLabelDefinition Margin="-20">
+                            <telerik:ChartSeriesLabelDefinition.Template>
+                                <DataTemplate>
+                                    <StackPanel>
+                                        <TextBlock Text="{Binding DataItem.DisplayValue}" />
+                                    </StackPanel>
+                                </DataTemplate>
+                            </telerik:ChartSeriesLabelDefinition.Template>
+                        </telerik:ChartSeriesLabelDefinition>
+                    </telerik:PieSeries.LabelDefinitions>
+                </telerik:PieSeries>
+            </telerik:RadPieChart.Series>
+        </telerik:RadPieChart>
+
+        <local:TotalLabelView Margin="5"
+                              DataContext="{Binding ShowTotal}" />
+
+        <telerik:RadLegend Grid.Column="1"
+                           Background="White"
+                           BorderBrush="LightGray"
+                           BorderThickness="1"
+                           Items="{Binding LegendItems,
+                                           ElementName=pieChart}" />
+    </Grid>
+</UserControl>

@@ -1,0 +1,46 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:treeMap="clr-namespace:Telerik.Windows.Controls.TreeMap;assembly=Telerik.Windows.Controls.DataVisualization">
+
+    <SolidColorBrush x:Key="UserGroupHeaderColor"
+                     Color="Green" />
+    <SolidColorBrush x:Key="TicketGroupHeaderColor"
+                     Color="#FFFBE8" />
+    <telerik:PaletteBrushes x:Key="FillColorizerBrushes">
+        <SolidColorBrush Color="#69C7D3" />
+        <SolidColorBrush Color="#B1E292" />
+        <SolidColorBrush Color="#D2B4E2" />
+        <SolidColorBrush Color="#A2D7F0" />
+        <SolidColorBrush Color="#E8D982" />
+        <SolidColorBrush Color="#BBDBC6" />
+        <SolidColorBrush Color="#B0BADB" />
+    </telerik:PaletteBrushes>
+
+    <treeMap:PivotMapGroupDefinition x:Key="UserNameGroupDefinition"
+                                     Member="UserName">
+        <treeMap:PivotMapGroupDefinition.Mappings>
+            <telerik:BrushColorizer Brush="{StaticResource UserGroupHeaderColor}" />
+            <telerik:PaletteColorizer Brushes="{StaticResource FillColorizerBrushes}"
+                                      TargetPropertyName="ChildrenBackgroundBrush" />
+        </treeMap:PivotMapGroupDefinition.Mappings>
+    </treeMap:PivotMapGroupDefinition>
+    <treeMap:PivotMapGroupDefinition x:Key="IssueIdGroupDefinition"
+                                     Member="IssueId">
+        <treeMap:PivotMapGroupDefinition.Mappings>
+            <telerik:BrushColorizer Brush="{StaticResource TicketGroupHeaderColor}" />
+            <telerik:PaletteColorizer Brushes="{StaticResource FillColorizerBrushes}"
+                                      TargetPropertyName="ChildrenBackgroundBrush" />
+        </treeMap:PivotMapGroupDefinition.Mappings>
+    </treeMap:PivotMapGroupDefinition>
+    <treeMap:PivotMapGroupDefinition x:Key="ActivityNameGroupDefinition"
+                                     Member="ActivityName">
+        <treeMap:PivotMapGroupDefinition.Mappings>
+            <telerik:BrushColorizer Brush="{StaticResource UserGroupHeaderColor}" />
+            <telerik:PaletteColorizer Brushes="{StaticResource FillColorizerBrushes}"
+                                      TargetPropertyName="ChildrenBackgroundBrush" />
+        </treeMap:PivotMapGroupDefinition.Mappings>
+    </treeMap:PivotMapGroupDefinition>
+
+</ResourceDictionary>

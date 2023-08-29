@@ -1,0 +1,163 @@
+﻿<telerik:RadRibbonWindow x:Class="RedmineTimePuncher.Views.MainWindow"
+                         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                         xmlns:Helpers="clr-namespace:Telerik.Windows.Controls.Theming.Helpers;assembly=Telerik.Windows.Controls"
+                         xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                         xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+                         xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+                         xmlns:controls="clr-namespace:RedmineTimePuncher.Views.Controls"
+                         xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                         xmlns:enums="clr-namespace:RedmineTimePuncher.Enums"
+                         xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
+                         xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+                         xmlns:inputControl="clr-namespace:RedmineTimePuncher.ViewModels.Input.Controls"
+                         xmlns:interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
+                         xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+                         xmlns:libConv="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+                         xmlns:local="clr-namespace:RedmineTimePuncher.Views"
+                         xmlns:mat="clr-namespace:Telerik.Windows.Controls.MaterialControls;assembly=Telerik.Windows.Controls"
+                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                         xmlns:myHelpers="clr-namespace:RedmineTimePuncher.Helpers"
+                         xmlns:navigation="clr-namespace:Telerik.Windows.Controls.Navigation;assembly=Telerik.Windows.Controls.Navigation"
+                         xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+                         xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"
+                         xmlns:tableEditor="clr-namespace:RedmineTableEditor.Views;assembly=RedmineTableEditor"
+                         xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                         xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+                         xmlns:telerikScheduleView="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.ScheduleView"
+                         xmlns:treeMap="clr-namespace:Telerik.Windows.Controls.TreeMap;assembly=Telerik.Windows.Controls.DataVisualization"
+                         xmlns:viewmodels="clr-namespace:RedmineTimePuncher.ViewModels"
+                         xmlns:views="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+                         Title="{Binding Title.Value}"
+                         Width="1000"
+                         Height="1050"
+                         d:DataContext="{d:DesignInstance {x:Type viewmodels:MainWindowViewModel}}"
+                         Icon="../RedmineTimePuncher.ico"
+                         IsTitleVisible="True"
+                         ShowInTaskbar="True"
+                         Style="{StaticResource RadRibbonWindowStyle}"
+                         mc:Ignorable="d">
+    <Window.InputBindings>
+        <KeyBinding Command="{Binding RibbonMinimizeCommand}"
+                    Gesture="Ctrl+F1" />
+        <KeyBinding Command="{Binding Input.MyWorks.SaveCommand.Command}"
+                    Gesture="Ctrl+S" />
+    </Window.InputBindings>
+    <b:Interaction.Triggers>
+        <b:EventTrigger EventName="Loaded">
+            <interactivity:EventToReactiveCommand Command="{Binding WindowLoadedEventCommand}" />
+        </b:EventTrigger>
+        <b:EventTrigger EventName="Closing">
+            <interactivity:EventToReactiveCommand Command="{Binding WindowClosingEventCommand}" />
+        </b:EventTrigger>
+        <b:EventTrigger EventName="Closed">
+            <interactivity:EventToReactiveCommand Command="{Binding WindowClosedEventCommand}" />
+        </b:EventTrigger>
+    </b:Interaction.Triggers>
+    <telerik:RadRibbonWindow.Resources>
+        <ResourceDictionary>
+            <Style BasedOn="{StaticResource RadNavigationViewItemStyle}"
+                   TargetType="telerik:RadNavigationViewItem">
+                <Setter Property="Foreground" Value="Black" />
+                <Setter Property="Content" Value="{Binding Mode}" />
+                <Setter Property="Icon" Value="{Binding}" />
+                <Setter Property="IconTemplate">
+                    <Setter.Value>
+                        <DataTemplate>
+                            <Image Width="24"
+                                   Source="{Binding Icon}"
+                                   ToolTip="{Binding Mode}" />
+                        </DataTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+            <DataTemplate x:Key="MenuIconTemplate">
+                <telerik:RadGlyph Foreground="Black"
+                                  Glyph="&#xe030;" />
+            </DataTemplate>
+        </ResourceDictionary>
+    </telerik:RadRibbonWindow.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <telerik:RadNavigationView Grid.Row="0"
+                                   AutoChangeDisplayMode="False"
+                                   ItemsSource="{Binding Functions}"
+                                   PaneBackground="#F1F1F1"
+                                   PaneHeaderBackground="#F1F1F1"
+                                   PaneToggleButtonContentTemplate="{StaticResource MenuIconTemplate}"
+                                   SelectedIndex="{Binding SelectedIndex.Value}">
+            <telerik:RadNavigationView.Content>
+                <ContentPresenter Content="{Binding}">
+                    <ContentPresenter.ContentTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
+                                                         Visibility="{Binding Input.IsSelected.Value,
+                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <local:InputView />
+                                </libCont:OverwrapMessage>
+                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
+                                                         Visibility="{Binding ShowEntry.IsSelected.Value,
+                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <local:ShowEntryView />
+                                </libCont:OverwrapMessage>
+                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
+                                                         Visibility="{Binding CountWiki.IsSelected.Value,
+                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <local:CountWikiPageView />
+                                </libCont:OverwrapMessage>
+                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
+                                                         Visibility="{Binding CreateTicket.IsSelected.Value,
+                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <local:CreateTicketView />
+                                </libCont:OverwrapMessage>
+                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
+                                                         Visibility="{Binding TableEditor.IsSelected.Value,
+                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <tableEditor:TableEditorView DataContext="{Binding TableEditor.ViewModel}" />
+                                </libCont:OverwrapMessage>
+                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
+                                                         Visibility="{Binding Visualize.IsSelected.Value,
+                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <local:VisualizeView />
+                                </libCont:OverwrapMessage>
+                            </Grid>
+                        </DataTemplate>
+                    </ContentPresenter.ContentTemplate>
+                </ContentPresenter>
+            </telerik:RadNavigationView.Content>
+            <telerik:RadNavigationView.PaneFooter>
+                <StackPanel Orientation="Vertical">
+                    <telerik:RadNavigationViewItem Command="{Binding ShowSettingDialogCommand}"
+                                                   Content="{x:Static props:Resources.SettingsDialog}">
+                        <telerik:RadNavigationViewItem.IconTemplate>
+                            <DataTemplate>
+                                <Image Width="24"
+                                       Source="../Images/icons8-settings-48.png"
+                                       ToolTip="{x:Static props:Resources.SettingsDialog}" />
+                            </DataTemplate>
+                        </telerik:RadNavigationViewItem.IconTemplate>
+                    </telerik:RadNavigationViewItem>
+                    <telerik:RadNavigationViewItem Command="{Binding ShowVersionDialogCommand}"
+                                                   Content="{x:Static props:Resources.VersionInfo}">
+                        <telerik:RadNavigationViewItem.IconTemplate>
+                            <DataTemplate>
+                                <Image Width="24"
+                                       Source="../Images/icons8-info-48.png"
+                                       ToolTip="{x:Static props:Resources.VersionInfo}" />
+                            </DataTemplate>
+                        </telerik:RadNavigationViewItem.IconTemplate>
+                    </telerik:RadNavigationViewItem>
+                </StackPanel>
+            </telerik:RadNavigationView.PaneFooter>
+        </telerik:RadNavigationView>
+    </Grid>
+    <b:Interaction.Behaviors>
+        <behaviors:WindowMaximizedAdjustmentMaxSizeBehavior />
+    </b:Interaction.Behaviors>
+</telerik:RadRibbonWindow>

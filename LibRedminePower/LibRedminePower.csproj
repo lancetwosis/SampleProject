@@ -1,0 +1,337 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{A9931B14-7ABC-4B1D-B006-296920E40150}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>LibRedminePower</RootNamespace>
+    <AssemblyName>LibRedminePower</AssemblyName>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
+    <WarningLevel>4</WarningLevel>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Windows" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xaml">
+      <RequiredTargetFramework>4.0</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.GridView, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.GridView.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Input, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Input.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.Navigation, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Navigation.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.RibbonView, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.RibbonView.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Controls.ScheduleView, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.ScheduleView.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Data, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Windows.Themes.Office2019, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
+      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Themes.Office2019.dll</HintPath>
+    </Reference>
+    <Reference Include="WindowsBase" />
+    <Reference Include="PresentationCore" />
+    <Reference Include="PresentationFramework" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Converters\ZeroToCollapsedConverter.cs" />
+    <Compile Include="Converters\VisibilityAnyConverter.cs" />
+    <Compile Include="Converters\IsNullConverter.cs" />
+    <Compile Include="Extentions\HsbColorEx.cs" />
+    <Compile Include="Extentions\IssueExtentions.cs" />
+    <Compile Include="ViewModels\EditableGridViewModel.cs" />
+    <Compile Include="AsyncLazy.cs" />
+    <Compile Include="Attributes\LocalizedDisplayNameAttribute.cs" />
+    <Compile Include="Behaviors\RadComboBoxNotNullableBehavior.cs" />
+    <Compile Include="Behaviors\RadRibbonViewIsMinimizedSettingAtLoadedBehavior.cs" />
+    <Compile Include="Converters\VisibilityToBooleanConverter.cs" />
+    <Compile Include="Converters\EnabledToOpacityConverter.cs" />
+    <Compile Include="Converters\RibbonButtonTextConverter.cs" />
+    <Compile Include="ErrorHandler.cs" />
+    <Compile Include="Enums\MarkupLangType.cs" />
+    <Compile Include="Exceptions\ApplicationExitException.cs" />
+    <Compile Include="Exceptions\RedmineApiException.cs" />
+    <Compile Include="Behaviors\RadComboBoxSelectedItemsBehavior.cs" />
+    <Compile Include="BusyTextNotifier.cs" />
+    <Compile Include="Extentions\BitmapExtentions.cs" />
+    <Compile Include="Extentions\ColorEx.cs" />
+    <Compile Include="Extentions\CombineLatestEnumerableExtensions.cs" />
+    <Compile Include="Extentions\CurrentInfoExtentions.cs" />
+    <Compile Include="Extentions\DirectoryInfoExtentions.cs" />
+    <Compile Include="Extentions\ObservableCollectionExtentions.cs" />
+    <Compile Include="Extentions\ObservableExtensions.cs" />
+    <Compile Include="Extentions\RedmineManagerExtenstions.cs" />
+    <Compile Include="Extentions\StringExtentions.cs" />
+    <Compile Include="Extentions\TaskExtentions.cs" />
+    <Compile Include="GoogleAnalytics\CustomAnalitycsMonitor.cs" />
+    <Compile Include="GoogleAnalytics\PlatformInfoProvider.cs" />
+    <Compile Include="Helpers\ButtonSetupHelper.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
+    <Compile Include="Initializer.cs" />
+    <Compile Include="Interfaces\ICommandBase.cs" />
+    <Compile Include="Interfaces\IErrorHandler.cs" />
+    <Compile Include="Proxy\TracingAopProxy.cs" />
+    <Compile Include="TextNotifier.cs" />
+    <Compile Include="ViewModels\AsyncCommandBase.cs" />
+    <Compile Include="ViewModels\Bases\ColorSettingViewModelBase.cs" />
+    <Compile Include="ViewModels\Bases\ViewModelBase.cs" />
+    <Compile Include="ViewModels\CommandBase.cs" />
+    <Compile Include="ViewModels\EditColorsViewModel.cs" />
+    <Compile Include="Helpers\MessageBoxHelper.cs" />
+    <Compile Include="ViewModels\TwinListBoxViewModel.cs" />
+    <Compile Include="Views\Controls\FilterTextBox.cs" />
+    <Compile Include="Views\Controls\MultiSelectionGridViewComboBoxColumn.cs" />
+    <Compile Include="Views\Controls\OverwrapMessage.cs" />
+    <Compile Include="Views\EditColorsWindow.xaml.cs">
+      <DependentUpon>EditColorsWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\GridViewEditButtonPanel.xaml.cs">
+      <DependentUpon>GridViewEditButtonPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TwinListBoxSortCommands.xaml.cs">
+      <DependentUpon>TwinListBoxSortCommands.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TwinListBoxAddRemoveCommands.xaml.cs">
+      <DependentUpon>TwinListBoxAddRemoveCommands.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\TwinListBox.xaml.cs">
+      <DependentUpon>TwinListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\WindowSettings.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Applications\ApplicationInfo.cs" />
+    <Compile Include="Attributes\LocalizedDescriptionAttribute.cs" />
+    <Compile Include="Behaviors\Bases\BehaviorBase.cs" />
+    <Compile Include="Behaviors\DropIndicationDetails.cs" />
+    <Compile Include="Behaviors\RowReorderBehavior.cs" />
+    <Compile Include="Converters\Bases\ConverterBase.cs" />
+    <Compile Include="Converters\BooleanToInvertBooleanConverter.cs" />
+    <Compile Include="Converters\EnumDescriptionTypeConverter.cs" />
+    <Compile Include="Converters\RelayValueConverterGroup.cs" />
+    <Compile Include="Converters\StringIsNullOrEmptyToBooleanConverter.cs" />
+    <Compile Include="Enums\StringCompareType.cs" />
+    <Compile Include="Exceptions\ExpiredException.cs" />
+    <Compile Include="Exceptions\RedmineConnectionException.cs" />
+    <Compile Include="Extentions\CloneExtentions.cs" />
+    <Compile Include="Extentions\DateTimeExtentions.cs" />
+    <Compile Include="Extentions\EnumBindingSourceExtension.cs" />
+    <Compile Include="Extentions\EnumerableExtentions.cs" />
+    <Compile Include="Extentions\EnumExtensions.cs" />
+    <Compile Include="Extentions\ExceptionExtentions.cs" />
+    <Compile Include="Localization\MyLocalizationManager.cs" />
+    <Compile Include="Logging\Logger.cs" />
+    <Compile Include="Logging\StopWatchLogger.cs" />
+    <Compile Include="Models\ActivityModel.cs" />
+    <Compile Include="Models\Bases\ModelBase.cs" />
+    <Compile Include="Models\Manager\RedmineWebManager.cs" />
+    <Compile Include="Models\ProgressInfo.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+    <EmbeddedResource Include="Properties\Resources.ja-JP.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Content Include="NLog.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="app.config" />
+    <None Include="NLog.xsd">
+      <SubType>Designer</SubType>
+    </None>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="Themes\ButtonStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\FilterTextBox.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\MyColorPickerTemplate.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\OverwrapMessage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\RadComboBoxStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\RadButtonStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\RadWindowHelperStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Telerik\Telerik.Windows.Controls.Input.Office2019.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Telerik\Telerik.Windows.Controls.Navigation.Office2019.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Telerik\Telerik.Windows.Controls.RibbonView.Office2019.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\Telerik\Telerik.Windows.Controls.ScheduleView.Office2019.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Themes\WatermarkTextBoxStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\EditColorsWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\GridViewEditButtonPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TwinListBoxSortCommands.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TwinListBoxAddRemoveCommands.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\TwinListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\GoogleAnalytics.Core\GoogleAnalytics.Core.csproj">
+      <Project>{a6be52d4-4652-4680-8e0d-9d1d1eb3ad1f}</Project>
+      <Name>GoogleAnalytics.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\ObservableCollectionSync\ObservableCollectionSync.csproj">
+      <Project>{7E6C3ED2-65E5-42C1-9A5B-A731F7F82144}</Project>
+      <Name>ObservableCollectionSync</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\redmine-net-api\src\redmine-net-api\redmine-net-api.csproj">
+      <Project>{21d76532-ea08-4687-91a1-81238819bf5e}</Project>
+      <Name>redmine-net-api</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AngleSharp">
+      <Version>0.16.0</Version>
+    </PackageReference>
+    <PackageReference Include="FastEnum">
+      <Version>1.6.1</Version>
+    </PackageReference>
+    <PackageReference Include="Fody">
+      <Version>6.5.2</Version>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="NLog">
+      <Version>4.7.13</Version>
+    </PackageReference>
+    <PackageReference Include="NLog.WindowsEventLog">
+      <Version>4.7.13</Version>
+    </PackageReference>
+    <PackageReference Include="PropertyChanged.Fody">
+      <Version>3.4.0</Version>
+    </PackageReference>
+    <PackageReference Include="ReactiveProperty.WPF">
+      <Version>8.1.2</Version>
+    </PackageReference>
+    <PackageReference Include="System.Reflection.DispatchProxy">
+      <Version>4.7.1</Version>
+    </PackageReference>
+    <PackageReference Include="System.Text.Json">
+      <Version>6.0.2</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

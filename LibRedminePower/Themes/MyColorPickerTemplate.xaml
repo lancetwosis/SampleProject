@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:prop="clr-namespace:LibRedminePower.Properties"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+                    xmlns:telerikInput="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Input"
+                    xmlns:telerikNavigation="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.Navigation"
+                    xmlns:telerikScheduleView="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.ScheduleView">
+    <DataTemplate x:Key="MyColorPickerTemplate">
+        <telerik:RadColorPicker Grid.Column="1"
+                                FontWeight="SemiBold"
+                                HeaderPalette="Metro"
+                                IsRecentColorsActive="True"
+                                MainPalette="Metro"
+                                MainPaletteHeaderText="{x:Static prop:Resources.ThemeColors}"
+                                NoColorText="{x:Static prop:Resources.Automatic}"
+                                RecentColorsHeaderText="{x:Static prop:Resources.RecentColors}"
+                                SelectedColor="{Binding Color.Value,
+                                                        Mode=TwoWay}"
+                                StandardPaletteHeaderText="{x:Static prop:Resources.StandardColors}">
+            <telerik:RadColorPicker.ContentTemplate>
+                <DataTemplate>
+                    <Grid Width="16"
+                          Height="16"
+                          Margin="3,0">
+                        <telerik1:RadGlyph HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           FontSize="16"
+                                           Glyph="{StaticResource GlyphPalette}" />
+                        <Rectangle Height="4"
+                                   HorizontalAlignment="Stretch"
+                                   VerticalAlignment="Bottom"
+                                   Fill="{Binding Converter={StaticResource converter}}" />
+                    </Grid>
+                </DataTemplate>
+            </telerik:RadColorPicker.ContentTemplate>
+            <telerik:RadColorPicker.AdditionalContent>
+                <ContentControl HorizontalContentAlignment="Stretch"
+                                Content="{Binding}">
+                    <ContentControl.ContentTemplate>
+                        <DataTemplate>
+                            <Grid>
+                                <telerik:RadButton x:Name="MoreColorsButton"
+                                                   Height="26"
+                                                   HorizontalContentAlignment="Left"
+                                                   BorderThickness="0"
+                                                   Command="{Binding OpenEditColorsCommand}"
+                                                   CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                             AncestorType={x:Type telerik:RadWindow}}}"
+                                                   FontWeight="Normal">
+                                    <TextBlock Margin="26,0,0,0"
+                                               FontWeight="Normal"
+                                               Foreground="Gray"
+                                               Text="{x:Static prop:Resources.MoreColors}" />
+                                </telerik:RadButton>
+                                <Image Width="18"
+                                       Height="18"
+                                       Margin="4,0,0,0"
+                                       HorizontalAlignment="Left"
+                                       VerticalAlignment="Center"
+                                       Source="../../../Images/More_colors.png" />
+                            </Grid>
+                        </DataTemplate>
+                    </ContentControl.ContentTemplate>
+                </ContentControl>
+            </telerik:RadColorPicker.AdditionalContent>
+        </telerik:RadColorPicker>
+    </DataTemplate>
+</ResourceDictionary>

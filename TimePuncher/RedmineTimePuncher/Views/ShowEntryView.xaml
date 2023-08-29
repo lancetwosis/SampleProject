@@ -1,0 +1,191 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.ShowEntryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+             xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:controls="clr-namespace:RedmineTimePuncher.ViewModels.Input.Controls"
+             xmlns:controls1="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:enums="clr-namespace:RedmineTimePuncher.Enums"
+             xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
+             xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
+             xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+             xmlns:treeMap="clr-namespace:Telerik.Windows.Controls.TreeMap;assembly=Telerik.Windows.Controls.DataVisualization"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels"
+             d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource RadTreeMapItemStyle}"
+               TargetType="telerik:RadTreeMapItem">
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="#333333" />
+        </Style>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="AUTO" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <telerik:RadRibbonView Grid.Row="0"
+                               ApplicationButtonVisibility="Collapsed"
+                               HelpButtonVisibility="Collapsed"
+                               IsEnabled="{Binding IsBusy.IsBusy,
+                                                   Converter={StaticResource InvertedBooleanConverter}}"
+                               IsMinimized="{Binding Source={x:Static props:Settings.Default},
+                                                     Path=RadRibbonViewIsMinimized,
+                                                     Mode=TwoWay}"
+                               MinimizeButtonVisibility="Visible"
+                               TitleBarVisibility="Collapsed">
+            <telerik:RadRibbonView.Resources>
+                <Style BasedOn="{StaticResource {x:Type telerik:RadRibbonButton}}"
+                       TargetType="telerik:RadRibbonButton">
+                    <Setter Property="CollapseToMedium" Value="WhenGroupIsMedium" />
+                    <Setter Property="CollapseToSmall" Value="WhenGroupIsSmall" />
+                    <Setter Property="Size" Value="Large" />
+                </Style>
+            </telerik:RadRibbonView.Resources>
+            <telerik:RadRibbonView.Items>
+                <telerik:RadRibbonTab Header="{x:Static props:Resources.RibbonTabHome}">
+                    <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupGeneral}">
+                        <telerik:RadCollapsiblePanel>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Row="0"
+                                           Grid.Column="0"
+                                           Style="{StaticResource RibbonTextBlockKStyle}"
+                                           Text="{x:Static props:Resources.ShowEntryDateFrom}" />
+                                <Grid Grid.Row="0"
+                                      Grid.Column="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+                                    <telerik:RadDateTimePicker Grid.Column="0"
+                                                               Margin="5,0,0,0"
+                                                               InputMode="DatePicker"
+                                                               SelectedDate="{Binding ShowEntry.StartDate.Value,
+                                                                                      Mode=TwoWay}">
+                                        <telerik:RadDateTimePicker.CalendarStyle>
+                                            <Style BasedOn="{StaticResource RadCalendarStyle}"
+                                                   TargetType="{x:Type telerik:RadCalendar}">
+                                                <Setter Property="AreWeekNumbersVisible" Value="False" />
+                                            </Style>
+                                        </telerik:RadDateTimePicker.CalendarStyle>
+                                    </telerik:RadDateTimePicker>
+                                    <TextBlock Grid.Column="1"
+                                               Margin="10,0,0,0"
+                                               Style="{StaticResource RibbonTextBlockKStyle}"
+                                               Text="{x:Static props:Resources.ShowEntryDateTo}" />
+                                    <telerik:RadDateTimePicker Grid.Column="2"
+                                                               Margin="5,0,0,0"
+                                                               InputMode="DatePicker"
+                                                               SelectedDate="{Binding ShowEntry.EndDate.Value,
+                                                                                      Mode=TwoWay}">
+                                        <telerik:RadDateTimePicker.CalendarStyle>
+                                            <Style BasedOn="{StaticResource RadCalendarStyle}"
+                                                   TargetType="{x:Type telerik:RadCalendar}">
+                                                <Setter Property="AreWeekNumbersVisible" Value="False" />
+                                            </Style>
+                                        </telerik:RadDateTimePicker.CalendarStyle>
+                                    </telerik:RadDateTimePicker>
+                                </Grid>
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="0"
+                                           Margin="0,5,0,0"
+                                           Style="{StaticResource RibbonTextBlockKStyle}"
+                                           Text="{x:Static props:Resources.ShowEntryTargetUsers}" />
+                                <telerik:RadComboBox Grid.Row="1"
+                                                     Grid.Column="1"
+                                                     Width="250"
+                                                     Margin="5,5,0,0"
+                                                     AllowMultipleSelection="True"
+                                                     DisplayMemberPath="Name"
+                                                     ItemsSource="{Binding ShowEntry.Users.Value}"
+                                                     MultipleSelectionSeparator=", "
+                                                     SelectedIndex="0"
+                                                     ToolTip="{Binding ShowEntry.SelectedUsersTooltip.Value}">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:RadComboBoxSelectedItemsBehavior SelectedItems="{Binding ShowEntry.SelectedUsers}" />
+                                    </b:Interaction.Behaviors>
+                                </telerik:RadComboBox>
+                            </Grid>
+                        </telerik:RadCollapsiblePanel>
+                        <telerik:Separator />
+                        <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding ShowEntry.ReloadCommand}" />
+                    </telerik:RadRibbonGroup>
+                    <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupView}">
+                        <telerik:RadCollapsiblePanel>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <TextBlock Style="{StaticResource RibbonTextBlockKStyle}"
+                                           Text="{x:Static props:Resources.ShowEntryGroupings}" />
+                                <telerik:RadComboBox Grid.Row="1"
+                                                     Width="250"
+                                                     Margin="5,5,0,0"
+                                                     AllowMultipleSelection="True"
+                                                     ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enums:GroupingType}}}"
+                                                     SelectedIndex="0">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:RadComboBoxSelectedItemsBehavior SelectedItems="{Binding ShowEntry.SelectedGroupDefinitions}" />
+                                    </b:Interaction.Behaviors>
+                                </telerik:RadComboBox>
+                            </Grid>
+                        </telerik:RadCollapsiblePanel>
+                    </telerik:RadRibbonGroup>
+                </telerik:RadRibbonTab>
+            </telerik:RadRibbonView.Items>
+
+            <b:Interaction.Behaviors>
+                <behaviors1:RadRibbonViewIsMinimizedSettingAtLoadedBehavior />
+            </b:Interaction.Behaviors>
+
+        </telerik:RadRibbonView>
+
+        <telerik:RadPivotMap Grid.Row="1"
+                             GroupDefinitions="{Binding ShowEntry.GroupDefinitions.Value}"
+                             ItemsSource="{Binding ShowEntry.TimeEntries.Value}"
+                             LabelPath="Subject"
+                             ToolTipFormat="時間: {0:N2} H"
+                             ToolTipPath="Entry.Hours"
+                             ValuePath="Entry.Hours">
+            <telerik:RadPivotMap.LeafMappings>
+                <telerik:DesaturationColorizer ParentSourceColorPropertyName="ChildrenBackgroundBrush"
+                                               From="0.9"
+                                               To="0.6" />
+            </telerik:RadPivotMap.LeafMappings>
+            <telerik:RadPivotMap.LeafItemStyle>
+                <Style BasedOn="{StaticResource RadTreeMapItemStyle}"
+                       TargetType="telerik:RadTreeMapItem">
+                    <Setter Property="BorderThickness" Value="1" />
+                    <Setter Property="BorderBrush" Value="#C3C8C1" />
+                </Style>
+            </telerik:RadPivotMap.LeafItemStyle>
+            <telerik:RadPivotMap.LayoutStrategy>
+                <telerik:SquarifiedStrategy />
+            </telerik:RadPivotMap.LayoutStrategy>
+        </telerik:RadPivotMap>
+    </Grid>
+</UserControl>

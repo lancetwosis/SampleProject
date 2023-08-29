@@ -1,0 +1,252 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.Settings.CategorySettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:controls="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:converters="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:enums="clr-namespace:RedmineTimePuncher.Enums"
+             xmlns:enumsLib="clr-namespace:LibRedminePower.Enums;assembly=LibRedminePower"
+             xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
+             xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings"
+             d:DataContext="{d:DesignInstance {x:Type vm:CategorySettingsViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:BooleanToInvertBooleanConverter x:Key="BooleanToInvertBooleanConverter" />
+        <Style BasedOn="{StaticResource MyGridViewSearchPanelStyle}"
+               TargetType="grid:GridViewSearchPanel" />
+        <vm:AssignRuleViewModel x:Key="AssignRuleViewModel" />
+        <vm:CategorySettingViewModel x:Key="CategorySettingViewModel" />
+    </UserControl.Resources>
+    <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Style="{StaticResource SettingHelpTextBlockStyle}"
+                           Text="{x:Static props:Resources.SettingsCateColMsg}" />
+                <Grid Grid.Row="1"
+                      Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="AUTO" />
+                    </Grid.ColumnDefinitions>
+                    <telerik:RadGridView x:Name="radGridView"
+                                         behaviors:RowReorderBehavior.IsEnabled="True"
+                                         AllowDrop="True"
+                                         AutoGenerateColumns="False"
+                                         CanUserFreezeColumns="False"
+                                         IsFilteringAllowed="False"
+                                         ItemsSource="{Binding Items}"
+                                         RowIndicatorVisibility="Collapsed"
+                                         SearchPanelCloseButtonVisibility="Collapsed"
+                                         SelectedItem="{Binding Items.SelectedItem.Value}"
+                                         ShowGroupPanel="False"
+                                         ShowSearchPanel="True">
+                        <telerik:RadGridView.RowStyle>
+                            <Style BasedOn="{StaticResource GridViewRowStyle}"
+                                   TargetType="telerik:GridViewRow">
+                                <Setter Property="telerik:DragDropManager.AllowDrag" Value="True" />
+                                <Setter Property="telerik:DragDropManager.TouchDragTrigger" Value="TapAndHold" />
+                            </Style>
+                        </telerik:RadGridView.RowStyle>
+                        <telerik:RadGridView.Columns>
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding IsEnabled.Value}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SettingsCateColIsEnable}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsEnabled.Value, Mode=TwoWay}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding Name}"
+                                                        Header="{x:Static props:Resources.SettingsCategoryCategory}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <Label Background="{Binding BackColor.Value}"
+                                               Content="{Binding Name}"
+                                               FontStyle="{Binding IsItalic.Value,
+                                                                   Converter={StaticResource BoolToFontItalicConverter}}"
+                                               FontWeight="{Binding IsBold.Value,
+                                                                    Converter={StaticResource BoolToFontBoldConverter}}"
+                                               Foreground="{Binding ForeColor.Value}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+                            <telerik:GridViewColumn CellTemplate="{StaticResource MyColorPickerTemplate}"
+                                                    Header="{x:Static props:Resources.SettingsCateColBackground}"
+                                                    IsSortable="false" />
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding IsBold.Value}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SettingsCateColBold}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsBold.Value, Mode=TwoWay}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding IsItalic.Value}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SettingsCateColItalic}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsItalic.Value, Mode=TwoWay}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+                            <libCont:MultiSelectionGridViewComboBoxColumn DataMemberBinding="{Binding TargetTrackers}"
+                                                                          DisplayMemberPath="Name"
+                                                                          EditTriggers="CellClick"
+                                                                          Header="{x:Static props:Resources.SettingsCateColTargetTracker}"
+                                                                          IsSortable="False"
+                                                                          ItemsSource="{Binding Trackers,
+                                                                                                Source={StaticResource CategorySettingViewModel}}" />
+                            <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding AndOrType.Value}"
+                                                            EditTriggers="CellClick"
+                                                            Header="{x:Static props:Resources.SettingsCateColCondition}"
+                                                            IsSortable="false"
+                                                            ItemsSourceBinding="{Binding Source={extensions:EnumBindingSource {x:Type enums:AndOrType}}}" />
+                            <telerik:GridViewDataColumn Width="*"
+                                                        DataMemberBinding="{Binding Details.Value}"
+                                                        Header="{x:Static props:Resources.SettingsCateColAutoFiling}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false" />
+                            <telerik:GridViewDataColumn DataMemberBinding="{Binding IsWorkingTime.Value}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SettingsCateColIsWokingTime}"
+                                                        IsReadOnly="True"
+                                                        IsSortable="false">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox IsChecked="{Binding IsWorkingTime.Value, Mode=TwoWay}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+                        </telerik:RadGridView.Columns>
+
+                        <telerik:RadGridView.ChildTableDefinitions>
+                            <telerik:GridViewTableDefinition>
+                                <telerik:GridViewTableDefinition.Relation>
+                                    <telerik:PropertyRelation ParentPropertyName="Rules" />
+                                </telerik:GridViewTableDefinition.Relation>
+                            </telerik:GridViewTableDefinition>
+                        </telerik:RadGridView.ChildTableDefinitions>
+                        <telerik:RadGridView.HierarchyChildTemplate>
+                            <DataTemplate>
+                                <Grid Margin="5">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="AUTO" />
+                                    </Grid.ColumnDefinitions>
+                                    <telerik:RadGridView AutoGenerateColumns="False"
+                                                         CanUserDeleteRows="True"
+                                                         CanUserFreezeColumns="False"
+                                                         CanUserInsertRows="True"
+                                                         CanUserSearch="False"
+                                                         GroupRenderMode="Flat"
+                                                         IsFilteringAllowed="False"
+                                                         IsReadOnly="False"
+                                                         ItemsSource="{Binding Rules}"
+                                                         RowIndicatorVisibility="Collapsed"
+                                                         SelectedItem="{Binding Rules.SelectedItem.Value}"
+                                                         ShowGroupPanel="False">
+                                        <telerik:RadGridView.Columns>
+                                            <libCont:MultiSelectionGridViewComboBoxColumn DataMemberBinding="{Binding SelectedProjects}"
+                                                                                          DisplayMemberPath="Name"
+                                                                                          EditTriggers="CellClick"
+                                                                                          Header="{x:Static props:Resources.IssueGridColProject}"
+                                                                                          IsSortable="False"
+                                                                                          ItemsSource="{Binding Projects,
+                                                                                                                Source={StaticResource AssignRuleViewModel}}" />
+                                            <libCont:MultiSelectionGridViewComboBoxColumn DataMemberBinding="{Binding SelectedTrackers}"
+                                                                                          DisplayMemberPath="Name"
+                                                                                          EditTriggers="CellClick"
+                                                                                          Header="{x:Static props:Resources.IssueGridColTracker}"
+                                                                                          IsSortable="False"
+                                                                                          ItemsSource="{Binding Trackers,
+                                                                                                                Source={StaticResource AssignRuleViewModel}}" />
+                                            <telerik:GridViewDataColumn DataMemberBinding="{Binding Subject.Value}"
+                                                                        EditTriggers="CellClick"
+                                                                        Header="{x:Static props:Resources.IssueGridColSubject}"
+                                                                        IsSortable="False" />
+                                            <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding StringCompare.Value}"
+                                                                            EditTriggers="CellClick"
+                                                                            Header="{x:Static props:Resources.SettingsCateColCompareMethod}"
+                                                                            IsSortable="False"
+                                                                            ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enumsLib:StringCompareType}}}" />
+                                            <libCont:MultiSelectionGridViewComboBoxColumn DataMemberBinding="{Binding SelectedStatuss}"
+                                                                                          DisplayMemberPath="Name"
+                                                                                          EditTriggers="CellClick"
+                                                                                          Header="{x:Static props:Resources.IssueGridColStatus}"
+                                                                                          IsSortable="False"
+                                                                                          ItemsSource="{Binding Statuss,
+                                                                                                                Source={StaticResource AssignRuleViewModel}}" />
+                                            <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding AssignTo.Value}"
+                                                                            EditTriggers="CellClick"
+                                                                            Header="{x:Static props:Resources.IssueGridColAssignee}"
+                                                                            IsSortable="False"
+                                                                            ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enums:AssignToType}}}" />
+                                        </telerik:RadGridView.Columns>
+                                    </telerik:RadGridView>
+                                    <controls:GridViewEditButtonPanel Grid.Column="1"
+                                                                      DataContext="{Binding Rules}" />
+                                </Grid>
+                            </DataTemplate>
+                        </telerik:RadGridView.HierarchyChildTemplate>
+                    </telerik:RadGridView>
+                    <controls:GridViewEditButtonPanel Grid.Column="1"
+                                                      Margin="0,20,0,0"
+                                                      DataContext="{Binding Items}" />
+                </Grid>
+                <CheckBox Grid.Row="2"
+                          Margin="7"
+                          Content="{x:Static props:Resources.SettingsCateIsAutoSameName}"
+                          IsChecked="{Binding IsAutoSameName.Value}" />
+            </Grid>
+
+            <Grid Grid.Row="1"
+                  HorizontalAlignment="Center">
+                <StackPanel Orientation="Horizontal">
+                    <Button Width="80"
+                            Margin="0,0,10,0"
+                            Command="{Binding ImportCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                                      Mode=FindAncestor}}"
+                            Content="{x:Static props:Resources.SettingsCmdImport}" />
+                    <Button Width="80"
+                            Command="{Binding ExportCommand}"
+                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                                      Mode=FindAncestor}}"
+                            Content="{x:Static props:Resources.SettingsCmdExport}" />
+                </StackPanel>
+            </Grid>
+        </Grid>
+    </libCont:OverwrapMessage>
+</UserControl>

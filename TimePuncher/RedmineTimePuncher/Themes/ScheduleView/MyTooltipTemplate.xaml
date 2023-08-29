@@ -1,0 +1,87 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls="clr-namespace:RedmineTimePuncher.Views.Controls"
+                    xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+                    xmlns:converters1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+                    xmlns:props="clr-namespace:RedmineTimePuncher.Properties">
+
+    <converters:BoolToFontBoldConverter x:Key="BoolToFontBoldConverter" />
+    <converters:BoolToFontItalicConverter x:Key="BoolToFontItalicConverter" />
+    <converters1:VisibilityAnyConverter x:Key="VisibilityAnyConverter" />
+
+    <DataTemplate x:Key="MyTooltipTemplate">
+        <Grid>
+            <StackPanel MaxWidth="500">
+                <StackPanel x:Name="errLabel"
+                            Orientation="Horizontal"
+                            Visibility="{Binding Appointment.IsError.Value,
+                                                 Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <ContentControl x:Name="ErrorIcon"
+                                    Margin="0,0,5,0"
+                                    HorizontalAlignment="Left"
+                                    Style="{StaticResource ImportanceMarkContentControlStyle}"
+                                    Template="{StaticResource HighImportanceMarkTemplate}" />
+                    <TextBlock VerticalAlignment="Center"
+                               Foreground="Red"
+                               Text="{Binding Appointment.ErrorMessage.Value}" />
+                </StackPanel>
+                <Border x:Name="categoryLabel"
+                        Grid.Row="1"
+                        Background="{Binding Appointment.Category.CategoryBrush}"
+                        Visibility="{Binding Appointment.Category,
+                                             Converter={StaticResource NullToVisibilityConverter}}">
+                    <TextBlock Margin="0"
+                               HorizontalAlignment="Left"
+                               VerticalAlignment="Center"
+                               FontStyle="{Binding Appointment.Category.Model.IsItalic,
+                                                   Converter={StaticResource BoolToFontItalicConverter}}"
+                               FontWeight="{Binding Appointment.Category.Model.IsBold,
+                                                    Converter={StaticResource BoolToFontBoldConverter}}"
+                               Foreground="{Binding Appointment.Category.ForeBrush}"
+                               Text="{Binding Appointment.Category.DisplayName}" />
+                </Border>
+                <controls:TicketTree x:Name="ticketTree"
+                                     Margin="0,0,0,3"
+                                     DataContext="{Binding Appointment.TicketTree}"
+                                     Visibility="{Binding HasItem.Value,
+                                                          Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <Separator Margin="0,0,0,3">
+                    <Separator.Visibility>
+                        <MultiBinding Converter="{StaticResource VisibilityAnyConverter}">
+                            <Binding ElementName="errLabel"
+                                     Path="Visibility" />
+                            <Binding ElementName="categoryLabel"
+                                     Path="Visibility" />
+                            <Binding ElementName="ticketTree"
+                                     Path="Visibility" />
+                        </MultiBinding>
+                    </Separator.Visibility>
+                </Separator>
+                <TextBlock Text="{Binding Subject}"
+                           TextWrapping="Wrap" />
+                <StackPanel Margin="5,1,0,0"
+                            Orientation="Horizontal">
+                    <TextBlock FontSize="10"
+                               Text="{Binding Start,
+                                              StringFormat='HH:mm'}"
+                               TextWrapping="Wrap" />
+                    <TextBlock FontSize="10"
+                               Text="{x:Static props:Resources.Tilde}" />
+                    <TextBlock FontSize="10"
+                               Text="{Binding End,
+                                              StringFormat='HH:mm'}"
+                               TextWrapping="Wrap" />
+                    <TextBlock Margin="5,0,0,0"
+                               FontSize="10"
+                               Text="{Binding Appointment.TimeEntryType}" />
+                </StackPanel>
+                <TextBlock Margin="5,3,0,0"
+                           FontSize="10"
+                           Text="{Binding Appointment.ToolTipBody}"
+                           TextWrapping="Wrap"
+                           Visibility="{Binding Appointment.ToolTipBody,
+                                                Converter={StaticResource NullToVisibilityConverter}}" />
+            </StackPanel>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

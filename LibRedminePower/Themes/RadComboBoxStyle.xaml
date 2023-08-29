@@ -1,0 +1,14 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls">
+
+    <Style x:Key="FilterableComboBoxStyleKey"
+           BasedOn="{StaticResource {x:Type telerik:RadComboBox}}"
+           TargetType="telerik:RadComboBox">
+        <Setter Property="IsEditable" Value="True" />
+        <Setter Property="IsFilteringEnabled" Value="True" />
+        <Setter Property="TextSearchMode" Value="Contains" />
+        <Setter Property="OpenDropDownOnFocus" Value="True" />
+    </Style>
+</ResourceDictionary>

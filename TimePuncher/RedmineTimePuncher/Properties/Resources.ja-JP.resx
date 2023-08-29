@@ -1,0 +1,1421 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="enumTickLength10" xml:space="preserve">
+    <value>10 分</value>
+  </data>
+  <data name="enumTickLength15" xml:space="preserve">
+    <value>15 分</value>
+  </data>
+  <data name="enumTickLength30" xml:space="preserve">
+    <value>30 分</value>
+  </data>
+  <data name="msgErrInvalidTermComments" xml:space="preserve">
+    <value>以下の作業時間のコメントから正しく開始時刻、終了時刻を取得できませんでした。
+{0}</value>
+  </data>
+  <data name="msgErrFailedToGetXXXByAdminApiKey" xml:space="preserve">
+    <value>{0} の取得に失敗しました。システム管理者のAPIキーの設定をご確認ください。</value>
+  </data>
+  <data name="enumAssignToMe" xml:space="preserve">
+    <value>自分</value>
+  </data>
+  <data name="enumAssignToNotMe" xml:space="preserve">
+    <value>自分以外</value>
+  </data>
+  <data name="enumAssignToAny" xml:space="preserve">
+    <value>誰でも</value>
+  </data>
+  <data name="enumAndOrTypeAnd" xml:space="preserve">
+    <value>かつ</value>
+  </data>
+  <data name="enumAndOrTypeOr" xml:space="preserve">
+    <value>または</value>
+  </data>
+  <data name="enumOutputTargetRedmine" xml:space="preserve">
+    <value>Redmine</value>
+  </data>
+  <data name="enumOutputTargetExtTool" xml:space="preserve">
+    <value>外部ツール</value>
+  </data>
+  <data name="enumOutputTargetCsvExport" xml:space="preserve">
+    <value>CSV エクスポート</value>
+  </data>
+  <data name="enumTermInputTypeRequiredInput" xml:space="preserve">
+    <value>必須</value>
+  </data>
+  <data name="enumTermInputTypeInputWarning" xml:space="preserve">
+    <value>非推奨</value>
+  </data>
+  <data name="enumTermInputTypeProhibitedInput" xml:space="preserve">
+    <value>禁止</value>
+  </data>
+  <data name="enumTermInputTypeNotInputWarning" xml:space="preserve">
+    <value>推奨</value>
+  </data>
+  <data name="enumTermInputTypeNone" xml:space="preserve">
+    <value>無し</value>
+  </data>
+  <data name="errExport" xml:space="preserve">
+    <value>エクスポートに失敗しました。以下のエラーが発生しました。
+{0}</value>
+  </data>
+  <data name="errImport" xml:space="preserve">
+    <value>インポートに失敗しました。以下のエラーが発生しました。
+
+{0}</value>
+  </data>
+  <data name="enumTickLength5" xml:space="preserve">
+    <value>5 分</value>
+  </data>
+  <data name="RibbonTabHome" xml:space="preserve">
+    <value>ホーム</value>
+  </data>
+  <data name="RibbonGroupGeneral" xml:space="preserve">
+    <value>全般</value>
+  </data>
+  <data name="RibbonGroupExport" xml:space="preserve">
+    <value>データ出力</value>
+  </data>
+  <data name="RibbonGroupCalendar" xml:space="preserve">
+    <value>カレンダー</value>
+  </data>
+  <data name="RibbonGroupSelectedAppos" xml:space="preserve">
+    <value>選択中の予定</value>
+  </data>
+  <data name="RibbonGroupCollaboration" xml:space="preserve">
+    <value>共同作業</value>
+  </data>
+  <data name="RibbonGroupSelectedSlots" xml:space="preserve">
+    <value>選択中のスロット</value>
+  </data>
+  <data name="RibbonCmdSave" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="RibbonCmdReload" xml:space="preserve">
+    <value>再読込</value>
+  </data>
+  <data name="RibbonCmdSettings" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="RibbonCmdCSV" xml:space="preserve">
+    <value>CSV</value>
+  </data>
+  <data name="RibbonCmdExternalTool" xml:space="preserve">
+    <value>外部ツール</value>
+  </data>
+  <data name="RibbonCmdToday" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="RibbonCmdPreviousDay" xml:space="preserve">
+    <value>前日</value>
+  </data>
+  <data name="RibbonCmdNextDay" xml:space="preserve">
+    <value>翌日</value>
+  </data>
+  <data name="RibbonCmdOpenIssue" xml:space="preserve">
+    <value>チケットを
+開く</value>
+  </data>
+  <data name="RibbonCmdCopyToSpentTime" xml:space="preserve">
+    <value>作業実績に
+コピー</value>
+  </data>
+  <data name="RibbonCmdAlignment" xml:space="preserve">
+    <value>整列</value>
+  </data>
+  <data name="RibbonCmdDelete" xml:space="preserve">
+    <value>削除</value>
+  </data>
+  <data name="RibbonCmdCoopRegister" xml:space="preserve">
+    <value>登録</value>
+  </data>
+  <data name="RibbonCmdSelectAllAppos" xml:space="preserve">
+    <value>予定を
+全選択</value>
+  </data>
+  <data name="RibbonCmdAlignAppointments" xml:space="preserve">
+    <value>予定を
+均等に整列</value>
+  </data>
+  <data name="RibbonCmdApprove" xml:space="preserve">
+    <value>承認</value>
+  </data>
+  <data name="Version" xml:space="preserve">
+    <value>バージョン</value>
+  </data>
+  <data name="VersionInfo" xml:space="preserve">
+    <value>バージョン情報</value>
+  </data>
+  <data name="VersionWebSiteLink" xml:space="preserve">
+    <value>Redmine Power のウェブサイト</value>
+  </data>
+  <data name="IssueGridColProject" xml:space="preserve">
+    <value>プロジェクト</value>
+  </data>
+  <data name="IssueGridColTracker" xml:space="preserve">
+    <value>トラッカー</value>
+  </data>
+  <data name="IssueGridColPriority" xml:space="preserve">
+    <value>優先度</value>
+  </data>
+  <data name="IssueGridColSubject" xml:space="preserve">
+    <value>題名</value>
+  </data>
+  <data name="IssueGridColTargetVersion" xml:space="preserve">
+    <value>対象バージョン</value>
+  </data>
+  <data name="IssueGridColCategory" xml:space="preserve">
+    <value>カテゴリ</value>
+  </data>
+  <data name="IssueGridColAssignee" xml:space="preserve">
+    <value>担当者</value>
+  </data>
+  <data name="IssueGridColDueDate" xml:space="preserve">
+    <value>期日</value>
+  </data>
+  <data name="IssueGridColUpdated" xml:space="preserve">
+    <value>更新日</value>
+  </data>
+  <data name="IssueGridColStatus" xml:space="preserve">
+    <value>ステータス</value>
+  </data>
+  <data name="IssueGridCmdUpdate" xml:space="preserve">
+    <value>更新</value>
+  </data>
+  <data name="IssueGridCmdCopyAsRefs" xml:space="preserve">
+    <value>"refs" としてコピー</value>
+  </data>
+  <data name="ScheduleViewCmdCoopRegister" xml:space="preserve">
+    <value>共同作業として登録</value>
+  </data>
+  <data name="ScheduleViewCmdCoopRemove" xml:space="preserve">
+    <value>共同作業から解除</value>
+  </data>
+  <data name="ScheduleViewCmdCoopApprove" xml:space="preserve">
+    <value>共同作業として承認</value>
+  </data>
+  <data name="RibbonCmdCoopRemove" xml:space="preserve">
+    <value>解除</value>
+  </data>
+  <data name="ResourceNameMyWork" xml:space="preserve">
+    <value>作業実績</value>
+  </data>
+  <data name="ResourceNameRedmineActivity" xml:space="preserve">
+    <value>Redmine 活動</value>
+  </data>
+  <data name="CategoryListBoxTitle" xml:space="preserve">
+    <value>作業分類</value>
+  </data>
+  <data name="ResourceSettingListBoxTitle" xml:space="preserve">
+    <value>カレンダー</value>
+  </data>
+  <data name="IssueGridMyIssues" xml:space="preserve">
+    <value>マイチケット</value>
+  </data>
+  <data name="ProgressMsgConnectingRedmine" xml:space="preserve">
+    <value>Redmine 通信中</value>
+  </data>
+  <data name="msgErrUnsetRedminSettings" xml:space="preserve">
+    <value>Redmine の接続情報が未設定です。
+設定画面より正しく設定してください。</value>
+  </data>
+  <data name="ProgressMsgGettingIssues" xml:space="preserve">
+    <value>チケット取得中</value>
+  </data>
+  <data name="msgConfDeleteEditedAppointment" xml:space="preserve">
+    <value>編集済みの予定があります。破棄しますか？</value>
+  </data>
+  <data name="msgErrSelectAppointments" xml:space="preserve">
+    <value>予定を選択してください。</value>
+  </data>
+  <data name="msgErrSetTicket" xml:space="preserve">
+    <value>チケットが登録されていません。</value>
+  </data>
+  <data name="msgErrSelectAppoOtherThanSpentTime" xml:space="preserve">
+    <value>作業実績以外の予定を選択してください。</value>
+  </data>
+  <data name="msgConfDeleteSelectedAppointments" xml:space="preserve">
+    <value>選択中の{0}個の予定を削除しますか？</value>
+  </data>
+  <data name="msgErrSelectSlot" xml:space="preserve">
+    <value>スロットを選択してください。</value>
+  </data>
+  <data name="msgErrSelectSlotOfSpentTime" xml:space="preserve">
+    <value>作業実績のスロットを選択してください。</value>
+  </data>
+  <data name="msgErrSelectAppointmentsOfSpentTime" xml:space="preserve">
+    <value>作業実績の予定を選択してください。</value>
+  </data>
+  <data name="LastUpdateTime" xml:space="preserve">
+    <value>{0}の最終更新時間</value>
+  </data>
+  <data name="RibbonCmdRename" xml:space="preserve">
+    <value>名前の
+変更</value>
+  </data>
+  <data name="RibbonCmdLoad" xml:space="preserve">
+    <value>読込</value>
+  </data>
+  <data name="RibbonCmdMeasure" xml:space="preserve">
+    <value>計測</value>
+  </data>
+  <data name="WikiCountResultCountedAt" xml:space="preserve">
+    <value>計測日時:</value>
+  </data>
+  <data name="WikiCountResultProject" xml:space="preserve">
+    <value>プロジェクト:</value>
+  </data>
+  <data name="WikiCountResultTitle" xml:space="preserve">
+    <value>タイトル</value>
+  </data>
+  <data name="WikiCountResultUpdateOn" xml:space="preserve">
+    <value>更新日</value>
+  </data>
+  <data name="WikiCountResultMeasurer" xml:space="preserve">
+    <value>計測者</value>
+  </data>
+  <data name="WikiCountResultAuthor" xml:space="preserve">
+    <value>作成者</value>
+  </data>
+  <data name="WikiCountResultNoOfChar" xml:space="preserve">
+    <value>文字数</value>
+  </data>
+  <data name="WikiCountResultNoOfLine" xml:space="preserve">
+    <value>行数</value>
+  </data>
+  <data name="WikiCountResultNoOfCharIncluded" xml:space="preserve">
+    <value>子ページを含む文字数</value>
+  </data>
+  <data name="WikiCountResultNoOfLineIncluded" xml:space="preserve">
+    <value>子ページを含む行数</value>
+  </data>
+  <data name="WikiCountResultParentPage" xml:space="preserve">
+    <value>親ページ:</value>
+  </data>
+  <data name="WikiCountResultExcludedPageNames" xml:space="preserve">
+    <value>除外されたページ:</value>
+  </data>
+  <data name="ShowEntryGroupUserName" xml:space="preserve">
+    <value>ユーザ名</value>
+  </data>
+  <data name="ShowEntryGroupIssueId" xml:space="preserve">
+    <value>チケット番号</value>
+  </data>
+  <data name="ShowEntryGroupActivity" xml:space="preserve">
+    <value>作業分類</value>
+  </data>
+  <data name="WikiCountParentPageHelp" xml:space="preserve">
+    <value>計測を行う最上位のページを設定します。
+Wikiページの親子関係は「名前変更」の「親ページ」より設定できます。</value>
+  </data>
+  <data name="ShowEntryDateFrom" xml:space="preserve">
+    <value>開始日:</value>
+  </data>
+  <data name="ShowEntryDateTo" xml:space="preserve">
+    <value>終了日:</value>
+  </data>
+  <data name="RibbonGroupView" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="ShowEntryTargetUsers" xml:space="preserve">
+    <value>ユーザ:</value>
+  </data>
+  <data name="ShowEntryGroupings" xml:space="preserve">
+    <value>グルーピング:</value>
+  </data>
+  <data name="IssueGridFavorites" xml:space="preserve">
+    <value>お気に入り</value>
+  </data>
+  <data name="IssueGridMsgAddFavorite" xml:space="preserve">
+    <value>このチケットをお気に入りに登録します</value>
+  </data>
+  <data name="IssueGridMsgRemoveFavorite" xml:space="preserve">
+    <value>このチケットをお気に入りから削除します</value>
+  </data>
+  <data name="IssueGridCmdOpenIssue" xml:space="preserve">
+    <value>チケットを開く</value>
+  </data>
+  <data name="IssueGridCmdAddFavorite" xml:space="preserve">
+    <value>お気に入りに追加</value>
+  </data>
+  <data name="IssueGridCmdRemoveFavorite" xml:space="preserve">
+    <value>お気に入りから削除</value>
+  </data>
+  <data name="msgNeedRestart" xml:space="preserve">
+    <value>この設定を反映させるためには、アプリの再起動が必要です。</value>
+  </data>
+  <data name="AppModeInputTime" xml:space="preserve">
+    <value>時間入力</value>
+  </data>
+  <data name="AppModeShowTimeEntry" xml:space="preserve">
+    <value>データ表示</value>
+  </data>
+  <data name="AppModeCountWiki" xml:space="preserve">
+    <value>Wiki計測</value>
+  </data>
+  <data name="SettingsDialog" xml:space="preserve">
+    <value>設定</value>
+  </data>
+  <data name="SettingsCategoryGeneral" xml:space="preserve">
+    <value>全般</value>
+  </data>
+  <data name="SettingsCategorySchedule" xml:space="preserve">
+    <value>スケジュール</value>
+  </data>
+  <data name="SettingsCategoryCategory" xml:space="preserve">
+    <value>作業分類</value>
+  </data>
+  <data name="SettingsCategoryAppointments" xml:space="preserve">
+    <value>予定項目</value>
+  </data>
+  <data name="SettingsCategoryIssueLists" xml:space="preserve">
+    <value>チケット一覧</value>
+  </data>
+  <data name="SettingsCategoryUsers" xml:space="preserve">
+    <value>ユーザ一覧</value>
+  </data>
+  <data name="SettingsCategoryExport" xml:space="preserve">
+    <value>データ出力</value>
+  </data>
+  <data name="SettingsCmdExport" xml:space="preserve">
+    <value>エクスポート</value>
+  </data>
+  <data name="SettingsCmdExportAll" xml:space="preserve">
+    <value>全体エクスポート</value>
+  </data>
+  <data name="SettingsCmdImport" xml:space="preserve">
+    <value>インポート</value>
+  </data>
+  <data name="SettingsCmdImportAll" xml:space="preserve">
+    <value>全体インポート</value>
+  </data>
+  <data name="CommonCmdCancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="SettingsMust" xml:space="preserve">
+    <value>必須</value>
+  </data>
+  <data name="SettingsGenLocale" xml:space="preserve">
+    <value>言語</value>
+  </data>
+  <data name="SettingsGenPassword" xml:space="preserve">
+    <value>パスワード</value>
+  </data>
+  <data name="SettingsGenSysApi" xml:space="preserve">
+    <value>システム管理者の
+APIアクセスキー</value>
+  </data>
+  <data name="SettingsGenMsgSetAdminAPIKey" xml:space="preserve">
+    <value>システム管理者のAPIアクセスキーを入力してください。([個人設定]-[APIアクセスキー]-[表示]) </value>
+  </data>
+  <data name="SettingsGenMsgAdminAPIKeyHelp" xml:space="preserve">
+    <value>システム管理者APIを指定することで、共同作業として他のユーザーに登録することができます。
+システム管理者APIはユーザー情報の取得（GET /users.xml）のみを利用しています。</value>
+  </data>
+  <data name="SettingsGenUserBasicAuth" xml:space="preserve">
+    <value>Basic認証を使う</value>
+  </data>
+  <data name="SettingsGenUserName" xml:space="preserve">
+    <value>ユーザ名</value>
+  </data>
+  <data name="SettingsGenApi" xml:space="preserve">
+    <value>APIアクセスキー</value>
+  </data>
+  <data name="SettingsGenPasswordOfBasic" xml:space="preserve">
+    <value>Basic認証のパスワード</value>
+  </data>
+  <data name="SettingsGenUserNameOfBasic" xml:space="preserve">
+    <value>Basic認証のユーザ</value>
+  </data>
+  <data name="SettingsGenMsgSetAPIKey" xml:space="preserve">
+    <value>APIアクセスキーを入力してください。([個人設定]-[APIアクセスキー]-[表示]) </value>
+  </data>
+  <data name="SettingsGenMsgSetUserName" xml:space="preserve">
+    <value>ユーザ名を入力してください。</value>
+  </data>
+  <data name="SettingsGenMsgSetPassword" xml:space="preserve">
+    <value>パスワードを入力してください。</value>
+  </data>
+  <data name="SettingsGenMsgSetRedmineUrl" xml:space="preserve">
+    <value>RedmineのトップページURLを指定してください。例：http://ServerName/redmine/</value>
+  </data>
+  <data name="SettingsScheInputUnit" xml:space="preserve">
+    <value>入力単位（分）</value>
+  </data>
+  <data name="SettingsScheDayStartTime" xml:space="preserve">
+    <value>一日の開始時刻</value>
+  </data>
+  <data name="SettingsScheWorkStartTime" xml:space="preserve">
+    <value>業務開始時刻</value>
+  </data>
+  <data name="SettingsScheTimesSettings" xml:space="preserve">
+    <value>時間設定</value>
+  </data>
+  <data name="SettingsScheColFrom" xml:space="preserve">
+    <value>開始</value>
+  </data>
+  <data name="SettingsScheColTo" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="SettingsScheColColor" xml:space="preserve">
+    <value>色</value>
+  </data>
+  <data name="SettingsScheColInputCheck" xml:space="preserve">
+    <value>入力チェック</value>
+  </data>
+  <data name="TimePickerHour" xml:space="preserve">
+    <value>時</value>
+  </data>
+  <data name="TimePickerMinite" xml:space="preserve">
+    <value>分</value>
+  </data>
+  <data name="TimePickerWatermark" xml:space="preserve">
+    <value>時刻を入力してください。</value>
+  </data>
+  <data name="SettingsCateColIsEnable" xml:space="preserve">
+    <value>有効</value>
+  </data>
+  <data name="SettingsCateColBackground" xml:space="preserve">
+    <value>背景色</value>
+  </data>
+  <data name="SettingsCateColBold" xml:space="preserve">
+    <value>太字</value>
+  </data>
+  <data name="SettingsCateColItalic" xml:space="preserve">
+    <value>斜字</value>
+  </data>
+  <data name="SettingsCateColAutoFiling" xml:space="preserve">
+    <value>自動振り分け</value>
+  </data>
+  <data name="SettingsCateColCondition" xml:space="preserve">
+    <value>振り分け条件</value>
+  </data>
+  <data name="SettingsCateColCompareMethod" xml:space="preserve">
+    <value>比較方法 (題名)</value>
+  </data>
+  <data name="SettingsCateIsAutoSameName" xml:space="preserve">
+    <value>作業分類と同名のチケット配下の場合は、その作業分類を割り当てる</value>
+  </data>
+  <data name="SettingsGenMsgRestartToChange" xml:space="preserve">
+    <value>再起動が必要な設定が変更されています。
+アプリケーションを終了しますか？</value>
+  </data>
+  <data name="SettingsAppoAutoLoading" xml:space="preserve">
+    <value>自動読込する</value>
+  </data>
+  <data name="SettingsAppoIgnoreWithinSpecifiedTime" xml:space="preserve">
+    <value>指定時間以下の活動を無視する</value>
+  </data>
+  <data name="SettingsAppoIgnoreSpecifiedTracker" xml:space="preserve">
+    <value>指定トラッカーの活動を無視する</value>
+  </data>
+  <data name="SettingsAppoIgnoreSpecifiedStrings" xml:space="preserve">
+    <value>指定文字を含むの活動を無視する</value>
+  </data>
+  <data name="SettingsAppoIgnoreSpecifiedStringsTooltip" xml:space="preserve">
+    <value>複数の文字列を指定する場合は、改行で指定してください</value>
+  </data>
+  <data name="SettingsAppoMinutes" xml:space="preserve">
+    <value>分</value>
+  </data>
+  <data name="SettingsAppoRefKeyword" xml:space="preserve">
+    <value>チケットへの参照用キーワード</value>
+  </data>
+  <data name="SettingsAppoReflectPrevIssue" xml:space="preserve">
+    <value>前回、選択されたチケット/作業分類を反映する</value>
+  </data>
+  <data name="SettingsAppoMailAndAppointment" xml:space="preserve">
+    <value>メール/予定</value>
+  </data>
+  <data name="SettingsExpoFolder" xml:space="preserve">
+    <value>出力フォルダ</value>
+  </data>
+  <data name="SettingsExpoNumberOfFiles" xml:space="preserve">
+    <value>ファイルの保持数</value>
+  </data>
+  <data name="SettingsExpoOpenCSV" xml:space="preserve">
+    <value>出力後にファイルを開く</value>
+  </data>
+  <data name="SettingsExpoMsgDefaultFolder" xml:space="preserve">
+    <value>未指定の場合は、「My Documents\Redmine Time Puncher」の配下に出力します</value>
+  </data>
+  <data name="SettingsExpoExternalToolPath" xml:space="preserve">
+    <value>外部ツールのパス</value>
+  </data>
+  <data name="SettingsExpoExternalToolCmdArg" xml:space="preserve">
+    <value>コマンド引数</value>
+  </data>
+  <data name="WikiCountTitleToBeExcluded" xml:space="preserve">
+    <value>集計から除外するタイトル:</value>
+  </data>
+  <data name="WikiCountUseAsRegex" xml:space="preserve">
+    <value>正規表現として扱う</value>
+  </data>
+  <data name="WikiCountTopPage" xml:space="preserve">
+    <value>トップページ</value>
+  </data>
+  <data name="RedmineMngMsgIncorrectAdminAPIKey" xml:space="preserve">
+    <value>システム管理者APIキーが間違えている可能性があります。設定を見直してください。</value>
+  </data>
+  <data name="RedmineMngMsgAdminAPIKeyNotSet" xml:space="preserve">
+    <value>システム管理者APIキーが未設定です。</value>
+  </data>
+  <data name="RedmineMngMsgFailedToGetMyTicket" xml:space="preserve">
+    <value>マイチケットの取得に失敗しました。</value>
+  </data>
+  <data name="RedmineMngMsgFailedToGetTicket" xml:space="preserve">
+    <value>チケットの取得に失敗しました。</value>
+  </data>
+  <data name="RedmineMngMsgFailedToGetTicketsByQuery" xml:space="preserve">
+    <value>クエリ「{0}」によるチケットの取得に失敗しました。</value>
+  </data>
+  <data name="RedmineMngMsgIssueIdNotSet" xml:space="preserve">
+    <value>チケット番号が未指定です。</value>
+  </data>
+  <data name="SettingsExpoMsgNeedsExternalToolSetup" xml:space="preserve">
+    <value>外部ツールの設定が完了していません。
+設定ダイアログから外部ツールの設定を実施してください。</value>
+  </data>
+  <data name="MyAppoMsgRegisterIssue" xml:space="preserve">
+    <value>この予定にチケットを登録してください。</value>
+  </data>
+  <data name="MyAppoMsgRegisterActivity" xml:space="preserve">
+    <value>この予定に作業分類を登録してください。</value>
+  </data>
+  <data name="MyAppoMsgCantSetActivityToThisProject" xml:space="preserve">
+    <value>このプロジェクトの予定には、「{0}」を指定することは出来ません。</value>
+  </data>
+  <data name="MyAppoMsgRegisteredCooperationFrom" xml:space="preserve">
+    <value>{0} からの共同作業として登録されました。</value>
+  </data>
+  <data name="RibbonCmdSelectAllApposTooltip" xml:space="preserve">
+    <value>選択中のスロットにある予定を全選択します。</value>
+  </data>
+  <data name="RibbonCmdSaveMsgConfirm" xml:space="preserve">
+    <value>変更内容をRedmineに保存しますか？</value>
+  </data>
+  <data name="RibbonCmdApproveMsgSelectCollaboration" xml:space="preserve">
+    <value>共同作業として登録された予定を選択してください。</value>
+  </data>
+  <data name="RibbonCmdMsgNeedsRedmineSettings" xml:space="preserve">
+    <value>Redmineの設定が完了していません。
+設定ダイアログからRedmineの設定を実施してください。</value>
+  </data>
+  <data name="RibbonCmdMsgExistsUnsavedAppointment" xml:space="preserve">
+    <value>登録が未完了の予定があります。
+エラーとなっている予定を正しく登録してください。</value>
+  </data>
+  <data name="RibbonCmdMsgNotExistUpdatedAppointment" xml:space="preserve">
+    <value>更新された予定がありません。</value>
+  </data>
+  <data name="RibbonCmdMsgNotExistSpentTimes" xml:space="preserve">
+    <value>作業実績に予定がありません。
+予定を登録してください。</value>
+  </data>
+  <data name="RibbonCmdMsgSelectNonCollaboAppointment" xml:space="preserve">
+    <value>共同作業以外の予定を選択してください。</value>
+  </data>
+  <data name="RibbonCmdSaveTooltip" xml:space="preserve">
+    <value>作業実績をRedmineに保存します。(Ctrl+S)</value>
+  </data>
+  <data name="RibbonCmdCSVTooltip" xml:space="preserve">
+    <value>作業実績をCSVファイルに出力します。</value>
+  </data>
+  <data name="RibbonCmdExternalToolTooltip" xml:space="preserve">
+    <value>作業実績を外部ツールに出力します。</value>
+  </data>
+  <data name="RibbonCmdDeleteTooltip" xml:space="preserve">
+    <value>選択された予定を削除します。</value>
+  </data>
+  <data name="RibbonCmdAlignAppointmentsTooltip" xml:space="preserve">
+    <value>選択範囲内のスロットにある予定を均等に整列します。</value>
+  </data>
+  <data name="msgErrDuplicateAppointment" xml:space="preserve">
+    <value>予定が重なっています。重ならないように整列してください。</value>
+  </data>
+  <data name="RibbonCmdAlignmentConfirm" xml:space="preserve">
+    <value>{0}の時間帯に予定が入っています。
+以下の時間帯を取り除きますか？
+{1}</value>
+  </data>
+  <data name="msgErrUnsupportedOS" xml:space="preserve">
+    <value>お使いのOSはサポート対象外です。
+ホームページより最新版を取得してお使いください。</value>
+  </data>
+  <data name="TermInputValidationMsgRequired" xml:space="preserve">
+    <value>{0} への入力は必須です。</value>
+  </data>
+  <data name="TermInputValidationMsgNotRecommended" xml:space="preserve">
+    <value>{0} への入力は推奨されていません。</value>
+  </data>
+  <data name="TermInputValidationMsgProhibuted" xml:space="preserve">
+    <value>{0} への入力は禁止されています。</value>
+  </data>
+  <data name="TermInputValidationMsgRecommended" xml:space="preserve">
+    <value>{0} への入力は推奨されています。</value>
+  </data>
+  <data name="TeamsStatusUndefind" xml:space="preserve">
+    <value>未定</value>
+  </data>
+  <data name="TeamsStatusAvailable" xml:space="preserve">
+    <value>連絡可能</value>
+  </data>
+  <data name="TeamsStatusOnThePhone" xml:space="preserve">
+    <value>電話中</value>
+  </data>
+  <data name="TeamsStatusBusy" xml:space="preserve">
+    <value>取り込み中</value>
+  </data>
+  <data name="TeamsStatusAway" xml:space="preserve">
+    <value>退席中</value>
+  </data>
+  <data name="TeamsStatusBeFightBack" xml:space="preserve">
+    <value>一時退席中</value>
+  </data>
+  <data name="TeamsStatusDoNotDisturb" xml:space="preserve">
+    <value>応答不可</value>
+  </data>
+  <data name="TeamsStatusPresenting" xml:space="preserve">
+    <value>発表中</value>
+  </data>
+  <data name="TeamsStatusInAMeeting" xml:space="preserve">
+    <value>会議中</value>
+  </data>
+  <data name="TeamsStatusNewActivity" xml:space="preserve">
+    <value>新しいアクティビティ</value>
+  </data>
+  <data name="TeamsStatusOffline" xml:space="preserve">
+    <value>オフライン</value>
+  </data>
+  <data name="TeamsStatusConnectionError" xml:space="preserve">
+    <value>接続がありません</value>
+  </data>
+  <data name="ScheduleViewCmdSelectAll" xml:space="preserve">
+    <value>スロットの予定を全選択</value>
+  </data>
+  <data name="ScheduleViewCmdAlignEvenly" xml:space="preserve">
+    <value>スロットの予定を均等に整列</value>
+  </data>
+  <data name="SettingsCategoryReview" xml:space="preserve">
+    <value>レビュー</value>
+  </data>
+  <data name="SettingsReviTracker" xml:space="preserve">
+    <value>トラッカー</value>
+  </data>
+  <data name="SettingsReviOpenTicket" xml:space="preserve">
+    <value>開催チケット</value>
+  </data>
+  <data name="SettingsReviRequestTicket" xml:space="preserve">
+    <value>依頼チケット</value>
+  </data>
+  <data name="SettingsReviPointTicket" xml:space="preserve">
+    <value>指摘チケット</value>
+  </data>
+  <data name="SettingsReviCustomField" xml:space="preserve">
+    <value>カスタムフィールドに保存する</value>
+  </data>
+  <data name="SettingsReviNeedsFaceToFace" xml:space="preserve">
+    <value>レビュー方法の指定</value>
+  </data>
+  <data name="SettingsReviMsgBoolCustomFieldHelp" xml:space="preserve">
+    <value>真偽値形式のカスタムフィールドを指定してください。 「{0}」が選択されると「はい」が設定されます。</value>
+  </data>
+  <data name="SettingsReviIsRequired" xml:space="preserve">
+    <value>レビューアの必須・任意の指定</value>
+  </data>
+  <data name="SettingsReviReviewProcess" xml:space="preserve">
+    <value>レビュー工程</value>
+  </data>
+  <data name="SettingsReviMsgCustomFieldHelp" xml:space="preserve">
+    <value>{0}形式のカスタムフィールドを指定してください。</value>
+  </data>
+  <data name="SettingsReviErrMsgNoTrackers" xml:space="preserve">
+    <value>トラッカーが設定されていません。</value>
+  </data>
+  <data name="SettingsReviErrMsgNoCustomFields" xml:space="preserve">
+    <value>{0}形式のカスタムフィールドが設定されていません。</value>
+  </data>
+  <data name="errEnviromentError" xml:space="preserve">
+    <value>環境が正しくありません。
+再インストールをしてください。</value>
+  </data>
+  <data name="SettingsReviDefaultStatus" xml:space="preserve">
+    <value>初期ステータス</value>
+  </data>
+  <data name="SettingsReviOutlookIntegration" xml:space="preserve">
+    <value>Outlookとの連携</value>
+  </data>
+  <data name="ReviewTargetIssueNo" xml:space="preserve">
+    <value>レビュー対象のチケット番号</value>
+  </data>
+  <data name="ReviewOrganizer" xml:space="preserve">
+    <value>開催者</value>
+  </data>
+  <data name="ReviewTargetProcess" xml:space="preserve">
+    <value>レビュー対象の工程</value>
+  </data>
+  <data name="ReviewStatusUnderReview" xml:space="preserve">
+    <value>開催中のステータス</value>
+  </data>
+  <data name="ReviewReviewMethod" xml:space="preserve">
+    <value>レビュー方法</value>
+  </data>
+  <data name="ReviewDuration" xml:space="preserve">
+    <value>期間</value>
+  </data>
+  <data name="ReviewDateTime" xml:space="preserve">
+    <value>開催日時</value>
+  </data>
+  <data name="ReviewCreateOutlookAppo" xml:space="preserve">
+    <value>Outlookの予定を作成する</value>
+  </data>
+  <data name="ReviewReviewer" xml:space="preserve">
+    <value>レビューア</value>
+  </data>
+  <data name="ReviewReviewerRequired" xml:space="preserve">
+    <value>必須</value>
+  </data>
+  <data name="ReviewDelivarables" xml:space="preserve">
+    <value>レビュー対象の成果物</value>
+  </data>
+  <data name="ReviewTitleOfOpenIssue" xml:space="preserve">
+    <value>開催チケットのタイトル</value>
+  </data>
+  <data name="ReviewDesctiptionOfRequestIssue" xml:space="preserve">
+    <value>依頼チケットの説明</value>
+  </data>
+  <data name="ReviewMsgMarkupLangEnable" xml:space="preserve">
+    <value>Textile記法が使用できます。</value>
+  </data>
+  <data name="ReviewErrMsgSetUpReview" xml:space="preserve">
+    <value>レビューの設定を行ってください。</value>
+  </data>
+  <data name="ReviewErrMsgNeedAdminAPIKey" xml:space="preserve">
+    <value>本機能を使用するにはシステム管理者のAPIキーの設定が必要です。</value>
+  </data>
+  <data name="ReviewErrMsgFailedToGetIssue" xml:space="preserve">
+    <value>チケットの取得に失敗しました。</value>
+  </data>
+  <data name="ReviewErrMsgNoMemberAssgined" xml:space="preserve">
+    <value>指定されたチケットのプロジェクトにメンバーが設定されていません。</value>
+  </data>
+  <data name="ReviewErrMsgNoStatusAvailable" xml:space="preserve">
+    <value>有効なステータスが存在しません。</value>
+  </data>
+  <data name="ReviewMethodDesktop" xml:space="preserve">
+    <value>机上レビュー</value>
+  </data>
+  <data name="ReviewMethodFaceToFace" xml:space="preserve">
+    <value>対面レビュー</value>
+  </data>
+  <data name="ReviewPleaseFollwings" xml:space="preserve">
+    <value>以下のレビューをお願いします。</value>
+  </data>
+  <data name="ReviewMsgAddPointAtHere" xml:space="preserve">
+    <value>ご指摘があれば {0} からお願いします。</value>
+  </data>
+  <data name="ReviewPoints" xml:space="preserve">
+    <value>指摘</value>
+  </data>
+  <data name="ReviewErrMsgSelectTargetTicket" xml:space="preserve">
+    <value>チケットを選択してください。</value>
+  </data>
+  <data name="ReviewErrMsgInvalidTimePeriod" xml:space="preserve">
+    <value>期間を正しく設定してください。</value>
+  </data>
+  <data name="ReviewErrMsgSelectReviewer" xml:space="preserve">
+    <value>レビューアを選択してください。</value>
+  </data>
+  <data name="ReviewMsgReferPointsAtHere" xml:space="preserve">
+    <value>{0} から指摘の一覧を表示できます。</value>
+  </data>
+  <data name="Review" xml:space="preserve">
+    <value>レビュー</value>
+  </data>
+  <data name="ReviewPointsList" xml:space="preserve">
+    <value>指摘一覧</value>
+  </data>
+  <data name="ReviewMsgMarkupLangEnableAndList" xml:space="preserve">
+    <value>Textile記法が使用できます。
+複数設定する場合は改行してください。</value>
+  </data>
+  <data name="RibbonCmdCreateReviewTicket" xml:space="preserve">
+    <value>チケット作成</value>
+  </data>
+  <data name="AppModeTicketCreater" xml:space="preserve">
+    <value>レビュー</value>
+  </data>
+  <data name="ReviewErrMsgFailedWorkWithOutlook" xml:space="preserve">
+    <value>Outlookとの連携に失敗しました。Outlookの設定を見直してください。</value>
+  </data>
+  <data name="SettingsReviSpecipyProcess" xml:space="preserve">
+    <value>レビュー対象の工程を指定</value>
+  </data>
+  <data name="ReviewSameTracker" xml:space="preserve">
+    <value>対象のチケットと同じ</value>
+  </data>
+  <data name="ReviewReviewerOptional" xml:space="preserve">
+    <value>任意</value>
+  </data>
+  <data name="CustomFieldFormatBool" xml:space="preserve">
+    <value>真偽値</value>
+  </data>
+  <data name="CustomFieldFormatList" xml:space="preserve">
+    <value>リスト</value>
+  </data>
+  <data name="RibbonCmdAdjustSchedule" xml:space="preserve">
+    <value>Outlookで
+予定を調整</value>
+  </data>
+  <data name="ReviewErrMsgFailedOpenAppointment" xml:space="preserve">
+    <value>予定が開けませんでした。Outlookの状態を確認してください。</value>
+  </data>
+  <data name="ReviewForShcheduleAdjust" xml:space="preserve">
+    <value>日程調整用</value>
+  </data>
+  <data name="ReviewMsgForAdjustSchedule" xml:space="preserve">
+    <value>※この予定は日程の調整用です。
+　ウィンドウを閉じることで {0} に日程が反映されます。予定を保存する必要はありません。</value>
+  </data>
+  <data name="ReviewErrMsgTargetClosed" xml:space="preserve">
+    <value>終了したチケットは選択できません。</value>
+  </data>
+  <data name="ReviewErrMsgSelectOrganizer" xml:space="preserve">
+    <value>開催者を選択してください。</value>
+  </data>
+  <data name="ReviewPointsAdd" xml:space="preserve">
+    <value>指摘追加</value>
+  </data>
+  <data name="ReviewTargetIssue" xml:space="preserve">
+    <value>レビュー対象のチケット</value>
+  </data>
+  <data name="SettingsCategoryReviewDescription" xml:space="preserve">
+    <value>レビューの説明</value>
+  </data>
+  <data name="SettingsReviColProject" xml:space="preserve">
+    <value>プロジェクト</value>
+  </data>
+  <data name="SettingsReviColProcess" xml:space="preserve">
+    <value>レビュー対象の工程</value>
+  </data>
+  <data name="SettingsReviColWikiPage" xml:space="preserve">
+    <value>Wiki ページ</value>
+  </data>
+  <data name="SettingsReviColHeader" xml:space="preserve">
+    <value>ヘッダー</value>
+  </data>
+  <data name="SettingsReviColIncludesHeader" xml:space="preserve">
+    <value>ヘッダーを含める</value>
+  </data>
+  <data name="SettingsReviColIncludesHeaderWrap" xml:space="preserve">
+    <value>ヘッダー
+を含める</value>
+  </data>
+  <data name="SettingsReviColProcessMsg" xml:space="preserve">
+    <value>: 説明を追加したい工程を選択してください。「指定なし」を選択すると工程に関係なく設定されます。</value>
+  </data>
+  <data name="SettingsReviColProjectMsg" xml:space="preserve">
+    <value>: 説明を追加したいチケットのプロジェクトを選択してください。</value>
+  </data>
+  <data name="SettingsReviColWikiPageMsg" xml:space="preserve">
+    <value>: 転記したい説明が記述されているWikiページを選択してください。</value>
+  </data>
+  <data name="SettingsReviColHeaderMsg" xml:space="preserve">
+    <value>: 転記したいセクションのヘッダーを選択してください。「指定なし」を選択するとページ全体が転記されます。</value>
+  </data>
+  <data name="SettingsReviColIncludesHeaderMsg" xml:space="preserve">
+    <value>: 転記する内容にセクションのヘッダーを含めるかどうかを選択してください。</value>
+  </data>
+  <data name="SettingsReviMsgTransGeneral" xml:space="preserve">
+    <value>チケットの説明にWikiページの記述を転記します。</value>
+  </data>
+  <data name="SettingsReviMsgTransOpen" xml:space="preserve">
+    <value>開催チケットの説明に指定されたWikiページの記述を転記します。</value>
+  </data>
+  <data name="SettingsReviTranscribeOpen" xml:space="preserve">
+    <value>開催チケットへの転記</value>
+  </data>
+  <data name="ReviewErrMsgFailedFindHeader" xml:space="preserve">
+    <value>指定されたヘッダー「{0}」がWikiページ「{1}」に見つかりませんでした。</value>
+  </data>
+  <data name="ReviewErrMsgFailedFindWikiPage" xml:space="preserve">
+    <value>指定されたウィキページ「{0}」が取得できませんでした。</value>
+  </data>
+  <data name="ReviewErrMsgFailedTranscribeDescription" xml:space="preserve">
+    <value>説明の転記に失敗しました。チケットの作成を続けますか？
+
+- {0}</value>
+  </data>
+  <data name="ReviewMsgTranscribeFollowings" xml:space="preserve">
+    <value>以下の文字列が転記されます。</value>
+  </data>
+  <data name="SettingsMsgNowGettingData" xml:space="preserve">
+    <value>データ取得中</value>
+  </data>
+  <data name="SetteingsCmdTest" xml:space="preserve">
+    <value>テスト</value>
+  </data>
+  <data name="SettingsCmdTest" xml:space="preserve">
+    <value>テスト</value>
+  </data>
+  <data name="SettingsReviMarkupLang" xml:space="preserve">
+    <value>テキスト書式</value>
+  </data>
+  <data name="ReviewMsgHere" xml:space="preserve">
+    <value>ここ</value>
+  </data>
+  <data name="SettingsReviErrMsgCannotUseTranscribe" xml:space="preserve">
+    <value>本機能を使用するにはRedmineのテキスト書式設定に「なし」以外を設定してください。</value>
+  </data>
+  <data name="SettingsReviErrMsgFailedSetProcess" xml:space="preserve">
+    <value>レビュー対象の工程「{0}」は設定できませんでした。</value>
+  </data>
+  <data name="CustomFieldFormatUser" xml:space="preserve">
+    <value>ユーザー</value>
+  </data>
+  <data name="SettingsReviSaveReviewer" xml:space="preserve">
+    <value>指摘者をチケットに保存</value>
+  </data>
+  <data name="SettingsReviLines" xml:space="preserve">
+    <value>行目</value>
+  </data>
+  <data name="SettingsReviColTracker" xml:space="preserve">
+    <value>レビュー対象のトラッカー</value>
+  </data>
+  <data name="SettingsReviColTrackerMsg" xml:space="preserve">
+    <value>: レビュー対象のチケットのトラッカーを選択してください。「指定なし」を選択するとトラッカーに関係なく設定されます。</value>
+  </data>
+  <data name="SettingsReviColTrackerWrap" xml:space="preserve">
+    <value>レビュー対象の
+トラッカー</value>
+  </data>
+  <data name="SettingsReviColProcessWrap" xml:space="preserve">
+    <value>レビュー対象の
+工程</value>
+  </data>
+  <data name="SettingsReviTranscribeRequest" xml:space="preserve">
+    <value>依頼チケットへの転記</value>
+  </data>
+  <data name="SettingsReviMsgTransRequest" xml:space="preserve">
+    <value>依頼チケットの説明に指定されたWikiページの記述を転記します。</value>
+  </data>
+  <data name="SettingsReviErrMsgInvalidTranscribeSetting" xml:space="preserve">
+    <value>転記の設定が正しくありません。</value>
+  </data>
+  <data name="SettingsMsgNowConnecting" xml:space="preserve">
+    <value>Redmine 通信中・・・</value>
+  </data>
+  <data name="SettingsMsgSetRedmineSettings" xml:space="preserve">
+    <value>Redmineの設定が未完了です</value>
+  </data>
+  <data name="enumExportItemsStartTime" xml:space="preserve">
+    <value>開始時間</value>
+  </data>
+  <data name="enumExportItemsEndTime" xml:space="preserve">
+    <value>終了時間</value>
+  </data>
+  <data name="enumExportItemsCategory" xml:space="preserve">
+    <value>カテゴリ</value>
+  </data>
+  <data name="enumExportItemsProject" xml:space="preserve">
+    <value>プロジェクト名</value>
+  </data>
+  <data name="enumExportItemsTicketFullName" xml:space="preserve">
+    <value>フルチケット名</value>
+  </data>
+  <data name="enumExportItemsSubject" xml:space="preserve">
+    <value>予定名</value>
+  </data>
+  <data name="enumExportItemsVersion" xml:space="preserve">
+    <value>バージョン</value>
+  </data>
+  <data name="enumExportItemsWorkCategory" xml:space="preserve">
+    <value>作業分類</value>
+  </data>
+  <data name="SettingsReviColTitleWrap" xml:space="preserve">
+    <value>レビュー対象の
+タイトル</value>
+  </data>
+  <data name="SettingsReviColTitle" xml:space="preserve">
+    <value>レビュー対象のタイトル</value>
+  </data>
+  <data name="SettingsReviColTitleMsg" xml:space="preserve">
+    <value>: レビュー対象のチケットのチケットのタイトルを入力してください。正規表現が使用できます。空欄の場合、タイトルに関係なく設定されます。</value>
+  </data>
+  <data name="SettingsReqColWorkTrackerWrap" xml:space="preserve">
+    <value>作業内容の
+トラッカー</value>
+  </data>
+  <data name="SettingsReqColWorkTitleWrap" xml:space="preserve">
+    <value>作業内容の
+タイトル</value>
+  </data>
+  <data name="AppModeTicketCreaterRequestWork" xml:space="preserve">
+    <value>作業</value>
+  </data>
+  <data name="ReviewRequests" xml:space="preserve">
+    <value>依頼内容:</value>
+  </data>
+  <data name="ReviewTargetIssueNoWork" xml:space="preserve">
+    <value>作業内容のチケット番号</value>
+  </data>
+  <data name="ReviewStatusUnderWork" xml:space="preserve">
+    <value>依頼中のステータス</value>
+  </data>
+  <data name="ReviewReviewerWork" xml:space="preserve">
+    <value>作業者</value>
+  </data>
+  <data name="ReviewMsgRequestFollowings" xml:space="preserve">
+    <value>以下の作業を実施してください。
+
+{0}</value>
+  </data>
+  <data name="SettingsCategoryRequestWork" xml:space="preserve">
+    <value>作業依頼</value>
+  </data>
+  <data name="SettingsScheColOnTime" xml:space="preserve">
+    <value>定時内</value>
+  </data>
+  <data name="RibbonCmdSplit" xml:space="preserve">
+    <value>分割</value>
+  </data>
+  <data name="msgInputSplitNumber" xml:space="preserve">
+    <value>予定を分割する数を指定してください。</value>
+  </data>
+  <data name="SettingsCalWorkingDay" xml:space="preserve">
+    <value>稼働日</value>
+  </data>
+  <data name="SettingsCalWorkingDaySun" xml:space="preserve">
+    <value>日</value>
+  </data>
+  <data name="SettingsCalWorkingDayMon" xml:space="preserve">
+    <value>月</value>
+  </data>
+  <data name="SettingsCalWorkingDayTue" xml:space="preserve">
+    <value>火</value>
+  </data>
+  <data name="SettingsCalWorkingDayWed" xml:space="preserve">
+    <value>水</value>
+  </data>
+  <data name="SettingsCalWorkingDayThu" xml:space="preserve">
+    <value>木</value>
+  </data>
+  <data name="SettingsCalWorkingDayFri" xml:space="preserve">
+    <value>金</value>
+  </data>
+  <data name="SettingsCalWorkingDaySat" xml:space="preserve">
+    <value>土</value>
+  </data>
+  <data name="SettingsCategoryCalendar" xml:space="preserve">
+    <value>カレンダー</value>
+  </data>
+  <data name="SettingsCalHolidaySettings" xml:space="preserve">
+    <value>休日の設定</value>
+  </data>
+  <data name="SettingsCalHolidaySettingsMsg" xml:space="preserve">
+    <value>稼働日に関して特別な設定をしたい日付を選択してください。
+稼働日が選択された場合、休日として設定されます。稼働日でなかった場合、特別な稼働日として設定されます。</value>
+  </data>
+  <data name="PersonHourOfWeekRemaining" xml:space="preserve">
+    <value>今週の残り工数</value>
+  </data>
+  <data name="PersonHourOfMonthRemaining" xml:space="preserve">
+    <value>今月の残り工数</value>
+  </data>
+  <data name="PersonHourOfMonth" xml:space="preserve">
+    <value>月の工数</value>
+  </data>
+  <data name="PersonHourOfWeek" xml:space="preserve">
+    <value>週の工数</value>
+  </data>
+  <data name="PersonHourAppoOnTime" xml:space="preserve">
+    <value>予定ありの時間</value>
+  </data>
+  <data name="PersonHourAppoOverTime" xml:space="preserve">
+    <value>定時間外</value>
+  </data>
+  <data name="SettingsCateColTargetTracker" xml:space="preserve">
+    <value>対象チケットの
+トラッカー</value>
+  </data>
+  <data name="msgErrFailedFindProject" xml:space="preserve">
+    <value>プロジェクトの設定に失敗しました。以下のチケットを確認してください。
+
+{0}</value>
+  </data>
+  <data name="SettingsExpoMsgExternalToolArgHelp" xml:space="preserve">
+    <value>「作業実績」のCSVファイルのパスを指定するためには「{0}」と入力してください。
+コマンド引数が未設定の場合、「作業実績」のCSVファイルのパスのみが引数となります。</value>
+  </data>
+  <data name="SettingsExpoMsgExternalTool" xml:space="preserve">
+    <value>「作業実績」の内容をCSV形式でエクスポートし、それを引数として外部ツールを起動することができます。</value>
+  </data>
+  <data name="SettingsCalPersonaHolidaySubject" xml:space="preserve">
+    <value>特定の件名の予定を休暇に設定</value>
+  </data>
+  <data name="SettingsCalPersonaHolidayCategory" xml:space="preserve">
+    <value>特定の分類の予定を休暇に設定</value>
+  </data>
+  <data name="SettingsCalSubject" xml:space="preserve">
+    <value>件名の形式</value>
+  </data>
+  <data name="SettingsCalCategory" xml:space="preserve">
+    <value>分類の名前の形式</value>
+  </data>
+  <data name="SettingsCalMsgCanUseRegex" xml:space="preserve">
+    <value>正規表現が使用できます。</value>
+  </data>
+  <data name="enumReportPeriodThisWeek" xml:space="preserve">
+    <value>今週</value>
+  </data>
+  <data name="enumReportPeriodThisMonth" xml:space="preserve">
+    <value>今月</value>
+  </data>
+  <data name="enumReportPeriodLastWeek" xml:space="preserve">
+    <value>先週</value>
+  </data>
+  <data name="enumReportPeriodLastMonth" xml:space="preserve">
+    <value>先月</value>
+  </data>
+  <data name="enumReportPeriodNextWeek" xml:space="preserve">
+    <value>来週</value>
+  </data>
+  <data name="enumReportPeriodNextMonth" xml:space="preserve">
+    <value>来月</value>
+  </data>
+  <data name="enumReportColumnActualTimes" xml:space="preserve">
+    <value>総実績時間</value>
+  </data>
+  <data name="enumReportColumnOnTimes" xml:space="preserve">
+    <value>定時内 総時間</value>
+  </data>
+  <data name="enumReportColumnOnTimesRemaining" xml:space="preserve">
+    <value>定時内 残り時間</value>
+  </data>
+  <data name="enumReportColumnOverTimeAppointment" xml:space="preserve">
+    <value>定時外 予定時間</value>
+  </data>
+  <data name="ReportScheduled" xml:space="preserve">
+    <value>予定あり</value>
+  </data>
+  <data name="ReportNotScheduled" xml:space="preserve">
+    <value>予定なし</value>
+  </data>
+  <data name="ReportHours" xml:space="preserve">
+    <value>時間</value>
+  </data>
+  <data name="ReportHoursWithBrackets" xml:space="preserve">
+    <value>時間 (</value>
+  </data>
+  <data name="ReportPercentage" xml:space="preserve">
+    <value>% )</value>
+  </data>
+  <data name="ReportTotalTime" xml:space="preserve">
+    <value>総時間</value>
+  </data>
+  <data name="ReportRemainingTime" xml:space="preserve">
+    <value>残り時間</value>
+  </data>
+  <data name="ReportOnTime" xml:space="preserve">
+    <value>定時内</value>
+  </data>
+  <data name="ReportOverTime" xml:space="preserve">
+    <value>定時外</value>
+  </data>
+  <data name="SettingsCategoryReport" xml:space="preserve">
+    <value>ミニレポート</value>
+  </data>
+  <data name="SettingsPersPeriod" xml:space="preserve">
+    <value>期間</value>
+  </data>
+  <data name="SettingsPersColOnTime" xml:space="preserve">
+    <value>定時内
+総時間</value>
+  </data>
+  <data name="SettingsPersColOnTimeRemaining" xml:space="preserve">
+    <value>定時内
+残り時間</value>
+  </data>
+  <data name="SettingsPersColOverTimesAppintment" xml:space="preserve">
+    <value>定時外
+予定時間</value>
+  </data>
+  <data name="SettingsPersColActualTimes" xml:space="preserve">
+    <value>総実績時間</value>
+  </data>
+  <data name="SettingsCateColIsWokingTime" xml:space="preserve">
+    <value>作業時間
+として計上</value>
+  </data>
+  <data name="SettingsPersMsg" xml:space="preserve">
+    <value>ミニレポートに表示したい内容を選択してください。
+すべての設定を削除するとミニレポートが表示されなくなります。</value>
+  </data>
+  <data name="SettingsScheColCoreTime" xml:space="preserve">
+    <value>コアタイム</value>
+  </data>
+  <data name="SettingsScheUseFlexTime" xml:space="preserve">
+    <value>フレックスタイム制を使用</value>
+  </data>
+  <data name="SettingsScheUseFlexTimeMsg" xml:space="preserve">
+    <value>フレキシブルタイムに不就労の時間がある場合、定時外就労の時間から差し引かれます。</value>
+  </data>
+  <data name="OutlookActionGetAppointments" xml:space="preserve">
+    <value>Outlookの予定の取得</value>
+  </data>
+  <data name="OutlookActionGetMails" xml:space="preserve">
+    <value>Outlookの送信済みメールの取得</value>
+  </data>
+  <data name="OutlookErrMsg" xml:space="preserve">
+    <value>{0}に失敗しました。
+Outlookの状態を確認してください。</value>
+  </data>
+  <data name="OutlookActionGetAppointmentsForReport" xml:space="preserve">
+    <value>就労時間の集計のためのOutlookの予定の取得</value>
+  </data>
+  <data name="SettingsCateColMsg" xml:space="preserve">
+    <value>作業分類の表示の設定とその作業分類にチケットを振り分けるための条件を設定してください。
+それぞれの設定行の順番は、振り分け条件の適用順番となります。</value>
+  </data>
+  <data name="SettingsQuery" xml:space="preserve">
+    <value>クエリ</value>
+  </data>
+  <data name="SettingsQueryMsg" xml:space="preserve">
+    <value>チケット一覧に追加したいクエリを選択してください。</value>
+  </data>
+  <data name="AppModeTableEditor" xml:space="preserve">
+    <value>チケット表編集</value>
+  </data>
+  <data name="Tilde" xml:space="preserve">
+    <value>～</value>
+  </data>
+  <data name="SelectedCount" xml:space="preserve">
+    <value>選択数: </value>
+  </data>
+  <data name="ReviewErrMsgSelectOperator" xml:space="preserve">
+    <value>作業者を選択してください。</value>
+  </data>
+  <data name="AppModeVisualize" xml:space="preserve">
+    <value>工数分析</value>
+  </data>
+  <data name="SettingsExpoMsgExternalToolNotExist" xml:space="preserve">
+    <value>設定された外部ツールが存在しません。</value>
+  </data>
+</root>

@@ -1,0 +1,268 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:helpers="clr-namespace:Telerik.Windows.Controls.Theming.Helpers;assembly=Telerik.Windows.Controls"
+                    xmlns:mat="clr-namespace:Telerik.Windows.Controls.MaterialControls;assembly=Telerik.Windows.Controls"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+                    xmlns:telerikPrimitives="clr-namespace:Telerik.Windows.Controls.Primitives;assembly=Telerik.Windows.Controls"
+                    xmlns:telerikScheduleView="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.ScheduleView">
+
+    <ControlTemplate x:Key="MyRadScheduleViewControlTemplate"
+                     TargetType="telerikScheduleView:RadScheduleView">
+        <Border Background="{TemplateBinding Background}">
+            <Grid>
+                <Grid.InputBindings>
+                    <KeyBinding Key="Del"
+                                Command="telerikScheduleView:RadScheduleViewCommands.DeleteAppointment" />
+                    <KeyBinding Key="O"
+                                Command="telerikScheduleView:RadScheduleViewCommands.CreateAppointment"
+                                Modifiers="Alt" />
+                    <KeyBinding Key="O"
+                                Command="telerikScheduleView:RadScheduleViewCommands.CreateAppointment"
+                                Modifiers="Ctrl" />
+                    <MouseBinding Command="telerikScheduleView:RadScheduleViewCommands.CreateAppointment"
+                                  MouseAction="LeftDoubleClick" />
+                </Grid.InputBindings>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <telerik:RadTransitionControl x:Name="PART_TranstionControl"
+                                              Grid.Row="1"
+                                              Duration="00:00:00.500">
+                    <telerik:RadTransitionControl.Transition>
+                        <telerik:SlideAndZoomTransition MinZoom="1" />
+                    </telerik:RadTransitionControl.Transition>
+                    <Grid x:Name="AppointmentsPanelGrid">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <Border x:Name="HeadersHeight"
+                                Grid.ColumnSpan="3"
+                                Height="{TemplateBinding HeadersLength}"
+                                Background="{telerik1:Office2019Resource ResourceKey=MainBackgroundBrush}" />
+                        <Border x:Name="HeadersWidth"
+                                Grid.RowSpan="3"
+                                Width="{TemplateBinding HeadersLength}"
+                                Background="{telerik1:Office2019Resource ResourceKey=MainBackgroundBrush}" />
+                        <telerikScheduleView:TimeRulerPanel x:Name="PART_TimeRulerPanel"
+                                                            Grid.Row="0"
+                                                            Grid.Column="1"
+                                                            ClipToBounds="True"
+                                                            Orientation="{TemplateBinding EffectiveOrientation}"
+                                                            Offset="{Binding HorizontalOffset,
+                                                                             RelativeSource={RelativeSource TemplatedParent}}" />
+                        <telerikScheduleView:TimeIndicatorsPanel x:Name="PART_TimeRulerIndicatorsPanel"
+                                                                 Grid.Row="0"
+                                                                 Grid.Column="1"
+                                                                 ClipToBounds="True"
+                                                                 Orientation="{TemplateBinding EffectiveOrientation}" />
+                        <telerikScheduleView:AppointmentsPanel x:Name="PART_ItemsHost"
+                                                               Grid.Row="1"
+                                                               Grid.Column="0"
+                                                               Grid.ColumnSpan="2"
+                                                               Panel.ZIndex="1"
+                                                               Background="{x:Null}"
+                                                               Orientation="{TemplateBinding EffectiveOrientation}" />
+                        <telerikPrimitives:LayoutTransformControl Grid.Row="1"
+                                                                  Grid.Column="1"
+                                                                  HorizontalAlignment="Right"
+                                                                  VerticalAlignment="Center"
+                                                                  Canvas.ZIndex="1"
+                                                                  UseLayoutRounding="True"
+                                                                  Visibility="{TemplateBinding ComputedAppointmentNavigationButtonsVisibility}">
+                            <telerikPrimitives:LayoutTransformControl.LayoutTransform>
+                                <RotateTransform Angle="-90" />
+                            </telerikPrimitives:LayoutTransformControl.LayoutTransform>
+                            <telerik:RadButton HorizontalContentAlignment="Stretch"
+                                               Command="telerikScheduleView:RadScheduleViewCommands.GoToNextAppointment"
+                                               FocusVisualStyle="{x:Null}">
+                                <Grid MinWidth="160"
+                                      Background="Transparent">
+                                    <TextBlock Margin="0,0,20,0"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               telerik:LocalizationManager.ResourceKey="NextAppointment" />
+                                    <TextBlock Margin="4,0"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               FontSize="8"
+                                               Text="▼" />
+                                </Grid>
+                            </telerik:RadButton>
+                        </telerikPrimitives:LayoutTransformControl>
+                        <telerikPrimitives:LayoutTransformControl Grid.Row="1"
+                                                                  Grid.Column="1"
+                                                                  HorizontalAlignment="Left"
+                                                                  VerticalAlignment="Center"
+                                                                  Canvas.ZIndex="1"
+                                                                  FocusVisualStyle="{x:Null}"
+                                                                  Visibility="{TemplateBinding ComputedAppointmentNavigationButtonsVisibility}">
+                            <telerikPrimitives:LayoutTransformControl.LayoutTransform>
+                                <RotateTransform Angle="-90" />
+                            </telerikPrimitives:LayoutTransformControl.LayoutTransform>
+                            <telerik:RadButton Command="telerikScheduleView:RadScheduleViewCommands.GoToPreviousAppointment"
+                                               FocusVisualStyle="{x:Null}">
+                                <Grid MinWidth="160"
+                                      Background="Transparent">
+                                    <TextBlock Margin="0,0,20,0"
+                                               HorizontalAlignment="Center"
+                                               VerticalAlignment="Center"
+                                               telerik:LocalizationManager.ResourceKey="PreviousAppointment" />
+                                    <TextBlock Margin="4,0"
+                                               HorizontalAlignment="Right"
+                                               VerticalAlignment="Center"
+                                               FontSize="8"
+                                               Text="▲" />
+                                </Grid>
+                            </telerik:RadButton>
+                        </telerikPrimitives:LayoutTransformControl>
+                        <Border Grid.RowSpan="3"
+                                Grid.ColumnSpan="3"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                Canvas.ZIndex="1" />
+                        <telerikScheduleView:TimeRulerLinesPanel x:Name="PART_TimeRulerLinesPanel"
+                                                                 Grid.Row="1"
+                                                                 Grid.Column="1"
+                                                                 Background="Transparent"
+                                                                 ClipToBounds="True"
+                                                                 Orientation="{TemplateBinding EffectiveOrientation}"
+                                                                 PixelLength="{TemplateBinding EffectivePixelLength}">
+                            <telerikScheduleView:TimeRulerLinesPanel.InputBindings>
+                                <KeyBinding Key="O"
+                                            Command="telerikScheduleView:RadScheduleViewCommands.CreateAppointment"
+                                            Modifiers="Ctrl" />
+                                <MouseBinding Command="telerikScheduleView:RadScheduleViewCommands.CreateAppointment"
+                                              MouseAction="LeftDoubleClick" />
+                            </telerikScheduleView:TimeRulerLinesPanel.InputBindings>
+                        </telerikScheduleView:TimeRulerLinesPanel>
+                        <telerikScheduleView:TimeIndicatorsPanel x:Name="PART_AppointmentsIndicatorsPanel"
+                                                                 Grid.Row="1"
+                                                                 Grid.Column="1"
+                                                                 ClipToBounds="True"
+                                                                 Orientation="{TemplateBinding EffectiveOrientation}" />
+                        <telerikScheduleView:HighlightPanel x:Name="PART_HighlightPanel"
+                                                            Grid.Row="1"
+                                                            Grid.Column="1"
+                                                            HorizontalAlignment="Left"
+                                                            VerticalAlignment="Stretch"
+                                                            Panel.ZIndex="1"
+                                                            Background="Transparent"
+                                                            ClipToBounds="True"
+                                                            IsHitTestVisible="False"
+                                                            Orientation="{TemplateBinding EffectiveOrientation}"
+                                                            PixelLength="{TemplateBinding EffectivePixelLength}" />
+                        <Border x:Name="AppointmentsBorder"
+                                Grid.Row="1"
+                                Grid.Column="1"
+                                Panel.ZIndex="2"
+                                BorderBrush="{telerik1:Office2019Resource ResourceKey=MainBorderBrush}"
+                                BorderThickness="1" />
+                        <Border x:Name="VerticalHeadersBorder"
+                                Grid.Row="1"
+                                Grid.Column="0"
+                                Panel.ZIndex="3"
+                                BorderBrush="{telerik1:Office2019Resource ResourceKey=MainBorderBrush}"
+                                BorderThickness="0,1" />
+                        <Border x:Name="HorizontalHeadersBorder"
+                                Grid.Row="0"
+                                Grid.Column="1"
+                                Panel.ZIndex="3"
+                                BorderBrush="{telerik1:Office2019Resource ResourceKey=MainBorderBrush}"
+                                BorderThickness="1,0" />
+                        <ScrollBar x:Name="PART_HorizontalScrollBar"
+                                   Grid.Row="2"
+                                   Grid.Column="1"
+                                   Margin="0,-1,0,0"
+                                   LargeChange="{TemplateBinding HorizontalLargeChange}"
+                                   Maximum="{TemplateBinding ExtentWidth}"
+                                   Orientation="Horizontal"
+                                   SmallChange="{TemplateBinding HorizontalSmallChange}"
+                                   ViewportSize="{TemplateBinding ViewportWidth}"
+                                   Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" />
+                        <ScrollBar x:Name="PART_VerticalScrollBar"
+                                   Grid.Row="1"
+                                   Grid.Column="2"
+                                   Margin="-1,0,0,0"
+                                   BorderBrush="{TemplateBinding BorderBrush}"
+                                   BorderThickness="0"
+                                   LargeChange="{TemplateBinding VerticalLargeChange}"
+                                   Maximum="{TemplateBinding ExtentHeight}"
+                                   Orientation="Vertical"
+                                   SmallChange="{TemplateBinding VerticalSmallChange}"
+                                   ViewportSize="{TemplateBinding ViewportHeight}"
+                                   Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
+                        <Grid x:Name="WarningsPanel"
+                              Grid.Row="0"
+                              Grid.RowSpan="3"
+                              Grid.ColumnSpan="3"
+                              Panel.ZIndex="2">
+                            <Grid x:Name="ViewDefinitionWarning"
+                                  Background="{telerik1:Office2019Resource ResourceKey=AlternativeBackgroundBrush}"
+                                  Visibility="{Binding ActiveViewDefinition,
+                                                       Mode=TwoWay,
+                                                       RelativeSource={RelativeSource TemplatedParent},
+                                                       Converter={StaticResource InvertedNullToVisibilityConverter}}">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           telerik:LocalizationManager.ResourceKey="ViewDefinitionWarning"
+                                           FontSize="24"
+                                           Foreground="{telerik1:Office2019Resource ResourceKey=MainForegroundBrush}" />
+                            </Grid>
+                            <Grid x:Name="AppointmentSourceWarning"
+                                  Background="{telerik1:Office2019Resource ResourceKey=AlternativeBackgroundBrush}"
+                                  Visibility="{Binding AppointmentsSource,
+                                                       Mode=TwoWay,
+                                                       RelativeSource={RelativeSource TemplatedParent},
+                                                       Converter={StaticResource InvertedNullToVisibilityConverter}}">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           telerik:LocalizationManager.ResourceKey="AppointmentSourceWarning"
+                                           FontSize="24"
+                                           Foreground="{telerik1:Office2019Resource ResourceKey=MainForegroundBrush}" />
+                            </Grid>
+                            <Border x:Name="NoAppointmentsWarning"
+                                    Background="{telerik1:Office2019Resource ResourceKey=AlternativeBackgroundBrush}"
+                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                    BorderThickness="1"
+                                    Visibility="{Binding IsVisibleRangeEmpty,
+                                                         Mode=TwoWay,
+                                                         RelativeSource={RelativeSource TemplatedParent},
+                                                         Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <TextBlock HorizontalAlignment="Center"
+                                           VerticalAlignment="Center"
+                                           telerik:LocalizationManager.ResourceKey="NoAppointments"
+                                           FontSize="24" />
+                            </Border>
+                        </Grid>
+                    </Grid>
+                </telerik:RadTransitionControl>
+            </Grid>
+        </Border>
+        <ControlTemplate.Triggers>
+            <Trigger Property="EffectiveOrientation" Value="Horizontal">
+                <Setter TargetName="HeadersHeight" Property="Visibility" Value="Collapsed" />
+            </Trigger>
+            <Trigger Property="EffectiveOrientation" Value="Vertical">
+                <Setter TargetName="HeadersWidth" Property="Visibility" Value="Collapsed" />
+                <Setter TargetName="PART_ItemsHost" Property="Grid.Column" Value="1" />
+                <Setter TargetName="PART_ItemsHost" Property="Grid.ColumnSpan" Value="1" />
+                <Setter TargetName="PART_ItemsHost" Property="Grid.Row" Value="0" />
+                <Setter TargetName="PART_ItemsHost" Property="Grid.RowSpan" Value="2" />
+                <Setter TargetName="PART_TimeRulerPanel" Property="Grid.Column" Value="0" />
+                <Setter TargetName="PART_TimeRulerPanel" Property="Grid.Row" Value="1" />
+                <Setter TargetName="PART_TimeRulerPanel" Property="Offset" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}}" />
+                <Setter TargetName="PART_TimeRulerIndicatorsPanel" Property="Grid.Column" Value="0" />
+                <Setter TargetName="PART_TimeRulerIndicatorsPanel" Property="Grid.Row" Value="1" />
+            </Trigger>
+        </ControlTemplate.Triggers>
+    </ControlTemplate>
+</ResourceDictionary>
