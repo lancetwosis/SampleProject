@@ -29,6 +29,16 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
     <UserControl.Resources>
+        <conv:RelayValueConverterGroup x:Key="NullToCollapsedConverter">
+            <conv:StringIsNullOrEmptyToBooleanConverter />
+            <conv:BooleanToInvertBooleanConverter />
+            <BooleanToVisibilityConverter />
+        </conv:RelayValueConverterGroup>
+        <conv:RelayValueConverterGroup x:Key="NullToVisibleConverter">
+            <conv:StringIsNullOrEmptyToBooleanConverter />
+            <BooleanToVisibilityConverter />
+        </conv:RelayValueConverterGroup>
+
         <DataTemplate x:Key="PieChartToolTipTemplate">
             <Border Background="White"
                     BorderBrush="Gray"
@@ -46,6 +56,33 @@
                     </TextBlock>
                 </StackPanel>
             </Border>
+        </DataTemplate>
+        <DataTemplate x:Key="PieLegendItemTemplate">
+            <!--  Presenter is PointViewModel  -->
+            <StackPanel Orientation="Horizontal"
+                        ToolTip="{Binding Title}">
+                <CheckBox Command="{Binding Presenter.SwitchVisibilityCommand}"
+                          IsChecked="True" />
+                <Path Width="12"
+                      Height="12"
+                      Margin="3,0,0,0"
+                      Fill="{Binding MarkerFill}">
+                    <Path.Data>
+                        <Binding Path="ActualMarkerGeometry"
+                                 RelativeSource="{RelativeSource AncestorType=telerik:LegendItemControl}" />
+                    </Path.Data>
+                </Path>
+                <TextBlock Margin="2,0,5,0"
+                           Text="{Binding Presenter.XLabel}"
+                           Visibility="{Binding Presenter.Url,
+                                                Converter={StaticResource NullToVisibleConverter}}" />
+                <telerik:RadHyperlinkButton Margin="2,0,5,0"
+                                            Content="{Binding Presenter.XLabel}"
+                                            NavigateUri="{Binding Presenter.Url}"
+                                            Style="{StaticResource myRadHyperlinkButtonStyle}"
+                                            Visibility="{Binding Presenter.Url,
+                                                                 Converter={StaticResource NullToCollapsedConverter}}" />
+            </StackPanel>
         </DataTemplate>
     </UserControl.Resources>
     <Grid>
@@ -70,7 +107,7 @@
                         </Style>
                     </telerik:PieSeries.DefaultSliceStyle>
                     <telerik:PieSeries.LegendSettings>
-                        <telerik:DataPointLegendSettings TitleBinding="XLabel" />
+                        <telerik:DataPointLegendSettings />
                     </telerik:PieSeries.LegendSettings>
                     <telerik:PieSeries.LabelConnectorsSettings>
                         <telerik:ChartSeriesLabelConnectorsSettings />
@@ -144,7 +181,13 @@
                            Background="White"
                            BorderBrush="LightGray"
                            BorderThickness="1"
-                           Items="{Binding LegendItems,
-                                           ElementName=pieChart}" />
+                           ItemTemplate="{StaticResource PieLegendItemTemplate}"
+                           Items="{Binding LegendItems}">
+            <telerik:RadLegend.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <telerik:RadWrapPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </telerik:RadLegend.ItemsPanel>
+        </telerik:RadLegend>
     </Grid>
 </UserControl>

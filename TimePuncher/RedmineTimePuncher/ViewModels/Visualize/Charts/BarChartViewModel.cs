@@ -58,8 +58,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             var allPoints = parent.Tickets.SelectMany(t => t.GetAllTimeEntries()).ToList();
             var allXAxises = allPoints.Select(a => a.GetFactor(XAxisType.SelectedType.Value)).Distinct().OrderBy(f => f.Value).ToList();
 
-            ShowTotal.TotalHours = allPoints.Sum(p => p.TotalHours);
-
             if (CombineType.SelectedType.Value != FactorType.None)
             {
                 var tmp = new List<SeriesViewModel>();
@@ -93,6 +91,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 }
                 Serieses.Add(series);
             }
+
+            ShowTotal.TotalHours = Serieses.SelectMany(s => s.Points.Select(p => p.IsVisble)).CombineLatest().Select(_ =>
+            {
+                return Serieses.Select(s => s.Points.Sum(p => p.Hours)).Sum();
+            }).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
         }
     }
 }

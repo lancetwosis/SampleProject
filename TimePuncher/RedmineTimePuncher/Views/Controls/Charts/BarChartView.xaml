@@ -112,6 +112,7 @@
             </Setter>
         </Style>
         <DataTemplate x:Key="BarLegendItemTemplate">
+            <!--  Presenter.DataContext is SeriesViewModel  -->
             <StackPanel Orientation="Horizontal"
                         ToolTip="{Binding Presenter.DataContext.TootTip}">
                 <CheckBox Command="{Binding Presenter.DataContext.SwitchVisibilityCommand}"

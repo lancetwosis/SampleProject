@@ -21,6 +21,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using Telerik.Windows.Controls.Legend;
 
 namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 {
@@ -35,6 +36,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         public SeriesViewModel SecondSeries { get; set; }
 
         public TotalLabelViewModel ShowTotal { get; set; }
+
+        public LegendItemCollection LegendItems { get; set; }
 
         private ResultViewModel parent { get; set; }
 
@@ -64,8 +67,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             var allPoints = parent.Tickets.SelectMany(t => t.GetAllTimeEntries()).ToList();
 
-            ShowTotal.TotalHours = allPoints.Sum(p => p.TotalHours);
-
             var series = new SeriesViewModel(ViewType.PieChart);
             var points = allPoints.GroupBy(a => a.GetFactor(CombineType.SelectedType.Value))
                 .Select(a => new PointViewModel(series, a.Key, a.ToList()))
@@ -84,13 +85,18 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 points.OrderByDescending(p => p.Hours).ToList().ForEach(p => series.Points.Add(p));
             }
 
+            LegendItems = new LegendItemCollection();
+            points.OrderBy(p => p.Factor.Value).Select(p => p.ToLegendItem()).ToList().ForEach(i => LegendItems.Add(i));
+
             var total =  series.Points.Select(a => a.IsVisble).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
-            foreach (var p in series.Points)
+            foreach (var p in series.Points.Indexed())
             {
-                p.SetDisplayValue(total);
+                p.v.SetDisplayValue(total);
+                p.v.Index = p.i;
             }
 
             Series = series;
+            ShowTotal.TotalHours = series.Points.Select(p => p.IsVisble).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
 
             if (SecondCombineType.SelectedType.Value != FactorType.None)
             {
@@ -115,13 +121,45 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 }
 
                 var secondTotal = secondSeries.Points.Select(a => a.IsVisble).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
-                //var secondTotal = secondSeries.Points.Sum(p => p.Hours);
-                foreach (var p in secondSeries.Points)
+                foreach (var p in secondSeries.Points.Indexed())
                 {
-                    p.SetDisplayValue(secondTotal);
+                    p.v.SetDisplayValue(secondTotal);
+                    p.v.Index = p.i;
                 }
 
                 SecondSeries = secondSeries;
+
+                Series.Points.CollectionChangedAsObservable().Subscribe(e =>
+                {
+                    if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+                    {
+                        foreach (var point in e.OldItems.OfType<PointViewModel>())
+                        {
+                            var removed = SecondSeries.Points.Where(p => p.ParentFactor.Equals(point.Factor)).ToList();
+                            foreach (var r in removed)
+                            {
+                                SecondSeries.Points.Remove(r);
+                                r.IsVisble.Value = false;
+                            }
+                        }
+                    }
+                    else if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add)
+                    {
+                        foreach (var point in e.NewItems.OfType<PointViewModel>())
+                        {
+                            var added = secondPoints.Where(p => p.ParentFactor.Equals(point.Factor)).ToList();
+                            foreach (var a in added)
+                            {
+                                a.IsVisble.Value = true;
+                                var upper = SecondSeries.Points.Indexed().FirstOrDefault(p => a.Index < p.v.Index);
+                                if (upper.v != null)
+                                    SecondSeries.Points.Insert(upper.i, a);
+                                else
+                                    SecondSeries.Points.Add(a);
+                            }
+                        }
+                    }
+                }).AddTo(myDisposables);
             }
         }
     }

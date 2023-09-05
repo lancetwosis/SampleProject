@@ -14,7 +14,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 {
     public class TotalLabelViewModel : FactorTypeViewModel
     {
-        public double TotalHours { get; set; }
+        public ReadOnlyReactivePropertySlim<double> TotalHours { get; set; }
         public ReadOnlyReactivePropertySlim<Visibility> IsVisible { get;  set; }
         public ReadOnlyReactivePropertySlim<HorizontalAlignment> HorizonAlign { get; set; }
         public ReadOnlyReactivePropertySlim<VerticalAlignment> VerticalAlign { get; set; }

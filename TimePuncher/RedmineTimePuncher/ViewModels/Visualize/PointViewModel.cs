@@ -18,6 +18,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using Telerik.Windows.Controls.Legend;
 
 namespace RedmineTimePuncher.ViewModels.Visualize
 {
@@ -29,8 +30,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public Brush Color { get; set; }
         public ToolTipViewModel ToolTip { get; set; }
         public DateTime XDateTime { get; set; }
+        public string Url { get; set; }
+        public int Index { get; set; }
 
-        public ReactivePropertySlim<bool> IsVisble => series.IsVisble;
+        public ReactivePropertySlim<bool> IsVisble { get; set; }
+        public ReactiveCommand SwitchVisibilityCommand { get; set; }
 
         public FactorModel Factor { get; set; }
         public FactorModel ParentFactor { get; set; }
@@ -46,12 +50,39 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             Hours = models != null ? models.Sum(m => m.TotalHours) : 0;
 
             if (series.Type == ViewType.BarChart)
+            {
                 Color = series.Color;
+                IsVisble = series.IsVisble;
+            }
             else if (series.Type == ViewType.PieChart)
+            {
                 Color = factor.GetColor();
+                IsVisble = new ReactivePropertySlim<bool>(true);
+            }
 
             if (factor.Type == FactorType.Date)
                 XDateTime = (DateTime) factor.Value;
+            if (factor.Type == FactorType.Issue)
+                Url = MyIssue.GetUrl((factor.RawValue as Issue).Id);
+
+            SwitchVisibilityCommand = new ReactiveCommand().WithSubscribe(() =>
+            {
+                var i = this.series.Points.IndexOf(this);
+                if (i >= 0)
+                {
+                    this.series.Points.Remove(this);
+                    IsVisble.Value = false;
+                }
+                else
+                {
+                    var upper = this.series.Points.Indexed().FirstOrDefault(p => this.Index < p.v.Index);
+                    if (upper.v != null)
+                        this.series.Points.Insert(upper.i, this);
+                    else
+                        this.series.Points.Add(this);
+                    IsVisble.Value = true;
+                }
+            }).AddTo(disposables);
         }
 
         public PointViewModel(SeriesViewModel series, FactorModel factor, FactorModel parentFactor, List<PersonHourModel> models = null)
@@ -75,14 +106,27 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             else if (series.Type == ViewType.PieChart)
             {
                 var label = Factor.Type == FactorType.Issue ? (Factor.RawValue as Issue).GetFullLabel() : Factor.Name;
-                var per = Hours / total.Value * 100;
                 ToolTip = new ToolTipViewModel(label, Hours, total, true);
-                DisplayValue = string.Join(Environment.NewLine, new[]
+                ToolTip.Percentage.Subscribe(per =>
                 {
-                    $"{Factor.Name}",
-                    $"  {Hours} h ({per:F1} %)",
+                    DisplayValue = string.Join(Environment.NewLine, new[]
+                    {
+                        $"{Factor.Name}",
+                        $"  {Hours} h ({per} %)",
+                    });
                 });
             }
+        }
+
+        public LegendItem ToLegendItem()
+        {
+            var item = new LegendItem() { MarkerFill = Color, Title = XLabel, Presenter = this };
+            if (Factor.Type == FactorType.Issue)
+            {
+                item.Title = (Factor.RawValue as Issue).GetFullLabel();
+            }
+
+            return item;
         }
     }
 
@@ -112,7 +156,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
             if (needsPercentage)
             {
-                Percentage = totalHours.Select(a => $"{hours / a * 100:F2}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
+                Percentage = totalHours.Select(a => $"{hours / a * 100:F1}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
             }
         }
 

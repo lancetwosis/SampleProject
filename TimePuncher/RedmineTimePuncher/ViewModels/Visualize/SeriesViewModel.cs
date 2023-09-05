@@ -48,6 +48,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 TootTip = (Factor.RawValue as Issue).GetFullLabel();
                 Url = MyIssue.GetUrl((Factor.RawValue as Issue).Id);
             }
+            else
+            {
+                TootTip = Title;
+            }
 
             IsVisble = new ReactivePropertySlim<bool>(true).AddTo(disposables);
             SwitchVisibilityCommand = new ReactiveCommand<BarSeries>().WithSubscribe(s =>

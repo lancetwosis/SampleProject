@@ -39,7 +39,7 @@
                        VerticalAlignment="Bottom"
                        FontSize="18"
                        FontWeight="Bold"
-                       Text="{Binding TotalHours}" />
+                       Text="{Binding TotalHours.Value}" />
             <TextBlock VerticalAlignment="Bottom"
                        FontSize="16"
                        Text=" h" />
