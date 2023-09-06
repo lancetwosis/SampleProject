@@ -875,5 +875,11 @@
   <ItemGroup>
     <Resource Include="Images\icons8-database_down-48.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\open_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\saveas_icon.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

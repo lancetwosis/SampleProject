@@ -47,6 +47,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             Serieses = new ObservableCollection<SeriesViewModel>();
 
             ShowTotal = new TotalLabelViewModel(IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarShowTotal)).AddTo(disposables);
+
+            setupIsEdited(XAxisType, CombineType, ShowTotal);
         }
 
         public override void SetupSeries()
@@ -75,7 +77,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
                 foreach (var group in Serieses.SelectMany(s => s.Points).GroupBy(p => p.XLabel))
                 {
-                    var total = group.Select(p => p.IsVisble).CombineLatest().Select(_ => group.Where(p => p.IsVisble.Value).Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
+                    var total = group.Select(p => p.IsVisible).CombineLatest().Select(_ => group.Where(p => p.IsVisible.Value).Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
                     group.ToList().ForEach(p => p.SetDisplayValue(total));
                 }
             }
@@ -92,10 +94,26 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 Serieses.Add(series);
             }
 
-            ShowTotal.TotalHours = Serieses.SelectMany(s => s.Points.Select(p => p.IsVisble)).CombineLatest().Select(_ =>
+            ShowTotal.TotalHours = Serieses.SelectMany(s => s.Points.Select(p => p.IsVisible)).CombineLatest().Select(_ =>
             {
                 return Serieses.Select(s => s.Points.Sum(p => p.Hours)).Sum();
             }).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
+
+            if (parent.Model.ChartSettings.BarVisibleSeriesNames.Any())
+            {
+                foreach (var s in Serieses)
+                {
+                    if (parent.Model.ChartSettings.BarVisibleSeriesNames.Contains(s.Title))
+                        s.IsVisible.Value = true;
+                    else
+                        s.IsVisible.Value = false;
+                }
+            }
+
+            Serieses.Select(a => a.IsVisible).CombineLatest().Subscribe(_ =>
+            {
+                parent.Model.ChartSettings.BarVisibleSeriesNames = Serieses.Where(a => a.IsVisible.Value).Select(a => a.Title).ToList();
+            }).AddTo(myDisposables);
         }
     }
 }

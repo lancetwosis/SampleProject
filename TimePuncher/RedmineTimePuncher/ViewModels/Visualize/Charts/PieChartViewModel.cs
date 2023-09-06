@@ -59,6 +59,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             SortType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
 
             ShowTotal = new TotalLabelViewModel(IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieShowTotal)).AddTo(disposables);
+
+            setupIsEdited(CombineType, SecondCombineType, SortType, ShowTotal);
         }
 
         public override void SetupSeries()
@@ -88,7 +90,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             LegendItems = new LegendItemCollection();
             points.OrderBy(p => p.Factor.Value).Select(p => p.ToLegendItem()).ToList().ForEach(i => LegendItems.Add(i));
 
-            var total =  series.Points.Select(a => a.IsVisble).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
+            var total =  series.Points.Select(a => a.IsVisible).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
             foreach (var p in series.Points.Indexed())
             {
                 p.v.SetDisplayValue(total);
@@ -96,7 +98,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             }
 
             Series = series;
-            ShowTotal.TotalHours = series.Points.Select(p => p.IsVisble).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
+            ShowTotal.TotalHours = series.Points.Select(p => p.IsVisible).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
 
             if (SecondCombineType.SelectedType.Value != FactorType.None)
             {
@@ -120,7 +122,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                         .SelectMany(g => g.OrderByDescending(a => a.Hours)).ToList().ForEach(p => secondSeries.Points.Add(p));
                 }
 
-                var secondTotal = secondSeries.Points.Select(a => a.IsVisble).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
+                var secondTotal = secondSeries.Points.Select(a => a.IsVisible).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
                 foreach (var p in secondSeries.Points.Indexed())
                 {
                     p.v.SetDisplayValue(secondTotal);
@@ -138,8 +140,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                             var removed = SecondSeries.Points.Where(p => p.ParentFactor.Equals(point.Factor)).ToList();
                             foreach (var r in removed)
                             {
-                                SecondSeries.Points.Remove(r);
-                                r.IsVisble.Value = false;
+                                r.IsVisible.Value = false;
                             }
                         }
                     }
@@ -150,17 +151,29 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                             var added = secondPoints.Where(p => p.ParentFactor.Equals(point.Factor)).ToList();
                             foreach (var a in added)
                             {
-                                a.IsVisble.Value = true;
-                                var upper = SecondSeries.Points.Indexed().FirstOrDefault(p => a.Index < p.v.Index);
-                                if (upper.v != null)
-                                    SecondSeries.Points.Insert(upper.i, a);
-                                else
-                                    SecondSeries.Points.Add(a);
+                                a.IsVisible.Value = true;
                             }
                         }
                     }
                 }).AddTo(myDisposables);
             }
+
+            if (parent.Model.ChartSettings.PieVisiblePointNames.Any())
+            {
+                foreach (var p in Series.Points.ToList())
+                {
+                    if (parent.Model.ChartSettings.PieVisiblePointNames.Contains(p.Factor.Name))
+                        p.IsVisible.Value = true;
+                    else
+                        p.IsVisible.Value = false;
+                }
+            }
+
+            // PointViewModel の IsVisible.Subscribe により Series.Points には表示されているもののみが含まれる
+            Series.Points.CollectionChangedAsObservable().StartWithDefault().Subscribe(_ =>
+            {
+                parent.Model.ChartSettings.PieVisiblePointNames = Series.Points.Select(a => a.Factor.Name).ToList();
+            }).AddTo(myDisposables);
         }
     }
 }

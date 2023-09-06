@@ -169,12 +169,17 @@ namespace RedmineTimePuncher.ViewModels
                 }
             });
 
-            Title = Mode.CombineLatest(Input.CurrentDate, TableEditor.ViewModel.TitlePrefix, (m, c, p) =>
+            Title = Mode.CombineLatest(
+                Input.CurrentDate,
+                TableEditor.ViewModel.TitlePrefix,
+                Visualize.TitlePrefix, (m, c, p, p2) =>
             {
                 if (m == ApplicationMode.TimePuncher)
                     return $"{c.ToString("yyyy/MM/dd (ddd)")}  -  {ApplicationInfo.Title}";
                 else if (m == ApplicationMode.TableEditor)
                     return $"{p}  -  {ApplicationInfo.Title}";
+                else if (m == ApplicationMode.Visualizer)
+                    return string.IsNullOrEmpty(p2) ? $"{ApplicationInfo.Title}" : $"{p2}  -  {ApplicationInfo.Title}";
                 else
                     return $"{ApplicationInfo.Title}";
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);

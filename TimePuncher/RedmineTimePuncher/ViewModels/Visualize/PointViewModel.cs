@@ -33,8 +33,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public string Url { get; set; }
         public int Index { get; set; }
 
-        public ReactivePropertySlim<bool> IsVisble { get; set; }
-        public ReactiveCommand SwitchVisibilityCommand { get; set; }
+        public ReactivePropertySlim<bool> IsVisible { get; set; }
 
         public FactorModel Factor { get; set; }
         public FactorModel ParentFactor { get; set; }
@@ -52,12 +51,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             if (series.Type == ViewType.BarChart)
             {
                 Color = series.Color;
-                IsVisble = series.IsVisble;
+                IsVisible = series.IsVisible;
             }
             else if (series.Type == ViewType.PieChart)
             {
                 Color = factor.GetColor();
-                IsVisble = new ReactivePropertySlim<bool>(true);
+                IsVisible = new ReactivePropertySlim<bool>(true);
             }
 
             if (factor.Type == FactorType.Date)
@@ -65,13 +64,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             if (factor.Type == FactorType.Issue)
                 Url = MyIssue.GetUrl((factor.RawValue as Issue).Id);
 
-            SwitchVisibilityCommand = new ReactiveCommand().WithSubscribe(() =>
+            IsVisible.Skip(1).Subscribe(_ =>
             {
+                if (series.Type != ViewType.PieChart)
+                    return;
+
                 var i = this.series.Points.IndexOf(this);
                 if (i >= 0)
                 {
                     this.series.Points.Remove(this);
-                    IsVisble.Value = false;
                 }
                 else
                 {
@@ -80,7 +81,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                         this.series.Points.Insert(upper.i, this);
                     else
                         this.series.Points.Add(this);
-                    IsVisble.Value = true;
                 }
             }).AddTo(disposables);
         }

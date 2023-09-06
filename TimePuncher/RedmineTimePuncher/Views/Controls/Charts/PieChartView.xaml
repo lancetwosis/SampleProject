@@ -61,8 +61,7 @@
             <!--  Presenter is PointViewModel  -->
             <StackPanel Orientation="Horizontal"
                         ToolTip="{Binding Title}">
-                <CheckBox Command="{Binding Presenter.SwitchVisibilityCommand}"
-                          IsChecked="True" />
+                <CheckBox IsChecked="{Binding Presenter.IsVisible.Value, Mode=TwoWay}" />
                 <Path Width="12"
                       Height="12"
                       Margin="3,0,0,0"

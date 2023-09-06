@@ -20,7 +20,10 @@ namespace RedmineTimePuncher.Models.Visualize
     public class ResultModel : LibRedminePower.Models.Bases.ModelBase
     {
         public bool HasValue { get; set; }
+        public bool IsEdited { get; set; }
         public DateTime CreateAt { get; set; }
+        public string FileName { get; set; }
+
         public TicketFiltersModel Filters { get; set; } = new TicketFiltersModel();
         public ChartSettingsModel ChartSettings { get; set; } = new ChartSettingsModel();
 

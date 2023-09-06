@@ -83,6 +83,8 @@
                 </Setter.Value>
             </Setter>
 
+            <Setter Property="Visibility" Value="{Binding IsVisible.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
             <Setter Property="LegendSettings">
                 <Setter.Value>
                     <telerik:SeriesLegendSettings />
@@ -115,9 +117,7 @@
             <!--  Presenter.DataContext is SeriesViewModel  -->
             <StackPanel Orientation="Horizontal"
                         ToolTip="{Binding Presenter.DataContext.TootTip}">
-                <CheckBox Command="{Binding Presenter.DataContext.SwitchVisibilityCommand}"
-                          CommandParameter="{Binding Presenter}"
-                          IsChecked="True" />
+                <CheckBox IsChecked="{Binding Presenter.DataContext.IsVisible.Value, Mode=TwoWay}" />
                 <Path Width="12"
                       Height="12"
                       Margin="3,0,0,0"

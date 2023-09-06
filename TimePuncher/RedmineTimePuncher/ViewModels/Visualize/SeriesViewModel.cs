@@ -31,8 +31,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
         public ObservableCollection<PointViewModel> Points { get; set; }
 
-        public ReactivePropertySlim<bool> IsVisble { get; set; }
-        public ReactiveCommand<BarSeries> SwitchVisibilityCommand { get; set; }
+        public ReactivePropertySlim<bool> IsVisible { get; set; }
 
         public FactorModel Factor { get; set; }
 
@@ -53,20 +52,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 TootTip = Title;
             }
 
-            IsVisble = new ReactivePropertySlim<bool>(true).AddTo(disposables);
-            SwitchVisibilityCommand = new ReactiveCommand<BarSeries>().WithSubscribe(s =>
-            {
-                if (s.Visibility == System.Windows.Visibility.Visible)
-                {
-                    s.Visibility = System.Windows.Visibility.Collapsed;
-                    IsVisble.Value = false;
-                }
-                else
-                {
-                    s.Visibility = System.Windows.Visibility.Visible;
-                    IsVisble.Value = true;
-                }
-            }).AddTo(disposables);
+            IsVisible = new ReactivePropertySlim<bool>(true).AddTo(disposables);
         }
 
         public SeriesViewModel(ViewType type) : this(type, "工数", null)

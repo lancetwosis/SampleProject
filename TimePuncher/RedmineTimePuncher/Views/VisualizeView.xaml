@@ -61,6 +61,10 @@
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.GetTimeEntriesCommand}" />
                         </telerik:RadRibbonGroup>
                         <telerik:RadRibbonGroup Header="検索結果">
+                            <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.OpenResultCommand}" />
+                            <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.SaveResultCommand}" />
+                            <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.SaveAsResultCommand}" />
+                            <telerik:Separator />
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.UpdateTimeEntriesCommand}" />
                         </telerik:RadRibbonGroup>
                     </telerik:RadRibbonTab>

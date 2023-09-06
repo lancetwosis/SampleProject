@@ -18,6 +18,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
         public ReactivePropertySlim<FactorType> SelectedType { get; set; }
         public ObservableCollection<FactorType> Types { get; set; }
+        public ReadOnlyReactivePropertySlim<bool> IsEdited { get; set; }
 
         public ReadOnlyReactivePropertySlim<bool> IsContinuous { get; set; }
 
@@ -28,6 +29,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
             Types = new ObservableCollection<FactorType>(types);
             SelectedType = selectedType.AddTo(disposables);
+            var org = SelectedType.Value;
+            IsEdited = SelectedType.Select(a => a != org).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             IsContinuous = SelectedType.Select(t => t == FactorType.Date).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }

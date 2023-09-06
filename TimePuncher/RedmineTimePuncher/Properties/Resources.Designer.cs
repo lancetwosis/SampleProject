@@ -1112,6 +1112,16 @@ namespace RedmineTimePuncher.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        public static System.Drawing.Bitmap open_icon {
+            get {
+                object obj = ResourceManager.GetObject("open_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         public static System.Drawing.Bitmap outlook16 {
             get {
                 object obj = ResourceManager.GetObject("outlook16", resourceCulture);
@@ -2342,6 +2352,16 @@ namespace RedmineTimePuncher.Properties {
         public static System.Drawing.Bitmap save_w {
             get {
                 object obj = ResourceManager.GetObject("save_w", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap saveas_icon {
+            get {
+                object obj = ResourceManager.GetObject("saveas_icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

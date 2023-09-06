@@ -28,6 +28,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
     {
 
         public ReadOnlyReactivePropertySlim<bool> IsEnabled { get; set; }
+        public ReadOnlyReactivePropertySlim<bool> IsEdited { get; set; }
 
         public ChartViewModelBase(ViewType type, ResultViewModel parent)
         {
@@ -39,6 +40,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         {
             myDisposables?.Dispose();
             myDisposables = new CompositeDisposable().AddTo(disposables);
+        }
+
+        protected void setupIsEdited(params FactorTypeViewModel[] factors)
+        {
+            IsEdited = factors.Select(f => f.IsEdited).CombineLatest().Select(l => l.Any(a => a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
     }
 }

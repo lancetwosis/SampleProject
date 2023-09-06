@@ -1516,4 +1516,10 @@ The order of the lines is the order in which the filing conditions are applied.<
   <data name="icons8_database_down_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\icons8-database_down-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="open_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\open_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="saveas_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\saveas_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -1,5 +1,6 @@
 ﻿using LibRedminePower.Extentions;
 using LibRedminePower.ViewModels;
+using Microsoft.Win32;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Helpers;
@@ -32,9 +33,14 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
         public TicketFiltersViewModel Filters { get; set; }
         public ResultViewModel Result { get; set; }
+        public ReadOnlyReactivePropertySlim<string> TitlePrefix { get; set; }
 
         public AsyncCommandBase GetTimeEntriesCommand { get; set; }
+
         public AsyncCommandBase UpdateTimeEntriesCommand { get; set; }
+        public AsyncCommandBase OpenResultCommand { get; set; }
+        public CommandBase SaveResultCommand { get; set; }
+        public CommandBase SaveAsResultCommand { get; set; }
 
         public MainWindowViewModel Parent { get; set; }
 
@@ -48,6 +54,19 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             Filters = new TicketFiltersViewModel(this).AddTo(disposables);
 
             Result = new ResultViewModel(this).AddTo(disposables);
+            TitlePrefix = Result.ObserveProperty(a => a.Model.FileName).CombineLatest(Result.IsEdited, (n, i) => (name:n, isEdited:i)).Select(p =>
+            {
+                if (!Result.Model.HasValue)
+                    return null;
+
+                if (string.IsNullOrEmpty(p.name))
+                    return "(新規)";
+
+                if (p.isEdited)
+                    return $"{p.name} (更新)";
+                else
+                    return p.name;
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             IsSelected.Where(a => a).Take(1).Subscribe(async _ =>
             {
@@ -58,7 +77,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     {
                         App.Current.Dispatcher.Invoke(() =>
                         {
-                            Result.LoadPreviousResult();
+                            Result.Initialize();
                         });
                     });
                 }
@@ -102,6 +121,42 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                    }
                }).AddTo(disposables);
 
+            OpenResultCommand = new AsyncCommandBase(
+                "開く", Properties.Resources.open_icon,
+                new[] {
+                    IsBusy.Select(a => !a),
+                }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
+                async () =>
+                {
+                    using (IsBusy.ProcessStart())
+                    using (parent.IsBusy.ProcessStart(""))
+                    {
+                        await Task.Run(() =>
+                        {
+                            App.Current.Dispatcher.Invoke(() =>
+                            {
+                                Result.Open();
+                            });
+                        });
+                    }
+                }).AddTo(disposables);
+
+            SaveResultCommand = new CommandBase(
+                "保存", Properties.Resources.save,
+                new[] {
+                    parent.IsBusy.Select(a => !a),
+                    this.ObserveProperty(a => a.Result.Model.HasValue),
+                    Result.IsEdited,
+                }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
+                () => Result.SaveToFile()).AddTo(disposables);
+
+            SaveAsResultCommand = new CommandBase(
+                "名前を付けて保存", Properties.Resources.saveas_icon,
+                new[] {
+                    parent.IsBusy.Select(a => !a),
+                    this.ObserveProperty(a => a.Result.Model.HasValue),
+                }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
+                () => Result.SaveAsToFile()).AddTo(disposables);
         }
 
         public override void OnWindowClosed()

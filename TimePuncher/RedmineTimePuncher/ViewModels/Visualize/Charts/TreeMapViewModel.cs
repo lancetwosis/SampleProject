@@ -48,6 +48,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             ThirdGroupingType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
 
             Points = new ObservableCollection<TreeMapItemViewModelBase>();
+
+            setupIsEdited(FirstGroupingType, SecondGroupingType, ThirdGroupingType);
         }
 
         public override void SetupSeries()
