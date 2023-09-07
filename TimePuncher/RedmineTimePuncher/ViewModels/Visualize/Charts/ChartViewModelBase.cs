@@ -42,9 +42,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             myDisposables = new CompositeDisposable().AddTo(disposables);
         }
 
-        protected void setupIsEdited(params FactorTypeViewModel[] factors)
+        protected List<FactorTypeViewModel> factors { get; set; }
+        protected void setupIsEdited()
         {
             IsEdited = factors.Select(f => f.IsEdited).CombineLatest().Select(l => l.Any(a => a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+        }
+
+        public void Save()
+        {
+            factors.ForEach(f => f.UpdatePreviousType());
         }
     }
 }

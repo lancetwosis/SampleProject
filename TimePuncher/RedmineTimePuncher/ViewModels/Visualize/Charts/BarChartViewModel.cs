@@ -48,7 +48,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             ShowTotal = new TotalLabelViewModel(IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarShowTotal)).AddTo(disposables);
 
-            setupIsEdited(XAxisType, CombineType, ShowTotal);
+            this.factors = new List<FactorTypeViewModel>() { XAxisType, CombineType, ShowTotal };
+            setupIsEdited();
         }
 
         public override void SetupSeries()
@@ -99,7 +100,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 return Serieses.Select(s => s.Points.Sum(p => p.Hours)).Sum();
             }).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
 
-            if (parent.Model.ChartSettings.BarVisibleSeriesNames.Any())
+            if (CombineType.SelectedType.Value == parent.Model.ChartSettings.BarPreviousCombine &&
+                parent.Model.ChartSettings.BarVisibleSeriesNames.Any())
             {
                 foreach (var s in Serieses)
                 {
@@ -112,6 +114,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             Serieses.Select(a => a.IsVisible).CombineLatest().Subscribe(_ =>
             {
+                parent.Model.ChartSettings.BarPreviousCombine = CombineType.SelectedType.Value;
                 parent.Model.ChartSettings.BarVisibleSeriesNames = Serieses.Where(a => a.IsVisible.Value).Select(a => a.Title).ToList();
             }).AddTo(myDisposables);
         }

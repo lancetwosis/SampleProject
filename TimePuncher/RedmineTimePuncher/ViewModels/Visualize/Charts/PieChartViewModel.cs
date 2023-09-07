@@ -60,7 +60,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             ShowTotal = new TotalLabelViewModel(IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieShowTotal)).AddTo(disposables);
 
-            setupIsEdited(CombineType, SecondCombineType, SortType, ShowTotal);
+            this.factors = new List<FactorTypeViewModel>() { CombineType, SecondCombineType, SortType, ShowTotal };
+            setupIsEdited();
         }
 
         public override void SetupSeries()
@@ -158,7 +159,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 }).AddTo(myDisposables);
             }
 
-            if (parent.Model.ChartSettings.PieVisiblePointNames.Any())
+            if (CombineType.SelectedType.Value == parent.Model.ChartSettings.PiePreviousCombine &&
+                parent.Model.ChartSettings.PieVisiblePointNames.Any())
             {
                 foreach (var p in Series.Points.ToList())
                 {
@@ -172,6 +174,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             // PointViewModel の IsVisible.Subscribe により Series.Points には表示されているもののみが含まれる
             Series.Points.CollectionChangedAsObservable().StartWithDefault().Subscribe(_ =>
             {
+                parent.Model.ChartSettings.PiePreviousCombine = CombineType.SelectedType.Value;
                 parent.Model.ChartSettings.PieVisiblePointNames = Series.Points.Select(a => a.Factor.Name).ToList();
             }).AddTo(myDisposables);
         }

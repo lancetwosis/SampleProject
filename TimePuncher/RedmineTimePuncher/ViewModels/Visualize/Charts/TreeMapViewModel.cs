@@ -31,7 +31,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         public FactorTypeViewModel SecondGroupingType { get; set; }
         public FactorTypeViewModel ThirdGroupingType { get; set; }
 
-        public ObservableCollection<TreeMapItemViewModelBase> Points { get; set; }
+        public ReactivePropertySlim<ObservableCollection<TreeMapItemViewModelBase>> Points { get; set; }
 
         private ResultViewModel parent { get; set; }
 
@@ -47,20 +47,20 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             ThirdGroupingType = new FactorTypeViewModel("グルーピング３", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.ThirdGrouping), groupings).AddTo(disposables);
             ThirdGroupingType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
 
-            Points = new ObservableCollection<TreeMapItemViewModelBase>();
-
-            setupIsEdited(FirstGroupingType, SecondGroupingType, ThirdGroupingType);
+            Points = new ReactivePropertySlim<ObservableCollection<TreeMapItemViewModelBase>>().AddTo(disposables);
+            this.factors = new List<FactorTypeViewModel>() { FirstGroupingType, SecondGroupingType, ThirdGroupingType };
+            setupIsEdited();
         }
 
         public override void SetupSeries()
         {
-            Points.Clear();
+            var points = new ObservableCollection<TreeMapItemViewModelBase>();
 
             var allTimeEntries = parent.Tickets.SelectMany(t => t.GetAllTimeEntries()).ToList();
 
             if (FirstGroupingType.SelectedType.Value == FactorType.None)
             {
-                createTicketTree(allTimeEntries).ForEach(t => Points.Add(t));
+                createTicketTree(allTimeEntries).ForEach(t => points.Add(t));
             }
             else if (SecondGroupingType.SelectedType.Value == FactorType.None)
             {
@@ -68,11 +68,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 {
                     var firstGroup = new GroupingItemViewModel(first.Key, 1);
                     createTicketTree(first.ToList()).ForEach(t => firstGroup.Children.Add(t));
-
-                    firstGroup.SetTotalHours();
-                    Points.Add(firstGroup);
+                    points.Add(firstGroup);
                 }
-                return;
             }
             else if (ThirdGroupingType.SelectedType.Value == FactorType.None)
             {
@@ -85,10 +82,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                         createTicketTree(second.ToList()).ForEach(t => secondGroup.Children.Add(t));
                         firstGroup.Children.Add(secondGroup);
                     }
-                    firstGroup.SetTotalHours();
-                    Points.Add(firstGroup);
+                    points.Add(firstGroup);
                 }
-                return;
             }
             else
             {
@@ -106,10 +101,16 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                         }
                         firstGroup.Children.Add(secondGroup);
                     }
-                    firstGroup.SetTotalHours();
-                    Points.Add(firstGroup);
+                    points.Add(firstGroup);
                 }
             }
+
+            foreach (var p in points)
+            {
+                p.SetTotalHours();
+            }
+
+            Points.Value = points;
         }
 
         private List<TreeMapItemViewModelBase> createTicketTree(List<PersonHourModel> allTimeEntries)
@@ -153,7 +154,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 var top = allPoints.FirstOrDefault(p => p.Issue.Id == t.Model.RawIssue.Id);
                 if (top != null)
                 {
-                    top.SetTotalHours();
                     points.Add(top);
                 }
             }

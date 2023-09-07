@@ -24,12 +24,14 @@ namespace RedmineTimePuncher.Models.Visualize
         public FactorType BarXAxis { get; set; } = FactorType.Date;
         public FactorType BarCombine { get; set; } = FactorType.None;
         public FactorType BarShowTotal { get; set; } = FactorType.TopRight;
+        public FactorType BarPreviousCombine { get; set; } = FactorType.None;
         public List<string> BarVisibleSeriesNames { get; set; } = new List<string>();
 
         public FactorType PieCombine { get; set; } = FactorType.Issue;
         public FactorType PieSort { get; set; } = FactorType.None;
         public FactorType PieShowTotal { get; set; } = FactorType.Center;
         public FactorType PieSecondCombine { get; set; } = FactorType.None;
+        public FactorType PiePreviousCombine { get; set; } = FactorType.Issue;
         public List<string> PieVisiblePointNames { get; set; } = new List<string>();
 
         public FactorType FirstGrouping { get; set; } = FactorType.None;

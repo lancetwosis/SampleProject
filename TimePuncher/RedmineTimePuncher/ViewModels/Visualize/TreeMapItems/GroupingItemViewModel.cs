@@ -19,5 +19,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
             XLabel = $"{factor.Type.ToString()}: {factor.Name}";
             Depth = depth;
         }
+
+        public override string ToString()
+        {
+            return $"(Total: {TotalHours.ToString("0.00").PadLeft(6, '0')}) : {XLabel}";
+        }
     }
 }

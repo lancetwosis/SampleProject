@@ -53,6 +53,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
                 c.SetTotalHours();
             }
 
+            // 子チケットがなく工数が付いていないものは削除する
+            foreach (var c in Children.Where(c => c.Hours == 0 && c.Children.Count == 0).ToList())
+            {
+                Children.Remove(c);
+            }
+
             TotalHours = Children.Sum(c => c.TotalHours);
             if (Issue != null)
             {

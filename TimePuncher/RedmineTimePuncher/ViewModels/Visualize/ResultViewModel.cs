@@ -275,6 +275,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             Model.FileName = fileName;
             Model.IsEdited = false;
             System.IO.File.WriteAllText(Model.FileName, Model.ToJson());
+
+            BarChart.Save();
+            PieChart.Save();
+            TreeMap.Save();
         }
 
         private void updateSerieses()
