@@ -91,9 +91,12 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Behaviors\GridViewSelectionBehavior.cs" />
     <Compile Include="Behaviors\RadGridViewPersistenceBehavior.cs" />
+    <Compile Include="Helpers\TreeMapSelectionUtilities.cs" />
     <Compile Include="Helpers\CalendarSelectionUtilities.cs" />
     <Compile Include="Helpers\ChartUtilities.cs" />
+    <Compile Include="Helpers\GridViewSelectionUtilities.cs" />
     <Compile Include="PersistenceProvider\GridViewProxies.cs" />
     <Compile Include="PersistenceProvider\GridViewColumnProperties.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

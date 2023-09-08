@@ -10,6 +10,7 @@
              xmlns:conv="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:enums="clr-namespace:RedmineTimePuncher.Enums"
+             xmlns:exHelpers="clr-namespace:TelerikEx.Helpers;assembly=TelerikEx"
              xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
              xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
              xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
@@ -18,7 +19,8 @@
              xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
-             xmlns:telerikEx="clr-namespace:TelerikEx.Helpers;assembly=TelerikEx"
+             xmlns:telerikExBehavior="clr-namespace:TelerikEx.Behaviors;assembly=TelerikEx"
+             xmlns:telerikExHelper="clr-namespace:TelerikEx.Helpers;assembly=TelerikEx"
              xmlns:treeMap="clr-namespace:Telerik.Windows.Controls.TreeMap;assembly=Telerik.Windows.Controls.DataVisualization"
              xmlns:views="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
              xmlns:visualizeEnums="clr-namespace:RedmineTimePuncher.ViewModels.Visualize.Enums"
@@ -298,27 +300,55 @@
 
                         <telerik:RadTreeListView x:Name="radTreeListView"
                                                  Grid.Row="2"
+                                                 telerikExHelper:GridViewSelectionUtilities.SelectedItems="{Binding Visualize.Result.SelectedTickets}"
                                                  AlternationCount="2"
                                                  AutoGenerateColumns="False"
                                                  CanUserDeleteRows="False"
                                                  CanUserFreezeColumns="False"
                                                  CanUserInsertRows="False"
                                                  HierarchyIndent="10"
-                                                 IsExpandedBinding="{Binding IsExpanded.Value,
+                                                 IsExpandedBinding="{Binding IsExpanded,
                                                                              Mode=TwoWay}"
-                                                 IsFilteringAllowed="False"
+                                                 IsFilteringAllowed="True"
                                                  IsReadOnly="True"
                                                  ItemsSource="{Binding Visualize.Result.Tickets}"
                                                  RowIndicatorVisibility="Collapsed"
-                                                 SelectionMode="Single"
+                                                 SelectionMode="Extended"
                                                  SelectionUnit="FullRow"
                                                  ShowGroupPanel="False">
+                            <telerik:RadTreeListView.ContextMenu>
+                                <ContextMenu>
+                                    <MenuItem Command="{Binding Visualize.ExpandCommand}"
+                                              Header="展開する" />
+                                    <MenuItem Command="{Binding Visualize.ExpandRecursiveCommand}"
+                                              Header="再帰的に展開する" />
+                                    <MenuItem Command="{Binding Visualize.CollapseCommand}"
+                                              Header="折りたたむ" />
+                                    <MenuItem Command="{Binding Visualize.CollapseRecursiveCommand}"
+                                              Header="再帰的に折りたたむ" />
+                                    <Separator />
+                                    <MenuItem Command="{Binding Visualize.ExpandAllCommand}"
+                                              Header="全て展開する" />
+                                    <MenuItem Command="{Binding Visualize.CollapseAllCommand}"
+                                              Header="全て折りたたむ" />
+                                    <Separator />
+                                    <MenuItem Command="{Binding Visualize.EnableCommand}"
+                                              Header="集計に加える" />
+                                    <MenuItem Command="{Binding Visualize.EnableRecursiveCommand}"
+                                              Header="再帰的に集計に加える" />
+                                    <MenuItem Command="{Binding Visualize.DisableCommand}"
+                                              Header="集計から除外する" />
+                                    <MenuItem Command="{Binding Visualize.DisableRecursiveCommand}"
+                                              Header="再帰的に集計から除外する" />
+                                </ContextMenu>
+                            </telerik:RadTreeListView.ContextMenu>
                             <telerik:RadTreeListView.ChildTableDefinitions>
                                 <telerik:TreeListViewTableDefinition ItemsSource="{Binding Children}" />
                             </telerik:RadTreeListView.ChildTableDefinitions>
                             <telerik:RadTreeListView.Columns>
                                 <telerik:GridViewDataColumn DataMemberBinding="{Binding IsEnabled.Value}"
                                                             EditTriggers="CellClick"
+                                                            FilterMemberPath="Id"
                                                             Header="チケット"
                                                             IsReadOnly="True"
                                                             IsSortable="False">
@@ -336,6 +366,9 @@
                                     </telerik:GridViewDataColumn.CellTemplate>
                                 </telerik:GridViewDataColumn>
                             </telerik:RadTreeListView.Columns>
+                            <b:Interaction.Behaviors>
+                                <telerikExBehavior:GridViewSelectionBehavior />
+                            </b:Interaction.Behaviors>
                         </telerik:RadTreeListView>
 
                         <Grid Grid.Column="1"

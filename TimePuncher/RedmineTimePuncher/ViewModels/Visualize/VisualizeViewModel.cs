@@ -42,6 +42,17 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public CommandBase SaveResultCommand { get; set; }
         public CommandBase SaveAsResultCommand { get; set; }
 
+        public ReactiveCommand ExpandCommand { get; set; }
+        public ReactiveCommand ExpandRecursiveCommand { get; set; }
+        public ReactiveCommand ExpandAllCommand { get; set; }
+        public ReactiveCommand CollapseCommand { get; set; }
+        public ReactiveCommand CollapseRecursiveCommand { get; set; }
+        public ReactiveCommand CollapseAllCommand { get; set; }
+        public ReactiveCommand EnableCommand { get; set; }
+        public ReactiveCommand EnableRecursiveCommand { get; set; }
+        public ReactiveCommand DisableCommand { get; set; }
+        public ReactiveCommand DisableRecursiveCommand { get; set; }
+
         public MainWindowViewModel Parent { get; set; }
 
         public VisualizeViewModel(MainWindowViewModel parent)
@@ -157,6 +168,44 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     this.ObserveProperty(a => a.Result.Model.HasValue),
                 }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
                 () => Result.SaveAsToFile()).AddTo(disposables);
+
+            ExpandCommand = Result.SelectedTickets.AnyAsObservable(t => !t.IsExpanded && t.Children.Any()).ToReactiveCommand().WithSubscribe(() =>
+            {
+                Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(true));
+            }).AddTo(disposables);
+            ExpandRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
+            {
+                Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(true, true));
+            }).AddTo(disposables);
+            ExpandAllCommand = new ReactiveCommand().WithSubscribe(() => Result.ExpandAll()).AddTo(disposables);
+
+            CollapseCommand = Result.SelectedTickets.AnyAsObservable(t => t.IsExpanded && t.Children.Any()).ToReactiveCommand().WithSubscribe(() =>
+            {
+                Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(false));
+            }).AddTo(disposables);
+            CollapseRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
+            {
+                Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(false, true));
+            }).AddTo(disposables);
+            CollapseAllCommand = new ReactiveCommand().WithSubscribe(() => Result.CollapseAll()).AddTo(disposables);
+
+            EnableCommand = Result.SelectedTickets.AnyAsObservable(t => !t.IsEnabled.Value).ToReactiveCommand().WithSubscribe(() =>
+            {
+                Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(true));
+            }).AddTo(disposables);
+            EnableRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
+            {
+                Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(true, true));
+            }).AddTo(disposables);
+
+            DisableCommand = Result.SelectedTickets.AnyAsObservable(t => t.IsEnabled.Value).ToReactiveCommand().WithSubscribe(() =>
+            {
+                Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(false));
+            }).AddTo(disposables);
+            DisableRecursiveCommand= Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
+            {
+                Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(false,true));
+            }).AddTo(disposables);
         }
 
         public override void OnWindowClosed()

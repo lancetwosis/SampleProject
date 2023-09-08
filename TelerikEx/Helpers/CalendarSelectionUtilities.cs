@@ -12,13 +12,18 @@ namespace TelerikEx.Helpers
 {
     /// <summary>
     /// RadCalendar の SelectedDates をバインドするためのユーティリティ。
-    /// RadGridView の SelectedItems から流用して、RadGridView を RadCalendar に置き換えただけ。
-    /// https://raw.githubusercontent.com/telerik/xaml-sdk/master/GridView/BindingSelectedItemsFromViewModel/GridViewSelectionUtilities.cs
+    /// RadGridView の SelectedItems から流用して、RadGridView を RadCalendar に置き換えた。
+    /// https://github.com/telerik/xaml-sdk/blob/master/GridView/BindingSelectedItemsFromViewModel/GridViewSelectionUtilities.cs
+    /// 
+    /// SelectedDates が IList で追加に対応していないため、VM側から RadCalendar の SelectedDates を制御することはできない。
+    /// VM側から追加や削除を行おうとすると必ず NotSupportedException になる。
+    /// 
+    /// より良い対応があるかもしれないが、現象が明らかなためこのままとする。
     /// </summary>
     public class CalendarSelectionUtilities
     {
         private static bool isSyncingSelection;
-        private static List<Tuple<WeakReference, List<RadCalendar>>> collectionTocalendar = new List<Tuple<WeakReference, List<RadCalendar>>>();
+        private static List<Tuple<WeakReference, List<RadCalendar>>> collectionToCalendar = new List<Tuple<WeakReference, List<RadCalendar>>>();
 
         public static readonly DependencyProperty SelectedDatesProperty = DependencyProperty.RegisterAttached(
             "SelectedDates",
@@ -87,7 +92,7 @@ namespace TelerikEx.Helpers
         {
             isSyncingSelection = true;
 
-            var calendars = GetOrCreatecalendar(collection);
+            var calendars = GetOrCreateCalendar(collection);
             foreach (var calendar in calendars)
             {
                 SyncSelection(calendar, oldItems, newItems);
@@ -127,13 +132,13 @@ namespace TelerikEx.Helpers
 
         private static void AddAssociation(INotifyCollectionChanged collection, RadCalendar calendar)
         {
-            List<RadCalendar> calendars = GetOrCreatecalendar(collection);
+            List<RadCalendar> calendars = GetOrCreateCalendar(collection);
             calendars.Add(calendar);
         }
 
         private static void RemoveAssociation(INotifyCollectionChanged collection, RadCalendar calendar)
         {
-            List<RadCalendar> calendars = GetOrCreatecalendar(collection);
+            List<RadCalendar> calendars = GetOrCreateCalendar(collection);
             calendars.Remove(calendar);
 
             if (calendars.Count == 0)
@@ -142,30 +147,30 @@ namespace TelerikEx.Helpers
             }
         }
 
-        private static List<RadCalendar> GetOrCreatecalendar(INotifyCollectionChanged collection)
+        private static List<RadCalendar> GetOrCreateCalendar(INotifyCollectionChanged collection)
         {
-            for (int i = 0; i < collectionTocalendar.Count; i++)
+            for (int i = 0; i < collectionToCalendar.Count; i++)
             {
-                var wr = collectionTocalendar[i].Item1;
+                var wr = collectionToCalendar[i].Item1;
                 if (wr.Target == collection)
                 {
-                    return collectionTocalendar[i].Item2;
+                    return collectionToCalendar[i].Item2;
                 }
             }
 
-            collectionTocalendar.Add(new Tuple<WeakReference, List<RadCalendar>>(new WeakReference(collection), new List<RadCalendar>()));
-            return collectionTocalendar[collectionTocalendar.Count - 1].Item2;
+            collectionToCalendar.Add(new Tuple<WeakReference, List<RadCalendar>>(new WeakReference(collection), new List<RadCalendar>()));
+            return collectionToCalendar[collectionToCalendar.Count - 1].Item2;
         }
 
         private static void CleanUp()
         {
-            for (int i = collectionTocalendar.Count - 1; i >= 0; i--)
+            for (int i = collectionToCalendar.Count - 1; i >= 0; i--)
             {
-                bool isAlive = collectionTocalendar[i].Item1.IsAlive;
-                var behaviors = collectionTocalendar[i].Item2;
+                bool isAlive = collectionToCalendar[i].Item1.IsAlive;
+                var behaviors = collectionToCalendar[i].Item2;
                 if (behaviors.Count == 0 || !isAlive)
                 {
-                    collectionTocalendar.RemoveAt(i);
+                    collectionToCalendar.RemoveAt(i);
                 }
             }
         }

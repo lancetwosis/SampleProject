@@ -58,7 +58,6 @@
                              IsFilteringAllowed="False"
                              IsReadOnly="True"
                              ItemsSource="{Binding Items.Value}"
-                             MouseRightButtonUp="RadGridView_MouseRightButtonUp"
                              RowHeight="18"
                              RowIndicatorVisibility="Collapsed"
                              RowLoaded="RadGridView_RowLoaded"
@@ -167,6 +166,7 @@
             <b:Interaction.Behaviors>
                 <behaviors:MyGridViewDragDropBehavior />
                 <telerikEx:RadGridViewPersistenceBehavior ColumnProperties="{Binding ColumnProperties}" />
+                <telerikEx:GridViewSelectionBehavior />
             </b:Interaction.Behaviors>
         </telerik:RadGridView>
     </controls1:OverwrapMessage>

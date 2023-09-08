@@ -53,6 +53,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
 
                 var button = new RadButton();
                 button.Command = ticket.GoToTicketCommand;
+                button.CommandParameter = ticket.Issue.Id;
                 button.HorizontalAlignment = HorizontalAlignment.Right;
                 button.VerticalAlignment = VerticalAlignment.Bottom;
                 button.Style = Application.Current.FindResource("GotoTicketButtonStyle") as Style;
@@ -67,6 +68,31 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
 
                 var grid = treemapItem.ChildrenOfType<Grid>().ElementAt(1);
                 grid.Children.Add(button);
+
+                var goToTicket = new MenuItem() { Header = "チケットを開く" };
+                goToTicket.Command = ticket.GoToTicketCommand;
+                goToTicket.CommandParameter = ticket.Issue.Id;
+                var expand = new MenuItem() { Header = "展開する" };
+                expand.Command = ticket.ExpandTicketCommand;
+                expand.CommandParameter = ticket.Issue.Id;
+                var collapse = new MenuItem() { Header = "折りたたむ" };
+                collapse.Command = ticket.CollapseTicketCommand;
+                collapse.CommandParameter = ticket.Issue.Id;
+                var remove = new MenuItem() { Header = "集計から除外する" };
+                remove.Command = ticket.RemoveTicketCommand;
+                remove.CommandParameter = ticket.Issue.Id;
+
+                var contextMenu = new ContextMenu();
+                contextMenu.Items.Add(goToTicket);
+                contextMenu.Items.Add(new System.Windows.Controls.Separator());
+                contextMenu.Items.Add(expand);
+                contextMenu.Items.Add(collapse);
+                contextMenu.Items.Add(new System.Windows.Controls.Separator());
+                contextMenu.Items.Add(remove);
+
+                treemapItem.ContextMenu = contextMenu;
+
+                treemapItem.SetBinding(RadTreeMapItem.IsSelectedProperty, new Binding("DataItem.IsSelected") { Mode = BindingMode.TwoWay});
             }
         }
 

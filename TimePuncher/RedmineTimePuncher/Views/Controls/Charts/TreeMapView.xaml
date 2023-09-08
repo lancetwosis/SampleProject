@@ -30,8 +30,11 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
     <Grid>
-        <telerik:RadTreeMap ItemsSource="{Binding Points.Value}"
-                            LayoutStrategy="Squarified">
+        <telerik:RadTreeMap telerikEx:TreeMapSelectionUtilities.SelectedItems="{Binding SelectedPoints}"
+                            IsSelectionEnabled="True"
+                            ItemsSource="{Binding Points.Value}"
+                            LayoutStrategy="Squarified"
+                            SelectionMode="Extended">
             <telerik:RadTreeMap.TypeDefinitions>
                 <telerik:TypeDefinition ChildrenPath="Children"
                                         LabelPath="DisplayValue"

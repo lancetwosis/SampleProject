@@ -32,8 +32,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         public FactorTypeViewModel ThirdGroupingType { get; set; }
 
         public ReactivePropertySlim<ObservableCollection<TreeMapItemViewModelBase>> Points { get; set; }
-
+        public ObservableCollection<TreeMapItemViewModelBase> SelectedPoints { get; set; }
         private ResultViewModel parent { get; set; }
+
+        public ReactiveCommand<int> GoToTicketCommand { get; set; }
+        public ReactiveCommand<int> ExpandCommand { get; set; }
+        public ReactiveCommand<int> CollapseCommand { get; set; }
+        public ReactiveCommand<int> RemoveCommand { get; set; }
 
         public TreeMapViewModel(ResultViewModel parent) : base(ViewType.TreeMap, parent)
         {
@@ -48,8 +53,34 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             ThirdGroupingType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
 
             Points = new ReactivePropertySlim<ObservableCollection<TreeMapItemViewModelBase>>().AddTo(disposables);
+            SelectedPoints = new ObservableCollection<TreeMapItemViewModelBase>();
+            SelectedPoints.CollectionChangedAsObservable().Subscribe(_ =>
+            {
+                updateTreeListSelection(SelectedPoints.Where(p => p.Issue != null).Select(p => p.Issue.Id).ToArray());
+            }).AddTo(disposables);
+
             this.factors = new List<FactorTypeViewModel>() { FirstGroupingType, SecondGroupingType, ThirdGroupingType };
             setupIsEdited();
+
+            GoToTicketCommand = new ReactiveCommand<int>().WithSubscribe(id =>
+            {
+                System.Diagnostics.Process.Start(MyIssue.GetUrl(id));
+            }).AddTo(disposables);
+
+            ExpandCommand = new ReactiveCommand<int>().WithSubscribe(id =>
+            {
+                parent.ExpandAll(id);
+            }).AddTo(disposables);
+
+            CollapseCommand = new ReactiveCommand<int>().WithSubscribe(id =>
+            {
+                parent.CollapseAll(id);
+            }).AddTo(disposables);
+
+            RemoveCommand = new ReactiveCommand<int>().WithSubscribe(id =>
+            {
+                parent.RemoveTicket(id);
+            }).AddTo(disposables);
         }
 
         public override void SetupSeries()
@@ -110,7 +141,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 p.SetTotalHours();
             }
 
+            var preSelected = SelectedPoints.Where(p => p.Issue != null).Select(t => t.Issue.Id).ToArray();
+
             Points.Value = points;
+
+            SelectTickets(preSelected);
         }
 
         private List<TreeMapItemViewModelBase> createTicketTree(List<PersonHourModel> allTimeEntries)
@@ -121,10 +156,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             {
                 var ps = allTimeEntries.Where(p => p.RawIssue.Id == t.Model.RawIssue.Id).ToArray();
                 if (ps.Length == 0)
-                    return new TicketItemViewModel(t.Model.RawIssue).AddTo(disposables);
+                    return new TicketItemViewModel(t.Model.RawIssue, this).AddTo(disposables);
 
                 var model = new PersonHourModel(t.Model.RawIssue, ps);
-                return new TicketItemViewModel(model).AddTo(disposables);
+                return new TicketItemViewModel(model, this).AddTo(disposables);
             }).Where(a => a != null).ToList();
 
             foreach (var t in visibleTickets)
@@ -144,7 +179,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
                 if (parent.Children.Any() && parent.Hours > 0)
                 {
-                    parent.Children.Insert(0, new TicketItemViewModel(parent));
+                    parent.Children.Insert(0, new TicketItemViewModel(parent, this));
                 }
             }
 
@@ -159,6 +194,33 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             }
 
             return points;
+        }
+
+        private BusyNotifier nowTicketUpdating = new BusyNotifier();
+        private void updateTreeListSelection(params int[] ids)
+        {
+            if (nowTicketUpdating.IsBusy)
+                return;
+
+            parent.SelectTickets(ids);
+        }
+
+        public void SelectTickets(params int[] ids)
+        {
+            using (nowTicketUpdating.ProcessStart())
+            {
+                // TreeMap の SelectedItems は IList で Add や Remove に対応していないため、
+                // SelectedPoints に Add しても NotSupportedException になる。
+                // よって、このような対応とする。
+                foreach (var p in SelectedPoints.ToList())
+                {
+                    p.IsSelected = false;
+                }
+                foreach (var t in Points.Value.Flatten(p => p.Children).Where(p => p.Issue != null && ids.Contains(p.Issue.Id)).ToList())
+                {
+                    t.IsSelected = true;
+                }
+            }
         }
     }
 }

@@ -15,25 +15,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
         public ObservableCollection<TreeMapItemViewModelBase> Children { get; set; }
         public double TotalHours { get; set; }
 
+        public bool IsSelected { get; set; }
+
         public Issue Issue { get; set; }
 
         protected TreeMapItemViewModelBase()
         {
             Children = new ObservableCollection<TreeMapItemViewModelBase>();
-        }
-
-        public TreeMapItemViewModelBase(PersonHourModel model) : this()
-        {
-            Issue = model.RawIssue;
-            Hours = model.TotalHours;
-            XLabel = Issue.GetLabel();
-        }
-
-        public TreeMapItemViewModelBase(Issue issue) : this()
-        {
-            Issue = issue;
-            Hours = 0;
-            XLabel = Issue.GetLabel();
         }
 
         public void SetTotalHours()

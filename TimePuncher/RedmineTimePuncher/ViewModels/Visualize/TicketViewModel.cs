@@ -2,6 +2,7 @@
 using NetOffice.OutlookApi.Enums;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Settings;
@@ -23,6 +24,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
     {
         public TicketModel Model { get; set; }
 
+        public string Id => Model.RawIssue.Id.ToString();
         public string Label => Model.RawIssue.GetLabel();
         public string Url => MyIssue.GetUrl(Model.RawIssue.Id);
         public string Tooltip => Model.RawIssue.GetFullLabel();
@@ -33,7 +35,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public ReadOnlyReactivePropertySlim<bool> HasTimeEntry { get; set; }
 
         public ReactivePropertySlim<bool> IsEnabled { get; set; }
-        public ReactivePropertySlim<bool> IsExpanded { get; set; }
+
+        /// <summary>
+        /// RadTreeListView の IsExpandedBinding とバインドするため RP ではなくそのまま保持する
+        /// </summary>
+        public bool IsExpanded { get; set; } = true;
+
         public ReadOnlyReactivePropertySlim<bool> IsReaf { get; set; }
 
         public TicketViewModel Parent { get; set; }
@@ -55,11 +62,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             IsEnabled = Model.ToReactivePropertySlimAsSynchronized(a => a.IsEnabled).AddTo(disposables);
             IsEnabled.Subscribe(i =>
             {
-                foreach (var c in Children)
-                    c.IsEnabled.Value = i;
+                updateRelatedIsEnabled(i);
             });
 
-            IsExpanded = Model.ToReactivePropertySlimAsSynchronized(a => a.IsExpanded).AddTo(disposables);
+            IsExpanded = Model.IsExpanded;
+            this.ObserveProperty(a => a.IsExpanded).Subscribe(i => Model.IsExpanded = i).AddTo(disposables);
 
             IsReaf = IsEnabled.CombineLatest(Children.CollectionChangedAsObservable().StartWithDefault(), (_, __) => true).Select(_ =>
             {
@@ -78,7 +85,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             if (!IsEnabled.Value)
                 return new List<PersonHourModel>();
 
-            if (IsExpanded.Value)
+            if (IsExpanded)
             {
                 var entries = TimeEntries.ToList();
                 foreach (var child in Children.Where(c => c.IsEnabled.Value))
@@ -112,7 +119,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 return result;
 
             result.Add(this);
-            if (IsExpanded.Value)
+            if (IsExpanded)
             {
                 foreach (var c in Children)
                 {
@@ -123,14 +130,88 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             return result;
         }
 
-        public void Collapse()
+        private BusyNotifier nowUpdateRelatedIsEnabled = new BusyNotifier();
+        private void updateRelatedIsEnabled(bool isEnabled)
         {
-            foreach (var c in Children)
-            {
-                c.Collapse();
-            }
+            if (nowUpdateRelatedIsEnabled.IsBusy)
+                return;
 
-            IsExpanded.Value = false;
+            if (isEnabled)
+            {
+                // 親を再帰的に true にする
+                var parent = Parent;
+                while (parent != null)
+                {
+                    if (parent.IsEnabled.Value)
+                        break;
+
+                    parent.setIsEnable(true);
+                    parent = parent.Parent;
+                }
+            }
+            else
+            {
+                // すべての子供を再帰的に false にする
+                foreach (var c in Children)
+                {
+                    setDisableRecursive(c);
+                }
+            }
+        }
+
+        private void setIsEnable(bool isEnabled)
+        {
+            using (nowUpdateRelatedIsEnabled.ProcessStart())
+            {
+                SetIsEnabled(isEnabled);
+            }
+        }
+
+        private void setDisableRecursive(TicketViewModel parent)
+        {
+            foreach (var c in parent.Children)
+            {
+                if (!c.IsEnabled.Value)
+                    continue;
+
+                setDisableRecursive(c);
+                c.setIsEnable(false);
+            }
+            parent.setIsEnable(false);
+        }
+
+        public void SetIsEnabled(bool isEnabled, bool recursive = false)
+        {
+            if (isEnabled)
+            {
+                IsEnabled.Value = isEnabled;
+                if (recursive)
+                    Children.ToList().ForEach(c => c.SetIsEnabled(isEnabled, true));
+            }
+            else
+            {
+                if (recursive)
+                    Children.ToList().ForEach(c => c.SetIsEnabled(isEnabled, true));
+
+                IsEnabled.Value = isEnabled;
+            }
+        }
+
+        public void SetIsExpanded(bool isExpanded, bool recursive = false)
+        {
+            if (isExpanded)
+            {
+                IsExpanded = isExpanded;
+                if (recursive)
+                    Children.ToList().ForEach(c => c.SetIsExpanded(isExpanded, true));
+            }
+            else
+            {
+                if (recursive)
+                    Children.ToList().ForEach(c => c.SetIsExpanded(isExpanded, true));
+
+                IsExpanded = isExpanded;
+            }
         }
 
         public override string ToString()

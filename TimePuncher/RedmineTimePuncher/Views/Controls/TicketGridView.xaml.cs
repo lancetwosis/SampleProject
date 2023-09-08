@@ -32,29 +32,5 @@ namespace RedmineTimePuncher.Views.Controls
         {
             DragDropManager.SetAllowDrag(e.Row, true);
         }
-
-        private void RadGridView_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
-        {
-            var radGridView = sender as RadGridView;
-            var s = e.OriginalSource as FrameworkElement;
-            var parentRow = s.ParentOfType<GridViewRow>();
-            if (parentRow != null)
-            {
-                var dataItem = parentRow.Item;
-
-                if (Keyboard.IsKeyDown(Key.LeftShift) ||
-                    Keyboard.IsKeyDown(Key.RightShift) ||
-                    Keyboard.IsKeyDown(Key.LeftCtrl) ||
-                    Keyboard.IsKeyDown(Key.RightCtrl))
-                {
-                    radGridView.SelectedItems.Add(dataItem);
-                }
-                else
-                {
-                    radGridView.SelectedItems.Clear();
-                    radGridView.SelectedItems.Add(dataItem);
-                }
-            }
-        }
     }
 }

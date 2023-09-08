@@ -3,6 +3,7 @@ using LibRedminePower.Helpers;
 using Microsoft.Win32;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.ViewModels.Visualize.Charts;
@@ -27,6 +28,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
         public ObservableCollection<TicketViewModel> Tickets { get; set; }
         public ObservableCollection<TicketViewModel> AllTickets { get; set; }
+        public ObservableCollection<TicketViewModel> SelectedTickets { get; set; }
 
         public ReactivePropertySlim<ViewType> ViewType { get; set; }
         public BarChartViewModel BarChart { get; set; }
@@ -51,6 +53,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
             Tickets = new ObservableCollection<TicketViewModel>();
             AllTickets = new ObservableCollection<TicketViewModel>();
+            SelectedTickets = new ObservableCollection<TicketViewModel>();
+            SelectedTickets.CollectionChangedAsObservable().StartWithDefault().Subscribe(_ => 
+            {
+                updateViewSelection(SelectedTickets.Select(t => t.Model.RawIssue.Id).ToArray());
+            }).AddTo(disposables);
         }
 
         private CompositeDisposable initializeDisposables;
@@ -139,7 +146,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     updateSerieses();
                 }).AddTo(setupTreeDisposables);
 
-                AllTickets.Select(a => a.IsExpanded).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher().Skip(1).Subscribe(_ =>
+                AllTickets.Select(a => a.ObserveProperty(b => b.IsExpanded)).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher().Skip(1).Subscribe(_ =>
                 {
                     Model.IsEdited = true;
                     updateSerieses();
@@ -182,7 +189,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             {
                 foreach (var c in Tickets[0].Children)
                 {
-                    c.Collapse();
+                    c.SetIsExpanded(false, true);
                 }
             }
 
@@ -294,6 +301,76 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 case Enums.ViewType.TreeMap:
                     TreeMap.SetupSeries();
                     break;
+            }
+        }
+
+        public void ExpandAll(int? id = null)
+        {
+            if (id.HasValue)
+            {
+                var target = AllTickets.FirstOrDefault(t => t.Model.RawIssue.Id == id.Value);
+                if (target != null)
+                    target.SetIsExpanded(true);
+            }
+            else
+            {
+                foreach (var t in Tickets)
+                {
+                    t.SetIsExpanded(true);
+                }
+            }
+        }
+
+        public void CollapseAll(int? id = null)
+        {
+            if (id.HasValue)
+            {
+                var target = AllTickets.FirstOrDefault(t => t.Model.RawIssue.Id == id.Value);
+                if (target != null)
+                    target.SetIsExpanded(false, true);
+            }
+            else
+            {
+                foreach (var t in Tickets)
+                {
+                    t.SetIsExpanded(false, true);
+                }
+            }
+        }
+
+        public void RemoveTicket(int id)
+        {
+            var removed = AllTickets.FirstOrDefault(t => t.Model.RawIssue.Id == id);
+            if (removed != null)
+            {
+                removed.IsEnabled.Value = false;
+            }
+        }
+
+        private BusyNotifier nowTicketUpdating = new BusyNotifier();
+        private void updateViewSelection(params int[] ids)
+        {
+            if (nowTicketUpdating.IsBusy || ViewType == null)
+                return;
+
+            if (ViewType.Value == Enums.ViewType.TreeMap)
+            {
+                TreeMap.SelectTickets(ids);
+            }
+        }
+
+        public void SelectTickets(params int[] ids)
+        {
+            using (nowTicketUpdating.ProcessStart())
+            {
+                foreach (var t in SelectedTickets.ToList())
+                {
+                    SelectedTickets.Remove(t);
+                }
+                foreach (var t in AllTickets.Where(t => ids.Contains(t.Model.RawIssue.Id)).ToList())
+                {
+                    SelectedTickets.Add(t);
+                }
             }
         }
 
