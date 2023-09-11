@@ -1,4 +1,5 @@
-﻿using RedmineTimePuncher.ViewModels.Visualize.Enums;
+﻿using RedmineTimePuncher.ViewModels.Visualize.Charts;
+using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 using System.Windows.Media;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.TreeMap;
@@ -31,6 +33,24 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
                 {
                     Text = $"{group.ToolTip.Label} : Total {group.ToolTip.TotalHours.Value} h",
                 };
+
+                var expand = new MenuItem() { Header = "展開する" };
+                expand.Command = group.ExpandTicketCommand;
+                var collapse = new MenuItem() { Header = "折りたたむ" };
+                collapse.Command = group.CollapseTicketCommand;
+                var remove = new MenuItem() { Header = "集計から除外する" };
+                remove.Command = group.RemoveTicketCommand;
+
+                var contextMenu = new ContextMenu();
+                contextMenu.Items.Add(expand);
+                contextMenu.Items.Add(collapse);
+                contextMenu.Items.Add(new System.Windows.Controls.Separator());
+                contextMenu.Items.Add(remove);
+
+                treemapItem.ContextMenu = contextMenu;
+
+                treemapItem.SetBinding(RadTreeMapItem.IsSelectedProperty, new Binding("DataItem.IsSelected") { Mode = BindingMode.TwoWay });
+                treemapItem.MouseRightButtonUp += treemapItem_MouseRightButtonUp;
             }
             else if (dataItem is TicketItemViewModel ticket)
             {
@@ -74,13 +94,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
                 goToTicket.CommandParameter = ticket.Issue.Id;
                 var expand = new MenuItem() { Header = "展開する" };
                 expand.Command = ticket.ExpandTicketCommand;
-                expand.CommandParameter = ticket.Issue.Id;
                 var collapse = new MenuItem() { Header = "折りたたむ" };
                 collapse.Command = ticket.CollapseTicketCommand;
-                collapse.CommandParameter = ticket.Issue.Id;
                 var remove = new MenuItem() { Header = "集計から除外する" };
                 remove.Command = ticket.RemoveTicketCommand;
-                remove.CommandParameter = ticket.Issue.Id;
 
                 var contextMenu = new ContextMenu();
                 contextMenu.Items.Add(goToTicket);
@@ -93,12 +110,39 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
                 treemapItem.ContextMenu = contextMenu;
 
                 treemapItem.SetBinding(RadTreeMapItem.IsSelectedProperty, new Binding("DataItem.IsSelected") { Mode = BindingMode.TwoWay});
+                treemapItem.MouseRightButtonUp += treemapItem_MouseRightButtonUp;
             }
+        }
+
+        // 右クリックでも選択状態になるようにする
+        private void treemapItem_MouseRightButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            var item = sender as RadTreeMapItem;
+
+            if (!Keyboard.IsKeyDown(Key.LeftShift) &&
+                !Keyboard.IsKeyDown(Key.RightShift) &&
+                !Keyboard.IsKeyDown(Key.LeftCtrl) &&
+                !Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                var treeVM = item.ParentOfType<RadTreeMap>().DataContext as TreeMapViewModel;
+                treeVM.SelectTickets();
+            }
+
+            var data = item.DataContext as TreeMapData;
+            var vm = data.DataItem as TreeMapItemViewModelBase;
+            vm.IsSelected = true;
+
+            // e.Handled = true によってイベントが伝播しないため手動で開く
+            item.ContextMenu.IsOpen = true;
+
+            // イベントが親チケットに伝播し、連続して選択状態になるのを防ぐため Handled にする
+            e.Handled = true;
         }
 
         protected override void Clear(RadTreeMapItem treemapItem, object dataItem)
         {
             treemapItem.ClearValue(RadTreeMapItem.BackgroundProperty);
+            treemapItem.MouseRightButtonUp -= treemapItem_MouseRightButtonUp;
         }
     }
 }

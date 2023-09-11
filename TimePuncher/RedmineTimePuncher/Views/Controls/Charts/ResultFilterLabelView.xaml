@@ -41,12 +41,20 @@
             CornerRadius="5"
             ToolTip="{Binding Label.Value}">
         <Grid>
-            <TextBlock Margin="5,0,5,0"
-                       VerticalAlignment="Center"
-                       Foreground="DimGray"
-                       Text="{Binding ShortLabel.Value}"
-                       TextDecorations="{Binding IsEnabled.Value,
-                                                 Converter={StaticResource IsEnbaleToTextStrikethrough}}" />
+            <StackPanel Orientation="Horizontal">
+                <TextBlock Margin="5,0,0,0"
+                           VerticalAlignment="Center"
+                           Foreground="Red"
+                           Text="*"
+                           Visibility="{Binding IsValid.Value,
+                                                Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
+                <TextBlock Margin="5,0,5,0"
+                           VerticalAlignment="Center"
+                           Foreground="DimGray"
+                           Text="{Binding ShortLabel.Value}"
+                           TextDecorations="{Binding IsEnabled.Value,
+                                                     Converter={StaticResource IsEnbaleToTextStrikethrough}}" />
+            </StackPanel>
 
             <Grid Margin="5,0,5,0"
                   Background="#fffacd"
@@ -62,8 +70,7 @@
                 </Grid.ColumnDefinitions>
                 <CheckBox Grid.Column="0"
                           IsChecked="{Binding IsEnabled.Value}" />
-                <Button x:Name="editButton"
-                        Grid.Column="1"
+                <Button Grid.Column="1"
                         Margin="5,0,0,0"
                         Command="{Binding EditCommand}"
                         Style="{StaticResource GlyphButtonStyle}">
@@ -71,17 +78,16 @@
                         <telerik:RadGlyph Glyph="&#xe10b;" />
                     </Button.Content>
                 </Button>
-                <Popup x:Name="editPopup"
-                       AllowsTransparency="True"
+                <Popup AllowsTransparency="True"
                        IsOpen="{Binding NowEditing.Value,
                                         Mode=TwoWay}"
                        Placement="Bottom"
-                       PlacementTarget="{Binding ElementName=editButton}"
+                       PlacementTarget="{Binding ElementName=border}"
                        StaysOpen="False">
                     <Border Background="#fffacd"
                             BorderBrush="LightGray"
                             BorderThickness="1"
-                            CornerRadius="10">
+                            CornerRadius="5">
                         <Grid Margin="5">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="AUTO" />
@@ -128,11 +134,8 @@
                                                      ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type m:FilterType}}}"
                                                      SelectedItem="{Binding FilterType.Value}" />
                             </StackPanel>
-
-
                         </Grid>
                     </Border>
-
                 </Popup>
                 <Button Grid.Column="3"
                         Command="{Binding DeleteCommand}"
@@ -141,7 +144,6 @@
                         <telerik:RadGlyph Glyph="&#xe10c;" />
                     </Button.Content>
                 </Button>
-
             </Grid>
         </Grid>
     </Border>

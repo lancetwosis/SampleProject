@@ -1,6 +1,8 @@
 ﻿using LibRedminePower.Extentions;
+using Reactive.Bindings;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.ViewModels.Visualize.Charts;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,15 +15,24 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
     public abstract class TreeMapItemViewModelBase : PointViewModel
     {
         public ObservableCollection<TreeMapItemViewModelBase> Children { get; set; }
+
+        public ReactiveCommand ExpandTicketCommand { get; set; }
+        public ReactiveCommand CollapseTicketCommand { get; set; }
+        public ReactiveCommand RemoveTicketCommand { get; set; }
+
         public double TotalHours { get; set; }
 
         public bool IsSelected { get; set; }
 
         public Issue Issue { get; set; }
 
-        protected TreeMapItemViewModelBase()
+        protected TreeMapItemViewModelBase(TreeMapViewModel tree)
         {
             Children = new ObservableCollection<TreeMapItemViewModelBase>();
+
+            ExpandTicketCommand = tree.ExpandCommand;
+            CollapseTicketCommand = tree.CollapseCommand;
+            RemoveTicketCommand = tree.RemoveCommand;
         }
 
         public void SetTotalHours()

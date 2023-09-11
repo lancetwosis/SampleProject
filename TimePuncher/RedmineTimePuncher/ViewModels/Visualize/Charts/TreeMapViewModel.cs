@@ -35,9 +35,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         public ObservableCollection<TreeMapItemViewModelBase> SelectedPoints { get; set; }
 
         public ReactiveCommand<int> GoToTicketCommand { get; set; }
-        public ReactiveCommand<int> ExpandCommand { get; set; }
-        public ReactiveCommand<int> CollapseCommand { get; set; }
-        public ReactiveCommand<int> RemoveCommand { get; set; }
+        public ReactiveCommand ExpandCommand { get; set; }
+        public ReactiveCommand CollapseCommand { get; set; }
+        public ReactiveCommand RemoveCommand { get; set; }
 
         public TreeMapViewModel(ResultViewModel parent) : base(ViewType.TreeMap, parent)
         {
@@ -64,23 +64,41 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 System.Diagnostics.Process.Start(MyIssue.GetUrl(id));
             }).AddTo(disposables);
 
-            ExpandCommand = new ReactiveCommand<int>().WithSubscribe(id =>
-            {
-                parent.ExpandAll(id);
-            }).AddTo(disposables);
-
-            CollapseCommand = new ReactiveCommand<int>().WithSubscribe(id =>
-            {
-                parent.CollapseAll(id);
-            }).AddTo(disposables);
-
-            RemoveCommand = new ReactiveCommand<int>().WithSubscribe(id =>
-            {
-                parent.RemoveTicket(id);
-            }).AddTo(disposables);
+            ExpandCommand = new ReactiveCommand().WithSubscribe(() => exec(i => parent.ExpandAll(i))).AddTo(disposables);
+            CollapseCommand = new ReactiveCommand().WithSubscribe(() => exec(i => parent.CollapseAll(i))).AddTo(disposables);
+            RemoveCommand = new ReactiveCommand().WithSubscribe(() => exec(i => parent.RemoveTicket(i))).AddTo(disposables);
         }
 
-        public override void SetupSeries()
+        private void exec(Action<int> action)
+        {
+            var childIds = SelectedPoints.OfType<GroupingItemViewModel>()
+                                    .SelectMany(g => getChildTickets(g))
+                                    .Select(t => t.Issue.Id).Distinct().ToList();
+            var ids = SelectedPoints.OfType<TicketItemViewModel>().Select(i => i.Issue.Id).Distinct().ToList();
+            foreach (var i in childIds.Concat(ids).Distinct())
+            {
+                action.Invoke(i);
+            }
+        }
+
+        private List<TicketItemViewModel> getChildTickets(GroupingItemViewModel top)
+        {
+            if (top.Children[0] is TicketItemViewModel)
+            {
+                return top.Children.OfType<TicketItemViewModel>().ToList();
+            }
+            else
+            {
+                var children = new List<TicketItemViewModel>();
+                foreach (var group in top.Children)
+                {
+                    children.AddRange(getChildTickets(group as GroupingItemViewModel));
+                }
+                return children;
+            }
+        }
+
+        public override void SetupSeries(bool needsSetVisible = true)
         {
             var points = new ObservableCollection<TreeMapItemViewModelBase>();
 
@@ -94,7 +112,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             {
                 foreach (var first in allTimeEntries.GroupBy(p => p.GetFactor(FirstGroupingType.SelectedType.Value)))
                 {
-                    var firstGroup = new GroupingItemViewModel(first.Key, 1);
+                    var firstGroup = new GroupingItemViewModel(first.Key, 1, this);
                     createTicketTree(first.ToList()).ForEach(t => firstGroup.Children.Add(t));
                     points.Add(firstGroup);
                 }
@@ -103,10 +121,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             {
                 foreach (var first in allTimeEntries.GroupBy(p => p.GetFactor(FirstGroupingType.SelectedType.Value)))
                 {
-                    var firstGroup = new GroupingItemViewModel(first.Key, 1);
+                    var firstGroup = new GroupingItemViewModel(first.Key, 1, this);
                     foreach (var second in first.GroupBy(p => p.GetFactor(SecondGroupingType.SelectedType.Value)))
                     {
-                        var secondGroup = new GroupingItemViewModel(second.Key, 2);
+                        var secondGroup = new GroupingItemViewModel(second.Key, 2, this);
                         createTicketTree(second.ToList()).ForEach(t => secondGroup.Children.Add(t));
                         firstGroup.Children.Add(secondGroup);
                     }
@@ -117,13 +135,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             {
                 foreach (var first in allTimeEntries.GroupBy(p => p.GetFactor(FirstGroupingType.SelectedType.Value)))
                 {
-                    var firstGroup = new GroupingItemViewModel(first.Key, 1);
+                    var firstGroup = new GroupingItemViewModel(first.Key, 1, this);
                     foreach (var second in first.GroupBy(p => p.GetFactor(SecondGroupingType.SelectedType.Value)))
                     {
-                        var secondGroup = new GroupingItemViewModel(second.Key, 2);
+                        var secondGroup = new GroupingItemViewModel(second.Key, 2, this);
                         foreach (var third in first.GroupBy(p => p.GetFactor(ThirdGroupingType.SelectedType.Value)))
                         {
-                            var thirdGroup = new GroupingItemViewModel(third.Key, 3);
+                            var thirdGroup = new GroupingItemViewModel(third.Key, 3, this);
                             createTicketTree(third.ToList()).ForEach(t => thirdGroup.Children.Add(t));
                             secondGroup.Children.Add(thirdGroup);
                         }

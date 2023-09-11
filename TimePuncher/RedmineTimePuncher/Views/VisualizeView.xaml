@@ -244,86 +244,101 @@
                     BorderBrush="{telerik1:Office2019Resource ResourceKey=AccentBorderBrush}"
                     BorderThickness="1"
                     CornerRadius="2">
-                <Grid>
+                <Grid Grid.IsSharedSizeScope="True">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="AUTO" />
                         <RowDefinition Height="AUTO" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    <StackPanel Background="AliceBlue"
-                                Orientation="Horizontal">
+                    <Grid Background="AliceBlue">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="First" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock Margin="28,4,4,4"
                                    FontSize="16"
                                    FontWeight="Bold"
                                    Foreground="{telerik1:Office2019Resource ResourceKey={x:Static telerik:Office2019ResourceKey.AccentBackgroundBrush}}"
                                    Text="検索結果" />
-                        <Border Margin="5,3,0,3"
-                                BorderBrush="LightGray"
-                                BorderThickness="1"
-                                CornerRadius="5"
-                                ToolTip="{Binding Visualize.Result.Model.CreateAt}"
-                                Visibility="{Binding Visualize.Result.Model.HasValue,
-                                                     Converter={StaticResource BooleanToVisibilityConverter}}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Margin="5,0,0,0"
-                                           VerticalAlignment="Center"
-                                           Foreground="DimGray"
-                                           Text="取得日: " />
-                                <TextBlock Margin="0,0,5,0"
-                                           VerticalAlignment="Center"
-                                           Foreground="DimGray"
-                                           Text="{Binding Visualize.Result.Model.CreateAt,
-                                                          StringFormat=yy/MM/dd}" />
-                            </StackPanel>
-                        </Border>
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal">
+                            <Border Margin="5,3,0,3"
+                                    BorderBrush="LightGray"
+                                    BorderThickness="1"
+                                    CornerRadius="5"
+                                    ToolTip="{Binding Visualize.Result.Model.CreateAt}"
+                                    Visibility="{Binding Visualize.Result.Model.HasValue,
+                                                         Converter={StaticResource BooleanToVisibilityConverter}}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Margin="5,0,0,0"
+                                               VerticalAlignment="Center"
+                                               Foreground="DimGray"
+                                               Text="取得日: " />
+                                    <TextBlock Margin="0,0,5,0"
+                                               VerticalAlignment="Center"
+                                               Foreground="DimGray"
+                                               Text="{Binding Visualize.Result.Model.CreateAt,
+                                                              StringFormat=yy/MM/dd}" />
+                                </StackPanel>
+                            </Border>
 
-                        <charts:FilterLabelView Margin="5,0,0,0"
-                                                DataContext="{Binding Visualize.Result.Filters.SpecifyParentIssue}"
-                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
-                                                                     Path=DataContext,
-                                                                     Converter={StaticResource NullToVisibilityConverter}}" />
-                        <charts:FilterLabelView Margin="5,0,0,0"
-                                                DataContext="{Binding Visualize.Result.Filters.SpecifyPeriod}"
-                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
-                                                                     Path=DataContext,
-                                                                     Converter={StaticResource NullToVisibilityConverter}}" />
-                        <charts:FilterLabelView Margin="5,0,0,0"
-                                                DataContext="{Binding Visualize.Result.Filters.SpecifyUsers}"
-                                                Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
-                                                                     Path=DataContext,
-                                                                     Converter={StaticResource NullToVisibilityConverter}}" />
-                    </StackPanel>
+                            <charts:FilterLabelView Margin="5,0,0,0"
+                                                    DataContext="{Binding Visualize.Result.Filters.SpecifyParentIssue}"
+                                                    Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
+                                                                         Path=DataContext,
+                                                                         Converter={StaticResource NullToVisibilityConverter}}" />
+                            <charts:FilterLabelView Margin="5,0,0,0"
+                                                    DataContext="{Binding Visualize.Result.Filters.SpecifyPeriod}"
+                                                    Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
+                                                                         Path=DataContext,
+                                                                         Converter={StaticResource NullToVisibilityConverter}}" />
+                            <charts:FilterLabelView Margin="5,0,0,0"
+                                                    DataContext="{Binding Visualize.Result.Filters.SpecifyUsers}"
+                                                    Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
+                                                                         Path=DataContext,
+                                                                         Converter={StaticResource NullToVisibilityConverter}}" />
+                        </StackPanel>
+                    </Grid>
 
-                    <StackPanel Grid.Row="1"
-                                Background="AliceBlue"
-                                Orientation="Horizontal">
+                    <Grid Grid.Row="1"
+                          Background="AliceBlue">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="First" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
                         <TextBlock Margin="28,4,4,4"
+                                   HorizontalAlignment="Right"
                                    FontSize="16"
                                    FontWeight="Bold"
                                    Foreground="{telerik1:Office2019Resource ResourceKey={x:Static telerik:Office2019ResourceKey.AccentBackgroundBrush}}"
                                    Text="フィルタ" />
-                        <Button Command="{Binding Visualize.AddFilterCommand}"
-                                Style="{StaticResource GlyphButtonStyle}">
-                            <Button.Content>
-                                <telerik:RadGlyph Foreground="Green"
-                                                  Glyph="&#xe120;" />
-                            </Button.Content>
-                        </Button>
-                        <ItemsControl Grid.Row="1"
-                                      ItemsSource="{Binding Visualize.Result.ResultFilters.Items}">
-                            <ItemsControl.ItemsPanel>
-                                <ItemsPanelTemplate>
-                                    <StackPanel Orientation="Horizontal" />
-                                </ItemsPanelTemplate>
-                            </ItemsControl.ItemsPanel>
-                            <ItemsControl.ItemTemplate>
-                                <DataTemplate>
-                                    <charts:ResultFilterLabelView Margin="2,0,2,0"
-                                                                  DataContext="{Binding}" />
-                                </DataTemplate>
-                            </ItemsControl.ItemTemplate>
-                        </ItemsControl>
-                    </StackPanel>
+                        <StackPanel Grid.Column="1"
+                                    Orientation="Horizontal">
+                            <Button Command="{Binding Visualize.AddFilterCommand}"
+                                    Style="{StaticResource GlyphButtonStyle}">
+                                <Button.Content>
+                                    <telerik:RadGlyph Foreground="Green"
+                                                      Glyph="&#xe120;" />
+                                </Button.Content>
+                            </Button>
+                            <ItemsControl Grid.Row="1"
+                                          ItemsSource="{Binding Visualize.Result.ResultFilters.Items}">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <charts:ResultFilterLabelView Margin="2,0,2,0"
+                                                                      DataContext="{Binding}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Grid>
 
                     <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>

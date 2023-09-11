@@ -39,7 +39,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         }
 
         protected CompositeDisposable myDisposables;
-        public virtual void SetupSeries()
+        public virtual void SetupSeries(bool needsSetVisible = true)
         {
             myDisposables?.Dispose();
             myDisposables = new CompositeDisposable().AddTo(disposables);

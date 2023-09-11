@@ -9,6 +9,7 @@ namespace RedmineTimePuncher.Models
 {
     public class MyUser : IdName
     {
+        public static string UrlBase;
         public string Email { get; set; }
         public List<Membership> Memberships { get; set; }
 
@@ -21,6 +22,11 @@ namespace RedmineTimePuncher.Models
             Name = $"{user.LastName} {user.FirstName}";
             Email = user.Email;
             Memberships = user.Memberships;
+        }
+
+        public static string GetUrl(int id)
+        {
+            return $"{UrlBase}users/{id}";
         }
 
         public override string ToString() => Name;

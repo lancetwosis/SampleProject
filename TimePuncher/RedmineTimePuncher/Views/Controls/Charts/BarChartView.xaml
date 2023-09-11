@@ -116,7 +116,15 @@
         <DataTemplate x:Key="BarLegendItemTemplate">
             <!--  Presenter.DataContext is SeriesViewModel  -->
             <StackPanel Orientation="Horizontal"
-                        ToolTip="{Binding Presenter.DataContext.TootTip}">
+                        ToolTip="{Binding Presenter.DataContext.ToolTip}">
+                <StackPanel.ContextMenu>
+                    <ContextMenu Visibility="{Binding Presenter.DataContext.VisibleAllCommand, Converter={StaticResource NullToVisibilityConverter}}">
+                        <MenuItem Command="{Binding Presenter.DataContext.VisibleAllCommand}"
+                                  Header="すべて表示する" />
+                        <MenuItem Command="{Binding Presenter.DataContext.InvisibleAllCommand}"
+                                  Header="すべて非表示にする" />
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
                 <CheckBox IsChecked="{Binding Presenter.DataContext.IsVisible.Value, Mode=TwoWay}" />
                 <Path Width="12"
                       Height="12"

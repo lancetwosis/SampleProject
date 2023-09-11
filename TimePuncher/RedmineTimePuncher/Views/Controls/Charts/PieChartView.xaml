@@ -61,6 +61,14 @@
             <!--  Presenter is PointViewModel  -->
             <StackPanel Orientation="Horizontal"
                         ToolTip="{Binding Title}">
+                <StackPanel.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Command="{Binding Presenter.VisibleAllCommand}"
+                                  Header="すべて表示する" />
+                        <MenuItem Command="{Binding Presenter.InvisibleAllCommand}"
+                                  Header="すべて非表示にする" />
+                    </ContextMenu>
+                </StackPanel.ContextMenu>
                 <CheckBox IsChecked="{Binding Presenter.IsVisible.Value, Mode=TwoWay}" />
                 <Path Width="12"
                       Height="12"

@@ -31,6 +31,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         public ObservableCollection<SeriesViewModel> Serieses { get; set; }
         public TotalLabelViewModel ShowTotal { get; set; }
 
+        private ReactiveCommand visibleAll { get; set; }
+        private ReactiveCommand invisibleAll { get; set; }
 
         public BarChartViewModel(ResultViewModel parent) : base(ViewType.BarChart, parent)
         {
@@ -47,9 +49,19 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             this.factors = new List<FactorTypeViewModel>() { XAxisType, CombineType, ShowTotal };
             setupIsEdited();
+
+            visibleAll = Serieses.AnyAsObservable(s => !s.IsVisible.Value, s => s.IsVisible).ToReactiveCommand().WithSubscribe(() =>
+            {
+                Serieses.ToList().ForEach(s => s.IsVisible.Value = true);
+            }).AddTo(disposables);
+
+            invisibleAll = Serieses.AnyAsObservable(s => s.IsVisible.Value, s => s.IsVisible).ToReactiveCommand().WithSubscribe(() =>
+            {
+                Serieses.ToList().ForEach(s => s.IsVisible.Value = false);
+            }).AddTo(disposables);
         }
 
-        public override void SetupSeries()
+        public override void SetupSeries(bool needsSetVisible = true)
         {
             base.SetupSeries();
 
@@ -63,7 +75,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 var tmp = new List<SeriesViewModel>();
                 foreach (var combine in allPoints.GroupBy(p => p.GetFactor(CombineType.SelectedType.Value)))
                 {
-                    var series = new SeriesViewModel(ViewType.BarChart, combine.Key);
+                    var series = new SeriesViewModel(ViewType.BarChart, combine.Key, visibleAll, invisibleAll);
                     var xAxises = combine.GroupBy(p => p.GetFactor(XAxisType.SelectedType.Value)).ToList();
                     foreach (var xAxis in allXAxises)
                     {
@@ -97,7 +109,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 return Serieses.Select(s => s.Points.Sum(p => p.Hours)).Sum();
             }).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
 
-            if (CombineType.SelectedType.Value == parent.Model.ChartSettings.BarPreviousCombine &&
+            if (needsSetVisible &&
+                CombineType.SelectedType.Value == parent.Model.ChartSettings.BarPreviousCombine &&
                 parent.Model.ChartSettings.BarVisibleSeriesNames.Any())
             {
                 foreach (var s in Serieses)

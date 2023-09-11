@@ -147,7 +147,7 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             Parent.Settings.ObserveProperty(a => a.Redmine.UrlBase).SubscribeWithErr(a =>
             {
-                MyAppointment.UrlBase = MyIssue.UrlBase = a;
+                MyAppointment.UrlBase = MyIssue.UrlBase = MyUser.UrlBase = a;
             }).AddTo(disposables);
             ScheduleSettings = Parent.Settings.ObserveProperty(a => a.Schedule).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             var tickLength = Parent.Settings.ObserveProperty(a => a.Schedule.TickLength).ToReadOnlyReactivePropertySlim().AddTo(disposables);

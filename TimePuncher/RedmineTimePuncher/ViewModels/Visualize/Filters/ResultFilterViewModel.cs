@@ -75,7 +75,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             ShortLabel = Label.Select(label => label.Count() > 31 ? $"{label.Substring(0, 27)}..." : label).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             NowEditing = new ReactivePropertySlim<bool>().AddTo(disposables);
-            IsValid = NowEditing.Select(n => n ? false : Factors.Any()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            IsValid = NowEditing.Select(n => n ? true : Factors.Any()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             EditCommand = new ReactiveCommand().WithSubscribe(() => NowEditing.Value = true).AddTo(disposables);
             DeleteCommand = new ReactiveCommand().WithSubscribe(() => parent.Items.Remove(this)).AddTo(disposables);

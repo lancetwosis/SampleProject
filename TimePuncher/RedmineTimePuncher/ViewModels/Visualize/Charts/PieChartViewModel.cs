@@ -60,7 +60,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             setupIsEdited();
         }
 
-        public override void SetupSeries()
+        public override void SetupSeries(bool needsSetVisible = true)
         {
             base.SetupSeries();
 
@@ -96,6 +96,17 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             Series = series;
             ShowTotal.TotalHours = series.Points.Select(p => p.IsVisible).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
+
+            // PointViewModel の IsVisible.Subscribe により Series.Points には表示されているもののみが含まれる
+            Series.VisibleAllCommand = Series.Points.CollectionChangedAsObservable()
+                .Select(_ => Series.Points.Count < points.Count).ToReactiveCommand().WithSubscribe(() =>
+            {
+                points.ToList().ForEach(p => p.IsVisible.Value = true);
+            }).AddTo(myDisposables);
+            Series.InvisibleAllCommand = Series.Points.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
+            {
+                Series.Points.ToList().ForEach(p => p.IsVisible.Value = false);
+            }).AddTo(myDisposables);
 
             if (SecondCombineType.SelectedType.Value != FactorType.None)
             {
@@ -155,7 +166,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 }).AddTo(myDisposables);
             }
 
-            if (CombineType.SelectedType.Value == parent.Model.ChartSettings.PiePreviousCombine &&
+            if (needsSetVisible &&
+                CombineType.SelectedType.Value == parent.Model.ChartSettings.PiePreviousCombine &&
                 parent.Model.ChartSettings.PieVisiblePointNames.Any())
             {
                 foreach (var p in Series.Points.ToList())

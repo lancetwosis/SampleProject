@@ -35,6 +35,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
         public ReactivePropertySlim<bool> IsVisible { get; set; }
 
+        public ReactiveCommand VisibleAllCommand => series.VisibleAllCommand;
+        public ReactiveCommand InvisibleAllCommand => series.InvisibleAllCommand;
+
         public FactorModel Factor { get; set; }
         public FactorModel ParentFactor { get; set; }
 
@@ -57,34 +60,33 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             {
                 Color = factor.GetColor();
                 IsVisible = new ReactivePropertySlim<bool>(true);
+                IsVisible.Skip(1).Subscribe(_ =>
+                {
+                    var i = this.series.Points.IndexOf(this);
+                    if (i >= 0)
+                    {
+                        this.series.Points.Remove(this);
+                    }
+                    else
+                    {
+                        var upper = this.series.Points.Indexed().FirstOrDefault(p => this.Index < p.v.Index);
+                        if (upper.v != null)
+                            this.series.Points.Insert(upper.i, this);
+                        else
+                            this.series.Points.Add(this);
+                    }
+                }).AddTo(disposables);
             }
 
             if (factor.Type == FactorType.Date)
                 XDateTime = (DateTime) factor.RawValue;
             if (factor.Type == FactorType.Issue)
                 Url = MyIssue.GetUrl((factor.RawValue as Issue).Id);
-
-            IsVisible.Skip(1).Subscribe(_ =>
-            {
-                if (series.Type != ViewType.PieChart)
-                    return;
-
-                var i = this.series.Points.IndexOf(this);
-                if (i >= 0)
-                {
-                    this.series.Points.Remove(this);
-                }
-                else
-                {
-                    var upper = this.series.Points.Indexed().FirstOrDefault(p => this.Index < p.v.Index);
-                    if (upper.v != null)
-                        this.series.Points.Insert(upper.i, this);
-                    else
-                        this.series.Points.Add(this);
-                }
-            }).AddTo(disposables);
         }
 
+        /// <summary>
+        /// PieChart の第二チャート用のコンストラクタ
+        /// </summary>
         public PointViewModel(SeriesViewModel series, FactorModel factor, FactorModel parentFactor, List<PersonHourModel> models = null)
             : this(series, factor, models)
         {

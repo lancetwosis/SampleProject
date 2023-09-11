@@ -68,14 +68,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             initializeDisposables = new CompositeDisposable().AddTo(disposables);
 
             ViewType = Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.ViewType).AddTo(initializeDisposables);
-            ViewType.Skip(1).Subscribe(_ => updateSerieses());
+            ViewType.Skip(1).Subscribe(_ => updateSerieses(true));
 
             BarChart = new BarChartViewModel(this).AddTo(initializeDisposables);
             PieChart = new PieChartViewModel(this).AddTo(initializeDisposables);
             TreeMap = new TreeMapViewModel(this).AddTo(initializeDisposables);
 
-            var org = ViewType.Value;
-            new[] { ViewType.Select(a => a != org), BarChart.IsEdited, PieChart.IsEdited, TreeMap.IsEdited }.CombineLatest()
+            new[] { BarChart.IsEdited, PieChart.IsEdited, TreeMap.IsEdited }.CombineLatest()
                 .Subscribe(l =>
                 {
                     if (l.Any(a => a))
@@ -143,20 +142,14 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
                 ResultFilters = new ResultFiltersViewModel(this, rawEntries).AddTo(disposables);
 
-                var onIsEnableChanged = AllTickets.Select(a => a.IsEnabled).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
-                var onIsExpandedChanged = AllTickets.Select(a => a.ObserveProperty(b => b.IsExpanded)).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
+                var onIsEnable = AllTickets.Select(a => a.IsEnabled).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
+                var onIsExpanded = AllTickets.Select(a => a.ObserveProperty(b => b.IsExpanded)).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
+                onIsEnable.CombineLatest(onIsExpanded, (_1, _2) => true).Skip(1).Subscribe(_ => updateSerieses(true)).AddTo(setupTreeDisposables);
+
                 var onFiltersChanged = ResultFilters.Items.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
                     ResultFilters.Items.ObserveElementProperty(i => i.IsEnabled.Value),
                     ResultFilters.Items.ObserveElementProperty(i => i.NowEditing.Value), (_1, _2, _3) => true);
-
-                onIsEnableChanged.CombineLatest(onIsExpandedChanged, onFiltersChanged, (_1, _2, _3) => true).Skip(1).Subscribe(_ =>
-                {
-                    if (ResultFilters.Items.Count == 0 || ResultFilters.Items.All(i => i.IsValid.Value))
-                    {
-                        Model.IsEdited = true;
-                        updateSerieses();
-                    }
-                }).AddTo(setupTreeDisposables);
+                onFiltersChanged.Skip(1).Subscribe(_ => updateSerieses(true, false));
 
                 updateSerieses();
             }
@@ -294,15 +287,21 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             TreeMap.Save();
         }
 
-        private void updateSerieses()
+        private void updateSerieses(bool isEdited = false, bool needsSetVisible = true)
         {
+            if (ResultFilters.Items.Any(i => i.NowEditing.Value || !i.IsValid.Value))
+                return;
+
+            if (isEdited)
+                Model.IsEdited = true;
+
             switch (ViewType.Value)
             {
                 case Enums.ViewType.BarChart:
-                    BarChart.SetupSeries();
+                    BarChart.SetupSeries(needsSetVisible);
                     break;
                 case Enums.ViewType.PieChart:
-                    PieChart.SetupSeries();
+                    PieChart.SetupSeries(needsSetVisible);
                     break;
                 case Enums.ViewType.TreeMap:
                     TreeMap.SetupSeries();
@@ -316,13 +315,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             {
                 var target = AllTickets.FirstOrDefault(t => t.Model.RawIssue.Id == id.Value);
                 if (target != null)
-                    target.SetIsExpanded(true);
+                    target.SetIsExpanded(true, true);
             }
             else
             {
                 foreach (var t in Tickets)
                 {
-                    t.SetIsExpanded(true);
+                    t.SetIsExpanded(true, true);
                 }
             }
         }

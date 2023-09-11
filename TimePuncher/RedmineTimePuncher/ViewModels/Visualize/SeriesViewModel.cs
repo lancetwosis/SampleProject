@@ -26,16 +26,18 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public ViewType Type { get; set; }
         public string Title { get; set; }
         public Brush Color { get; set; }
-        public string TootTip { get; set; }
+        public string ToolTip { get; set; }
         public string Url { get; set; }
 
         public ObservableCollection<PointViewModel> Points { get; set; }
 
         public ReactivePropertySlim<bool> IsVisible { get; set; }
+        public ReactiveCommand VisibleAllCommand { get; set; }
+        public ReactiveCommand InvisibleAllCommand { get; set; }
 
         public FactorModel Factor { get; set; }
 
-        private SeriesViewModel(ViewType type, string title, FactorModel factor)
+        private SeriesViewModel(ViewType type, string title, FactorModel factor, ReactiveCommand visibleAll, ReactiveCommand invisibleAll)
         {
             Type = type;
             Points = new ObservableCollection<PointViewModel>();
@@ -44,22 +46,30 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             Color = Factor != null ? Factor.GetColor() : FactorType.None.GetColor(Title);
             if (Factor != null && Factor.Type == FactorType.Issue)
             {
-                TootTip = (Factor.RawValue as Issue).GetFullLabel();
+                ToolTip = (Factor.RawValue as Issue).GetFullLabel();
                 Url = MyIssue.GetUrl((Factor.RawValue as Issue).Id);
+            }
+            else if (Factor != null && Factor.Type == FactorType.User)
+            {
+                ToolTip = Title;
+                Url = MyUser.GetUrl((Factor.RawValue as IdentifiableName).Id);
             }
             else
             {
-                TootTip = Title;
+                ToolTip = Title;
             }
 
             IsVisible = new ReactivePropertySlim<bool>(true).AddTo(disposables);
+            VisibleAllCommand = visibleAll;
+            InvisibleAllCommand = invisibleAll;
         }
 
-        public SeriesViewModel(ViewType type) : this(type, "工数", null)
+        public SeriesViewModel(ViewType type) : this(type, "工数", null, null, null)
         {
         }
 
-        public SeriesViewModel(ViewType type, FactorModel factor) : this(type, factor.Name, factor)
+        public SeriesViewModel(ViewType type, FactorModel factor, ReactiveCommand visibleAll, ReactiveCommand invisibleAll)
+            : this(type, factor.Name, factor, visibleAll, invisibleAll)
         {
         }
     }

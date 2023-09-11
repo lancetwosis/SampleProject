@@ -16,20 +16,14 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
     public class TicketItemViewModel : TreeMapItemViewModelBase
     {
         public ReactiveCommand<int> GoToTicketCommand { get; set; }
-        public ReactiveCommand<int> ExpandTicketCommand { get; set; }
-        public ReactiveCommand<int> CollapseTicketCommand { get; set; }
-        public ReactiveCommand<int> RemoveTicketCommand { get; set; }
 
-        private TicketItemViewModel(Issue issue, double hours, string xLabel, TreeMapViewModel tree) : base()
+        private TicketItemViewModel(Issue issue, double hours, string xLabel, TreeMapViewModel tree) : base(tree)
         {
             Issue = issue;
             Hours = hours;
             XLabel = xLabel;
 
             GoToTicketCommand = tree.GoToTicketCommand;
-            ExpandTicketCommand = tree.ExpandCommand;
-            CollapseTicketCommand = tree.CollapseCommand;
-            RemoveTicketCommand = tree.RemoveCommand;
         }
 
         public TicketItemViewModel(PersonHourModel model, TreeMapViewModel tree)
