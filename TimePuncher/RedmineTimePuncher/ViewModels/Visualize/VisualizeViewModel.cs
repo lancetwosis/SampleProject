@@ -52,7 +52,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public ReactiveCommand EnableRecursiveCommand { get; set; }
         public ReactiveCommand DisableCommand { get; set; }
         public ReactiveCommand DisableRecursiveCommand { get; set; }
-
+        public ReactiveCommand AddFilterCommand { get; set; }
         public MainWindowViewModel Parent { get; set; }
 
         public VisualizeViewModel(MainWindowViewModel parent)
@@ -79,18 +79,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     return p.name;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            IsSelected.Where(a => a).Take(1).Subscribe(async _ =>
+            IsSelected.Where(a => a).Take(1).Subscribe(_ =>
             {
                 using (IsBusy.ProcessStart())
                 using (parent.IsBusy.ProcessStart(""))
                 {
-                    await Task.Run(() =>
-                    {
-                        App.Current.Dispatcher.Invoke(() =>
-                        {
-                            Result.Initialize();
-                        });
-                    });
+                    Result.Initialize();
                 }
             }).AddTo(disposables);
 
@@ -102,14 +96,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                    using (IsBusy.ProcessStart())
                    using (parent.IsBusy.ProcessStart(""))
                    {
-                       await Task.Run(() =>
-                       {
-                           return App.Current.Dispatcher.Invoke(async () =>
-                           {
-                               await Result.GetTimeEntriesAsync(Filters);
-                               Filters.IsExpanded.Value = false;
-                           });
-                       });
+                       await Result.GetTimeEntriesAsync(Filters);
+                       Filters.IsExpanded.Value = false;
                    }
                }).AddTo(disposables);
 
@@ -121,14 +109,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                    using (IsBusy.ProcessStart())
                    using (parent.IsBusy.ProcessStart(""))
                    {
-                       await Task.Run(() =>
-                       {
-                           return App.Current.Dispatcher.Invoke(async () =>
-                           {
-                               await Result.UpdateTimeEntriesAsync();
-                               Filters.IsExpanded.Value = false;
-                           });
-                       });
+                       await Result.UpdateTimeEntriesAsync();
+                       Filters.IsExpanded.Value = false;
                    }
                }).AddTo(disposables);
 
@@ -142,31 +124,23 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     using (IsBusy.ProcessStart())
                     using (parent.IsBusy.ProcessStart(""))
                     {
-                        await Task.Run(() =>
-                        {
-                            App.Current.Dispatcher.Invoke(() =>
-                            {
-                                Result.Open();
-                            });
-                        });
+                        Result.Open();
                     }
                 }).AddTo(disposables);
 
-            SaveResultCommand = new CommandBase(
-                "保存", Properties.Resources.save,
-                new[] {
+            var hasResult = new[] {
                     parent.IsBusy.Select(a => !a),
                     this.ObserveProperty(a => a.Result.Model.HasValue),
-                    Result.IsEdited,
-                }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
+                }.CombineLatestValuesAreAllTrue();
+
+            SaveResultCommand = new CommandBase(
+                "保存", Properties.Resources.save,
+                new[] { hasResult, Result.IsEdited, }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
                 () => Result.SaveToFile()).AddTo(disposables);
 
             SaveAsResultCommand = new CommandBase(
                 "名前を付けて保存", Properties.Resources.saveas_icon,
-                new[] {
-                    parent.IsBusy.Select(a => !a),
-                    this.ObserveProperty(a => a.Result.Model.HasValue),
-                }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
+                hasResult.Select(a => a ? null : ""),
                 () => Result.SaveAsToFile()).AddTo(disposables);
 
             ExpandCommand = Result.SelectedTickets.AnyAsObservable(t => !t.IsExpanded && t.Children.Any()).ToReactiveCommand().WithSubscribe(() =>
@@ -205,6 +179,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             DisableRecursiveCommand= Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
             {
                 Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(false,true));
+            }).AddTo(disposables);
+
+            AddFilterCommand = hasResult.ToReactiveCommand().WithSubscribe(() =>
+            {
+                Result.AddNewFilter();
             }).AddTo(disposables);
         }
 

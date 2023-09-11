@@ -32,6 +32,8 @@ namespace RedmineTimePuncher.Models.Visualize
         public List<TicketModel> Tickets { get; set; } = new List<TicketModel>();
         public List<CategorySettingModel> Categories { get; set; } = new List<CategorySettingModel>();
 
+        public ObservableCollection<ResultFilterModel> ResultFilters { get; set; } = new ObservableCollection<ResultFilterModel>();
+
         public ResultModel()
         {
         }

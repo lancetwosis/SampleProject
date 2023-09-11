@@ -29,6 +29,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public ObservableCollection<TicketViewModel> Tickets { get; set; }
         public ObservableCollection<TicketViewModel> AllTickets { get; set; }
         public ObservableCollection<TicketViewModel> SelectedTickets { get; set; }
+        public ResultFiltersViewModel ResultFilters { get; set; }
 
         public ReactivePropertySlim<ViewType> ViewType { get; set; }
         public BarChartViewModel BarChart { get; set; }
@@ -140,16 +141,21 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     Tickets.Add(t);
                 }
 
-                AllTickets.Select(a => a.IsEnabled).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher().Skip(1).Subscribe(_ =>
-                {
-                    Model.IsEdited = true;
-                    updateSerieses();
-                }).AddTo(setupTreeDisposables);
+                ResultFilters = new ResultFiltersViewModel(this, rawEntries).AddTo(disposables);
 
-                AllTickets.Select(a => a.ObserveProperty(b => b.IsExpanded)).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher().Skip(1).Subscribe(_ =>
+                var onIsEnableChanged = AllTickets.Select(a => a.IsEnabled).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
+                var onIsExpandedChanged = AllTickets.Select(a => a.ObserveProperty(b => b.IsExpanded)).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
+                var onFiltersChanged = ResultFilters.Items.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
+                    ResultFilters.Items.ObserveElementProperty(i => i.IsEnabled.Value),
+                    ResultFilters.Items.ObserveElementProperty(i => i.NowEditing.Value), (_1, _2, _3) => true);
+
+                onIsEnableChanged.CombineLatest(onIsExpandedChanged, onFiltersChanged, (_1, _2, _3) => true).Skip(1).Subscribe(_ =>
                 {
-                    Model.IsEdited = true;
-                    updateSerieses();
+                    if (ResultFilters.Items.Count == 0 || ResultFilters.Items.All(i => i.IsValid.Value))
+                    {
+                        Model.IsEdited = true;
+                        updateSerieses();
+                    }
                 }).AddTo(setupTreeDisposables);
 
                 updateSerieses();
@@ -372,6 +378,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     SelectedTickets.Add(t);
                 }
             }
+        }
+
+        public void AddNewFilter()
+        {
+            ResultFilters?.AddNewFilter();
         }
 
         public void Save()

@@ -136,6 +136,7 @@
     <Compile Include="Behaviors\MyReadOnlyBehavior.cs" />
     <Compile Include="Behaviors\RadScheduleViewSelectedAppointmentsBehavior.cs" />
     <Compile Include="Converters\AppointmentTypeToOpacityConverter.cs" />
+    <Compile Include="Converters\BoolToTextStrikethroughConverter .cs" />
     <Compile Include="Converters\SliderValueToVisibilityConverter.cs" />
     <Compile Include="Converters\PeriodToIsEnabledConverter.cs" />
     <Compile Include="Converters\BoolToFontBoldConverter.cs" />
@@ -166,6 +167,7 @@
     <Compile Include="Interfaces\IAutoUpdateSetting.cs" />
     <Compile Include="Interfaces\IPeriod.cs" />
     <Compile Include="Interfaces\ISettingsModel.cs" />
+    <Compile Include="Models\DiffMatchPatch.cs" />
     <Compile Include="Models\IdName.cs" />
     <Compile Include="Models\Managers\DebugDataManager.cs" />
     <Compile Include="Models\Managers\TeamsManager.cs" />
@@ -177,6 +179,7 @@
     <Compile Include="Models\MyTimeEntry.cs" />
     <Compile Include="Models\MyUser.cs" />
     <Compile Include="Models\MyWikiPage.cs" />
+    <Compile Include="Models\Visualize\ResultFilterModel.cs" />
     <Compile Include="Models\Visualize\TicketModel.cs" />
     <Compile Include="Models\Visualize\ResultModel.cs" />
     <Compile Include="Models\Visualize\ChartSettingsModel.cs" />
@@ -211,8 +214,13 @@
     <Compile Include="Models\TicketTreeItemModel.cs" />
     <Compile Include="Models\WikiLine.cs" />
     <Compile Include="ViewModels\Bases\FunctionViewModelBase.cs" />
+    <Compile Include="ViewModels\CountWikiPage\Charts\DateItem.cs" />
+    <Compile Include="ViewModels\CountWikiPage\Charts\SeriesViewModelBase.cs" />
+    <Compile Include="ViewModels\CountWikiPage\Charts\UserSeriesViewModel.cs" />
+    <Compile Include="ViewModels\CountWikiPage\Charts\WikiSeriesViewModel.cs" />
     <Compile Include="ViewModels\CountWikiPage\CountWikiPageViewModel.cs" />
     <Compile Include="ViewModels\CountWikiPage\CountResultViewModel.cs" />
+    <Compile Include="ViewModels\CountWikiPage\Charts\CustomSeriesDescriptorSelector.cs" />
     <Compile Include="ViewModels\CreateTicket\CreateTicketViewModel.cs" />
     <Compile Include="ViewModels\CreateTicket\MemberViewModel.cs" />
     <Compile Include="ViewModels\Input\Controls\CustomScheduleViewDialogHostFactory.cs" />
@@ -286,6 +294,8 @@
     <Compile Include="ViewModels\Visualize\Charts\PieChartViewModel.cs" />
     <Compile Include="ViewModels\Visualize\Enums\ViewType.cs" />
     <Compile Include="ViewModels\Visualize\Enums\FactorType.cs" />
+    <Compile Include="ViewModels\Visualize\Filters\ResultFilterViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Filters\ResultFiltersViewModel.cs" />
     <Compile Include="ViewModels\Visualize\TotalLabelViewModel.cs" />
     <Compile Include="ViewModels\Visualize\Filters\SpecifyUsersViewModel.cs" />
     <Compile Include="ViewModels\Visualize\ResultViewModel.cs" />
@@ -303,6 +313,9 @@
     <Compile Include="ViewModels\Visualize\TreeMapItems\TicketItemViewModel.cs" />
     <Compile Include="ViewModels\Visualize\TreeMapItems\TreeMapItemViewModelBase.cs" />
     <Compile Include="ViewModels\Visualize\VisualizeViewModel.cs" />
+    <Compile Include="Views\Controls\Charts\ResultFilterLabelView.xaml.cs">
+      <DependentUpon>ResultFilterLabelView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Controls\Charts\TotalLabelView.xaml.cs">
       <DependentUpon>TotalLabelView.xaml</DependentUpon>
     </Compile>
@@ -523,6 +536,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Themes\Settings\HelpTextBlockStyle.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\Charts\ResultFilterLabelView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

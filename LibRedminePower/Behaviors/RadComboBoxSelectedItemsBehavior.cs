@@ -17,20 +17,23 @@ namespace LibRedminePower.Behaviors
             get { return (INotifyCollectionChanged)GetValue(MyPropertyProperty); }
             set { SetValue(MyPropertyProperty, value); }
         }
-        public static readonly DependencyProperty MyPropertyProperty =
-            DependencyProperty.Register("SelectedItems", typeof(INotifyCollectionChanged), typeof(RadComboBoxSelectedItemsBehavior), new PropertyMetadata(onSelectedItemsPropertyChanged));
+        public static readonly DependencyProperty MyPropertyProperty = DependencyProperty.Register(
+            "SelectedItems",
+            typeof(INotifyCollectionChanged),
+            typeof(RadComboBoxSelectedItemsBehavior),
+            new PropertyMetadata(onSelectedItemsPropertyChanged));
 
         private static void onSelectedItemsPropertyChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
         {
-            if(!isIgnoreChnaged)
+            if (!nowTransfering)
             {
                 var comboBox = (target as RadComboBoxSelectedItemsBehavior).AssociatedObject;
                 if(comboBox != null)
                 {
                     var items = e.NewValue as IList;
-                    isIgnoreChnaged = true;
-                    Transfer(items, comboBox.SelectedItems);
-                    isIgnoreChnaged = false;
+                    nowTransfering = true;
+                    transfer(items, comboBox.SelectedItems);
+                    nowTransfering = false;
                 }
             }
         }
@@ -53,18 +56,21 @@ namespace LibRedminePower.Behaviors
 
         private void AssociatedObject_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            isIgnoreChnaged = true;
-            Transfer(AssociatedObject.SelectedItems, SelectedItems as IList);
-            isIgnoreChnaged = false;
+            if (!nowTransfering)
+            {
+                nowTransfering = true;
+                transfer(AssociatedObject.SelectedItems, SelectedItems as IList);
+                nowTransfering = false;
+            }
         }
 
-        private static bool isIgnoreChnaged = false;
+        private static bool nowTransfering = false;
 
-        private static void Transfer(IList source, IList target)
+        private static void transfer(IList source, IList target)
         {
             if (source == null || target == null) return;
             target.Clear();
-            foreach(var item in source)
+            foreach (var item in source)
             {
                 target.Add(item);
             }

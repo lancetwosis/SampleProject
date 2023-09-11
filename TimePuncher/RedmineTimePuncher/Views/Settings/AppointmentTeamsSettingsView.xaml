@@ -21,42 +21,55 @@
                       IsChecked="{Binding IsEnabled.Value.Value}" />
         </GroupBox.Header>
 
-        <Grid Margin="5,0,0,0"
-              IsEnabled="{Binding ElementName=teamsCheckBox,
-                                  Path=IsChecked}">
-            <Grid.RowDefinitions>
-                <RowDefinition />
-                <RowDefinition />
-            </Grid.RowDefinitions>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"
-                                  SharedSizeGroup="FirstColumn" />
-                <ColumnDefinition />
-            </Grid.ColumnDefinitions>
+        <StackPanel Margin="5,5,0,0"
+                    IsEnabled="{Binding ElementName=teamsCheckBox,
+                                        Path=IsChecked}">
+            <CheckBox Margin="5,5,0,0"
+                      Content="ステータスの読み込み"
+                      IsChecked="{Binding IsEnabledStatus.Value.Value}" />
+            <GroupBox Margin="5,5,0,0">
+                <GroupBox.Header>
+                    <CheckBox x:Name="teamsCallHistoryCheckBox"
+                              Content="通話履歴の読み込み"
+                              IsChecked="{Binding IsEnabledCallHistory.Value.Value}" />
+                </GroupBox.Header>
 
-            <CheckBox Grid.Column="0"
-                      VerticalAlignment="Center"
-                      Content="{x:Static props:Resources.SettingsAppoAutoLoading}"
-                      IsChecked="{Binding IsAutoUpdate.Value}" />
-            <StackPanel Grid.Column="1"
-                        HorizontalAlignment="Left"
-                        Orientation="Horizontal">
-                <telerik:RadNumericUpDown MinWidth="80"
-                                          Margin="5,0,0,0"
-                                          IsEnabled="{Binding IsAutoUpdate.Value}"
-                                          Maximum="9999"
-                                          Minimum="1"
-                                          ValueFormat="Numeric"
-                                          Value="{Binding AutoUpdateMinutes.Value}">
-                    <telerik:RadNumericUpDown.NumberFormatInfo>
-                        <global:NumberFormatInfo NumberDecimalDigits="0" />
-                    </telerik:RadNumericUpDown.NumberFormatInfo>
-                </telerik:RadNumericUpDown>
-                <TextBlock Margin="5,0,0,0"
-                           VerticalAlignment="Center"
-                           Text="{x:Static props:Resources.SettingsAppoMinutes}" />
-            </StackPanel>
-        </Grid>
+                <Grid IsEnabled="{Binding ElementName=teamsCallHistoryCheckBox, Path=IsChecked}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          SharedSizeGroup="FirstColumn" />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <CheckBox Grid.Column="0"
+                              VerticalAlignment="Center"
+                              Content="{x:Static props:Resources.SettingsAppoAutoLoading}"
+                              IsChecked="{Binding IsAutoUpdate.Value}" />
+                    <StackPanel Grid.Column="1"
+                                HorizontalAlignment="Left"
+                                Orientation="Horizontal">
+                        <telerik:RadNumericUpDown MinWidth="80"
+                                                  Margin="5,0,0,0"
+                                                  IsEnabled="{Binding IsAutoUpdate.Value}"
+                                                  Maximum="9999"
+                                                  Minimum="1"
+                                                  ValueFormat="Numeric"
+                                                  Value="{Binding AutoUpdateMinutes.Value}">
+                            <telerik:RadNumericUpDown.NumberFormatInfo>
+                                <global:NumberFormatInfo NumberDecimalDigits="0" />
+                            </telerik:RadNumericUpDown.NumberFormatInfo>
+                        </telerik:RadNumericUpDown>
+                        <TextBlock Margin="5,0,0,0"
+                                   VerticalAlignment="Center"
+                                   Text="{x:Static props:Resources.SettingsAppoMinutes}" />
+                    </StackPanel>
+                </Grid>
+            </GroupBox>
+
+        </StackPanel>
     </GroupBox>
 
 </UserControl>

@@ -791,9 +791,14 @@ namespace RedmineTimePuncher.Models.Managers
             return Manager.GetAllWikiPagesWithErrConv(projIdentifier).Select(w => new MyWikiPage(redmineSettings.UrlBase, projIdentifier, w, null)).ToList();
         }
 
-        public MyWikiPage GetWikiPage(string projectId, string title)
+        public MyWikiPage GetWikiPage(string projectId, string title, int? version = null)
         {
-            return new MyWikiPage(redmineSettings.UrlBase, projectId, Manager.GetWikiPage(projectId, null, title));
+            var param =
+                version.HasValue ?
+                new NameValueCollection { { RedmineKeys.VERSION, version.ToString() } } :
+                null;
+
+            return new MyWikiPage(redmineSettings.UrlBase, projectId, Manager.GetWikiPage(projectId, param, title));
         }
 
         public MyWikiPage GetWikiPageIncludeChildren(string projectId, string title)

@@ -30,8 +30,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         public ReadOnlyReactivePropertySlim<bool> IsEnabled { get; set; }
         public ReadOnlyReactivePropertySlim<bool> IsEdited { get; set; }
 
+        protected ResultViewModel parent { get; set; } 
+
         public ChartViewModelBase(ViewType type, ResultViewModel parent)
         {
+            this.parent = parent;
             IsEnabled = parent.ViewType.Select(t => t == type).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
@@ -51,6 +54,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         public void Save()
         {
             factors.ForEach(f => f.UpdatePreviousType());
+        }
+
+        protected List<PersonHourModel> getAllTimeEntries()
+        {
+            var allEntries = parent.Tickets.SelectMany(t => t.GetAllTimeEntries()).ToList();
+            if (parent.Model.ResultFilters.Any())
+                return allEntries.Where(t => parent.Model.ResultFilters.All(f => f.IsMatch(t))).ToList();
+            else
+                return allEntries;
         }
     }
 }

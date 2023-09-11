@@ -33,7 +33,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
         public ReactivePropertySlim<ObservableCollection<TreeMapItemViewModelBase>> Points { get; set; }
         public ObservableCollection<TreeMapItemViewModelBase> SelectedPoints { get; set; }
-        private ResultViewModel parent { get; set; }
 
         public ReactiveCommand<int> GoToTicketCommand { get; set; }
         public ReactiveCommand<int> ExpandCommand { get; set; }
@@ -42,8 +41,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
         public TreeMapViewModel(ResultViewModel parent) : base(ViewType.TreeMap, parent)
         {
-            this.parent = parent;
-
             var groupings = new[] { FactorType.None, FactorType.Project, FactorType.Category, FactorType.User, FactorType.OnTime };
             FirstGroupingType = new FactorTypeViewModel("グルーピング１", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.FirstGrouping), groupings).AddTo(disposables);
             FirstGroupingType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
@@ -87,7 +84,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         {
             var points = new ObservableCollection<TreeMapItemViewModelBase>();
 
-            var allTimeEntries = parent.Tickets.SelectMany(t => t.GetAllTimeEntries()).ToList();
+            var allTimeEntries = getAllTimeEntries();
 
             if (FirstGroupingType.SelectedType.Value == FactorType.None)
             {

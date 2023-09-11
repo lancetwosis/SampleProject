@@ -1418,4 +1418,28 @@ Outlookの状態を確認してください。</value>
   <data name="SettingsExpoMsgExternalToolNotExist" xml:space="preserve">
     <value>設定された外部ツールが存在しません。</value>
   </data>
+  <data name="WikiCountResultVersion" xml:space="preserve">
+    <value>バージョン</value>
+  </data>
+  <data name="WikiCountResultComment" xml:space="preserve">
+    <value>コメント</value>
+  </data>
+  <data name="WikiCountResultInsertNoOfLine" xml:space="preserve">
+    <value>追加行数</value>
+  </data>
+  <data name="WikiCountResultInsertNoOfChar" xml:space="preserve">
+    <value>追加文字数</value>
+  </data>
+  <data name="WikiCountResultDeleteNoOfLine" xml:space="preserve">
+    <value>削除行数</value>
+  </data>
+  <data name="WikiCountResultDeleteNoOfChar" xml:space="preserve">
+    <value>削除文字数</value>
+  </data>
+  <data name="WikiCountHistories" xml:space="preserve">
+    <value>変更履歴</value>
+  </data>
+  <data name="WikiCountPageList" xml:space="preserve">
+    <value>Wikiページ一覧</value>
+  </data>
 </root>

@@ -247,6 +247,7 @@
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
                     <StackPanel Background="AliceBlue"
@@ -292,7 +293,39 @@
                                                                      Path=DataContext,
                                                                      Converter={StaticResource NullToVisibilityConverter}}" />
                     </StackPanel>
-                    <Grid Grid.Row="1">
+
+                    <StackPanel Grid.Row="1"
+                                Background="AliceBlue"
+                                Orientation="Horizontal">
+                        <TextBlock Margin="28,4,4,4"
+                                   FontSize="16"
+                                   FontWeight="Bold"
+                                   Foreground="{telerik1:Office2019Resource ResourceKey={x:Static telerik:Office2019ResourceKey.AccentBackgroundBrush}}"
+                                   Text="フィルタ" />
+                        <Button Command="{Binding Visualize.AddFilterCommand}"
+                                Style="{StaticResource GlyphButtonStyle}">
+                            <Button.Content>
+                                <telerik:RadGlyph Foreground="Green"
+                                                  Glyph="&#xe120;" />
+                            </Button.Content>
+                        </Button>
+                        <ItemsControl Grid.Row="1"
+                                      ItemsSource="{Binding Visualize.Result.ResultFilters.Items}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal" />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <charts:ResultFilterLabelView Margin="2,0,2,0"
+                                                                  DataContext="{Binding}" />
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+
+                    <Grid Grid.Row="2">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="AUTO" />
                             <ColumnDefinition Width="*" />

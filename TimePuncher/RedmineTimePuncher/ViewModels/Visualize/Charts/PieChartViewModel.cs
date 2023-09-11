@@ -39,12 +39,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
         public LegendItemCollection LegendItems { get; set; }
 
-        private ResultViewModel parent { get; set; }
-
         public PieChartViewModel(ResultViewModel parent) : base(ViewType.PieChart, parent)
         {
-            this.parent = parent;
-
             CombineType = new FactorTypeViewModel("グルーピング１", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieCombine),
                 FactorType.Issue, FactorType.Project, FactorType.Date, FactorType.User,FactorType.Category, FactorType.OnTime).AddTo(disposables);
             CombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
@@ -68,7 +64,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         {
             base.SetupSeries();
 
-            var allPoints = parent.Tickets.SelectMany(t => t.GetAllTimeEntries()).ToList();
+            var allPoints = getAllTimeEntries();
 
             var series = new SeriesViewModel(ViewType.PieChart);
             var points = allPoints.GroupBy(a => a.GetFactor(CombineType.SelectedType.Value))

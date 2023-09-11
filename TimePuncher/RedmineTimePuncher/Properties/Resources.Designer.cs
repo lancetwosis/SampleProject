@@ -19,7 +19,7 @@ namespace RedmineTimePuncher.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -4076,6 +4076,24 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Histories に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiCountHistories {
+            get {
+                return ResourceManager.GetString("WikiCountHistories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Wiki Page List に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiCountPageList {
+            get {
+                return ResourceManager.GetString("WikiCountPageList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Set the top level page to be measured.
         ///The parent-child relationship of a wiki page can be set from &quot;Parent page&quot; under &quot;Rename&quot;. に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -4095,6 +4113,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Comment に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiCountResultComment {
+            get {
+                return ResourceManager.GetString("WikiCountResultComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Measured: に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string WikiCountResultCountedAt {
@@ -4104,11 +4131,47 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   No. of chars deleted に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiCountResultDeleteNoOfChar {
+            get {
+                return ResourceManager.GetString("WikiCountResultDeleteNoOfChar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   No. of lines deleted に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiCountResultDeleteNoOfLine {
+            get {
+                return ResourceManager.GetString("WikiCountResultDeleteNoOfLine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Excluded Pages: に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string WikiCountResultExcludedPageNames {
             get {
                 return ResourceManager.GetString("WikiCountResultExcludedPageNames", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   No. of chars added に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiCountResultInsertNoOfChar {
+            get {
+                return ResourceManager.GetString("WikiCountResultInsertNoOfChar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   No. of lines added に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiCountResultInsertNoOfLine {
+            get {
+                return ResourceManager.GetString("WikiCountResultInsertNoOfLine", resourceCulture);
             }
         }
         
@@ -4190,6 +4253,15 @@ namespace RedmineTimePuncher.Properties {
         public static string WikiCountResultUpdateOn {
             get {
                 return ResourceManager.GetString("WikiCountResultUpdateOn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Version に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiCountResultVersion {
+            get {
+                return ResourceManager.GetString("WikiCountResultVersion", resourceCulture);
             }
         }
         

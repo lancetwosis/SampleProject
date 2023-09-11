@@ -31,12 +31,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         public ObservableCollection<SeriesViewModel> Serieses { get; set; }
         public TotalLabelViewModel ShowTotal { get; set; }
 
-        private ResultViewModel parent { get; set; }
 
         public BarChartViewModel(ResultViewModel parent) : base(ViewType.BarChart, parent)
         {
-            this.parent = parent;
-
             XAxisType = new FactorTypeViewModel("X軸", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarXAxis),
                 FactorType.Date, FactorType.Issue, FactorType.Project, FactorType.User, FactorType.Category, FactorType.OnTime).AddTo(disposables);
             XAxisType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
@@ -58,7 +55,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             Serieses.Clear();
 
-            var allPoints = parent.Tickets.SelectMany(t => t.GetAllTimeEntries()).ToList();
+            var allPoints = getAllTimeEntries();
             var allXAxises = allPoints.Select(a => a.GetFactor(XAxisType.SelectedType.Value)).Distinct().OrderBy(f => f.Value).ToList();
 
             if (CombineType.SelectedType.Value != FactorType.None)

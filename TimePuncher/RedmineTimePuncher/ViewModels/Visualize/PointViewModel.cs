@@ -60,7 +60,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             }
 
             if (factor.Type == FactorType.Date)
-                XDateTime = (DateTime) factor.Value;
+                XDateTime = (DateTime) factor.RawValue;
             if (factor.Type == FactorType.Issue)
                 Url = MyIssue.GetUrl((factor.RawValue as Issue).Id);
 

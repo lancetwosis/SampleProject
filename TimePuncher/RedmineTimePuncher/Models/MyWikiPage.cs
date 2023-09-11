@@ -1,20 +1,26 @@
-﻿using LibRedminePower.Enums;
+﻿using AngleSharp.Common;
+using DiffMatchPatch;
+using LibRedminePower.Enums;
 using LibRedminePower.Extentions;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Helpers;
+using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Extentions;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using static NetOffice.OfficeApi.Tools.Contribution.DialogUtils;
 
 namespace RedmineTimePuncher.Models
 {
@@ -44,6 +50,10 @@ namespace RedmineTimePuncher.Models
         public bool IsTopWiki { get; set; }
         public int Depth { get; set; }
 
+        public BusyNotifier IsBusyUpdateHistories { get; set; }
+        [JsonIgnore]
+        public List<HistorySummary> Histories { get; set; }
+
         public MyWikiPage Parent { get; set; }
 
         private WikiPage rawWikiPage;
@@ -69,6 +79,66 @@ namespace RedmineTimePuncher.Models
             ParentTitle = rawWikiPage.ParentTitle;
             AllChildren = new ObservableCollection<MyWikiPage>();
             Children = AllChildren.ToFilteredReadOnlyObservableCollection(c => c.IsSummaryTarget);
+
+            IsBusyUpdateHistories = new BusyNotifier();
+        }
+
+        public async Task UpdateHistoriesAsync(RedmineManager redmine)
+        {
+            using (IsBusyUpdateHistories.ProcessStart())
+            {
+                if (Version < 1) return;
+                if (Histories != null) return;
+
+                var histories =
+                    Version > 1 ?
+                    await Task.Run(() => Enumerable.Range(1, Version - 1).Select(v => redmine.GetWikiPage(ProjectId, Title, v)).ToList()) :
+                    new List<MyWikiPage>() ;
+                histories.Add(this);
+
+                var dmp = new diff_match_patch();
+                Histories = new [] 
+                {
+                    new HistorySummary(Url)
+                    {
+                        Title = histories.First().Title,
+                        Version = histories.First().Version,
+                        UpdatedOn = histories.First().UpdatedOn,
+                        Author = histories.First().Author,
+                        Comment = histories.First().rawWikiPage.Comments,
+                        Summary = new Summary(histories.First().rawWikiPage),
+                        InsertNoOfLine = histories.First().rawWikiPage.Text.SplitLines().Where(b => !string.IsNullOrEmpty(b)).Count(),
+                        InsertNoOfChar = histories.First().rawWikiPage.Text.Length,
+                    }
+                }.Concat(
+                        histories.Zip(histories.Skip(1), (p, n) => 
+                        {
+                            // 以下のURLを参考に比較ロジックを作った
+                            // https://white-azalea.hatenablog.jp/entry/2014/03/23/154542
+                            var lines = dmp.diff_linesToChars(p.rawWikiPage.Text, n.rawWikiPage.Text);
+                            var text1 = (string)lines[0];
+                            var text2 = (string)lines[1];
+                            var linearray = (List<string>)lines[2];
+                            var diff = dmp.diff_main(text1, text2, false);
+                            dmp.diff_charsToLines(diff, linearray);
+                            var inserts = diff.Where(a => a.operation == Operation.INSERT).ToList();
+                            var deletes = diff.Where(a => a.operation == Operation.DELETE).ToList();
+                            return new HistorySummary(Url)
+                            {
+                                Title = n.Title,
+                                Version = n.Version,
+                                UpdatedOn = n.UpdatedOn,
+                                Author = n.Author,
+                                Comment = n.rawWikiPage.Comments,
+                                Summary = new Summary(n.rawWikiPage),
+                                InsertNoOfLine = inserts.Sum(a => a.text.SplitLines().Where(b => !string.IsNullOrEmpty(b)).Count()),
+                                InsertNoOfChar = inserts.Sum(a => a.text.Length),
+                                DeleteNoOfLine = deletes.Sum(a => a.text.SplitLines().Where(b => !string.IsNullOrEmpty(b)).Count()),
+                                DeleteNoOfChar = deletes.Sum(a => a.text.Length),
+                            };
+                        })
+                    ).Reverse().ToList();
+            }
         }
 
         public void CalculateSummary(string disableWords, FilterType type)
@@ -233,10 +303,41 @@ namespace RedmineTimePuncher.Models
         }
     }
 
+    public class UserSummary
+    {
+        public IdentifiableName Author { get; set; }
+        public string Name => Author.Name;
+        public int InsertNoOfLine { get; set; }
+        public int InsertNoOfChar { get; set; }
+        public int DeleteNoOfLine { get; set; }
+        public int DeleteNoOfChar { get; set; }
+
+    }
+
+    public class HistorySummary
+    {
+        private string url;
+        public HistorySummary(string url)
+        {
+            this.url = url;
+        }
+        public string Title { get; set; }
+        public int Version { get; set; }
+        public string Url => $"{url}/{Version}";
+        public DateTime? UpdatedOn { get; set; }
+        public IdentifiableName Author { get; set; }
+        public string Comment { get; set; }
+        public int InsertNoOfLine { get; set; }
+        public int InsertNoOfChar { get; set; }
+        public int DeleteNoOfLine { get; set; }
+        public int DeleteNoOfChar { get; set; }
+        public Summary Summary { get; set; }
+    }
+
     public class Summary
     {
-        public int NoOfChar { get; set; }
         public int NoOfLine { get; set; }
+        public int NoOfChar { get; set; }
         public int NoOfHeader1 { get; set; }
         public int NoOfHeader2 { get; set; }
         public int NoOfHeader3 { get; set; }
@@ -266,8 +367,8 @@ namespace RedmineTimePuncher.Models
 
         public Summary(List<Summary> sumaries)
         {
-            NoOfChar = sumaries.Sum(s => s.NoOfChar);
             NoOfLine = sumaries.Sum(s => s.NoOfLine);
+            NoOfChar = sumaries.Sum(s => s.NoOfChar);
             NoOfHeader1 = sumaries.Sum(s => s.NoOfHeader1);
             NoOfHeader2 = sumaries.Sum(s => s.NoOfHeader2);
             NoOfHeader3 = sumaries.Sum(s => s.NoOfHeader3);

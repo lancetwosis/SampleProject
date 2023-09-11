@@ -38,10 +38,12 @@ namespace RedmineTimePuncher.Models.Managers
             @"Microsoft\Teams");
 
         private string msTeamParserExePath;
-
+        private AppointmentTeamsSettingsModel _setting;
         private DebugDataManager debugDataManager = new DebugDataManager();
+
         public TeamsManager(AppointmentTeamsSettingsModel setting)
         {
+            _setting = setting;
             if (!setting.IsEnabled) return;
 
             IsInstalled = isInstalled();
@@ -74,6 +76,8 @@ namespace RedmineTimePuncher.Models.Managers
         public async Task<List<MyAppointment>> GetCallAsync(Resource resource, CancellationToken token, DateTime start, DateTime end)
         {
             if (!IsInstalled) return new List<MyAppointment>();
+            if (!_setting.IsEnabledCallHistory) return new List<MyAppointment>();
+
             if (debugDataManager.IsExist) return debugDataManager.GetData(resource, start, end, Enums.AppointmentType.TeamsCall);
 
             var indexedDbPaths = new[]
@@ -206,6 +210,7 @@ namespace RedmineTimePuncher.Models.Managers
             var result = new List<TeamsStatusSlot>();
 
             if (!IsInstalled) return result.Cast<Slot>().ToList();
+            if (!_setting.IsEnabledStatus) return result.Cast<Slot>().ToList();
 
             var files = new System.IO.DirectoryInfo(logFolderName).GetFiles("*logs*").OrderBy(a => a.LastWriteTime);
             var alllines = files.SelectMany(a => readFile(a.FullName));
