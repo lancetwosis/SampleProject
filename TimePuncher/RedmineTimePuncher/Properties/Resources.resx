@@ -1546,4 +1546,25 @@ The order of the lines is the order in which the filing conditions are applied.<
   <data name="WikiCountPageList" xml:space="preserve">
     <value>Wiki Page List</value>
   </data>
+  <data name="enumWikiPeriodTypeLast1Week" xml:space="preserve">
+    <value>Last 1 Weeks</value>
+  </data>
+  <data name="enumWikiPeriodTypeLastNWeeks" xml:space="preserve">
+    <value>Last N Weeks</value>
+  </data>
+  <data name="enumWikiPeriodTypeLast1Month" xml:space="preserve">
+    <value>Last 1 Month</value>
+  </data>
+  <data name="enumWikiPeriodTypeLastNMonth" xml:space="preserve">
+    <value>Last N Month</value>
+  </data>
+  <data name="enumWikiPeriodTypeBetween" xml:space="preserve">
+    <value>Between</value>
+  </data>
+  <data name="enumWikiPeriodTypeLastHalfYear" xml:space="preserve">
+    <value>Last Half Year</value>
+  </data>
+  <data name="enumWikiPeriodTypeAll" xml:space="preserve">
+    <value>All</value>
+  </data>
 </root>

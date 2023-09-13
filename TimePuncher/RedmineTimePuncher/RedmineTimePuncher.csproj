@@ -154,6 +154,7 @@
     <Compile Include="Enums\LocaleType.cs" />
     <Compile Include="Enums\HeaderLevel.cs" />
     <Compile Include="Enums\OutputTargetTypes.cs" />
+    <Compile Include="Enums\WikiPeriodType.cs" />
     <Compile Include="Enums\PersonHourReportContentType.cs" />
     <Compile Include="Enums\ReportPeriodType.cs" />
     <Compile Include="Enums\TeamsStatus.cs" />

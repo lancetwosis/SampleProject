@@ -494,6 +494,69 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   All に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumWikiPeriodTypeAll {
+            get {
+                return ResourceManager.GetString("enumWikiPeriodTypeAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Between に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumWikiPeriodTypeBetween {
+            get {
+                return ResourceManager.GetString("enumWikiPeriodTypeBetween", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last 1 Month に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumWikiPeriodTypeLast1Month {
+            get {
+                return ResourceManager.GetString("enumWikiPeriodTypeLast1Month", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last 1 Weeks に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumWikiPeriodTypeLast1Week {
+            get {
+                return ResourceManager.GetString("enumWikiPeriodTypeLast1Week", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last Half Year に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumWikiPeriodTypeLastHalfYear {
+            get {
+                return ResourceManager.GetString("enumWikiPeriodTypeLastHalfYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last N Month に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumWikiPeriodTypeLastNMonth {
+            get {
+                return ResourceManager.GetString("enumWikiPeriodTypeLastNMonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last N Weeks に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumWikiPeriodTypeLastNWeeks {
+            get {
+                return ResourceManager.GetString("enumWikiPeriodTypeLastNWeeks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   The environment is not correct.
         ///Please reinstall. に類似しているローカライズされた文字列を検索します。
         /// </summary>

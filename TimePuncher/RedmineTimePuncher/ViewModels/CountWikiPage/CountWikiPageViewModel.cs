@@ -54,7 +54,11 @@ namespace RedmineTimePuncher.ViewModels.CountWikiPage
         public AsyncCommandBase DiffHistoriesCommand { get; set; }
         public ReadOnlyReactivePropertySlim<List<UserSummary>> UserSummaries { get; set; }
         public ReadOnlyReactivePropertySlim<List<SeriesViewModelBase>> Serieses { get; set;}
-
+        public ReactivePropertySlim<Enums.WikiPeriodType> SelectedPeriodType { get; set; }
+        public ReadOnlyReactivePropertySlim<bool> IsPeriodNumericType { get; set; }
+        public ReactivePropertySlim<int> SelectedPeriodNumeric { get; set; }
+        public ReactivePropertySlim<DateTime> SelectedStartDate { get; set; }
+        public ReactivePropertySlim<DateTime> SelectedEndDate { get; set; }
 
         public CountWikiPageViewModel(MainWindowViewModel parent) : base(ApplicationMode.WikiPageCounter, parent)
         {
@@ -72,8 +76,21 @@ namespace RedmineTimePuncher.ViewModels.CountWikiPage
             WikiPages = new ObservableCollection<MyWikiPage>();
             SelectedWikiPages = new ObservableCollection<MyWikiPage>();
 
+            SelectedPeriodType = new ReactivePropertySlim<WikiPeriodType>().AddTo(disposables);
+            IsPeriodNumericType = SelectedPeriodType.Select(a => a == WikiPeriodType.LastNMonth || a == WikiPeriodType.LastNWeeks).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            SelectedPeriodNumeric = new ReactivePropertySlim<int>(1);
+            SelectedStartDate = new ReactivePropertySlim<DateTime>(DateTime.Today.AddDays(-7));
+            SelectedEndDate = new ReactivePropertySlim<DateTime>(DateTime.Today);
+
+            var selectedPeriod = SelectedPeriodType.CombineLatest(SelectedPeriodNumeric, SelectedStartDate, SelectedEndDate)
+                .Select(a => a.First.GetPeriod(a.Second, a.Third, a.Fourth)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+
+            SelectedPeriodType.Subscribe(_ =>
+            SelectedWikiPages.ToList().ForEach(async wiki => await wiki.UpdateHistoriesAsync(parent.Redmine.Value, selectedPeriod.Value))).AddTo(disposables);
             SelectedWikiPages.ObserveAddChanged().Subscribe(async wiki =>
-                await wiki.UpdateHistoriesAsync(parent.Redmine.Value));
+                await wiki.UpdateHistoriesAsync(parent.Redmine.Value, selectedPeriod.Value)).AddTo(disposables);
+            SelectedWikiPages.ObserveRemoveChanged().Subscribe(wiki => wiki.CtsUpdateHistories?.Cancel()).AddTo(disposables);
+            SelectedWikiPages.ObserveResetChanged().Subscribe(_ => SelectedWikiPages.ToList().ForEach(a  => a.CtsUpdateHistories?.Cancel())).AddTo(disposables);
 
             IsBusyUpdateHistories = 
                 SelectedWikiPages.CollectionChangedAsObservable().StartWithDefault().Select(_ =>
@@ -178,6 +195,15 @@ namespace RedmineTimePuncher.ViewModels.CountWikiPage
                                 }
                             );
                         }
+                    }
+                }
+
+                // もし１日しかなかったら、グラフが描写されないので、二日分にする。
+                if(allDates.Count == 1)
+                {
+                    foreach(var page in allSeries)
+                    {
+                        page.Items.Add(new DataItem() { XValue = page.Items[0].XValue.AddDays(-1), YValue = page.Items[0].YValue });
                     }
                 }
 

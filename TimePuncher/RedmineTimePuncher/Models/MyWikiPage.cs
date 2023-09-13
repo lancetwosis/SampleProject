@@ -2,6 +2,7 @@
 using DiffMatchPatch;
 using LibRedminePower.Enums;
 using LibRedminePower.Extentions;
+using NetOffice.OutlookApi;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Helpers;
@@ -19,6 +20,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 using static NetOffice.OfficeApi.Tools.Contribution.DialogUtils;
 
@@ -50,6 +52,7 @@ namespace RedmineTimePuncher.Models
         public bool IsTopWiki { get; set; }
         public int Depth { get; set; }
 
+        public CancellationTokenSource CtsUpdateHistories { get; set; }
         public BusyNotifier IsBusyUpdateHistories { get; set; }
         [JsonIgnore]
         public List<HistorySummary> Histories { get; set; }
@@ -57,6 +60,7 @@ namespace RedmineTimePuncher.Models
         public MyWikiPage Parent { get; set; }
 
         private WikiPage rawWikiPage;
+        private (DateTime, DateTime) startEnd;
 
         public MyWikiPage() { }
 
@@ -83,39 +87,50 @@ namespace RedmineTimePuncher.Models
             IsBusyUpdateHistories = new BusyNotifier();
         }
 
-        public async Task UpdateHistoriesAsync(RedmineManager redmine)
+        public async Task UpdateHistoriesAsync(RedmineManager redmine, (DateTime, DateTime) startEnd)
         {
             using (IsBusyUpdateHistories.ProcessStart())
             {
-                if (Version < 1) return;
-                if (Histories != null) return;
+                if (Histories != null && this.startEnd.Item1 == startEnd.Item1 && this.startEnd.Item2 == startEnd.Item2) return;
+                CtsUpdateHistories = new CancellationTokenSource();
+                this.startEnd = startEnd;
 
-                var histories =
-                    Version > 1 ?
-                    await Task.Run(() => Enumerable.Range(1, Version - 1).Select(v => redmine.GetWikiPage(ProjectId, Title, v)).ToList()) :
-                    new List<MyWikiPage>() ;
-                histories.Add(this);
+                var histories = new List<(MyWikiPage h, bool latest)>();
+                foreach (var v in Enumerable.Range(1, Version - 1).Reverse().Indexed())
+                {
+                    var h = await Task.Run(() => redmine.GetWikiPage(ProjectId, Title, v.v));
+                    histories.Add((h, false));
+                    if (startEnd.Item1 > h.UpdatedOn) break;
+
+                    // キャンセルされた場合は、抜ける。
+                    if (CtsUpdateHistories.IsCancellationRequested) return;
+
+                    // 大量の履歴を連続で取得するとエラーになることがあるので、10回に一度、100m秒スリープする。
+                    System.Threading.Thread.Sleep(100);
+                }
+                histories.Insert(0, (this, true));
+                histories.Reverse();
 
                 var dmp = new diff_match_patch();
                 Histories = new [] 
                 {
-                    new HistorySummary(Url)
+                    (new HistorySummary(Url)
                     {
-                        Title = histories.First().Title,
-                        Version = histories.First().Version,
-                        UpdatedOn = histories.First().UpdatedOn,
-                        Author = histories.First().Author,
-                        Comment = histories.First().rawWikiPage.Comments,
-                        Summary = new Summary(histories.First().rawWikiPage),
-                        InsertNoOfLine = histories.First().rawWikiPage.Text.SplitLines().Where(b => !string.IsNullOrEmpty(b)).Count(),
-                        InsertNoOfChar = histories.First().rawWikiPage.Text.Length,
-                    }
+                        Title = histories.First().h.Title,
+                        Version = histories.First().h.Version,
+                        UpdatedOn = histories.First().h.UpdatedOn,
+                        Author = histories.First().h.Author,
+                        Comment = histories.First().h.rawWikiPage.Comments,
+                        Summary = new Summary(histories.First().h.rawWikiPage),
+                        InsertNoOfLine = histories.First().h.rawWikiPage.Text.SplitLines().Where(b => !string.IsNullOrEmpty(b)).Count(),
+                        InsertNoOfChar = histories.First().h.rawWikiPage.Text.Length,
+                    }, histories.First().latest),
                 }.Concat(
                         histories.Zip(histories.Skip(1), (p, n) => 
                         {
                             // 以下のURLを参考に比較ロジックを作った
                             // https://white-azalea.hatenablog.jp/entry/2014/03/23/154542
-                            var lines = dmp.diff_linesToChars(p.rawWikiPage.Text, n.rawWikiPage.Text);
+                            var lines = dmp.diff_linesToChars(p.h.rawWikiPage.Text, n.h.rawWikiPage.Text);
                             var text1 = (string)lines[0];
                             var text2 = (string)lines[1];
                             var linearray = (List<string>)lines[2];
@@ -123,21 +138,22 @@ namespace RedmineTimePuncher.Models
                             dmp.diff_charsToLines(diff, linearray);
                             var inserts = diff.Where(a => a.operation == Operation.INSERT).ToList();
                             var deletes = diff.Where(a => a.operation == Operation.DELETE).ToList();
-                            return new HistorySummary(Url)
+                            return (new HistorySummary(Url)
                             {
-                                Title = n.Title,
-                                Version = n.Version,
-                                UpdatedOn = n.UpdatedOn,
-                                Author = n.Author,
-                                Comment = n.rawWikiPage.Comments,
-                                Summary = new Summary(n.rawWikiPage),
+                                Title = n.h.Title,
+                                Version = n.h.Version,
+                                UpdatedOn = n.h.UpdatedOn,
+                                Author = n.h.Author,
+                                Comment = n.h.rawWikiPage.Comments,
+                                Summary = new Summary(n.h.rawWikiPage),
                                 InsertNoOfLine = inserts.Sum(a => a.text.SplitLines().Where(b => !string.IsNullOrEmpty(b)).Count()),
                                 InsertNoOfChar = inserts.Sum(a => a.text.Length),
                                 DeleteNoOfLine = deletes.Sum(a => a.text.SplitLines().Where(b => !string.IsNullOrEmpty(b)).Count()),
                                 DeleteNoOfChar = deletes.Sum(a => a.text.Length),
-                            };
+                            }, n.latest);
                         })
-                    ).Reverse().ToList();
+                    ).Where(a => (startEnd.Item1 <= a.Item1.UpdatedOn && a.Item1.UpdatedOn <= startEnd.Item2) || a.latest)
+                    .Select(a => a.Item1).Reverse().ToList();
             }
         }
 

@@ -1442,4 +1442,25 @@ Outlookの状態を確認してください。</value>
   <data name="WikiCountPageList" xml:space="preserve">
     <value>Wikiページ一覧</value>
   </data>
+  <data name="enumWikiPeriodTypeBetween" xml:space="preserve">
+    <value>範囲指定</value>
+  </data>
+  <data name="enumWikiPeriodTypeLast1Month" xml:space="preserve">
+    <value>直近一か月</value>
+  </data>
+  <data name="enumWikiPeriodTypeLast1Week" xml:space="preserve">
+    <value>直近一週間</value>
+  </data>
+  <data name="enumWikiPeriodTypeLastNMonth" xml:space="preserve">
+    <value>直近Nか月</value>
+  </data>
+  <data name="enumWikiPeriodTypeLastNWeeks" xml:space="preserve">
+    <value>直近N週間</value>
+  </data>
+  <data name="enumWikiPeriodTypeLastHalfYear" xml:space="preserve">
+    <value>直近半年</value>
+  </data>
+  <data name="enumWikiPeriodTypeAll" xml:space="preserve">
+    <value>すべて</value>
+  </data>
 </root>

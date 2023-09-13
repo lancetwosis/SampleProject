@@ -8,6 +8,8 @@
              xmlns:controls="clr-namespace:RedmineTimePuncher.ViewModels.Input.Controls"
              xmlns:controls1="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:enums="clr-namespace:RedmineTimePuncher.Enums"
+             xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
              xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
              xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
              xmlns:local="clr-namespace:RedmineTimePuncher.Views.Controls"
@@ -55,7 +57,7 @@
                 </telerik:RadRibbonView.Resources>
                 <telerik:RadRibbonView.Items>
                     <telerik:RadRibbonTab Header="{x:Static props:Resources.RibbonTabHome}">
-                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupGeneral}">
+                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.WikiCountPageList}">
                             <telerik:RadCollapsiblePanel>
                                 <Grid>
                                     <Grid.Resources>
@@ -123,6 +125,71 @@
                             </telerik:RadCollapsiblePanel>
                             <telerik:Separator />
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding CountWiki.CountCommand}" />
+                        </telerik:RadRibbonGroup>
+                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.WikiCountHistories}">
+                            <telerik:RadCollapsiblePanel VerticalAlignment="Top">
+                                <telerik:RadRibbonComboBox x:Name="PeriodTypeCombobox"
+                                                           MinWidth="{Binding ElementName=inputStartDate,
+                                                                              Path=ActualWidth}"
+                                                           VerticalAlignment="Top"
+                                                           IsEditable="False"
+                                                           ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enums:WikiPeriodType}}}"
+                                                           OpenDropDownOnFocus="False"
+                                                           SelectedItem="{Binding CountWiki.SelectedPeriodType.Value}" />
+                                <telerik:RadNumericUpDown MinWidth="{Binding ElementName=PeriodTypeCombobox,
+                                                                             Path=ActualWidth}"
+                                                          HideTrailingZeros="True"
+                                                          Maximum="99"
+                                                          Minimum="1"
+                                                          ValueFormat="Numeric"
+                                                          Visibility="{Binding CountWiki.IsPeriodNumericType.Value,
+                                                                               Converter={StaticResource booleanToVisibilityConverter}}" />
+                                <StackPanel x:Name="inputStartDate"
+                                            Orientation="Horizontal"
+                                            Visibility="{Binding ElementName=PeriodTypeCombobox,
+                                                                 Path=SelectedItem,
+                                                                 Converter={StaticResource EnumToVisibilityConverter},
+                                                                 ConverterParameter=Between}">
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="開始:" />
+                                    <telerik:RadDateTimePicker Margin="5,0,0,0"
+                                                               InputMode="DatePicker"
+                                                               IsEnabled="{Binding ElementName=specifyPeriodCheckBox,
+                                                                                   Path=IsChecked}"
+                                                               SelectedDate="{Binding CountWiki.SelectedStartDate.Value,
+                                                                                      Mode=TwoWay}">
+                                        <telerik:RadDateTimePicker.CalendarStyle>
+                                            <Style BasedOn="{StaticResource RadCalendarStyle}"
+                                                   TargetType="{x:Type telerik:RadCalendar}">
+                                                <Setter Property="AreWeekNumbersVisible" Value="False" />
+                                            </Style>
+                                        </telerik:RadDateTimePicker.CalendarStyle>
+                                    </telerik:RadDateTimePicker>
+                                </StackPanel>
+                                <StackPanel x:Name="inputEndDate"
+                                            Orientation="Horizontal"
+                                            Visibility="{Binding ElementName=PeriodTypeCombobox,
+                                                                 Path=SelectedItem,
+                                                                 Converter={StaticResource EnumToVisibilityConverter},
+                                                                 ConverterParameter=Between}">
+
+                                    <TextBlock VerticalAlignment="Center"
+                                               Text="終了:" />
+                                    <telerik:RadDateTimePicker Margin="5,0,0,0"
+                                                               InputMode="DatePicker"
+                                                               IsEnabled="{Binding ElementName=specifyPeriodCheckBox,
+                                                                                   Path=IsChecked}"
+                                                               SelectedDate="{Binding CountWiki.SelectedEndDate.Value,
+                                                                                      Mode=TwoWay}">
+                                        <telerik:RadDateTimePicker.CalendarStyle>
+                                            <Style BasedOn="{StaticResource RadCalendarStyle}"
+                                                   TargetType="{x:Type telerik:RadCalendar}">
+                                                <Setter Property="AreWeekNumbersVisible" Value="False" />
+                                            </Style>
+                                        </telerik:RadDateTimePicker.CalendarStyle>
+                                    </telerik:RadDateTimePicker>
+                                </StackPanel>
+                            </telerik:RadCollapsiblePanel>
                         </telerik:RadRibbonGroup>
                         <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupExport}">
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding CountWiki.ExportCommand}" />
@@ -394,7 +461,7 @@
                                 <telerik:DateTimeContinuousAxis LabelFormat="yy/MM/dd"
                                                                 MajorStep="1"
                                                                 MajorStepUnit="Day"
-                                                                PlotMode="OnTicks "
+                                                                PlotMode="OnTicks"
                                                                 SmartLabelsMode="SmartStep" />
                             </telerik:RadCartesianChart.HorizontalAxis>
 
