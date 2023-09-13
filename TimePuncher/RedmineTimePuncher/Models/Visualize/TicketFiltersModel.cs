@@ -32,6 +32,9 @@ namespace RedmineTimePuncher.Models.Visualize
         public bool SpecifyUsers { get; set; }
         public ObservableCollection<MyUser> Users { get; set; } = new ObservableCollection<MyUser>();
 
+        public bool SpecifyProjects { get; set; }
+        public ObservableCollection<MyProject> Projects { get; set; } = new ObservableCollection<MyProject>();
+
         public TicketFiltersModel()
         {
         }
@@ -57,28 +60,42 @@ namespace RedmineTimePuncher.Models.Visualize
                 prms.Add(RedmineKeys.ISSUE_ID, $"~{ParentIssueId}");
                 results = redmine.GetTimeEntries(prms);
             }
+            else if (SpecifyProjects)
+            {
+                results = getTimeEntries(redmine, prms, Projects.Select(p => p.Id).ToList());
+            }
             else
             {
-                // 親チケットが指定されていなかったら自分にアサインされているプロジェクトを対象とする
-                results = new List<TimeEntry>();
-                foreach (var m in redmine.MyUser.Memberships)
-                {
-                    prms.Set(RedmineKeys.PROJECT_ID, m.Project.Id.ToString());
-                    var r = redmine.GetTimeEntries(prms);
-                    if (r != null && r.Count != 0)
-                        results.AddRange(r);
-                }
+                // 自分にアサインされているプロジェクトを対象とする
+                results = getTimeEntries(redmine, prms, redmine.MyUser.Memberships.Select(m => m.Project.Id).ToList());
             }
 
             if (results == null || results.Count == 0)
                 return new List<TimeEntry>();
 
-            // project_id を指定して GetTimeEntries を実行すると子プロジェクトのものも含めて取得してしまう
-            // よって Distinct し、重複したものを削除する
             if (SpecifyUsers)
-                return results.Distinct().Where(t => Users.Any(u => u.Id == t.User.Id)).ToList();
+                return results.Where(t => Users.Any(u => u.Id == t.User.Id)).ToList();
             else
-                return results.Distinct().ToList();
+                return results.ToList();
+        }
+
+        private List<TimeEntry> getTimeEntries(Managers.RedmineManager redmine, NameValueCollection prms, List<int> projectIds)
+        {
+            var results = new List<TimeEntry>();
+            foreach (var id in projectIds)
+            {
+                prms.Set(RedmineKeys.PROJECT_ID, id.ToString());
+                var r = redmine.GetTimeEntries(prms);
+                if (r != null && r.Count != 0)
+                    results.AddRange(r);
+            }
+
+            // PROJECT_ID 指定で取得すると子プロジェクトの作業時間まで取得してしまうため、
+            // ・子プロジェクトの作業時間を削除する
+            // ・重複して取得してしまったものを削除する
+            return results.Where(r => projectIds.Contains(r.Project.Id))
+                .Distinct()
+                .ToList();
         }
 
         public DateTime GetStart(DateTime createAt)

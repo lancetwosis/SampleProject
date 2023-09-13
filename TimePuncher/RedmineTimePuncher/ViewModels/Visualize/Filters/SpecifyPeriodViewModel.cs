@@ -60,11 +60,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                     switch (PeriodMode.Value)
                     {
                         case FilterPeriodType.LastWeek:
-                            return $"期間: 直近一週間 ({start} - {end})";
+                            return $"直近一週間 ({start} - {end})";
                         case FilterPeriodType.LastMonth:
-                            return $"期間: 直近一か月 ({start} - {end})";
+                            return $"直近一か月 ({start} - {end})";
                         case FilterPeriodType.SpecifyPeriod:
-                            return $"期間: {start} - {end}";
+                            return $"{start} - {end}";
                         default:
                             throw new InvalidOperationException();
                     }
@@ -74,13 +74,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                     switch (PeriodMode.Value)
                     {
                         case FilterPeriodType.LastWeek:
-                            return "期間: 直近一週間";
+                            return "直近一週間";
                         case FilterPeriodType.LastMonth:
-                            return "期間: 直近一か月";
+                            return "直近一か月";
                         case FilterPeriodType.SpecifyPeriod:
                             var start = model.GetStart(DateTime.Today).ToString("yy/MM/dd");
                             var end = model.GetEnd(DateTime.Today).ToString("yy/MM/dd");
-                            return $"期間: {start} - {end}";
+                            return $"{start} - {end}";
                         default:
                             throw new InvalidOperationException();
                     }

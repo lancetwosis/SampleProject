@@ -297,6 +297,7 @@
     <Compile Include="ViewModels\Visualize\Enums\FactorType.cs" />
     <Compile Include="ViewModels\Visualize\Filters\ResultFilterViewModel.cs" />
     <Compile Include="ViewModels\Visualize\Filters\ResultFiltersViewModel.cs" />
+    <Compile Include="ViewModels\Visualize\Filters\SpecifyProjectsViewModel.cs" />
     <Compile Include="ViewModels\Visualize\TotalLabelViewModel.cs" />
     <Compile Include="ViewModels\Visualize\Filters\SpecifyUsersViewModel.cs" />
     <Compile Include="ViewModels\Visualize\ResultViewModel.cs" />

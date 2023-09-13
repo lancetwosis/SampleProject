@@ -26,7 +26,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 {
     public class SpecifyUsersViewModel : FilterGroupViewModelBase
     {
-        public TwinListBoxViewModel<MyUser> Users { get; set; }
+        public ExpandableTwinListBoxViewModel<MyUser> Users { get; set; }
 
         // https://www.colordic.org/colorsample/fff7f0
         public SpecifyUsersViewModel(TicketFiltersModel model, ReactivePropertySlim<RedmineManager> redmine)
@@ -41,12 +41,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 var allUsers = r.GetUsers();
                 var selectedUsers = model.Users;
 
-                if (model.Users.Count == 0)
+                Users = new ExpandableTwinListBoxViewModel<MyUser>(allUsers, selectedUsers).AddTo(myDisposables);
+                IsEnabled.Skip(1).Subscribe(i =>
                 {
-                    selectedUsers.Add(allUsers.First(a => a.Id == r.MyUser.Id));
-                }
-
-                Users = new TwinListBoxViewModel<MyUser>(allUsers, selectedUsers).AddTo(myDisposables);
+                    Users.Expanded = i;
+                    if (i && model.Users.Count == 0)
+                    {
+                        selectedUsers.Add(allUsers.First(a => a.Id == r.MyUser.Id));
+                    }
+                }).AddTo(myDisposables);
             });
 
             var usersChanged = model.Users.CollectionChangedAsObservable().StartWithDefault();
@@ -66,15 +69,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                     return $"ユーザ: {NAN}";
 
                 if (model.Users.Count <= 3)
-                    return $"ユーザ: {string.Join(", ", model.Users)}";
+                    return $"{string.Join(", ", model.Users)}";
                 else
-                    return $"ユーザ: {string.Join(", ", model.Users.Take(3))}, ...";
+                    return $"{string.Join(", ", model.Users.Take(3))}, ...";
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             Tooltip = IsEnabled.CombineLatest(IsValid, usersChanged, (_1, _2, _3) => true).Select(_ =>
             {
                 if (!IsEnabled.Value)
-                    return "アサインされているプロジェクトのメンバーが対象となります";
+                    return "あなたにアサインされているプロジェクトのメンバーが対象となります";
                 else if (IsValid.Value != null)
                     return null;
                 else

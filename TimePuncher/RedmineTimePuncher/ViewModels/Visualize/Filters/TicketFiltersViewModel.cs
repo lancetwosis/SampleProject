@@ -25,6 +25,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
         public SpecifyParentIssueViewModel SpecifyParentIssue { get; set; }
         public SpecifyPeriodViewModel SpecifyPeriod { get; set; }
         public SpecifyUsersViewModel SpecifyUsers { get; set; }
+        public SpecifyProjectsViewModel SpecifyProjects { get; set; }
         public ReadOnlyReactivePropertySlim<string> IsValid { get; set; }
         public ReactivePropertySlim<bool> IsExpanded { get; set; }
         public TicketFiltersModel Model { get; set; }
@@ -51,20 +52,23 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             SpecifyParentIssue = new SpecifyParentIssueViewModel(Model, parent.Parent.Redmine).AddTo(disposables);
             SpecifyPeriod = new SpecifyPeriodViewModel(Model, createAt).AddTo(disposables);
             SpecifyUsers = new SpecifyUsersViewModel(Model, parent.Parent.Redmine).AddTo(disposables);
+            SpecifyProjects = new SpecifyProjectsViewModel(Model, parent.Parent.Redmine).AddTo(disposables);
 
-            IsValid = SpecifyParentIssue.IsEnabled.CombineLatest(SpecifyParentIssue.IsValid,
-                SpecifyPeriod.IsEnabled, SpecifyPeriod.IsValid,
-                SpecifyPeriod.IsEnabled, SpecifyPeriod.IsValid, (_1, _2, _3, _4, _5, _6) => true).Select(_ =>
+            IsValid = createIsValid(SpecifyParentIssue, SpecifyPeriod, SpecifyUsers, SpecifyProjects);
+        }
+
+        private ReadOnlyReactivePropertySlim<string> createIsValid(params FilterGroupViewModelBase[] groups)
+        {
+            return groups.Select(g => g.IsEnabled.CombineLatest(g.IsValid, (_, __) => true)).CombineLatest().Select(_ =>
             {
                 if (!SpecifyParentIssue.IsEnabled.Value && !SpecifyPeriod.IsEnabled.Value)
                     return "検索条件を選択してください。";
 
-                if (SpecifyParentIssue.IsEnabled.Value && SpecifyParentIssue.IsValid.Value != null)
-                    return SpecifyParentIssue.IsValid.Value;
-                if (SpecifyPeriod.IsEnabled.Value && SpecifyPeriod.IsValid.Value != null)
-                    return SpecifyPeriod.IsValid.Value;
-                if (SpecifyUsers.IsEnabled.Value && SpecifyUsers.IsValid.Value != null)
-                    return SpecifyUsers.IsValid.Value;
+                foreach (var g in groups)
+                {
+                    if (g.IsEnabled.Value && g.IsValid.Value != null)
+                        return g.IsValid.Value;
+                }
 
                 return null;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);

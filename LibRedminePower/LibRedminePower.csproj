@@ -132,6 +132,7 @@
     <Compile Include="ViewModels\CommandBase.cs" />
     <Compile Include="ViewModels\EditColorsViewModel.cs" />
     <Compile Include="Helpers\MessageBoxHelper.cs" />
+    <Compile Include="ViewModels\ExpandableTwinListBoxViewModel.cs" />
     <Compile Include="ViewModels\TwinListBoxViewModel.cs" />
     <Compile Include="Views\Controls\FilterTextBox.cs" />
     <Compile Include="Views\Controls\MultiSelectionGridViewComboBoxColumn.cs" />
@@ -141,6 +142,9 @@
     </Compile>
     <Compile Include="Views\GridViewEditButtonPanel.xaml.cs">
       <DependentUpon>GridViewEditButtonPanel.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ExpandableTwinListBox.xaml.cs">
+      <DependentUpon>ExpandableTwinListBox.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\TwinListBoxSortCommands.xaml.cs">
       <DependentUpon>TwinListBoxSortCommands.xaml</DependentUpon>
@@ -271,6 +275,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\GridViewEditButtonPanel.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\ExpandableTwinListBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

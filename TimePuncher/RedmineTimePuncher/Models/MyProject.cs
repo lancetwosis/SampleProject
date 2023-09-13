@@ -32,5 +32,10 @@ namespace RedmineTimePuncher.Models
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Identifier);
             return hashCode;
         }
+
+        public override string ToString()
+        {
+            return Name;
+        }
     }
 }

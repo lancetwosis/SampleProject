@@ -115,6 +115,12 @@
                                                                                                             AncestorType=Expander},
                                                                              Path=IsExpanded,
                                                                              Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
+                                <charts:FilterLabelView Margin="5,0,0,0"
+                                                        DataContext="{Binding Visualize.Filters.SpecifyProjects}"
+                                                        Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                            AncestorType=Expander},
+                                                                             Path=IsExpanded,
+                                                                             Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
                             </StackPanel>
                         </DataTemplate>
                     </Expander.HeaderTemplate>
@@ -135,7 +141,9 @@
                                               Content="親チケット指定"
                                               IsChecked="{Binding Visualize.Filters.SpecifyParentIssue.IsEnabled.Value}" />
                                 </GroupBox.Header>
-                                <Grid IsEnabled="{Binding ElementName=parentIssueCheckBox, Path=IsChecked}">
+                                <Grid Margin="0,3,0,0"
+                                      IsEnabled="{Binding ElementName=parentIssueCheckBox,
+                                                          Path=IsChecked}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="AUTO" />
                                         <ColumnDefinition Width="*" />
@@ -146,6 +154,14 @@
                                              Text="{Binding Visualize.Filters.SpecifyParentIssue.ParentIssueId.Value,
                                                             UpdateSourceTrigger=PropertyChanged}"
                                              TextAlignment="Right" />
+                                    <telerik:RadButton Grid.Column="1"
+                                                       Margin="10,0,0,0"
+                                                       Padding="0"
+                                                       HorizontalAlignment="Left"
+                                                       VerticalAlignment="Center"
+                                                       ClickMode="Press"
+                                                       Command="{Binding Visualize.Filters.SpecifyParentIssue.GoToTicketCommand}"
+                                                       Style="{StaticResource GotoTicketButtonStyle}" />
                                 </Grid>
                             </GroupBox>
                             <GroupBox Grid.Row="1"
@@ -220,21 +236,36 @@
 
                         </Grid>
 
-                        <GroupBox Grid.Column="1"
-                                  Margin="5,5,0,0"
-                                  Background="{Binding Visualize.Filters.SpecifyUsers.Background}">
-                            <GroupBox.Header>
-                                <CheckBox x:Name="userCheckBox"
-                                          Content="ユーザ指定"
-                                          IsChecked="{Binding Visualize.Filters.SpecifyUsers.IsEnabled.Value}" />
-                            </GroupBox.Header>
-                            <views:TwinListBox Height="200"
-                                               Margin="5"
-                                               DataContext="{Binding Visualize.Filters.SpecifyUsers.Users}"
-                                               IsEnabled="{Binding ElementName=userCheckBox,
-                                                                   Path=IsChecked}" />
-                        </GroupBox>
-
+                        <Grid Grid.Column="1">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="AUTO" />
+                                <RowDefinition Height="AUTO" />
+                            </Grid.RowDefinitions>
+                            <GroupBox Grid.Row="0"
+                                      Margin="5,5,0,0"
+                                      Background="{Binding Visualize.Filters.SpecifyUsers.Background}">
+                                <GroupBox.Header>
+                                    <CheckBox x:Name="userCheckBox"
+                                              Content="ユーザ指定"
+                                              IsChecked="{Binding Visualize.Filters.SpecifyUsers.IsEnabled.Value}" />
+                                </GroupBox.Header>
+                                <views:ExpandableTwinListBox DataContext="{Binding Visualize.Filters.SpecifyUsers.Users}"
+                                                             IsEnabled="{Binding ElementName=userCheckBox,
+                                                                                 Path=IsChecked}" />
+                            </GroupBox>
+                            <GroupBox Grid.Row="1"
+                                      Margin="5,5,0,0"
+                                      Background="{Binding Visualize.Filters.SpecifyProjects.Background}">
+                                <GroupBox.Header>
+                                    <CheckBox x:Name="projectCheckBox"
+                                              Content="プロジェクト指定"
+                                              IsChecked="{Binding Visualize.Filters.SpecifyProjects.IsEnabled.Value}" />
+                                </GroupBox.Header>
+                                <views:ExpandableTwinListBox DataContext="{Binding Visualize.Filters.SpecifyProjects.Projects}"
+                                                             IsEnabled="{Binding ElementName=projectCheckBox,
+                                                                                 Path=IsChecked}" />
+                            </GroupBox>
+                        </Grid>
                     </Grid>
                 </Expander>
 
@@ -295,6 +326,11 @@
                                                                          Converter={StaticResource NullToVisibilityConverter}}" />
                             <charts:FilterLabelView Margin="5,0,0,0"
                                                     DataContext="{Binding Visualize.Result.Filters.SpecifyUsers}"
+                                                    Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
+                                                                         Path=DataContext,
+                                                                         Converter={StaticResource NullToVisibilityConverter}}" />
+                            <charts:FilterLabelView Margin="5,0,0,0"
+                                                    DataContext="{Binding Visualize.Result.Filters.SpecifyProjects}"
                                                     Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
                                                                          Path=DataContext,
                                                                          Converter={StaticResource NullToVisibilityConverter}}" />

@@ -25,6 +25,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
     public class SpecifyParentIssueViewModel : FilterGroupViewModelBase
     {
         public ReactivePropertySlim<string> ParentIssueId { get; set; }
+        public ReactiveCommand GoToTicketCommand { get; set; }
 
         // https://www.colordic.org/colorsample/f0fff7
         public SpecifyParentIssueViewModel(TicketFiltersModel model, ReactivePropertySlim<RedmineManager> redmine)
@@ -54,6 +55,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             IsValid = parentIssue.Select(i => i != null ? null : "親チケットを指定してください。").ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
+            GoToTicketCommand = parentIssue.Select(p => p != null).ToReactiveCommand().WithSubscribe(() => parentIssue.Value.GoToTicket()).AddTo(disposables);
+
             Label = IsEnabled.CombineLatest(IsValid, parentIssue, (_1, _2, _3) => true).Select(_ =>
             {
                 if (!IsEnabled.Value)
@@ -61,7 +64,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 else if (IsValid.Value != null)
                     return $"親チケット: {NAN}";
                 else
-                    return $"親チケット: #{ParentIssueId.Value}";
+                    return $"#{ParentIssueId.Value}";
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             Tooltip = IsEnabled.CombineLatest(IsValid, parentIssue, (_1, _2, _3) => true).Select(_ =>
@@ -71,7 +74,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 else if (IsValid.Value != null)
                     return null;
                 else
-                    return $"{parentIssue.Value.RawIssue.GetFullLabel()}";
+                    return $"親チケット: {parentIssue.Value.RawIssue.GetFullLabel()}";
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
     }
