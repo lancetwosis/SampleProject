@@ -35,7 +35,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
         private ResultViewModel parent { get; set; }
 
-        public ResultFiltersViewModel(ResultViewModel parent, List<PersonHourModel> allEntries)
+        public ResultFiltersViewModel(ResultViewModel parent, List<PersonHourModel> allEntries, bool needsClear)
         {
             this.parent = parent;
 
@@ -46,6 +46,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             Categories = allEntries.Select(t => t.GetFactor(FactorType.Category)).Distinct().ToList();
             Dates = allEntries.Select(t => t.GetFactor(FactorType.Date)).Distinct().ToList();
             OnTimes = allEntries.Select(t => t.GetFactor(FactorType.OnTime)).Distinct().ToList();
+
+            if (needsClear)
+                parent.Model.ResultFilters.Clear();
 
             Items = new ObservableCollectionSync<ResultFilterViewModel, ResultFilterModel>(parent.Model.ResultFilters,
                 m => new ResultFilterViewModel(this, m).AddTo(disposables), vm => vm.Model).AddTo(disposables);

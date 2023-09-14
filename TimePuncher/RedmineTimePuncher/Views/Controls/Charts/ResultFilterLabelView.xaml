@@ -75,7 +75,7 @@
                         Command="{Binding EditCommand}"
                         Style="{StaticResource GlyphButtonStyle}">
                     <Button.Content>
-                        <telerik:RadGlyph Glyph="&#xe10b;" />
+                        <telerik:RadGlyph Glyph="{StaticResource GlyphEdit}" />
                     </Button.Content>
                 </Button>
                 <Popup AllowsTransparency="True"
@@ -88,7 +88,7 @@
                             BorderBrush="LightGray"
                             BorderThickness="1"
                             CornerRadius="5">
-                        <Grid Margin="5">
+                        <Grid>
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="AUTO" />
                                 <RowDefinition Height="AUTO" />
@@ -141,7 +141,8 @@
                         Command="{Binding DeleteCommand}"
                         Style="{StaticResource GlyphButtonStyle}">
                     <Button.Content>
-                        <telerik:RadGlyph Glyph="&#xe10c;" />
+                        <telerik:RadGlyph Foreground="Red"
+                                          Glyph="{StaticResource GlyphMinusCircle}" />
                     </Button.Content>
                 </Button>
             </Grid>

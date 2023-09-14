@@ -92,7 +92,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         }
 
         private CompositeDisposable setupTreeDisposables;
-        private void setupTicketTree()
+        private void setupTicketTree(bool isNew = false)
         {
             if (Model.TimeEntries.Count == 0)
             {
@@ -140,7 +140,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     Tickets.Add(t);
                 }
 
-                ResultFilters = new ResultFiltersViewModel(this, rawEntries).AddTo(disposables);
+                ResultFilters = new ResultFiltersViewModel(this, rawEntries, isNew).AddTo(disposables);
 
                 var onIsEnable = AllTickets.Select(a => a.IsEnabled).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
                 var onIsExpanded = AllTickets.Select(a => a.ObserveProperty(b => b.IsExpanded)).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
@@ -181,7 +181,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             Model.Tickets = await filters.GetTicketsAsync(Model.TimeEntries);
             Model.Categories = parent.Parent.Settings.Category.Items.ToList();
 
-            setupTicketTree();
+            setupTicketTree(isNew);
 
             // 親チケット指定が設定されていたらトップの子チケットだけが展開された状態にする
             if (Tickets.Any() && filters.SpecifyParentIssue.IsEnabled.Value)

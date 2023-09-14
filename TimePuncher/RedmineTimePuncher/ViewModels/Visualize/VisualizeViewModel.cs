@@ -24,6 +24,8 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
+using Telerik.Windows.Controls;
+using Telerik.Windows.Controls.GridView;
 
 namespace RedmineTimePuncher.ViewModels.Visualize
 {
@@ -52,6 +54,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public ReactiveCommand EnableRecursiveCommand { get; set; }
         public ReactiveCommand DisableCommand { get; set; }
         public ReactiveCommand DisableRecursiveCommand { get; set; }
+        public ReactiveCommand<RadTreeListView> ScrollToSelectedRowCommand { get; set; }
         public ReactiveCommand AddFilterCommand { get; set; }
         public MainWindowViewModel Parent { get; set; }
 
@@ -179,6 +182,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             DisableRecursiveCommand= Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
             {
                 Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(false,true));
+            }).AddTo(disposables);
+
+            ScrollToSelectedRowCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand<RadTreeListView>().WithSubscribe(tree =>
+            {
+                var index = tree.Items.OfType<TicketViewModel>().ToList().IndexOf(Result.SelectedTickets[0]);
+                tree.ScrollIntoViewAsync(tree.Items[index], tree.Columns[0], f => (f as GridViewRow).IsSelected = true);
             }).AddTo(disposables);
 
             AddFilterCommand = hasResult.ToReactiveCommand().WithSubscribe(() =>

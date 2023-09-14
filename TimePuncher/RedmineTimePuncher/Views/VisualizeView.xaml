@@ -382,8 +382,7 @@
                             <ColumnDefinition Width="*" />
                         </Grid.ColumnDefinitions>
 
-                        <telerik:RadTreeListView x:Name="radTreeListView"
-                                                 Grid.Row="2"
+                        <telerik:RadTreeListView Grid.Row="2"
                                                  telerikExHelper:GridViewSelectionUtilities.SelectedItems="{Binding Visualize.Result.SelectedTickets}"
                                                  AlternationCount="2"
                                                  AutoGenerateColumns="False"
@@ -393,7 +392,7 @@
                                                  HierarchyIndent="10"
                                                  IsExpandedBinding="{Binding IsExpanded,
                                                                              Mode=TwoWay}"
-                                                 IsFilteringAllowed="True"
+                                                 IsFilteringAllowed="False"
                                                  IsReadOnly="True"
                                                  ItemsSource="{Binding Visualize.Result.Tickets}"
                                                  RowIndicatorVisibility="Collapsed"
@@ -432,10 +431,30 @@
                             <telerik:RadTreeListView.Columns>
                                 <telerik:GridViewDataColumn DataMemberBinding="{Binding IsEnabled.Value}"
                                                             EditTriggers="CellClick"
-                                                            FilterMemberPath="Id"
-                                                            Header="チケット"
                                                             IsReadOnly="True"
                                                             IsSortable="False">
+                                    <telerik:GridViewDataColumn.Header>
+                                        <Grid>
+                                            <TextBlock Margin="0,3,0,0"
+                                                       HorizontalAlignment="Left"
+                                                       Text="チケット"
+                                                       TextAlignment="Center" />
+                                            <Button HorizontalAlignment="Right"
+                                                    Command="{Binding Visualize.ScrollToSelectedRowCommand}"
+                                                    CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                              AncestorType={x:Type telerik:RadTreeListView}}}"
+                                                    DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                         AncestorType={x:Type telerik:RadTreeListView}},
+                                                                          Path=DataContext}"
+                                                    Style="{StaticResource GlyphButtonStyle}"
+                                                    ToolTip="選択行に移動">
+                                                <Button.Content>
+                                                    <telerik:RadGlyph FontSize="13"
+                                                                      Glyph="{StaticResource GlyphZoom}" />
+                                                </Button.Content>
+                                            </Button>
+                                        </Grid>
+                                    </telerik:GridViewDataColumn.Header>
                                     <telerik:GridViewDataColumn.CellTemplate>
                                         <DataTemplate>
                                             <StackPanel Orientation="Horizontal"

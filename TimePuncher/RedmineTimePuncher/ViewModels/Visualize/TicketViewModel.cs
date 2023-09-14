@@ -24,7 +24,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize
     {
         public TicketModel Model { get; set; }
 
-        public string Id => Model.RawIssue.Id.ToString();
         public string Label => Model.RawIssue.GetLabel();
         public string Url => MyIssue.GetUrl(Model.RawIssue.Id);
         public string Tooltip => Model.RawIssue.GetFullLabel();
