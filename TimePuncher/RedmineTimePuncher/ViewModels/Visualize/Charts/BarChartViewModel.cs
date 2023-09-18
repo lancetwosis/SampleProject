@@ -70,7 +70,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             var allPoints = getAllTimeEntries();
             var allXAxises = allPoints.Select(a => a.GetFactor(XAxisType.SelectedType.Value)).Distinct().OrderBy(f => f.Value).ToList();
 
-            if (CombineType.SelectedType.Value != FactorType.None)
+            if (!CombineType.SelectedType.Value.Equals(FactorType.None))
             {
                 var tmp = new List<SeriesViewModel>();
                 foreach (var combine in allPoints.GroupBy(p => p.GetFactor(CombineType.SelectedType.Value)))

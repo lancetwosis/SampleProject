@@ -41,11 +41,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
             AllTypes = new List<FactorType>() { FactorType.Project, FactorType.User, FactorType.Category, FactorType.Date, FactorType.OnTime };
 
-            Projects = allEntries.Select(t => t.GetFactor(FactorType.Project)).Distinct().ToList();
-            Users = allEntries.Select(t => t.GetFactor(FactorType.User)).Distinct().ToList();
-            Categories = allEntries.Select(t => t.GetFactor(FactorType.Category)).Distinct().ToList();
-            Dates = allEntries.Select(t => t.GetFactor(FactorType.Date)).Distinct().ToList();
-            OnTimes = allEntries.Select(t => t.GetFactor(FactorType.OnTime)).Distinct().ToList();
+            Projects = allEntries.Select(t => t.Project).Distinct().ToList();
+            Users = allEntries.Select(t => t.User).Distinct().ToList();
+            Categories = allEntries.Select(t => t.Category).Distinct().ToList();
+            Dates = allEntries.Select(t => t.SpentOn).Distinct().ToList();
+            OnTimes = allEntries.Select(t => t.OnTime).Distinct().ToList();
 
             if (needsClear)
                 parent.Model.ResultFilters.Clear();

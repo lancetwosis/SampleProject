@@ -24,6 +24,10 @@ using System.Runtime.InteropServices;
 using NetOffice.OutlookApi;
 using RedmineTimePuncher.ViewModels.CountWikiPage.Charts;
 using System.Diagnostics;
+using System.Diagnostics.PerformanceData;
+using LibRedminePower.Helpers;
+using System.Runtime.InteropServices.ComTypes;
+using System.ComponentModel.Composition.Primitives;
 
 namespace RedmineTimePuncher.ViewModels.CountWikiPage
 {
@@ -32,27 +36,16 @@ namespace RedmineTimePuncher.ViewModels.CountWikiPage
         public BusyNotifier IsBusy { get; set; }
         public ObservableCollection<MyProject> Projects { get; set; }
         public ReactivePropertySlim<MyProject> SelectedProject { get; set; }
-
-        public ObservableCollection<MyWikiPage> AllWikiPages { get; set; }
-        public ReactivePropertySlim<MyWikiPage> SelectedWikiPage { get; set; }
-
-        public string DisableWords { get; set; }
-        public bool IsRegex { get; set; }
-
-        public AsyncCommandBase CountCommand { get; set; }
+        public AsyncCommandBase ReloadCommand { get; }
         public AsyncCommandBase ExportCommand { get; set; }
 
-        public ReactivePropertySlim<CountResultViewModel> Result { get; set; }
-        public ReadOnlyReactivePropertySlim<string> CountedAt { get; set; }
-        public ReadOnlyReactivePropertySlim<string> TargetProject { get; set; }
-
-        public ObservableCollection<MyWikiPage> WikiPages { get; set; }
-        public ObservableCollection<MyWikiPage> SelectedWikiPages { get; set; }
+        public ObservableCollection<MyWikiPageCount> WikiPages { get; set; }
+        public ObservableCollection<MyWikiPageCount> SelectedWikiPages { get; set; }
         public ReadOnlyReactivePropertySlim<ReadOnlyReactivePropertySlim<bool>> IsBusyUpdateHistories { get; set; }
-        public ReadOnlyReactivePropertySlim<List<HistorySummary>> HistorySummaries { get; set; }
-        public ObservableCollection<HistorySummary> SelectedHistorySummaries { get; set; }
+        public ReadOnlyReactivePropertySlim<List<MyWikiHistorySummary>> HistorySummaries { get; set; }
+        public ObservableCollection<MyWikiHistorySummary> SelectedHistorySummaries { get; set; }
         public AsyncCommandBase DiffHistoriesCommand { get; set; }
-        public ReadOnlyReactivePropertySlim<List<UserSummary>> UserSummaries { get; set; }
+        public ReadOnlyReactivePropertySlim<List<WikiUserSummary>> UserSummaries { get; set; }
         public ReadOnlyReactivePropertySlim<List<SeriesViewModelBase>> Serieses { get; set;}
         public ReactivePropertySlim<Enums.WikiPeriodType> SelectedPeriodType { get; set; }
         public ReadOnlyReactivePropertySlim<bool> IsPeriodNumericType { get; set; }
@@ -66,15 +59,9 @@ namespace RedmineTimePuncher.ViewModels.CountWikiPage
 
             Projects = new ObservableCollection<MyProject>();
             SelectedProject = new ReactivePropertySlim<MyProject>().AddTo(disposables);
-            AllWikiPages = new ObservableCollection<MyWikiPage>();
-            SelectedWikiPage = new ReactivePropertySlim<MyWikiPage>().AddTo(disposables);
 
-            Result = new ReactivePropertySlim<CountResultViewModel>().AddTo(disposables);
-            CountedAt = Result.Select(r => r != null ? r.CountedAt.ToString() : "").ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            TargetProject = Result.Select(r => r != null ? r.Project.Name : "").ToReadOnlyReactivePropertySlim().AddTo(disposables);
-
-            WikiPages = new ObservableCollection<MyWikiPage>();
-            SelectedWikiPages = new ObservableCollection<MyWikiPage>();
+            WikiPages = new ObservableCollection<MyWikiPageCount>();
+            SelectedWikiPages = new ObservableCollection<MyWikiPageCount>();
 
             SelectedPeriodType = new ReactivePropertySlim<WikiPeriodType>().AddTo(disposables);
             IsPeriodNumericType = SelectedPeriodType.Select(a => a == WikiPeriodType.LastNMonth || a == WikiPeriodType.LastNWeeks).ToReadOnlyReactivePropertySlim().AddTo(disposables);
@@ -101,10 +88,11 @@ namespace RedmineTimePuncher.ViewModels.CountWikiPage
                         return new BusyNotifier().ToReadOnlyReactivePropertySlim(false);
                 }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            SelectedHistorySummaries = new ObservableCollection<HistorySummary>();
+            SelectedHistorySummaries = new ObservableCollection<MyWikiHistorySummary>();
 
             DiffHistoriesCommand = new AsyncCommandBase(
-                Properties.Resources.RibbonCmdMeasure, Properties.Resources.icons8_count,
+                Properties.Resources.DiffHistories, 
+                Properties.Resources.icons8_compare_16,
                 SelectedHistorySummaries.CollectionChangedAsObservable().StartWithDefault().Select(_ =>
                         SelectedHistorySummaries.Select(a => a.Title).Distinct().Count() == 1 && SelectedHistorySummaries.Count >= 2).Select(a => !a ? "" : null),
                 async () =>
@@ -121,12 +109,12 @@ namespace RedmineTimePuncher.ViewModels.CountWikiPage
                 if (!a)
                     return SelectedWikiPages.SelectMany(h => h.Histories).OrderByDescending(b => b.UpdatedOn).ToList();
                 else
-                    return new List<HistorySummary>();
+                    return new List<MyWikiHistorySummary>();
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             UserSummaries = HistorySummaries.Select(allhs => 
             {
-                return allhs.GroupBy(h => h.Author).Select(x => new UserSummary()
+                return allhs.GroupBy(h => h.Author).Select(x => new WikiUserSummary()
                 {
                     Author = x.Key,
                     InsertNoOfChar = x.Sum(y => y.InsertNoOfChar),
@@ -234,56 +222,72 @@ namespace RedmineTimePuncher.ViewModels.CountWikiPage
                     await getProjectsTask;
             }).AddTo(disposables);
 
-            SelectedProject.SubscribeWithErr(async p =>
-            {
-                using (IsBusy.ProcessStart())
-                using (parent.IsBusy.ProcessStart(""))
-                {
-                    if (p != null)
-                    {
-                        var wikis = await Task.Run(() =>
-                            parent.Redmine.Value.GetAllWikiPages(p.Identifier));
-                        AllWikiPages.Clear();
-                        foreach (var w in wikis.OrderByDescending(w => w.IsTopWiki))
-                        {
-                            AllWikiPages.Add(w);
-                        }
-                        SelectedWikiPage.Value = AllWikiPages.FirstOrDefault();
-                    }
-                }
-            }).AddTo(disposables);
+            SelectedProject.Where(p => p != null).SubscribeWithErr(p => ReloadCommand.Command.Execute(null)).AddTo(disposables);
 
-            CountCommand = new AsyncCommandBase(
-                Properties.Resources.RibbonCmdMeasure, Properties.Resources.icons8_count,
-                SelectedWikiPage.Select(w => w != null ? null : ""),
+            ReloadCommand = new AsyncCommandBase(
+                Properties.Resources.RibbonCmdReload, Properties.Resources.reload,
+                Observable.Return((string)null),
                 async () =>
                 {
                     using (IsBusy.ProcessStart())
                     using (parent.IsBusy.ProcessStart(""))
                     {
-                        var topWiki = await Task.Run(() =>
-                             parent.Redmine.Value.GetWikiPageIncludeChildren(SelectedWikiPage.Value.ProjectId, SelectedWikiPage.Value.Title));
-                        Result.Value = new CountResultViewModel(DateTime.Now, parent.Redmine.Value.MyUser.Name, SelectedProject.Value, topWiki,
-                                                                IsRegex ? FilterType.AsRegex : FilterType.Contains, DisableWords).AddTo(disposables);
                         WikiPages.Clear();
-                        if (Result.Value.TopWikiPage.IsSummaryTarget)
-                            WikiPages.Add(Result.Value.TopWikiPage);
+
+                        var wikiItems = await Task.Run(() => parent.Redmine.Value.GetAllWikiPages(SelectedProject.Value.Identifier));
+                        foreach (var wikiItem in wikiItems.Where(a => string.IsNullOrEmpty(a.ParentTitle)))
+                        {
+                            var wiki = new MyWikiPageCount(wikiItem, null, wikiItems);
+                            var _ = wiki.UpdateSummaryAsync(parent.Redmine.Value); // 投げ捨て
+                            WikiPages.Add(wiki);
+                        }
                     }
-                }).AddTo(disposables);
+                });
+
+            var isBusyUpdateSummary = WikiPages.CollectionChangedAsObservable().StartWithDefault().Select(_ =>
+            {
+                if (WikiPages.Any())
+                    return WikiPages.Select(a => a.IsBusyUpdateSummary).CombineLatestValuesAreAllFalse().Inverse().ToReadOnlyReactivePropertySlim();
+                else
+                    return new BusyNotifier().ToReadOnlyReactivePropertySlim(false);
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             ExportCommand = new AsyncCommandBase(
                 Properties.Resources.RibbonCmdCSV, Properties.Resources.export_excel,
-                Result.Select(r => r != null && r.TopWikiPage.IsSummaryTarget ? null : ""),
+                isBusyUpdateSummary.ObserveProperty(a => a.Value.Value).Select(a => a ? "" : null),
                 async () =>
                 {
                     var dialog = new SaveFileDialog();
-                    dialog.FileName = Result.Value.FileName;
+                    dialog.FileName = $"{SelectedProject.Value.Name}_{DateTime.Today.ToString("yyMMdd")}.csv";
                     dialog.Filter = "CSV Files|*.csv";
                     if (dialog.ShowDialog().Value == true)
                     {
-                        Result.Value.Export(dialog.FileName);
+                        var sb = new StringBuilder();
+                        sb.AppendLine(addDoubleQuat(Properties.Resources.WikiCountResultProject, SelectedProject.Value.Name));
+                        sb.AppendLine();
+                        sb.AppendLine(addDoubleQuat(Properties.Resources.WikiCountResultTitle,
+                                                    Properties.Resources.WikiCountResultParentPage,
+                                                    Properties.Resources.WikiCountResultUpdateOn,
+                                                    Properties.Resources.WikiCountResultAuthor,
+                                                    Properties.Resources.WikiCountResultNoOfChar,
+                                                    Properties.Resources.WikiCountResultNoOfLine,
+                                                    Properties.Resources.WikiCountResultNoOfCharIncluded,
+                                                    Properties.Resources.WikiCountResultNoOfLineIncluded));
+                        var wikis = WikiPages.Flatten(w => w.Children).ToList();
+                        foreach (var w in wikis)
+                        {
+                            sb.AppendLine(addDoubleQuat(w.IndexedTitle, w.ParentTitle, w.UpdatedOn, w.Author.Name, w.Summary.NoOfChar, w.Summary.NoOfLine,
+                                                        w.SummaryIncludedChildren.NoOfChar, w.SummaryIncludedChildren.NoOfLine));
+                        }
+                        FileHelper.WriteAllText(dialog.FileName, sb.ToString());
                     }
                 }).AddTo(disposables);
+        }
+
+
+        private string addDoubleQuat(params object[] strs)
+        {
+            return "\"" + string.Join("\",\"", strs) + "\"";
         }
     }
 }

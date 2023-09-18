@@ -168,7 +168,6 @@
     <Compile Include="Interfaces\IAutoUpdateSetting.cs" />
     <Compile Include="Interfaces\IPeriod.cs" />
     <Compile Include="Interfaces\ISettingsModel.cs" />
-    <Compile Include="Models\DiffMatchPatch.cs" />
     <Compile Include="Models\IdName.cs" />
     <Compile Include="Models\Managers\DebugDataManager.cs" />
     <Compile Include="Models\Managers\TeamsManager.cs" />
@@ -179,7 +178,11 @@
     <Compile Include="Models\MyPriority.cs" />
     <Compile Include="Models\MyTimeEntry.cs" />
     <Compile Include="Models\MyUser.cs" />
+    <Compile Include="Models\MyWikiHistorySummary.cs" />
     <Compile Include="Models\MyWikiPage.cs" />
+    <Compile Include="Models\MyWikiPageItem.cs" />
+    <Compile Include="Models\MyWikiPageCount.cs" />
+    <Compile Include="Models\MyWikiSummary.cs" />
     <Compile Include="Models\Visualize\ResultFilterModel.cs" />
     <Compile Include="Models\Visualize\TicketModel.cs" />
     <Compile Include="Models\Visualize\ResultModel.cs" />
@@ -214,13 +217,13 @@
     <Compile Include="Models\Settings\UserSettingsModel.cs" />
     <Compile Include="Models\TicketTreeItemModel.cs" />
     <Compile Include="Models\WikiLine.cs" />
+    <Compile Include="Models\WikiUserSummary.cs" />
     <Compile Include="ViewModels\Bases\FunctionViewModelBase.cs" />
     <Compile Include="ViewModels\CountWikiPage\Charts\DateItem.cs" />
     <Compile Include="ViewModels\CountWikiPage\Charts\SeriesViewModelBase.cs" />
     <Compile Include="ViewModels\CountWikiPage\Charts\UserSeriesViewModel.cs" />
     <Compile Include="ViewModels\CountWikiPage\Charts\WikiSeriesViewModel.cs" />
     <Compile Include="ViewModels\CountWikiPage\CountWikiPageViewModel.cs" />
-    <Compile Include="ViewModels\CountWikiPage\CountResultViewModel.cs" />
     <Compile Include="ViewModels\CountWikiPage\Charts\CustomSeriesDescriptorSelector.cs" />
     <Compile Include="ViewModels\CreateTicket\CreateTicketViewModel.cs" />
     <Compile Include="ViewModels\CreateTicket\MemberViewModel.cs" />
@@ -743,6 +746,9 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="DiffPlex">
+      <Version>1.7.1</Version>
+    </PackageReference>
     <PackageReference Include="FastEnum">
       <Version>1.6.1</Version>
     </PackageReference>
@@ -899,6 +905,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\saveas_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-wiki-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\icons8-compare-16.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

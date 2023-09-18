@@ -248,7 +248,7 @@ namespace RedmineTableEditor.ViewModels
                         }
                     }, parent.CTS.Token);
 
-                    var needsDetail = fileSettings.ParentIssues.Properties.Select(a => a.Field.Value).Any(a => a.IsDetail());
+                    var needsDetail = fileSettings.ParentIssues.Properties.Any(a => a.IsDetail());
                     if (myItems != null && needsDetail)
                     {
                         myItems = await Task.WhenAll(myItems.Select(a => Task.Run(() => Redmine.Value.GetIssue(a.Id)))).WithCancel(parent.CTS.Token);
@@ -266,7 +266,7 @@ namespace RedmineTableEditor.ViewModels
                                 parentIssues.AddRange(issues.OrderBy(i => i.Id));
 
                         // 子チケットの情報を取得する。
-                        needsDetail = fileSettings.SubIssues.Properties.Select(a => a.Field.Value).Any(a => a.IsDetail());
+                        needsDetail = fileSettings.SubIssues.Properties.Any(a => a.IsDetail());
                         await Task.WhenAll(parentIssues.Select(a => a.UpdateChildrenAsync(parent.CTS.Token, needsDetail)));
 
                         IssuesView.AddRange(parentIssues.SelectMany(a => a.ToViewRows()));

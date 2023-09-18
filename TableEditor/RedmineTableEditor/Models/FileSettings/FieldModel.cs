@@ -43,6 +43,11 @@ namespace RedmineTableEditor.Models.FileSettings
             CustomFieldId = cfId;
         }
 
+        public bool IsDetail()
+        {
+            return Field.HasValue ? Field.Value.IsDetail() : false;
+        }
+
         public override bool Equals(object obj)
         {
             if (obj is FieldModel other)

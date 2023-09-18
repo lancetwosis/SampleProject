@@ -24,15 +24,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         {
             IsVisible = SelectedType.Select(t =>
             {
-                switch (t)
+                switch (t.ValueType)
                 {
-                    case FactorType.None:
+                    case Enums.FactorValueType.None:
                         return Visibility.Collapsed;
-                    case FactorType.Center:
-                    case FactorType.TopLeft:
-                    case FactorType.BottomLeft:
-                    case FactorType.TopRight:
-                    case FactorType.BottomRight:
+                    case Enums.FactorValueType.Center:
+                    case Enums.FactorValueType.TopLeft:
+                    case Enums.FactorValueType.BottomLeft:
+                    case Enums.FactorValueType.TopRight:
+                    case Enums.FactorValueType.BottomRight:
                         return Visibility.Visible;
                     default:
                         throw new InvalidOperationException();
@@ -41,16 +41,16 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
             HorizonAlign = SelectedType.Select(t =>
             {
-                switch (t)
+                switch (t.ValueType)
                 {
-                    case FactorType.None:
-                    case FactorType.Center:
+                    case Enums.FactorValueType.None:
+                    case Enums.FactorValueType.Center:
                         return HorizontalAlignment.Center;
-                    case FactorType.TopLeft:
-                    case FactorType.BottomLeft:
+                    case Enums.FactorValueType.TopLeft:
+                    case Enums.FactorValueType.BottomLeft:
                         return HorizontalAlignment.Left;
-                    case FactorType.TopRight:
-                    case FactorType.BottomRight:
+                    case Enums.FactorValueType.TopRight:
+                    case Enums.FactorValueType.BottomRight:
                         return HorizontalAlignment.Right;
                     default:
                         throw new InvalidOperationException();
@@ -59,16 +59,16 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
             VerticalAlign = SelectedType.Select(t =>
             {
-                switch (t)
+                switch (t.ValueType)
                 {
-                    case FactorType.None:
-                    case FactorType.Center:
+                    case Enums.FactorValueType.None:
+                    case Enums.FactorValueType.Center:
                         return VerticalAlignment.Center;
-                    case FactorType.TopLeft:
-                    case FactorType.TopRight:
+                    case Enums.FactorValueType.TopLeft:
+                    case Enums.FactorValueType.TopRight:
                         return VerticalAlignment.Top;
-                    case FactorType.BottomLeft:
-                    case FactorType.BottomRight:
+                    case Enums.FactorValueType.BottomLeft:
+                    case Enums.FactorValueType.BottomRight:
                         return VerticalAlignment.Bottom;
                     default:
                         throw new InvalidOperationException();

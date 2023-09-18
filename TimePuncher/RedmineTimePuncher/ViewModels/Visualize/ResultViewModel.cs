@@ -45,10 +45,17 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             this.parent = parent;
 
             var json = Properties.Settings.Default.VisualizeResult;
-            if (!string.IsNullOrEmpty(json))
-                Model = CloneExtentions.ToObject<ResultModel>(json);
-            else
+            try
+            {
+                if (!string.IsNullOrEmpty(json))
+                    Model = CloneExtentions.ToObject<ResultModel>(json);
+                else
+                    Model = new ResultModel();
+            }
+            catch
+            {
                 Model = new ResultModel();
+            }
 
             IsEdited = this.ObserveProperty(a => a.Model.IsEdited).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
@@ -105,6 +112,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 setupTreeDisposables?.Dispose();
                 setupTreeDisposables = new CompositeDisposable().AddTo(disposables);
 
+                FactorType.CustomFields.Clear();
+                Model.CustomFields.ForEach(f => FactorType.CustomFields.Add(new FactorType(f)));
+
                 var timesDic = Model.TimeEntries.Select(a => new MyTimeEntry(a)).GroupBy(t => (t.Entry.Issue, t.Entry.User, t.SpentOn, t.Entry.Activity, t.Type), t => t);
                 var rawEntries = timesDic.Select(p =>
                 {
@@ -113,6 +123,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     var category = Model.Categories.First(a => a.Name == p.Key.Activity.Name);
                     return new PersonHourModel(issue, project, p.Key.User, p.Key.SpentOn.Value, category, p.Key.Type, p.ToList()).AddTo(setupTreeDisposables);
                 }).ToList();
+
+                var cs = rawEntries.SelectMany(a => a.CustomFields).Select(a => a.Type).Distinct().ToList();
+                foreach (var c in cs)
+                {
+                    BarChart.XAxisType.Types.Add(c);
+                }
 
                 var tickets = Model.Tickets.Select(a => new TicketViewModel(a).AddTo(setupTreeDisposables)).ToList();
                 // TimeEntry をそれぞれのチケットに紐づける
@@ -177,6 +193,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 return;
 
             Model.Projects = await Task.Run(() => parent.Parent.Redmine.Value.Projects.Value);
+            Model.CustomFields = await Task.Run(() => parent.Parent.Redmine.Value.CustomFields.Value);
             Model.TimeEntries = filters.GetTimeEntries();
             Model.Tickets = await filters.GetTicketsAsync(Model.TimeEntries);
             Model.Categories = parent.Parent.Settings.Category.Items.ToList();

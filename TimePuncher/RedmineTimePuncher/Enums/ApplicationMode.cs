@@ -43,7 +43,7 @@ namespace RedmineTimePuncher.Enums
                 case ApplicationMode.EntryViewer:
                     return Resources.icons8_select_all_files_48.ToBitmapSource();
                 case ApplicationMode.WikiPageCounter:
-                    return Resources.icons8_count.ToBitmapSource();
+                    return Resources.icons8_wiki_32.ToBitmapSource();
                 case ApplicationMode.TicketCreater:
                     return Resources.icons8_review.ToBitmapSource();
                 case ApplicationMode.TableEditor:

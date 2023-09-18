@@ -1,6 +1,7 @@
 ﻿using LibRedminePower.Attributes;
 using LibRedminePower.Converters;
 using LibRedminePower.Extentions;
+using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
@@ -14,8 +15,7 @@ using Telerik.Windows.Controls.ChartView;
 
 namespace RedmineTimePuncher.ViewModels.Visualize.Enums
 {
-    [TypeConverter(typeof(EnumDescriptionTypeConverter))]
-    public enum FactorType
+    public enum FactorValueType
     {
         None,
         Date,
@@ -31,21 +31,68 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Enums
         BottomLeft,
         BottomRight,
         OnTime,
-
-        //Unselected  = -1,
-        //[LocalizedDescription(nameof(Resources.AppModeInputTime), typeof(Resources))]
-        //TimePuncher,
-        //[LocalizedDescription(nameof(Resources.AppModeShowTimeEntry), typeof(Resources))]
-        //EntryViewer,
-        //[LocalizedDescription(nameof(Resources.AppModeTableEditor), typeof(Resources))]
-        //TableEditor,
-        //[LocalizedDescription(nameof(Resources.AppModeTicketCreater), typeof(Resources))]
-        //TicketCreater,
-        //[LocalizedDescription(nameof(Resources.AppModeVisualize), typeof(Resources))]
-        //Visualizer,
-        //[LocalizedDescription(nameof(Resources.AppModeCountWiki), typeof(Resources))]
-        //WikiPageCounter,
+        IssueCustomField,
     }
+
+    public class FactorType
+    {
+        public FactorValueType ValueType { get; set; }
+        public string Name { get; set; }
+
+        public static FactorType None        = new FactorType(FactorValueType.None);
+        public static FactorType Date        = new FactorType(FactorValueType.Date);
+        public static FactorType Issue       = new FactorType(FactorValueType.Issue);
+        public static FactorType Project     = new FactorType(FactorValueType.Project);
+        public static FactorType User        = new FactorType(FactorValueType.User);
+        public static FactorType Category    = new FactorType(FactorValueType.Category);
+        public static FactorType ASC         = new FactorType(FactorValueType.ASC);
+        public static FactorType DESC        = new FactorType(FactorValueType.DESC);
+        public static FactorType Center      = new FactorType(FactorValueType.Center);
+        public static FactorType TopLeft     = new FactorType(FactorValueType.TopLeft);
+        public static FactorType TopRight    = new FactorType(FactorValueType.TopRight);
+        public static FactorType BottomLeft  = new FactorType(FactorValueType.BottomLeft);
+        public static FactorType BottomRight = new FactorType(FactorValueType.BottomRight);
+        public static FactorType OnTime      = new FactorType(FactorValueType.OnTime);
+
+        public static List<FactorType> CustomFields = new List<FactorType>();
+
+        public FactorType() { }
+
+        public FactorType(FactorValueType type)
+        {
+            ValueType = type;
+            Name = type.ToString();
+        }
+
+        public FactorType(CustomField customField)
+        {
+            ValueType = FactorValueType.IssueCustomField;
+            Name = customField.Name;
+        }
+
+
+        public override string ToString()
+        {
+            return Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is FactorType type &&
+                   ValueType == type.ValueType &&
+                   Name == type.Name;
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = -1979447941;
+            hashCode = hashCode * -1521134295 + ValueType.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            return hashCode;
+        }
+    }
+
+
 
     public static class FactorTypeEx
     {
@@ -69,15 +116,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Enums
                 return color;
             }
 
-            switch (type)
+            switch (type.ValueType)
             {
-                case FactorType.Issue:
+                case FactorValueType.Issue:
                     colorDic[(type, title)] = getModifiedBrush(id.Value, issueColors);
                     return colorDic[(type, title)];
-                case FactorType.User:
+                case FactorValueType.User:
                     colorDic[(type, title)] = getModifiedBrush(id.Value, userColors);
                     return colorDic[(type, title)];
-                case FactorType.Project:
+                case FactorValueType.Project:
                     colorDic[(type, title)] = getModifiedBrush(id.Value, projectColors);
                     return colorDic[(type, title)];
                 default:

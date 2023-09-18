@@ -31,6 +31,7 @@ namespace RedmineTimePuncher.Models.Visualize
         public double TotalHours { get; set; }
 
         public FactorModel Issue { get; set; }
+        public List<FactorModel> CustomFields { get; set; }
         public FactorModel Project { get; set; }
         public FactorModel User { get; set; }
         public FactorModel SpentOn { get; set; }
@@ -45,6 +46,12 @@ namespace RedmineTimePuncher.Models.Visualize
             TotalHours = (double)times.Sum(t => t.Entry.Hours);
 
             Issue = new FactorModel(parent);
+            CustomFields = new List<FactorModel>();
+            foreach (var c in parent.CustomFields)
+            {
+                CustomFields.Add(new FactorModel(c));
+            }
+
             Project = new FactorModel(project);
             User = new FactorModel(FactorType.User, user);
             SpentOn = new FactorModel(spentOn);
@@ -59,6 +66,12 @@ namespace RedmineTimePuncher.Models.Visualize
             TotalHours = (double)Times.Sum(t => t.Entry.Hours);
 
             Issue = new FactorModel(parent);
+            CustomFields = new List<FactorModel>();
+            foreach (var c in parent.CustomFields)
+            {
+                CustomFields.Add(new FactorModel(c));
+            }
+
             Project = children[0].Project;
             User = children[0].User;
             SpentOn = children[0].SpentOn;
@@ -68,20 +81,28 @@ namespace RedmineTimePuncher.Models.Visualize
 
         public FactorModel GetFactor(FactorType type)
         {
-            switch (type)
+            switch (type.ValueType)
             {
-                case FactorType.Date:
+                case FactorValueType.Date:
                     return SpentOn;
-                case FactorType.Issue:
+                case FactorValueType.Issue:
                     return Issue;
-                case FactorType.Project:
+                case FactorValueType.Project:
                     return Project;
-                case FactorType.User:
+                case FactorValueType.User:
                     return User;
-                case FactorType.Category:
+                case FactorValueType.Category:
                     return Category;
-                case FactorType.OnTime:
+                case FactorValueType.OnTime:
                     return OnTime;
+                case FactorValueType.IssueCustomField:
+                    var field = CustomFields.FirstOrDefault(f => f.Type.Name == type.Name);
+                    if (field != null)
+                        return field;
+
+                    var dummy = new FactorModel(new IssueCustomField() { Name = type.Name }, true);
+                    CustomFields.Add(dummy);
+                    return dummy;
                 default:
                     throw new InvalidOperationException();
             }

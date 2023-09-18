@@ -19,7 +19,7 @@ namespace RedmineTimePuncher.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -175,6 +175,15 @@ namespace RedmineTimePuncher.Properties {
         public static string CustomFieldFormatUser {
             get {
                 return ResourceManager.GetString("CustomFieldFormatUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   View Differences に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DiffHistories {
+            get {
+                return ResourceManager.GetString("DiffHistories", resourceCulture);
             }
         }
         
@@ -690,9 +699,9 @@ namespace RedmineTimePuncher.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
-        public static System.Drawing.Bitmap icons8_count {
+        public static System.Drawing.Bitmap icons8_compare_16 {
             get {
-                object obj = ResourceManager.GetObject("icons8_count", resourceCulture);
+                object obj = ResourceManager.GetObject("icons8_compare_16", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -793,6 +802,16 @@ namespace RedmineTimePuncher.Properties {
         public static System.Drawing.Bitmap icons8_view_headline_48 {
             get {
                 object obj = ResourceManager.GetObject("icons8_view_headline_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap icons8_wiki_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_wiki_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -4157,16 +4176,6 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Set the top level page to be measured.
-        ///The parent-child relationship of a wiki page can be set from &quot;Parent page&quot; under &quot;Rename&quot;. に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string WikiCountParentPageHelp {
-            get {
-                return ResourceManager.GetString("WikiCountParentPageHelp", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Author に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string WikiCountResultAuthor {
@@ -4181,15 +4190,6 @@ namespace RedmineTimePuncher.Properties {
         public static string WikiCountResultComment {
             get {
                 return ResourceManager.GetString("WikiCountResultComment", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Measured: に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string WikiCountResultCountedAt {
-            get {
-                return ResourceManager.GetString("WikiCountResultCountedAt", resourceCulture);
             }
         }
         
@@ -4212,15 +4212,6 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Excluded Pages: に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string WikiCountResultExcludedPageNames {
-            get {
-                return ResourceManager.GetString("WikiCountResultExcludedPageNames", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   No. of chars added に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string WikiCountResultInsertNoOfChar {
@@ -4235,15 +4226,6 @@ namespace RedmineTimePuncher.Properties {
         public static string WikiCountResultInsertNoOfLine {
             get {
                 return ResourceManager.GetString("WikiCountResultInsertNoOfLine", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Measurer に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string WikiCountResultMeasurer {
-            get {
-                return ResourceManager.GetString("WikiCountResultMeasurer", resourceCulture);
             }
         }
         

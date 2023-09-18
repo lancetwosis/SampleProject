@@ -24,8 +24,8 @@ namespace RedmineTimePuncher.Models.Settings
         public MyTracker Tracker { get; set; }
         public List<MyTracker> PossibleTrackers { get; set; }
         public string Title { get; set; }
-        public MyWikiPage WikiPage { get; set; }
-        public List<MyWikiPage> WikiPages { get; set; }
+        public MyWikiPageItem WikiPage { get; set; }
+        public List<MyWikiPageItem> WikiPages { get; set; }
         public bool IncludesHeader { get; set; } = true;
         public WikiLine Header { get; set; }
         public List<WikiLine> Headers { get; set; }
@@ -47,7 +47,7 @@ namespace RedmineTimePuncher.Models.Settings
             PossibleProjects = TranscribeSettingModel.PROJECTS_ONLY_WIKI_ENABLED;
             Project = PossibleProjects.FirstOrDefault();
 
-            WikiPages = new List<MyWikiPage>();
+            WikiPages = new List<MyWikiPageItem>();
             Headers = new List<WikiLine>();
 
             GoToWikiCommand = this.ObserveProperty(a => a.WikiPage).Select(w => w != null).ToReactiveCommand().WithSubscribe(() => WikiPage.GoToWiki()).AddTo(disposables);
@@ -85,13 +85,13 @@ namespace RedmineTimePuncher.Models.Settings
             }).AddTo(myDisposables);
         }
 
-        private async Task updateWikiPagesAsync(MyProject p, ReactivePropertySlim<string> isBusy, Func<MyWikiPage> selector)
+        private async Task updateWikiPagesAsync(MyProject p, ReactivePropertySlim<string> isBusy, Func<MyWikiPageItem> selector)
         {
             try
             {
                 if (p == null)
                 {
-                    WikiPages = new List<MyWikiPage>();
+                    WikiPages = new List<MyWikiPageItem>();
                     WikiPage = null;
                     return;
                 }
@@ -110,7 +110,7 @@ namespace RedmineTimePuncher.Models.Settings
             }
 ;        }
 
-        private async Task updateHeadersAsync(MyWikiPage w, ReactivePropertySlim<string> isBusy, Func<WikiLine> selector)
+        private async Task updateHeadersAsync(MyWikiPageItem w, ReactivePropertySlim<string> isBusy, Func<WikiLine> selector)
         {
             try
             {

@@ -83,17 +83,17 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
         private ObservableCollection<FactorModel> getAllFactors(ResultFiltersViewModel parent, FactorType type)
         {
-            switch (type)
+            switch (type.ValueType)
             {
-                case FactorType.Project:
+                case FactorValueType.Project:
                     return new ObservableCollection<FactorModel>(parent.Projects);
-                case FactorType.User:
+                case FactorValueType.User:
                     return new ObservableCollection<FactorModel>(parent.Users);
-                case FactorType.Category:
+                case FactorValueType.Category:
                     return new ObservableCollection<FactorModel>(parent.Categories);
-                case FactorType.Date:
+                case FactorValueType.Date:
                     return new ObservableCollection<FactorModel>(parent.Dates);
-                case FactorType.OnTime:
+                case FactorValueType.OnTime:
                     return new ObservableCollection<FactorModel>(parent.OnTimes);
                 default:
                     throw new InvalidOperationException();

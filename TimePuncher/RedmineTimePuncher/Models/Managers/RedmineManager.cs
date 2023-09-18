@@ -36,6 +36,8 @@ namespace RedmineTimePuncher.Models.Managers
         public Lazy<List<IssuePriority>> Priorities { get; set; }
         public Lazy<List<TimeEntryActivity>> TimeEntryActivities { get; set; }
 
+        public Lazy<List<CustomField>> CustomFields { get; set; }
+
         public string Host => Manager.Host;
         public MyUser MyUser { get; set; }
         public int MyUserId => MyUser.Id;
@@ -155,6 +157,12 @@ namespace RedmineTimePuncher.Models.Managers
                     throw new ApplicationException(Properties.Resources.RedmineMngMsgIncorrectAdminAPIKey);
                 }
             }
+
+            CustomFields = new Lazy<List<CustomField>>(() =>
+            {
+                if (MasterManager == null) throw new ApplicationException(Properties.Resources.RedmineMngMsgAdminAPIKeyNotSet);
+                return MasterManager.GetObjectsWithErrConv<CustomField>(new NameValueCollection());
+            });
         }
 
         public void ClearCash()
@@ -786,45 +794,14 @@ namespace RedmineTimePuncher.Models.Managers
             return myProjects.Where(p => p.EnabledModules.Any(m => m.Name == RedmineKeys.WIKI)).Select(p => new MyProject(p)).ToList();
         }
 
-        public List<MyWikiPage> GetAllWikiPages(string projIdentifier)
+        public List<MyWikiPageItem> GetAllWikiPages(string projIdentifier)
         {
-            return Manager.GetAllWikiPagesWithErrConv(projIdentifier).Select(w => new MyWikiPage(redmineSettings.UrlBase, projIdentifier, w, null)).ToList();
+            return Manager.GetAllWikiPagesWithErrConv(projIdentifier).Select(w => new MyWikiPageItem(redmineSettings.UrlBase, projIdentifier, w)).ToList();
         }
 
         public MyWikiPage GetWikiPage(string projectId, string title, int? version = null)
         {
-            var param =
-                version.HasValue ?
-                new NameValueCollection { { RedmineKeys.VERSION, version.ToString() } } :
-                null;
-
-            return new MyWikiPage(redmineSettings.UrlBase, projectId, Manager.GetWikiPage(projectId, param, title));
-        }
-
-        public MyWikiPage GetWikiPageIncludeChildren(string projectId, string title)
-        {
-            var allWikis = GetAllWikiPages(projectId);
-
-            var rawParent = allWikis.FirstOrDefault(w => w.Title == title);
-            if (rawParent == null)
-                throw new ApplicationException();
-
-            // GetAllWikiPages API では WikiPage.Text が取得されない。よって Text を取得するため再実行する。
-            var parent = GetWikiPage(projectId, title);
-
-            getChildWikiPages(projectId, allWikis, parent);
-
-            return parent;
-        }
-
-        private void getChildWikiPages(string projectId, List<MyWikiPage> allWikis, MyWikiPage parent)
-        {
-            foreach (var rawChild in allWikis.Where(w => w.ParentTitle == parent.Title))
-            {
-                var child = new MyWikiPage(redmineSettings.UrlBase, projectId, Manager.GetWikiPage(projectId, null, rawChild.Title), parent);
-                getChildWikiPages(projectId, allWikis, child);
-                parent.AllChildren.Add(child);
-            }
+            return new MyWikiPage(redmineSettings.UrlBase, projectId, Manager.GetWikiPage(projectId, null, title, version.HasValue ? (uint)version.Value : 0));
         }
 
         public Issue CreateTicket(Issue issue)

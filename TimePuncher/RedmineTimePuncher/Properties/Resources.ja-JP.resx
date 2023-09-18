@@ -376,9 +376,6 @@
   <data name="RibbonCmdMeasure" xml:space="preserve">
     <value>計測</value>
   </data>
-  <data name="WikiCountResultCountedAt" xml:space="preserve">
-    <value>計測日時:</value>
-  </data>
   <data name="WikiCountResultProject" xml:space="preserve">
     <value>プロジェクト:</value>
   </data>
@@ -387,9 +384,6 @@
   </data>
   <data name="WikiCountResultUpdateOn" xml:space="preserve">
     <value>更新日</value>
-  </data>
-  <data name="WikiCountResultMeasurer" xml:space="preserve">
-    <value>計測者</value>
   </data>
   <data name="WikiCountResultAuthor" xml:space="preserve">
     <value>作成者</value>
@@ -409,9 +403,6 @@
   <data name="WikiCountResultParentPage" xml:space="preserve">
     <value>親ページ:</value>
   </data>
-  <data name="WikiCountResultExcludedPageNames" xml:space="preserve">
-    <value>除外されたページ:</value>
-  </data>
   <data name="ShowEntryGroupUserName" xml:space="preserve">
     <value>ユーザ名</value>
   </data>
@@ -420,10 +411,6 @@
   </data>
   <data name="ShowEntryGroupActivity" xml:space="preserve">
     <value>作業分類</value>
-  </data>
-  <data name="WikiCountParentPageHelp" xml:space="preserve">
-    <value>計測を行う最上位のページを設定します。
-Wikiページの親子関係は「名前変更」の「親ページ」より設定できます。</value>
   </data>
   <data name="ShowEntryDateFrom" xml:space="preserve">
     <value>開始日:</value>
@@ -1462,5 +1449,8 @@ Outlookの状態を確認してください。</value>
   </data>
   <data name="enumWikiPeriodTypeAll" xml:space="preserve">
     <value>すべて</value>
+  </data>
+  <data name="DiffHistories" xml:space="preserve">
+    <value>差分を比較</value>
   </data>
 </root>

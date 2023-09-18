@@ -59,16 +59,17 @@ namespace RedmineTimePuncher.Models.Visualize
             Value = value;
 
             this.rawValue = rawValue;
-            switch (type)
+            switch (type.ValueType)
             {
-                case FactorType.Issue:
-                case FactorType.Project:
-                case FactorType.User:
-                case FactorType.Category:
+                case FactorValueType.Issue:
+                case FactorValueType.Project:
+                case FactorValueType.User:
+                case FactorValueType.Category:
+                case FactorValueType.IssueCustomField:
                     RawValueJson = rawValue.ToJson();
                     break;
-                case FactorType.Date:
-                case FactorType.OnTime:
+                case FactorValueType.Date:
+                case FactorValueType.OnTime:
                     RawValueJson = rawValue.ToString();
                     break;
                 default:
@@ -78,6 +79,14 @@ namespace RedmineTimePuncher.Models.Visualize
 
         public FactorModel(Issue issue) : this(FactorType.Issue, issue.GetLabel(), issue.Id, issue)
         {
+        }
+
+        public FactorModel(IssueCustomField customField, bool isDummy = false)
+            : this(FactorType.CustomFields.First(f => f.Name == customField.Name),
+                  customField.Values != null ? customField.Values[0].Info : "未設定", customField.Id, customField)
+        {
+            if (isDummy)
+                Name = "無効";
         }
 
         public FactorModel(Project project) : this(FactorType.Project, project.Name, project.Id, project)
@@ -102,15 +111,15 @@ namespace RedmineTimePuncher.Models.Visualize
 
         public Brush GetColor()
         {
-            switch (Type)
+            switch (Type.ValueType)
             {
-                case FactorType.Issue:
-                case FactorType.Project:
-                case FactorType.User:
+                case FactorValueType.Issue:
+                case FactorValueType.Project:
+                case FactorValueType.User:
                     return Type.GetColor(Name, (int)Value);
-                case FactorType.Category:
+                case FactorValueType.Category:
                     return ((CategorySettingModel)RawValue).GetBackground();
-                case FactorType.OnTime:
+                case FactorValueType.OnTime:
                     return ((TimeEntryType)RawValue).GetColor();
                 default:
                     return Type.GetColor(Name);

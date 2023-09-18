@@ -28,6 +28,7 @@ namespace RedmineTimePuncher.Models.Visualize
         public ChartSettingsModel ChartSettings { get; set; } = new ChartSettingsModel();
 
         public List<Project> Projects { get; set; } = new List<Project>();
+        public List<CustomField> CustomFields { get; set; } = new List<CustomField>();
         public List<TimeEntry> TimeEntries { get; set; } = new List<TimeEntry>();
         public List<TicketModel> Tickets { get; set; } = new List<TicketModel>();
         public List<CategorySettingModel> Categories { get; set; } = new List<CategorySettingModel>();
