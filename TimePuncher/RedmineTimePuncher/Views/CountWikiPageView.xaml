@@ -387,7 +387,8 @@
                                                                                      ItemsSourcePath="Items"
                                                                                      ValuePath="YValue">
                                                     <telerik:CategoricalSeriesDescriptor.Style>
-                                                        <Style TargetType="telerik:AreaSeries">
+                                                        <Style BasedOn="{StaticResource {x:Type telerik:AreaSeries}}"
+                                                               TargetType="telerik:AreaSeries">
                                                             <Setter Property="CombineMode" Value="Stack" />
                                                             <Setter Property="LegendSettings">
                                                                 <Setter.Value>
@@ -403,7 +404,8 @@
                                                                                      ItemsSourcePath="Items"
                                                                                      ValuePath="YValue">
                                                     <telerik:CategoricalSeriesDescriptor.Style>
-                                                        <Style TargetType="telerik:LineSeries">
+                                                        <Style BasedOn="{StaticResource {x:Type telerik:LineSeries}}"
+                                                               TargetType="telerik:LineSeries">
                                                             <Setter Property="VerticalAxis">
                                                                 <Setter.Value>
                                                                     <telerik:LinearAxis HorizontalLocation="Right" />
