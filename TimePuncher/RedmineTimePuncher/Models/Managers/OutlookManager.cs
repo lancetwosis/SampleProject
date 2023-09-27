@@ -2,6 +2,7 @@
 using LibRedminePower.Extentions;
 using LibRedminePower.Logging;
 using NetOffice.OutlookApi;
+using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Extentions;
 using RedmineTimePuncher.Models.Settings;
@@ -20,19 +21,20 @@ namespace RedmineTimePuncher.Models.Managers
 {
     public class OutlookManager : LibRedminePower.Models.Bases.ModelBase
     {
-        public AppointmentOutlookSettingsModel AppointmentSettings { get; set; }
 
         public bool IsInstalled { get; private set; }
         public static RedmineManager Redmine { get; set; }
         public static int TickLength;
 
+        private ReadOnlyReactivePropertySlim<AppointmentOutlookSettingsModel> settings;
         private Application outlook;
 
         private DebugDataManager debugDataManager = new DebugDataManager();
 
-        public OutlookManager(AppointmentOutlookSettingsModel setting)
+        public OutlookManager(ReadOnlyReactivePropertySlim<AppointmentOutlookSettingsModel> settings)
         {
-            if (setting.IsEnabled)
+            this.settings = settings;
+            if (settings.Value.IsEnabled)
             {
                 setupOutlookInstance("New");
             }
@@ -212,9 +214,9 @@ namespace RedmineTimePuncher.Models.Managers
         private MyAppointment createMyAppointment(Resource resource, Enums.AppointmentType apoType, string subject, string body, DateTime start, DateTime end, string[] recipients)
         {
             // Refs等の設定が指定されていた場合
-            if (!string.IsNullOrEmpty(AppointmentSettings.RefsKeywords))
+            if (!string.IsNullOrEmpty(settings.Value.RefsKeywords))
             {
-                var ticketNo = Redmine.GetTicketNo(AppointmentSettings.RefsKeywords, body);
+                var ticketNo = Redmine.GetTicketNo(settings.Value.RefsKeywords, body);
                 if (!string.IsNullOrEmpty(ticketNo))
                 {
                     return new MyAppointment(resource, Enums.AppointmentType.Schedule, subject, body, start, end, ticketNo)
@@ -225,7 +227,7 @@ namespace RedmineTimePuncher.Models.Managers
             }
 
             // 前回の設定を反映する場合
-            if (AppointmentSettings.IsReflectLastInput)
+            if (settings.Value.IsReflectLastInput)
             {
                 var entry = Redmine.GetTimeEntry(subject);
                 if (entry != null)

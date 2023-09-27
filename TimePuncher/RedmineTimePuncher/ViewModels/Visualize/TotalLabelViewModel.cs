@@ -1,5 +1,7 @@
 ﻿using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.FactorTypes;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;
@@ -26,13 +28,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             {
                 switch (t.ValueType)
                 {
-                    case Enums.FactorValueType.None:
+                    case FactorValueType.None:
                         return Visibility.Collapsed;
-                    case Enums.FactorValueType.Center:
-                    case Enums.FactorValueType.TopLeft:
-                    case Enums.FactorValueType.BottomLeft:
-                    case Enums.FactorValueType.TopRight:
-                    case Enums.FactorValueType.BottomRight:
+                    case FactorValueType.Center:
+                    case FactorValueType.TopLeft:
+                    case FactorValueType.BottomLeft:
+                    case FactorValueType.TopRight:
+                    case FactorValueType.BottomRight:
                         return Visibility.Visible;
                     default:
                         throw new InvalidOperationException();
@@ -43,14 +45,14 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             {
                 switch (t.ValueType)
                 {
-                    case Enums.FactorValueType.None:
-                    case Enums.FactorValueType.Center:
+                    case FactorValueType.None:
+                    case FactorValueType.Center:
                         return HorizontalAlignment.Center;
-                    case Enums.FactorValueType.TopLeft:
-                    case Enums.FactorValueType.BottomLeft:
+                    case FactorValueType.TopLeft:
+                    case FactorValueType.BottomLeft:
                         return HorizontalAlignment.Left;
-                    case Enums.FactorValueType.TopRight:
-                    case Enums.FactorValueType.BottomRight:
+                    case FactorValueType.TopRight:
+                    case FactorValueType.BottomRight:
                         return HorizontalAlignment.Right;
                     default:
                         throw new InvalidOperationException();
@@ -61,14 +63,14 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             {
                 switch (t.ValueType)
                 {
-                    case Enums.FactorValueType.None:
-                    case Enums.FactorValueType.Center:
+                    case FactorValueType.None:
+                    case FactorValueType.Center:
                         return VerticalAlignment.Center;
-                    case Enums.FactorValueType.TopLeft:
-                    case Enums.FactorValueType.TopRight:
+                    case FactorValueType.TopLeft:
+                    case FactorValueType.TopRight:
                         return VerticalAlignment.Top;
-                    case Enums.FactorValueType.BottomLeft:
-                    case Enums.FactorValueType.BottomRight:
+                    case FactorValueType.BottomLeft:
+                    case FactorValueType.BottomRight:
                         return VerticalAlignment.Bottom;
                     default:
                         throw new InvalidOperationException();

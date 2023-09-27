@@ -1,4 +1,6 @@
-﻿using RedmineTimePuncher.ViewModels.Visualize.Charts;
+﻿using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.ViewModels.Visualize.Charts;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;

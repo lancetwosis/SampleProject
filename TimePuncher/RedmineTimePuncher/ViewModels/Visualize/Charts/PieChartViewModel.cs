@@ -8,6 +8,7 @@ using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.FactorTypes;
 using RedmineTimePuncher.ViewModels.Bases;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;

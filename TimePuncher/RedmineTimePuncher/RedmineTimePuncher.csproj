@@ -183,6 +183,7 @@
     <Compile Include="Models\MyWikiPageItem.cs" />
     <Compile Include="Models\MyWikiPageCount.cs" />
     <Compile Include="Models\MyWikiSummary.cs" />
+    <Compile Include="Models\Visualize\FactorTypes\FactorType.cs" />
     <Compile Include="Models\Visualize\ResultFilterModel.cs" />
     <Compile Include="Models\Visualize\TicketModel.cs" />
     <Compile Include="Models\Visualize\ResultModel.cs" />
@@ -297,7 +298,6 @@
     <Compile Include="ViewModels\Visualize\Charts\TreeMapViewModel.cs" />
     <Compile Include="ViewModels\Visualize\Charts\PieChartViewModel.cs" />
     <Compile Include="ViewModels\Visualize\Enums\ViewType.cs" />
-    <Compile Include="ViewModels\Visualize\Enums\FactorType.cs" />
     <Compile Include="ViewModels\Visualize\Filters\ResultFilterViewModel.cs" />
     <Compile Include="ViewModels\Visualize\Filters\ResultFiltersViewModel.cs" />
     <Compile Include="ViewModels\Visualize\Filters\SpecifyProjectsViewModel.cs" />

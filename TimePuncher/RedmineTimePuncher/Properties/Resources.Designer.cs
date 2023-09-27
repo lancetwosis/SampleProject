@@ -1054,6 +1054,16 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   An error occurred while loading call history in Teams.
+        ///[Settings] - [Appointments] - [Teams] - [Loading Call History] has been set to OFF. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string msgErrLoadingCallHistoryOff {
+            get {
+                return ResourceManager.GetString("msgErrLoadingCallHistoryOff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Please select an appointment. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string msgErrSelectAppointments {
@@ -2589,6 +2599,24 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsAppoReflectPrevIssue {
             get {
                 return ResourceManager.GetString("SettingsAppoReflectPrevIssue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Loading Status に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsAppoTeamsCallHistory {
+            get {
+                return ResourceManager.GetString("SettingsAppoTeamsCallHistory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Loading Call History に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsAppoTeamsStatus {
+            get {
+                return ResourceManager.GetString("SettingsAppoTeamsStatus", resourceCulture);
             }
         }
         

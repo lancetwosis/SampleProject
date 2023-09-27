@@ -16,6 +16,7 @@ using System.Diagnostics;
 using RedmineTimePuncher.ViewModels.Input.Slots;
 using RedmineTimePuncher.Models.Settings;
 using Cysharp.Diagnostics;
+using Reactive.Bindings;
 
 namespace RedmineTimePuncher.Models.Managers
 {
@@ -38,13 +39,13 @@ namespace RedmineTimePuncher.Models.Managers
             @"Microsoft\Teams");
 
         private string msTeamParserExePath;
-        private AppointmentTeamsSettingsModel _setting;
+        private ReadOnlyReactivePropertySlim<AppointmentTeamsSettingsModel> setting;
         private DebugDataManager debugDataManager = new DebugDataManager();
 
-        public TeamsManager(AppointmentTeamsSettingsModel setting)
+        public TeamsManager(ReadOnlyReactivePropertySlim<AppointmentTeamsSettingsModel> setting)
         {
-            _setting = setting;
-            if (!setting.IsEnabled) return;
+            this.setting = setting;
+            if (!setting.Value.IsEnabled) return;
 
             IsInstalled = isInstalled();
 
@@ -76,7 +77,7 @@ namespace RedmineTimePuncher.Models.Managers
         public async Task<List<MyAppointment>> GetCallAsync(Resource resource, CancellationToken token, DateTime start, DateTime end)
         {
             if (!IsInstalled) return new List<MyAppointment>();
-            if (!_setting.IsEnabledCallHistory) return new List<MyAppointment>();
+            if (!setting.Value.IsEnabledCallHistory) return new List<MyAppointment>();
 
             if (debugDataManager.IsExist) return debugDataManager.GetData(resource, start, end, Enums.AppointmentType.TeamsCall);
 
@@ -210,7 +211,7 @@ namespace RedmineTimePuncher.Models.Managers
             var result = new List<TeamsStatusSlot>();
 
             if (!IsInstalled) return result.Cast<Slot>().ToList();
-            if (!_setting.IsEnabledStatus) return result.Cast<Slot>().ToList();
+            if (!setting.Value.IsEnabledStatus) return result.Cast<Slot>().ToList();
 
             var files = new System.IO.DirectoryInfo(logFolderName).GetFiles("*logs*").OrderBy(a => a.LastWriteTime);
             var alllines = files.SelectMany(a => readFile(a.FullName));

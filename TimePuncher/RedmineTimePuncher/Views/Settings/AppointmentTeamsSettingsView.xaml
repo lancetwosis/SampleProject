@@ -25,12 +25,12 @@
                     IsEnabled="{Binding ElementName=teamsCheckBox,
                                         Path=IsChecked}">
             <CheckBox Margin="5,5,0,0"
-                      Content="ステータスの読み込み"
+                      Content="{x:Static props:Resources.SettingsAppoTeamsStatus}"
                       IsChecked="{Binding IsEnabledStatus.Value.Value}" />
             <GroupBox Margin="5,5,0,0">
                 <GroupBox.Header>
                     <CheckBox x:Name="teamsCallHistoryCheckBox"
-                              Content="通話履歴の読み込み"
+                              Content="{x:Static props:Resources.SettingsAppoTeamsCallHistory}"
                               IsChecked="{Binding IsEnabledCallHistory.Value.Value}" />
                 </GroupBox.Header>
 

@@ -1,5 +1,7 @@
 ﻿using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.FactorTypes;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;

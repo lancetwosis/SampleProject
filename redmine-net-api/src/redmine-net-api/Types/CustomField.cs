@@ -34,75 +34,91 @@ namespace Redmine.Net.Api.Types
     public sealed class CustomField : IdentifiableName, IEquatable<CustomField>
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるように internal を外す
         /// <summary>
         /// 
         /// </summary>
-        public string CustomizedType { get; internal set; }
+        //public string CustomizedType { get; internal set; }
+        public string CustomizedType { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string FieldFormat { get; internal set; }
+        //public string FieldFormat { get; internal set; }
+        public string FieldFormat { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string Regexp { get; internal set; }
+        //public string Regexp { get; internal set; }
+        public string Regexp { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int? MinLength { get; internal set; }
+        //public int? MinLength { get; internal set; }
+        public int? MinLength { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int? MaxLength { get; internal set; }
+        //public int? MaxLength { get; internal set; }
+        public int? MaxLength { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool IsRequired { get; internal set; }
+        //public bool IsRequired { get; internal set; }
+        public bool IsRequired { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool IsFilter { get; internal set; }
+        //public bool IsFilter { get; internal set; }
+        public bool IsFilter { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool Searchable { get; internal set; }
+        //public bool Searchable { get; internal set; }
+        public bool Searchable { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool Multiple { get; internal set; }
+        //public bool Multiple { get; internal set; }
+        public bool Multiple { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string DefaultValue { get; internal set; }
+        //public string DefaultValue { get; internal set; }
+        public string DefaultValue { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool Visible { get; internal set; }
+        //public bool Visible { get; internal set; }
+        public bool Visible { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public IList<CustomFieldPossibleValue> PossibleValues { get; internal set; }
+        //public IList<CustomFieldPossibleValue> PossibleValues { get; internal set; }
+        public IList<CustomFieldPossibleValue> PossibleValues { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public IList<TrackerCustomField> Trackers { get; internal set; }
+        //public IList<TrackerCustomField> Trackers { get; internal set; }
+        public IList<TrackerCustomField> Trackers { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public IList<CustomFieldRole> Roles { get; internal set; }
+        //public IList<CustomFieldRole> Roles { get; internal set; }
+        public IList<CustomFieldRole> Roles { get; set; }
+        // カスタマイズ(E):デシリアライズできるように internal を外す
         #endregion
 
         #region Implementation of IXmlSerializable 

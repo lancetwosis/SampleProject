@@ -13,6 +13,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Telerik.Windows.Controls;
 using LibRedminePower.Extentions;
+using System.Windows;
+using LibRedminePower.Helpers;
 
 namespace RedmineTimePuncher.ViewModels.Input
 {
@@ -71,9 +73,24 @@ namespace RedmineTimePuncher.ViewModels.Input
                         Logger.Info("outlookResource.Reload2.SetReloadCommand Start");
 
                         // Teams通話、会議を取得開始
-                        var call = await parent.Parent.Teams.GetCallAsync(Resource, ct, parent.StartTime.Value, parent.EndTime.Value);
-                        parent.Appointments.RemoveAll(a => a.ApoType == AppointmentType.TeamsCall || a.ApoType == AppointmentType.TeamsMeeting);
-                        parent.Appointments.AddRange(parent.Parent.Settings.Appointment.Outlook.Filter(call));
+                        try
+                        {
+                            var call = await parent.Parent.Teams.GetCallAsync(Resource, ct, parent.StartTime.Value, parent.EndTime.Value);
+                            parent.Appointments.RemoveAll(a => a.ApoType == AppointmentType.TeamsCall || a.ApoType == AppointmentType.TeamsMeeting);
+                            parent.Appointments.AddRange(parent.Parent.Settings.Appointment.Outlook.Filter(call));
+                        }
+                        catch(Exception ex) 
+                        {
+                            Logger.Error(ex.ToString());
+
+                            // 通話履歴の読み取りを無効にする。
+                            var temp = parent.Parent.Settings.Appointment.Teams.Clone();
+                            temp.IsEnabledCallHistory = false;
+                            parent.Parent.Settings.Appointment.Teams = temp;
+
+                            // ユーザーにその旨、連絡する。
+                            MessageBoxHelper.ConfirmWarning(Properties.Resources.msgErrLoadingCallHistoryOff);
+                        }
 
                         Logger.Info("outlookResource.Reload2.SetReloadCommand End");
                     });

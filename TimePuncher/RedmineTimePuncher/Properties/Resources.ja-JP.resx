@@ -1405,6 +1405,19 @@ Outlookの状態を確認してください。</value>
   <data name="SettingsExpoMsgExternalToolNotExist" xml:space="preserve">
     <value>設定された外部ツールが存在しません。</value>
   </data>
+  <data name="SettingsAppoTeamsCallHistory" xml:space="preserve">
+    <value>ステータスの読み込み</value>
+  </data>
+  <data name="SettingsAppoTeamsStatus" xml:space="preserve">
+    <value>通話履歴の読み込み</value>
+  </data>
+  <data name="msgErrLoadingCallHistoryOff" xml:space="preserve">
+    <value>Teamsの通話履歴の読み込みでエラーが発生しました。
+[設定]-[予定項目]-[Teams]-[通話履歴の読み込み]をOFFに設定しました。</value>
+  </data>
+  <data name="SettingsExpoMsgExternalToolNotExist" xml:space="preserve">
+    <value>設定された外部ツールが存在しません。</value>
+  </data>
   <data name="WikiCountResultVersion" xml:space="preserve">
     <value>バージョン</value>
   </data>

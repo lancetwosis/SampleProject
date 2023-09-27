@@ -1560,4 +1560,17 @@ The order of the lines is the order in which the filing conditions are applied.<
   <data name="DiffHistories" xml:space="preserve">
     <value>View Differences</value>
   </data>
+  <data name="SettingsAppoTeamsStatus" xml:space="preserve">
+    <value>Loading Call History</value>
+  </data>
+  <data name="SettingsAppoTeamsCallHistory" xml:space="preserve">
+    <value>Loading Status</value>
+  </data>
+  <data name="msgErrLoadingCallHistoryOff" xml:space="preserve">
+    <value>An error occurred while loading call history in Teams.
+[Settings] - [Appointments] - [Teams] - [Loading Call History] has been set to OFF.</value>
+  </data>
+  <data name="SettingsExpoMsgExternalToolNotExist" xml:space="preserve">
+    <value>The selected external tool does not exist.</value>
+  </data>
 </root>

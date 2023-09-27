@@ -7,6 +7,7 @@ using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.FactorTypes;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;

@@ -6,6 +6,7 @@ using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.FactorTypes;
 using RedmineTimePuncher.ViewModels.Visualize.Charts;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using RedmineTimePuncher.ViewModels.Visualize.Filters;
@@ -119,9 +120,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 var rawEntries = timesDic.Select(p =>
                 {
                     var issue = Model.Tickets.First(i => i.RawIssue.Id == p.Key.Issue.Id).RawIssue;
+                    var customFields = new List<CustomField>();
+                    if (issue.CustomFields != null)
+                        customFields = issue.CustomFields.Select(ic => Model.CustomFields.First(c => c.Id == ic.Id)).ToList();
                     var project = Model.Projects.First(a => a.Id == issue.Project.Id);
                     var category = Model.Categories.First(a => a.Name == p.Key.Activity.Name);
-                    return new PersonHourModel(issue, project, p.Key.User, p.Key.SpentOn.Value, category, p.Key.Type, p.ToList()).AddTo(setupTreeDisposables);
+                    return new PersonHourModel(issue, customFields, project, p.Key.User, p.Key.SpentOn.Value, category, p.Key.Type, p.ToList()).AddTo(setupTreeDisposables);
                 }).ToList();
 
                 var cs = rawEntries.SelectMany(a => a.CustomFields).Select(a => a.Type).Distinct().ToList();

@@ -5,6 +5,7 @@ using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Interfaces;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
+using RedmineTimePuncher.Models.Visualize.FactorTypes;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;
@@ -38,7 +39,7 @@ namespace RedmineTimePuncher.Models.Visualize
         public FactorModel Category { get; set; }
         public FactorModel OnTime { get; set; }
 
-        public PersonHourModel(Issue parent, Project project, IdentifiableName user, DateTime spentOn, CategorySettingModel category, TimeEntryType entryType, List<MyTimeEntry> times)
+        public PersonHourModel(Issue parent, List<CustomField> customFields, Project project, IdentifiableName user, DateTime spentOn, CategorySettingModel category, TimeEntryType entryType, List<MyTimeEntry> times)
             : base(true)
         {
             Times = times;
@@ -47,10 +48,7 @@ namespace RedmineTimePuncher.Models.Visualize
 
             Issue = new FactorModel(parent);
             CustomFields = new List<FactorModel>();
-            foreach (var c in parent.CustomFields)
-            {
-                CustomFields.Add(new FactorModel(c));
-            }
+            parent.CustomFields?.ToList().ForEach(c => CustomFields.Add(new FactorModel(c)));
 
             Project = new FactorModel(project);
             User = new FactorModel(FactorType.User, user);
@@ -67,10 +65,7 @@ namespace RedmineTimePuncher.Models.Visualize
 
             Issue = new FactorModel(parent);
             CustomFields = new List<FactorModel>();
-            foreach (var c in parent.CustomFields)
-            {
-                CustomFields.Add(new FactorModel(c));
-            }
+            parent.CustomFields?.ToList().ForEach(c => CustomFields.Add(new FactorModel(c)));
 
             Project = children[0].Project;
             User = children[0].User;

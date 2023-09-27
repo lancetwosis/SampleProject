@@ -6,6 +6,7 @@ using RedmineTimePuncher.Interfaces;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
+using RedmineTimePuncher.Models.Visualize.FactorTypes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
