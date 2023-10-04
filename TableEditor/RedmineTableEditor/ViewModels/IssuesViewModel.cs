@@ -236,24 +236,7 @@ namespace RedmineTableEditor.ViewModels
                     clearIssues();
 
                     // 親チケットを取得する。
-                    var myItems = await Task.Run(() =>
-                    {
-                        if (fileSettings.ParentIssues.UseQuery)
-                        {
-                            return Redmine.Value.GetIssues(fileSettings.ParentIssues.Query)?.ToArray();
-                        }
-                        else
-                        {
-                            return Redmine.Value.GetChildIssues(int.Parse(fileSettings.ParentIssues.IssueId), fileSettings.ParentIssues.Recoursive)?.ToArray();
-                        }
-                    }, parent.CTS.Token);
-
-                    var needsDetail = fileSettings.ParentIssues.Properties.Any(a => a.IsDetail());
-                    if (myItems != null && needsDetail)
-                    {
-                        myItems = await Task.WhenAll(myItems.Select(a => Task.Run(() => Redmine.Value.GetIssue(a.Id)))).WithCancel(parent.CTS.Token);
-                    }
-
+                    var myItems = await fileSettings.ParentIssues.GetIssuesAsync(Redmine.Value, parent.CTS.Token);
                     if (myItems != null && myItems.Any())
                     {
                         var issues = myItems.Select(issue => new MyIssue(Redmine.Value, fileSettings.SubIssues.Items, issue)).ToList();
@@ -261,12 +244,12 @@ namespace RedmineTableEditor.ViewModels
                             parentIssues.AddRange(issues);
                         else
                             if (fileSettings.ParentIssues.Recoursive)
-                                parentIssues.AddRange(orderByParentChild(int.Parse(fileSettings.ParentIssues.IssueId), issues));
+                                parentIssues.AddRange(orderByParentChild(fileSettings.ParentIssues, issues));
                             else
                                 parentIssues.AddRange(issues.OrderBy(i => i.Id));
 
                         // 子チケットの情報を取得する。
-                        needsDetail = fileSettings.SubIssues.Properties.Any(a => a.IsDetail());
+                        var needsDetail = fileSettings.SubIssues.Properties.Any(a => a.IsDetail());
                         await Task.WhenAll(parentIssues.Select(a => a.UpdateChildrenAsync(parent.CTS.Token, needsDetail)));
 
                         IssuesView.AddRange(parentIssues.SelectMany(a => a.ToViewRows()));
@@ -284,20 +267,23 @@ namespace RedmineTableEditor.ViewModels
             }
         }
 
-        private List<MyIssue> orderByParentChild(int topParentId, List<MyIssue> issues)
+        private List<MyIssue> orderByParentChild(ParentIssueSettingsModel setting, List<MyIssue> issues)
         {
             // 親チケットの下に子チケットが来るようにソートする
+            var parentId = int.Parse(setting.IssueId);
             var tree = new Dictionary<int, List<MyIssue>>();
             foreach (var i in issues.OrderBy(i => i.Id))
             {
-                if (tree.ContainsKey(i.Issue.ParentIssue.Id))
+                if (i.Id == parentId)
+                    tree[0] = new List<MyIssue>() { i };
+                else if (tree.ContainsKey(i.Issue.ParentIssue.Id))
                     tree[i.Issue.ParentIssue.Id].Add(i);
                 else
                     tree[i.Issue.ParentIssue.Id] = new List<MyIssue>() { i };
             }
 
             var results = new List<MyIssue>();
-            var tops = tree[topParentId];
+            var tops = tree[setting.ShowParentIssue ? 0 : parentId];
             foreach (var t in tops)
             {
                 orderSub(tree, results, t, 0);

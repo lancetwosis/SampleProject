@@ -5,7 +5,7 @@ using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Interfaces;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;
@@ -32,6 +32,7 @@ namespace RedmineTimePuncher.Models.Visualize
         public double TotalHours { get; set; }
 
         public FactorModel Issue { get; set; }
+        public FactorModel FixedVersion { get; set; }
         public List<FactorModel> CustomFields { get; set; }
         public FactorModel Project { get; set; }
         public FactorModel User { get; set; }
@@ -39,35 +40,42 @@ namespace RedmineTimePuncher.Models.Visualize
         public FactorModel Category { get; set; }
         public FactorModel OnTime { get; set; }
 
-        public PersonHourModel(Issue parent, List<CustomField> customFields, Project project, IdentifiableName user, DateTime spentOn, CategorySettingModel category, TimeEntryType entryType, List<MyTimeEntry> times)
-            : base(true)
+        private PersonHourModel(Issue parent) : base(true)
         {
-            Times = times;
             RawIssue = parent;
-            TotalHours = (double)times.Sum(t => t.Entry.Hours);
 
             Issue = new FactorModel(parent);
             CustomFields = new List<FactorModel>();
-            parent.CustomFields?.ToList().ForEach(c => CustomFields.Add(new FactorModel(c)));
+            if (parent.CustomFields != null && parent.CustomFields.Any())
+            {
+                var cfs = parent.CustomFields.Where(icf => FactorTypes.CustomFields.Any(c => c.CustomField.Id == icf.Id))
+                                             .Select(icf => new FactorModel(icf))
+                                             .ToList();
+                CustomFields.AddRange(cfs);
+            }
+        }
+
+        public PersonHourModel(Issue parent, MyProject project, IdentifiableName user, DateTime spentOn, CategorySettingModel category, TimeEntryType entryType, List<MyTimeEntry> times)
+            : this(parent)
+        {
+            Times = times;
+            TotalHours = (double)times.Sum(t => t.Entry.Hours);
 
             Project = new FactorModel(project);
-            User = new FactorModel(FactorType.User, user);
+            FixedVersion = new FactorModel(parent.FixedVersion, project);
+            User = new FactorModel(FactorTypes.User, user);
             SpentOn = new FactorModel(spentOn);
             Category = new FactorModel(category);
             OnTime = new FactorModel(entryType);
         }
 
-        public PersonHourModel(Issue parent, params PersonHourModel[] children)
+        public PersonHourModel(Issue parent, params PersonHourModel[] children) : this(parent)
         {
             Times = children.SelectMany(p => p.Times).ToList();
-            RawIssue = parent;
             TotalHours = (double)Times.Sum(t => t.Entry.Hours);
 
-            Issue = new FactorModel(parent);
-            CustomFields = new List<FactorModel>();
-            parent.CustomFields?.ToList().ForEach(c => CustomFields.Add(new FactorModel(c)));
-
             Project = children[0].Project;
+            FixedVersion = children[0].FixedVersion;
             User = children[0].User;
             SpentOn = children[0].SpentOn;
             Category = children[0].Category;
@@ -82,6 +90,8 @@ namespace RedmineTimePuncher.Models.Visualize
                     return SpentOn;
                 case FactorValueType.Issue:
                     return Issue;
+                case FactorValueType.FixedVersion:
+                    return FixedVersion;
                 case FactorValueType.Project:
                     return Project;
                 case FactorValueType.User:

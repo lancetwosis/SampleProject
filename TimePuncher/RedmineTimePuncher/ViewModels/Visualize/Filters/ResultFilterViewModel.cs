@@ -7,7 +7,7 @@ using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
@@ -92,10 +92,14 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                     return new ObservableCollection<FactorModel>(parent.Users);
                 case FactorValueType.Category:
                     return new ObservableCollection<FactorModel>(parent.Categories);
+                case FactorValueType.FixedVersion:
+                    return new ObservableCollection<FactorModel>(parent.Versions);
                 case FactorValueType.Date:
                     return new ObservableCollection<FactorModel>(parent.Dates);
                 case FactorValueType.OnTime:
                     return new ObservableCollection<FactorModel>(parent.OnTimes);
+                case FactorValueType.IssueCustomField:
+                    return new ObservableCollection<FactorModel>(parent.CustomFields[type]);
                 default:
                     throw new InvalidOperationException();
             }

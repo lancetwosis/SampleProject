@@ -596,6 +596,15 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   Display the parent issue in this list に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ParentIssueIssueShowParentIssueMsg {
+            get {
+                return ResourceManager.GetString("ParentIssueIssueShowParentIssueMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Edit Issue Table file(*.eit)|*.eit|All file(*.*)|*.* に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RedmineTableEditorFileFormat {

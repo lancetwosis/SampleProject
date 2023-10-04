@@ -117,11 +117,7 @@ namespace RedmineTimePuncher.Models.Managers
                             var sbOutput = new StringBuilder();
                             proc.OutputDataReceived += (s, e) => sbOutput.AppendLine(e.Data);
                             proc.ErrorDataReceived += (s, e) => sbOutput.AppendLine(e.Data);
-                            proc.Exited += (s, ev) =>
-                            {
-                                if (proc.ExitCode != 1) throw new Exception(sbOutput.ToString());
-                                ctoken.Cancel();
-                            };
+                            proc.Exited += (s, ev) => ctoken.Cancel();
                             // プロセスの開始
                             proc.Start();
                             // 非同期出力読出し開始
@@ -129,6 +125,7 @@ namespace RedmineTimePuncher.Models.Managers
                             proc.BeginOutputReadLine();
                             // 終了まで待つ
                             ctoken.Token.WaitHandle.WaitOne();
+                            if (proc.ExitCode != 1) throw new Exception(sbOutput.ToString());
                         }
                     }
                     finally

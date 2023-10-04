@@ -38,7 +38,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
-                var allUsers = r.GetUsers();
+                var allUsers = r.Users.Value;
                 var selectedUsers = model.Users;
 
                 Users = new ExpandableTwinListBoxViewModel<MyUser>(allUsers, selectedUsers).AddTo(myDisposables);

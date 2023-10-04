@@ -11,11 +11,29 @@ namespace RedmineTimePuncher.Models
     {
         public string Identifier { get; set; }
 
+        public List<Redmine.Net.Api.Types.Version> Versions { get; set; } = new List<Redmine.Net.Api.Types.Version>();
+
         public MyProject() { }
 
         public MyProject(Project rawProject) : base(rawProject)
         {
             Identifier = rawProject.Identifier;
+        }
+
+        public MyProject(Project rawProject, List<Redmine.Net.Api.Types.Version> versions) : this(rawProject)
+        {
+            Versions = versions;
+        }
+
+        public string CreateVersionLabel(int versionId)
+        {
+            return $"{Versions.First(v => v.Id == versionId).Name} - {Name}";
+        }
+
+        public long CreateVersionValue(int versionId)
+        {
+            // 「Project の Id」→「Version の Id」の順番で Version のソートが行われるようにする
+            return Id * 100000 + versionId;
         }
 
         public override bool Equals(object obj)

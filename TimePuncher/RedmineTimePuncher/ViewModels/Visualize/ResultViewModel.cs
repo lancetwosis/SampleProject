@@ -5,8 +5,9 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
+using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.ViewModels.Visualize.Charts;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using RedmineTimePuncher.ViewModels.Visualize.Filters;
@@ -113,26 +114,21 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 setupTreeDisposables?.Dispose();
                 setupTreeDisposables = new CompositeDisposable().AddTo(disposables);
 
-                FactorType.CustomFields.Clear();
-                Model.CustomFields.ForEach(f => FactorType.CustomFields.Add(new FactorType(f)));
+                FactorTypes.SetCustomFields(Model);
 
                 var timesDic = Model.TimeEntries.Select(a => new MyTimeEntry(a)).GroupBy(t => (t.Entry.Issue, t.Entry.User, t.SpentOn, t.Entry.Activity, t.Type), t => t);
                 var rawEntries = timesDic.Select(p =>
                 {
                     var issue = Model.Tickets.First(i => i.RawIssue.Id == p.Key.Issue.Id).RawIssue;
-                    var customFields = new List<CustomField>();
-                    if (issue.CustomFields != null)
-                        customFields = issue.CustomFields.Select(ic => Model.CustomFields.First(c => c.Id == ic.Id)).ToList();
                     var project = Model.Projects.First(a => a.Id == issue.Project.Id);
                     var category = Model.Categories.First(a => a.Name == p.Key.Activity.Name);
-                    return new PersonHourModel(issue, customFields, project, p.Key.User, p.Key.SpentOn.Value, category, p.Key.Type, p.ToList()).AddTo(setupTreeDisposables);
+                    return new PersonHourModel(issue, project, p.Key.User, p.Key.SpentOn.Value, category, p.Key.Type, p.ToList()).AddTo(setupTreeDisposables);
                 }).ToList();
 
-                var cs = rawEntries.SelectMany(a => a.CustomFields).Select(a => a.Type).Distinct().ToList();
-                foreach (var c in cs)
-                {
-                    BarChart.XAxisType.Types.Add(c);
-                }
+                // 対象となったチケットに設定されていたカスタムフィールドのみをチャートに反映
+                var cfs = rawEntries.SelectMany(a => a.CustomFields).Select(a => a.Type).Distinct().ToList();
+                BarChart.SetCustomFieldFactors(cfs);
+                PieChart.SetCustomFieldFactors(cfs);
 
                 var tickets = Model.Tickets.Select(a => new TicketViewModel(a).AddTo(setupTreeDisposables)).ToList();
                 // TimeEntry をそれぞれのチケットに紐づける
@@ -196,11 +192,16 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             if (!r.HasValue)
                 return;
 
-            Model.Projects = await Task.Run(() => parent.Parent.Redmine.Value.Projects.Value);
             Model.CustomFields = await Task.Run(() => parent.Parent.Redmine.Value.CustomFields.Value);
+            Model.Users = await Task.Run(() => parent.Parent.Redmine.Value.Users.Value);
+            Model.Categories = parent.Parent.Settings.Category.Items.ToList();
+
             Model.TimeEntries = filters.GetTimeEntries();
             Model.Tickets = await filters.GetTicketsAsync(Model.TimeEntries);
-            Model.Categories = parent.Parent.Settings.Category.Items.ToList();
+
+            var projects = await Task.Run(() => parent.Parent.Redmine.Value.Projects.Value);
+            Model.Projects = Model.Tickets.Select(t => t.RawIssue.Project.Id).Distinct()
+                .Select(id => new MyProject(projects.First(p => p.Id == id), parent.Parent.Redmine.Value.GetVersions(id))).ToList();
 
             setupTicketTree(isNew);
 
@@ -310,7 +311,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
         private void updateSerieses(bool isEdited = false, bool needsSetVisible = true)
         {
-            if (ResultFilters.Items.Any(i => i.NowEditing.Value || !i.IsValid.Value))
+            if (ResultFilters == null || ResultFilters.Items.Any(i => i.NowEditing.Value || !i.IsValid.Value))
                 return;
 
             if (isEdited)

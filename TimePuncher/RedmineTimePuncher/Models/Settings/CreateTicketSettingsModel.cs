@@ -56,7 +56,7 @@ namespace RedmineTimePuncher.Models.Settings
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
                 var trackers = await Task.Run(() => r.Trackers.Value);
-                var customFields = await Task.Run(() => r.GetCustomFields());
+                var customFields = await Task.Run(() => r.CustomFields.Value);
                 var statuses = await Task.Run(() => r.Statuss.Value);
 
                 if (!trackers.Any())

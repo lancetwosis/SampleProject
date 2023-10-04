@@ -367,4 +367,7 @@
   <data name="ErrMsgSelectIssueId" xml:space="preserve">
     <value>チケット番号を指定してください。</value>
   </data>
+  <data name="ParentIssueIssueShowParentIssueMsg" xml:space="preserve">
+    <value>親チケットも一覧に含める</value>
+  </data>
 </root>

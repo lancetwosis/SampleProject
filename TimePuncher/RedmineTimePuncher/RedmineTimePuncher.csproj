@@ -183,13 +183,15 @@
     <Compile Include="Models\MyWikiPageItem.cs" />
     <Compile Include="Models\MyWikiPageCount.cs" />
     <Compile Include="Models\MyWikiSummary.cs" />
-    <Compile Include="Models\Visualize\FactorTypes\FactorType.cs" />
+    <Compile Include="Models\Visualize\Factors\FactorType.cs" />
+    <Compile Include="Models\Visualize\Factors\FactorTypes.cs" />
+    <Compile Include="Models\Visualize\Factors\FactorValueType.cs" />
     <Compile Include="Models\Visualize\ResultFilterModel.cs" />
     <Compile Include="Models\Visualize\TicketModel.cs" />
     <Compile Include="Models\Visualize\ResultModel.cs" />
     <Compile Include="Models\Visualize\ChartSettingsModel.cs" />
     <Compile Include="Models\Visualize\TicketFiltersModel.cs" />
-    <Compile Include="Models\Visualize\FactorModel.cs" />
+    <Compile Include="Models\Visualize\Factors\FactorModel.cs" />
     <Compile Include="Models\Visualize\PersonHourModel.cs" />
     <Compile Include="Models\Visualize\PersonHourReportModel.cs" />
     <Compile Include="Models\Settings\AppointmentMyWorksSettingsModel.cs" />

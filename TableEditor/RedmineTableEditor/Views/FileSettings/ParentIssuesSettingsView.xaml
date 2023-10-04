@@ -74,6 +74,7 @@
                             <RowDefinition Height="AUTO" />
                             <RowDefinition Height="AUTO" />
                             <RowDefinition Height="AUTO" />
+                            <RowDefinition Height="AUTO" />
                         </Grid.RowDefinitions>
                         <TextBlock Grid.Row="0"
                                    Margin="0,5,0,5"
@@ -92,6 +93,10 @@
                                            Foreground="{telerik1:Office2019Resource ResourceKey=CheckedForegroundBrush}"
                                            Style="{StaticResource GotoTicketButtonStyle}" />
                         <CheckBox Grid.Row="2"
+                                  Margin="0,5,0,0"
+                                  Content="{x:Static props:Resources.ParentIssueIssueShowParentIssueMsg}"
+                                  IsChecked="{Binding ShowParentIssue.Value}" />
+                        <CheckBox Grid.Row="3"
                                   Margin="0,5,0,0"
                                   Content="{x:Static props:Resources.ParentIssueIssueRecoursiveMsg}"
                                   IsChecked="{Binding Recoursive.Value}" />

@@ -39,7 +39,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                     try
                     {
                         error2.Value = "ユーザー情報取得中";
-                        users.Value = await Task.Run(() => r.GetUsersOtherThanMyself());
+                        users.Value = await Task.Run(() => r.Users.Value.Where(u => u.Id != r.MyUser.Id).ToList());
                         error2.Value = null;
                     }
                     catch (Exception ex)

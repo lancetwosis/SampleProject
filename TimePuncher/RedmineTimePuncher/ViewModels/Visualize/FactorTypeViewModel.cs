@@ -1,7 +1,7 @@
 ﻿using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;
@@ -35,7 +35,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             SelectedType = selectedType.AddTo(disposables);
             previousType = new ReactivePropertySlim<FactorType>(SelectedType.Value).AddTo(disposables);
             IsEdited = SelectedType.CombineLatest(previousType, (v, pre) => v != pre).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            IsContinuous = SelectedType.Select(t => t == FactorType.Date).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            IsContinuous = SelectedType.Select(t => t.Equals(FactorTypes.Date)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         public void UpdatePreviousType()

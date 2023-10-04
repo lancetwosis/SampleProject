@@ -1,5 +1,5 @@
 ﻿using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.ViewModels.Visualize.Charts;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
@@ -56,7 +56,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
             }
             else if (dataItem is TicketItemViewModel ticket)
             {
-                treemapItem.Background = FactorType.Issue.GetColor(ticket.XLabel, ticket.Issue.Id);
+                treemapItem.Background = FactorTypes.Issue.GetColor(ticket.XLabel, ticket.Issue.Id);
 
                 var text = new FrameworkElementFactory(typeof(TextBlock));
                 text.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Center);

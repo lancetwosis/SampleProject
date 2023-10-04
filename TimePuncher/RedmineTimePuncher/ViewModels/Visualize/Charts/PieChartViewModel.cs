@@ -8,7 +8,7 @@ using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.ViewModels.Bases;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
@@ -42,17 +42,17 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
         public PieChartViewModel(ResultViewModel parent) : base(ViewType.PieChart, parent)
         {
-            CombineType = new FactorTypeViewModel("グルーピング１", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieCombine),
-                FactorType.Issue, FactorType.Project, FactorType.Date, FactorType.User,FactorType.Category, FactorType.OnTime).AddTo(disposables);
+            CombineType = new FactorTypeViewModel("グルーピング１", IsEnabled,
+                parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieCombine), FactorTypes.GetGroupings()).AddTo(disposables);
             CombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
 
-            SecondCombineType = new FactorTypeViewModel("グルーピング２", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieSecondCombine),
-                FactorType.None, FactorType.Issue, FactorType.Project, FactorType.Date, FactorType.User, FactorType.Category, FactorType.OnTime).AddTo(disposables);
+            SecondCombineType = new FactorTypeViewModel("グルーピング２", IsEnabled,
+                parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieSecondCombine), FactorTypes.Get2ndGroupings()).AddTo(disposables);
             SecondCombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
-            ShowSecondSeries = SecondCombineType.SelectedType.Select(a => a != FactorType.None).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            ShowSecondSeries = SecondCombineType.SelectedType.Select(a => a != FactorTypes.None).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             SortType = new FactorTypeViewModel("ソート", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieSort),
-                FactorType.None, FactorType.ASC, FactorType.DESC).AddTo(disposables);
+                FactorTypes.None, FactorTypes.ASC, FactorTypes.DESC).AddTo(disposables);
             SortType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
 
             ShowTotal = new TotalLabelViewModel(IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieShowTotal)).AddTo(disposables);
@@ -72,21 +72,18 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 .Select(a => new PointViewModel(series, a.Key, a.ToList()))
                 .ToList();
 
-            if (SortType.SelectedType.Value == FactorType.None)
+            if (SortType.SelectedType.Value.Equals(FactorTypes.None))
             {
                 points.OrderBy(p => p.Factor.Value).ToList().ForEach(p => series.Points.Add(p));
             }
-            else if (SortType.SelectedType.Value == FactorType.ASC)
+            else if (SortType.SelectedType.Value.Equals(FactorTypes.ASC))
             {
                 points.OrderBy(p => p.Hours).ToList().ForEach(p => series.Points.Add(p));
             }
-            else if (SortType.SelectedType.Value == FactorType.DESC)
+            else if (SortType.SelectedType.Value.Equals(FactorTypes.DESC))
             {
                 points.OrderByDescending(p => p.Hours).ToList().ForEach(p => series.Points.Add(p));
             }
-
-            LegendItems = new LegendItemCollection();
-            points.OrderBy(p => p.Factor.Value).Select(p => p.ToLegendItem()).ToList().ForEach(i => LegendItems.Add(i));
 
             var total =  series.Points.Select(a => a.IsVisible).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
             foreach (var p in series.Points.Indexed())
@@ -96,6 +93,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             }
 
             Series = series;
+
+            LegendItems = new LegendItemCollection();
+            points.OrderBy(p => p.Factor.Value).Select(p => p.ToLegendItem()).ToList().ForEach(i => LegendItems.Add(i));
+
+            // 表示非表示が切り替わったら合計の再計算
             ShowTotal.TotalHours = series.Points.Select(p => p.IsVisible).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
 
             // PointViewModel の IsVisible.Subscribe により Series.Points には表示されているもののみが含まれる
@@ -109,23 +111,23 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 Series.Points.ToList().ForEach(p => p.IsVisible.Value = false);
             }).AddTo(myDisposables);
 
-            if (SecondCombineType.SelectedType.Value != FactorType.None)
+            if (!SecondCombineType.SelectedType.Value.Equals(FactorTypes.None))
             {
                 var secondSeries = new SeriesViewModel(ViewType.PieChart);
                 var secondPoints = allPoints.GroupBy(a => (a.GetFactor(SecondCombineType.SelectedType.Value), a.GetFactor(CombineType.SelectedType.Value)))
                     .Select(a => new PointViewModel(secondSeries, a.Key.Item1, a.Key.Item2, a.ToList()))
                     .ToList();
 
-                if (SortType.SelectedType.Value == FactorType.None)
+                if (SortType.SelectedType.Value.Equals(FactorTypes.None))
                 {
                     secondPoints.OrderBy(p => p.ParentFactor.Value).ThenBy(p => p.Factor.Value).ToList().ForEach(p => secondSeries.Points.Add(p));
                 }
-                else if (SortType.SelectedType.Value == FactorType.ASC)
+                else if (SortType.SelectedType.Value.Equals(FactorTypes.ASC))
                 {
                     secondPoints.GroupBy(p => p.ParentFactor.Value).OrderBy(g => g.Sum(a => a.Hours))
                         .SelectMany(g => g.OrderBy(a => a.Hours)).ToList().ForEach(p => secondSeries.Points.Add(p));
                 }
-                else if (SortType.SelectedType.Value == FactorType.DESC)
+                else if (SortType.SelectedType.Value.Equals(FactorTypes.DESC))
                 {
                     secondPoints.GroupBy(p => p.ParentFactor.Value).OrderByDescending(g => g.Sum(a => a.Hours))
                         .SelectMany(g => g.OrderByDescending(a => a.Hours)).ToList().ForEach(p => secondSeries.Points.Add(p));
@@ -167,6 +169,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 }).AddTo(myDisposables);
             }
 
+            // 凡例の表示非表示チェックボックスの復元
             if (needsSetVisible &&
                 CombineType.SelectedType.Value == parent.Model.ChartSettings.PiePreviousCombine &&
                 parent.Model.ChartSettings.PieVisiblePointNames.Any())
@@ -180,12 +183,22 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 }
             }
 
+            // 凡例の表示非表示チェックボックスの保存
             // PointViewModel の IsVisible.Subscribe により Series.Points には表示されているもののみが含まれる
             Series.Points.CollectionChangedAsObservable().StartWithDefault().Subscribe(_ =>
             {
                 parent.Model.ChartSettings.PiePreviousCombine = CombineType.SelectedType.Value;
                 parent.Model.ChartSettings.PieVisiblePointNames = Series.Points.Select(a => a.Factor.Name).ToList();
             }).AddTo(myDisposables);
+        }
+
+        public void SetCustomFieldFactors(List<FactorType> customFieldFactors)
+        {
+            foreach (var f in customFieldFactors)
+            {
+                CombineType.Types.Add(f);
+                SecondCombineType.Types.Add(f);
+            }
         }
     }
 }

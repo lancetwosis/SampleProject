@@ -199,15 +199,24 @@ namespace RedmineTableEditor.Models
         /// <summary>
         /// 指定されたチケットの子チケットを再帰的に取得する。
         /// </summary>
-        public List<Issue> GetChildIssues(int parentIssueId, bool recursive = true)
+        public List<Issue> GetChildIssues(int parentIssueId, bool recursive = true, bool includeSelf = false)
         {
+            var results = new List<Issue>();
+
+            if (includeSelf)
+                results.Add(GetIssue(parentIssueId));
+
             // ~ をつけることで子チケットを再帰的に検索してくれる
             var id = recursive ? $"~{parentIssueId}" : $"{parentIssueId}";
-            return manager.GetObjectsWithErrConv<Issue>(new NameValueCollection
+            var children = manager.GetObjectsWithErrConv<Issue>(new NameValueCollection
                 {
                     { RedmineKeys.PARENT_ID, id },
                     { RedmineKeys.STATUS_ID, "*" }
                 });
+            if (children != null)
+                results.AddRange(children);
+
+            return results;
         }
 
         public void UpdateTicket(Issue issue)

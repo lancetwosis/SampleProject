@@ -8,7 +8,7 @@ using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.ViewModels.Bases;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
@@ -29,6 +29,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
     {
         public FactorTypeViewModel XAxisType { get; set; }
         public FactorTypeViewModel CombineType { get; set; }
+        public FactorTypeViewModel SortType { get; set; }
         public ObservableCollection<SeriesViewModel> Serieses { get; set; }
         public TotalLabelViewModel ShowTotal { get; set; }
 
@@ -37,12 +38,18 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
         public BarChartViewModel(ResultViewModel parent) : base(ViewType.BarChart, parent)
         {
-            XAxisType = new FactorTypeViewModel("X軸", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarXAxis),
-                FactorType.Date, FactorType.Issue, FactorType.Project, FactorType.User, FactorType.Category, FactorType.OnTime).AddTo(disposables);
+            XAxisType = new FactorTypeViewModel("X軸", IsEnabled,
+                parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarXAxis), FactorTypes.GetGroupings()).AddTo(disposables);
             XAxisType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
-            CombineType = new FactorTypeViewModel("グルーピング", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarCombine),
-                FactorType.None, FactorType.Issue, FactorType.Project, FactorType.Date, FactorType.User, FactorType.Category, FactorType.OnTime).AddTo(disposables);
+            CombineType = new FactorTypeViewModel("グルーピング", IsEnabled,
+                parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarCombine), FactorTypes.Get2ndGroupings()).AddTo(disposables);
             CombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
+
+            SortType = new FactorTypeViewModel("ソート",
+                IsEnabled.CombineLatest(XAxisType.IsContinuous, (ie, ic) => ie && !ic).ToReadOnlyReactivePropertySlim().AddTo(disposables),
+                parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarSort),
+                FactorTypes.None, FactorTypes.ASC, FactorTypes.DESC).AddTo(disposables);
+            SortType.SelectedType.Skip(1).Subscribe(_ => reorderXLabels()).AddTo(disposables);
 
             Serieses = new ObservableCollection<SeriesViewModel>();
 
@@ -62,6 +69,25 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             }).AddTo(disposables);
         }
 
+        private void reorderXLabels()
+        {
+            if (XAxisType.IsContinuous.Value || Serieses.Count == 0)
+                return;
+
+            List<FactorModel> sortedLabels = null;
+            if (SortType.SelectedType.Value.Equals(FactorTypes.None))
+                sortedLabels = Serieses[0].Points.OrderBy(p => p.Factor.Value).Select(p => p.Factor).ToList();
+            else if (SortType.SelectedType.Value.Equals(FactorTypes.ASC))
+                sortedLabels = Serieses[0].Points.OrderBy(p => p.TotalHours.Value).Select(p => p.Factor).ToList();
+            else if (SortType.SelectedType.Value.Equals(FactorTypes.DESC))
+                sortedLabels = Serieses[0].Points.OrderByDescending(p => p.TotalHours.Value).Select(p => p.Factor).ToList();
+
+            foreach (var s in Serieses)
+            {
+                s.OrderPoints(sortedLabels);
+            }
+        }
+
         public override void SetupSeries(bool needsSetVisible = true)
         {
             base.SetupSeries();
@@ -71,7 +97,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             var allPoints = getAllTimeEntries();
             var allXAxises = allPoints.Select(a => a.GetFactor(XAxisType.SelectedType.Value)).Distinct().OrderBy(f => f.Value).ToList();
 
-            if (!CombineType.SelectedType.Value.Equals(FactorType.None))
+            if (!CombineType.SelectedType.Value.Equals(FactorTypes.None))
             {
                 var tmp = new List<SeriesViewModel>();
                 foreach (var combine in allPoints.GroupBy(p => p.GetFactor(CombineType.SelectedType.Value)))
@@ -105,11 +131,16 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 Serieses.Add(series);
             }
 
-            ShowTotal.TotalHours = Serieses.SelectMany(s => s.Points.Select(p => p.IsVisible)).CombineLatest().Select(_ =>
+            // 表示非表示が切り替わったら合計の再計算
+            ShowTotal.TotalHours = Serieses.Select(s => s.IsVisible).CombineLatest().Select(_ =>
             {
-                return Serieses.Select(s => s.Points.Sum(p => p.Hours)).Sum();
+                return Serieses.Select(s => s.Points.Where(p => p.IsVisible.Value).Sum(p => p.Hours)).Sum();
             }).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
 
+            // 表示非表示が切り替わったら並べ替え
+            Serieses.Select(s => s.IsVisible).CombineLatest().Subscribe(_ => reorderXLabels()).AddTo(myDisposables);
+
+            // 凡例の表示非表示チェックボックスの復元
             if (needsSetVisible &&
                 CombineType.SelectedType.Value == parent.Model.ChartSettings.BarPreviousCombine &&
                 parent.Model.ChartSettings.BarVisibleSeriesNames.Any())
@@ -123,11 +154,21 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                 }
             }
 
+            // 凡例の表示非表示チェックボックスの保存
             Serieses.Select(a => a.IsVisible).CombineLatest().Subscribe(_ =>
             {
                 parent.Model.ChartSettings.BarPreviousCombine = CombineType.SelectedType.Value;
                 parent.Model.ChartSettings.BarVisibleSeriesNames = Serieses.Where(a => a.IsVisible.Value).Select(a => a.Title).ToList();
             }).AddTo(myDisposables);
+        }
+
+        public void SetCustomFieldFactors(List<FactorType> customFieldFactors)
+        {
+            foreach (var f in customFieldFactors)
+            {
+                XAxisType.Types.Add(f);
+                CombineType.Types.Add(f);
+            }
         }
     }
 }

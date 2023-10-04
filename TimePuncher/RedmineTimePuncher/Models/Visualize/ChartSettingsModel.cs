@@ -6,7 +6,7 @@ using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Interfaces;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;
@@ -22,22 +22,23 @@ namespace RedmineTimePuncher.Models.Visualize
     {
         public ViewType ViewType { get; set; } = ViewType.BarChart;
 
-        public FactorType BarXAxis { get; set; } = FactorType.Date;
-        public FactorType BarCombine { get; set; } = FactorType.None;
-        public FactorType BarShowTotal { get; set; } = FactorType.TopRight;
-        public FactorType BarPreviousCombine { get; set; } = FactorType.None;
+        public FactorType BarXAxis { get; set; } = FactorTypes.Date;
+        public FactorType BarCombine { get; set; } = FactorTypes.None;
+        public FactorType BarSort { get; set; } = FactorTypes.None;
+        public FactorType BarShowTotal { get; set; } = FactorTypes.TopRight;
+        public FactorType BarPreviousCombine { get; set; } = FactorTypes.None;
         public List<string> BarVisibleSeriesNames { get; set; } = new List<string>();
 
-        public FactorType PieCombine { get; set; } = FactorType.Issue;
-        public FactorType PieSort { get; set; } = FactorType.None;
-        public FactorType PieShowTotal { get; set; } = FactorType.Center;
-        public FactorType PieSecondCombine { get; set; } = FactorType.None;
-        public FactorType PiePreviousCombine { get; set; } = FactorType.Issue;
+        public FactorType PieCombine { get; set; } = FactorTypes.Issue;
+        public FactorType PieSort { get; set; } = FactorTypes.None;
+        public FactorType PieShowTotal { get; set; } = FactorTypes.Center;
+        public FactorType PieSecondCombine { get; set; } = FactorTypes.None;
+        public FactorType PiePreviousCombine { get; set; } = FactorTypes.Issue;
         public List<string> PieVisiblePointNames { get; set; } = new List<string>();
 
-        public FactorType FirstGrouping { get; set; } = FactorType.None;
-        public FactorType SecondGrouping { get; set; } = FactorType.None;
-        public FactorType ThirdGrouping { get; set; } = FactorType.None;
+        public FactorType FirstGrouping { get; set; } = FactorTypes.None;
+        public FactorType SecondGrouping { get; set; } = FactorTypes.None;
+        public FactorType ThirdGrouping { get; set; } = FactorTypes.None;
 
         public ChartSettingsModel()
         {

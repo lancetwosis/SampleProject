@@ -30,6 +30,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
         public ReactivePropertySlim<Query> SelectedQuery { get; set; }
         public ReactiveCommand GoToQueryCommand { get; set; }
         public ReactivePropertySlim<string> ParentIssueId { get; set; }
+        public ReactivePropertySlim<bool> ShowParentIssue { get; set; }
         public ReactivePropertySlim<bool> Recoursive { get; set; }
         public ReactiveCommand GoToTicketCommand { get; set; }
         public ReadOnlyReactivePropertySlim<bool> HasProperties { get; set; }
@@ -70,6 +71,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             }).AddTo(disposables);
 
             ParentIssueId = model.ToReactivePropertySlimAsSynchronized(a => a.IssueId).AddTo(disposables);
+            ShowParentIssue = model.ToReactivePropertySlimAsSynchronized(a => a.ShowParentIssue).AddTo(disposables);
             Recoursive = model.ToReactivePropertySlimAsSynchronized(a => a.Recoursive).AddTo(disposables);
             var parentIssue = ParentIssueId.StartWithDefault().Where(id => !string.IsNullOrEmpty(id))
                 .Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher().Select(id =>
@@ -126,7 +128,11 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             // 変更を刈り取る。
             IsEdited = new[]
             {
+                UseQuery.Skip(1),
                 SelectedQuery.Skip(1).Select(_ => true),
+                ParentIssueId.Skip(1).Select(_ => true),
+                ShowParentIssue.Skip(1),
+                Recoursive.Skip(1),
                 this.ObserveProperty(a => a.VisibleProps.IsEdited.Value).Where(a => a),
             }.Merge().Select(_ => true).ToReactiveProperty().AddTo(disposables);
 

@@ -6,7 +6,7 @@ using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
@@ -35,6 +35,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public int Index { get; set; }
 
         public ReactivePropertySlim<bool> IsVisible { get; set; }
+
+        /// <summary>
+        /// このポイントが属する集団の Hours の合計。BarChart の場合、同じ XLabel のポイントの合計。
+        /// 現状、BarChart のみで使用。
+        /// </summary>
+        public ReadOnlyReactivePropertySlim<double> TotalHours { get; set; }
 
         public ReactiveCommand VisibleAllCommand => series.VisibleAllCommand;
         public ReactiveCommand InvisibleAllCommand => series.InvisibleAllCommand;
@@ -79,9 +85,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 }).AddTo(disposables);
             }
 
-            if (factor.Type == FactorType.Date)
+            if (factor.Type.Equals(FactorTypes.Date))
                 XDateTime = (DateTime) factor.RawValue;
-            if (factor.Type == FactorType.Issue)
+            if (factor.Type.Equals(FactorTypes.Issue))
                 Url = MyIssue.GetUrl((factor.RawValue as Issue).Id);
         }
 
@@ -102,13 +108,14 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         {
             if (series.Type == ViewType.BarChart)
             {
-                var label = Factor.Type == FactorType.Issue ? (Factor.RawValue as Issue).GetFullLabel() : XLabel;
-                var seriesName = series.Factor?.Type == FactorType.Issue ? (series.Factor.RawValue as Issue).GetFullLabel() : series.Title;
-                ToolTip = new ToolTipViewModel(seriesName, label, Hours, total).AddTo(disposables);
+                var label = Factor.Type.Equals(FactorTypes.Issue) ? (Factor.RawValue as Issue).GetFullLabel() : XLabel;
+                var seriesName = (series.Factor != null && series.Factor.Type.Equals(FactorTypes.Issue)) ? (series.Factor.RawValue as Issue).GetFullLabel() : series.Title;
+                TotalHours = total != null ? total : new ReactivePropertySlim<double>(Hours).ToReadOnlyReactivePropertySlim();
+                ToolTip = new ToolTipViewModel(seriesName, label, Hours, TotalHours).AddTo(disposables);
             }
             else if (series.Type == ViewType.PieChart)
             {
-                var label = Factor.Type == FactorType.Issue ? (Factor.RawValue as Issue).GetFullLabel() : Factor.Name;
+                var label = Factor.Type.Equals(FactorTypes.Issue) ? (Factor.RawValue as Issue).GetFullLabel() : Factor.Name;
                 ToolTip = new ToolTipViewModel(label, Hours, total, true);
                 ToolTip.Percentage.Subscribe(per =>
                 {
@@ -124,12 +131,17 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public LegendItem ToLegendItem()
         {
             var item = new LegendItem() { MarkerFill = Color, Title = XLabel, Presenter = this };
-            if (Factor.Type == FactorType.Issue)
+            if (Factor.Type.Equals(FactorTypes.Issue))
             {
                 item.Title = (Factor.RawValue as Issue).GetFullLabel();
             }
 
             return item;
+        }
+
+        public override string ToString()
+        {
+            return $"({XLabel}, {Hours})";
         }
     }
 

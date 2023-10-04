@@ -349,7 +349,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     var exception = createOutlookAppointment(
                         $"({Resources.ReviewForShcheduleAdjust}) {Title}",
                         string.Format(Resources.ReviewMsgForAdjustSchedule, ApplicationInfo.Title),
-                        await Task.Run(() => parent.Redmine.Value.GetUsers()),
+                        await Task.Run(() => parent.Redmine.Value.Users.Value),
                         i =>
                         {
                             i.CloseEvent += (ref bool cancel) =>
@@ -505,7 +505,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                         MarkupLangType.None.CreateParagraph(Resources.ReviewPointsList, showAllUrl),
                         Organizer.Name,
                         refKey != null ? $"{refKey} #{Ticket.Id}" : ""),
-                    await Task.Run(() => redmine.GetUsers()),
+                    await Task.Run(() => redmine.Users.Value),
                     i => i.Save());
             }
 

@@ -19,6 +19,7 @@ namespace RedmineTimePuncher.Enums
         List,
         [LocalizedDescription(nameof(Resources.CustomFieldFormatUser), typeof(Resources))]
         User,
+        Version,
     }
 
     public static class CustomFieldFormatEx
@@ -33,6 +34,8 @@ namespace RedmineTimePuncher.Enums
                     return CustomFieldFormat.List;
                 case "user":
                     return CustomFieldFormat.User;
+                case "version":
+                    return CustomFieldFormat.Version;
                 default:
                     throw new NotSupportedException();
             }

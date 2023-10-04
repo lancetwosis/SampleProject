@@ -7,7 +7,7 @@ using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
@@ -29,24 +29,27 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
         public List<FactorModel> Projects { get; set; }
         public List<FactorModel> Users { get; set; }
         public List<FactorModel> Categories { get; set; }
+        public List<FactorModel> Versions { get; set; }
         public List<FactorModel> Dates { get; set; }
         public List<FactorModel> OnTimes { get; set; }
+        public Dictionary<FactorType, List<FactorModel>> CustomFields { get; set; }
 
         public ObservableCollectionSync<ResultFilterViewModel, ResultFilterModel> Items { get; set; }
 
-        private ResultViewModel parent { get; set; }
-
         public ResultFiltersViewModel(ResultViewModel parent, List<PersonHourModel> allEntries, bool needsClear)
         {
-            this.parent = parent;
+            Projects     = allEntries.Select(t => t.Project).Distinct().OrderBy(f => f.Value).ToList();
+            Users        = allEntries.Select(t => t.User).Distinct().OrderBy(f => f.Value).ToList();
+            Categories   = allEntries.Select(t => t.Category).Distinct().OrderBy(f => f.Value).ToList();
+            Versions     = allEntries.Select(t => t.FixedVersion).Distinct().OrderBy(f => f.Value).ToList();
+            Dates        = allEntries.Select(t => t.SpentOn).Distinct().OrderBy(f => f.Value).ToList();
+            OnTimes      = allEntries.Select(t => t.OnTime).Distinct().OrderBy(f => f.Value).ToList();
+            CustomFields = allEntries.SelectMany(t => t.CustomFields)
+                .GroupBy(c => c.Type)
+                .ToDictionary(g => g.Key, g => g.Distinct().OrderBy(f => f.Value).ToList());
 
-            AllTypes = new List<FactorType>() { FactorType.Project, FactorType.User, FactorType.Category, FactorType.Date, FactorType.OnTime };
-
-            Projects = allEntries.Select(t => t.Project).Distinct().ToList();
-            Users = allEntries.Select(t => t.User).Distinct().ToList();
-            Categories = allEntries.Select(t => t.Category).Distinct().ToList();
-            Dates = allEntries.Select(t => t.SpentOn).Distinct().ToList();
-            OnTimes = allEntries.Select(t => t.OnTime).Distinct().ToList();
+            AllTypes = new List<FactorType>() { FactorTypes.Project, FactorTypes.User, FactorTypes.Category, FactorTypes.FixedVersion, FactorTypes.Date, FactorTypes.OnTime, };
+            AllTypes.AddRange(CustomFields.Keys);
 
             if (needsClear)
                 parent.Model.ResultFilters.Clear();
@@ -58,7 +61,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
         public void AddNewFilter()
         {
             var m = new ResultFilterModel();
-            m.Type = FactorType.Project;
+            m.Type = FactorTypes.Project;
 
             var vm = new ResultFilterViewModel(this, m).AddTo(disposables);
             vm.NowEditing.Value = true;

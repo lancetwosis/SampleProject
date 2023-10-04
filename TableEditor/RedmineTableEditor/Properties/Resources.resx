@@ -377,4 +377,7 @@ Please set them correctly in the settings screen.</value>
   <data name="ErrMsgSelectIssueId" xml:space="preserve">
     <value>Please input the issue id.</value>
   </data>
+  <data name="ParentIssueIssueShowParentIssueMsg" xml:space="preserve">
+    <value>Display the parent issue in this list</value>
+  </data>
 </root>

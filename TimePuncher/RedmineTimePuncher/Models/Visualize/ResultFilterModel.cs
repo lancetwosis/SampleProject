@@ -7,7 +7,7 @@ using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Interfaces;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ namespace RedmineTimePuncher.Models.Visualize
     public class ResultFilterModel : LibRedminePower.Models.Bases.ModelBase
     {
         public bool IsEnabled { get; set; } = true;
-        public FactorType Type { get; set; } = FactorType.Project;
+        public FactorType Type { get; set; } = FactorTypes.Project;
         public ObservableCollection<FactorModel> Factors { get; set; } = new ObservableCollection<FactorModel>();
         public FilterType FilterType { get; set; }
 

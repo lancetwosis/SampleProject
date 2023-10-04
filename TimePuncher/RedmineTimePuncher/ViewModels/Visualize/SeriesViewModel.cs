@@ -6,7 +6,7 @@ using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
@@ -44,13 +44,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             Points = new ObservableCollection<PointViewModel>();
             Title = title;
             Factor = factor;
-            Color = Factor != null ? Factor.GetColor() : FactorType.None.GetColor(Title);
-            if (Factor != null && Factor.Type == FactorType.Issue)
+            Color = Factor != null ? Factor.GetColor() : FactorTypes.None.GetColor(Title);
+            if (Factor != null && Factor.Type.Equals(FactorTypes.Issue))
             {
                 ToolTip = (Factor.RawValue as Issue).GetFullLabel();
                 Url = MyIssue.GetUrl((Factor.RawValue as Issue).Id);
             }
-            else if (Factor != null && Factor.Type == FactorType.User)
+            else if (Factor != null && Factor.Type.Equals(FactorTypes.User))
             {
                 ToolTip = Title;
                 Url = MyUser.GetUrl((Factor.RawValue as IdentifiableName).Id);
@@ -72,6 +72,17 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public SeriesViewModel(ViewType type, FactorModel factor, ReactiveCommand visibleAll, ReactiveCommand invisibleAll)
             : this(type, factor.Name, factor, visibleAll, invisibleAll)
         {
+        }
+
+        public void OrderPoints(List<FactorModel> xLabels)
+        {
+            var org = Points.ToList();
+            Points.Clear();
+
+            foreach(var x in xLabels)
+            {
+                Points.Add(org.First(p => p.Factor.Equals(x)));
+            }
         }
     }
 }

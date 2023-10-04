@@ -37,6 +37,7 @@ namespace RedmineTimePuncher.Models.Managers
         public Lazy<List<TimeEntryActivity>> TimeEntryActivities { get; set; }
 
         public Lazy<List<CustomField>> CustomFields { get; set; }
+        public Lazy<List<MyUser>> Users { get; set; }
 
         public string Host => Manager.Host;
         public MyUser MyUser { get; set; }
@@ -48,9 +49,11 @@ namespace RedmineTimePuncher.Models.Managers
 
         private RedmineWebManager webManager;
 
-        private ConcurrentDictionary<string, Lazy<Project>> dicProjects;
-        private ConcurrentDictionary<string, Lazy<Issue>> dicJournalIssues;
-        private ConcurrentDictionary<string, Lazy<TimeEntry>> dicTimeEntries;
+        private ConcurrentDictionary<string, Project> dicProjects;
+        private ConcurrentDictionary<string, Issue> dicJournalIssues;
+        private ConcurrentDictionary<string, TimeEntry> dicTimeEntries;
+        private ConcurrentDictionary<string, List<ProjectMembership>> dicMemberShips;
+        private ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>> dicVersions;
 
         private RedmineSettingsModel redmineSettings;
 
@@ -97,6 +100,15 @@ namespace RedmineTimePuncher.Models.Managers
             Statuss = new Lazy<List<IssueStatus>>(() => Manager.GetObjectsWithErrConv<IssueStatus>(new NameValueCollection()));
             Priorities = new Lazy<List<IssuePriority>>(() => Manager.GetObjectsWithErrConv<IssuePriority>(new NameValueCollection()));
             TimeEntryActivities = new Lazy<List<TimeEntryActivity>>(() => Manager.GetObjectsWithErrConv<TimeEntryActivity>(new NameValueCollection()));
+        }
+
+        public void ClearCash()
+        {
+            dicProjects = new ConcurrentDictionary<string, Project>();
+            dicJournalIssues = new ConcurrentDictionary<string, Issue>();
+            dicTimeEntries = new ConcurrentDictionary<string, TimeEntry>();
+            dicMemberShips = new ConcurrentDictionary<string, List<ProjectMembership>>();
+            dicVersions = new ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>>();
         }
 
         public async Task CheckConnectAsync()
@@ -158,47 +170,24 @@ namespace RedmineTimePuncher.Models.Managers
                 }
             }
 
-            CustomFields = new Lazy<List<CustomField>>(() =>
-            {
-                if (MasterManager == null) throw new ApplicationException(Properties.Resources.RedmineMngMsgAdminAPIKeyNotSet);
-                return MasterManager.GetObjectsWithErrConv<CustomField>(new NameValueCollection());
-            });
+            CustomFields = new Lazy<List<CustomField>>(() => getObjectsByMasterManager<CustomField>());
+            Users = new Lazy<List<MyUser>>(() => getObjectsByMasterManager<User>().Select(u => new MyUser(u)).ToList());
         }
 
-        public void ClearCash()
+        private List<T> getObjectsByMasterManager<T>(NameValueCollection prms = null) where T : class, new()
         {
-            dicProjects = new ConcurrentDictionary<string, Lazy<Project>>();
-            dicJournalIssues = new ConcurrentDictionary<string, Lazy<Issue>>();
-            dicTimeEntries = new ConcurrentDictionary<string, Lazy<TimeEntry>>();
+            if (MasterManager == null)
+                throw new ApplicationException(Properties.Resources.RedmineMngMsgAdminAPIKeyNotSet);
+
+            return MasterManager.GetObjectsWithErrConv<T>(prms != null ? prms : new NameValueCollection());
         }
 
         public bool CanUseAdminApiKey() => MasterManager != null;
 
-        public List<MyUser> GetUsers()
-        {
-            if (MasterManager == null) throw new ApplicationException(Properties.Resources.RedmineMngMsgAdminAPIKeyNotSet);
-            return MasterManager.GetObjectsWithErrConv<User>(new NameValueCollection()).Select(a => new MyUser(a)).ToList();
-        }
-
-        /// <summary>
-        /// 自分自身以外のユーザを取得する
-        /// </summary>
-        public List<MyUser> GetUsersOtherThanMyself()
-        {
-            if (MasterManager == null) throw new ApplicationException(Properties.Resources.RedmineMngMsgAdminAPIKeyNotSet);
-            return MasterManager.GetObjectsWithErrConv<User>(new NameValueCollection()).Where(a => a.Id != MyUser.Id).Select(a => new MyUser(a)).ToList();
-        }
-
         public List<ProjectMembership> GetMemberships(int projectId)
         {
-            if (MasterManager == null) throw new ApplicationException(Properties.Resources.RedmineMngMsgAdminAPIKeyNotSet);
-            return MasterManager.GetObjectsWithErrConv<ProjectMembership>(new NameValueCollection() { { RedmineKeys.PROJECT_ID, projectId.ToString() } });
-        }
-
-        public List<CustomField> GetCustomFields()
-        {
-            if (MasterManager == null) throw new ApplicationException(Properties.Resources.RedmineMngMsgAdminAPIKeyNotSet);
-            return MasterManager.GetObjectsWithErrConv<CustomField>(new NameValueCollection());
+            return dicMemberShips.GetOrAdd(projectId.ToString(),
+                getObjectsByMasterManager<ProjectMembership>(new NameValueCollection() { { RedmineKeys.PROJECT_ID, projectId.ToString() } }));
         }
 
         public string GetTicketNo(params string[] contents)
@@ -245,8 +234,12 @@ namespace RedmineTimePuncher.Models.Managers
         public Project GetProject(string id)
         {
             return dicProjects.GetOrAdd(id,
-                new Lazy<Project>(() =>
-                Manager.GetObjectWithErrConv<Project>(id, new NameValueCollection { { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES } }))).Value;
+                Manager.GetObjectWithErrConv<Project>(id, new NameValueCollection { { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES } }));
+        }
+
+        public List<Redmine.Net.Api.Types.Version> GetVersions(int projectId)
+        {
+            return dicVersions.GetOrAdd(projectId, Manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId));
         }
 
         public IEnumerable<MyIssue> GetMyTickets()
@@ -434,19 +427,19 @@ namespace RedmineTimePuncher.Models.Managers
         /// </summary>
         public TimeEntry GetTimeEntry(string subject)
         {
-            return dicTimeEntries.GetOrAdd(subject,
-                new Lazy<TimeEntry>(() =>
-                {
-                    var parameters = new NameValueCollection()
-                    {
-                        // 「~」を追加することで文字列が正規表現として扱われる
-                        { RedmineKeys.COMMENTS, $"~{System.Web.HttpUtility.UrlEncode(subject)}" },
-                        { RedmineKeys.LIMIT, "1" },
-                        { RedmineKeys.USER_ID, $"{MyUserId}" },
-                    };
-                    var result = Manager.GetObjectsWithErrConv<TimeEntry>(parameters);
-                    return result != null ? result.FirstOrDefault() : null;
-                })).Value;
+            if (dicTimeEntries.TryGetValue(subject, out var result))
+                return result;
+
+            var parameters = new NameValueCollection()
+            {
+                // 「~」を追加することで文字列が正規表現として扱われる
+                { RedmineKeys.COMMENTS, $"~{System.Web.HttpUtility.UrlEncode(subject)}" },
+                { RedmineKeys.LIMIT, "1" },
+                { RedmineKeys.USER_ID, $"{MyUserId}" },
+            };
+            var entries = Manager.GetObjectsWithErrConv<TimeEntry>(parameters);
+            dicTimeEntries[subject] = entries != null ? entries.FirstOrDefault() : null;
+            return dicTimeEntries[subject];
         }
 
         /// <summary>
@@ -713,7 +706,7 @@ namespace RedmineTimePuncher.Models.Managers
             if (reload)
                 dicJournalIssues.TryRemove(ticketNo, out _);
 
-            return dicJournalIssues.GetOrAdd(ticketNo, new Lazy<Issue>(() => getIssueJournalApi(ticketNo))).Value;
+            return dicJournalIssues.GetOrAdd(ticketNo, getIssueJournalApi(ticketNo));
         }
 
         private Issue getIssueJournalApi(string ticketNo)
@@ -722,7 +715,7 @@ namespace RedmineTimePuncher.Models.Managers
             {
                 return Manager.GetObjectWithErrConv<Issue>(ticketNo, new NameValueCollection { { RedmineKeys.INCLUDE, RedmineKeys.JOURNALS } });
             }
-            catch(ForbiddenException)
+            catch (ForbiddenException)
             {
                 // 見つからなかった場合は、NULL応答をする。
                 // これ以外の例外の場合は、集約例外に通知する

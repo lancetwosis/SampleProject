@@ -87,6 +87,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                             var temp = parent.Parent.Settings.Appointment.Teams.Clone();
                             temp.IsEnabledCallHistory = false;
                             parent.Parent.Settings.Appointment.Teams = temp;
+                            parent.Parent.Settings.Save();
 
                             // ユーザーにその旨、連絡する。
                             MessageBoxHelper.ConfirmWarning(Properties.Resources.msgErrLoadingCallHistoryOff);

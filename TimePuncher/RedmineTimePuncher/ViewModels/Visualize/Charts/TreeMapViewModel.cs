@@ -8,7 +8,7 @@ using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
-using RedmineTimePuncher.Models.Visualize.FactorTypes;
+using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.ViewModels.Bases;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using RedmineTimePuncher.ViewModels.Visualize.TreeMapItems;
@@ -42,7 +42,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
         public TreeMapViewModel(ResultViewModel parent) : base(ViewType.TreeMap, parent)
         {
-            var groupings = new[] { FactorType.None, FactorType.Project, FactorType.Category, FactorType.User, FactorType.OnTime };
+            var groupings = new[] { FactorTypes.None, FactorTypes.Project, FactorTypes.User, FactorTypes.Category, FactorTypes.FixedVersion, FactorTypes.OnTime };
             FirstGroupingType = new FactorTypeViewModel("グルーピング１", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.FirstGrouping), groupings).AddTo(disposables);
             FirstGroupingType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
             SecondGroupingType = new FactorTypeViewModel("グルーピング２", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.SecondGrouping), groupings).AddTo(disposables);
@@ -105,11 +105,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             var allTimeEntries = getAllTimeEntries();
 
-            if (FirstGroupingType.SelectedType.Value == FactorType.None)
+            if (FirstGroupingType.SelectedType.Value.Equals(FactorTypes.None))
             {
                 createTicketTree(allTimeEntries).ForEach(t => points.Add(t));
             }
-            else if (SecondGroupingType.SelectedType.Value == FactorType.None)
+            else if (SecondGroupingType.SelectedType.Value.Equals(FactorTypes.None))
             {
                 foreach (var first in allTimeEntries.GroupBy(p => p.GetFactor(FirstGroupingType.SelectedType.Value)))
                 {
@@ -118,7 +118,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
                     points.Add(firstGroup);
                 }
             }
-            else if (ThirdGroupingType.SelectedType.Value == FactorType.None)
+            else if (ThirdGroupingType.SelectedType.Value.Equals(FactorTypes.None))
             {
                 foreach (var first in allTimeEntries.GroupBy(p => p.GetFactor(FirstGroupingType.SelectedType.Value)))
                 {

@@ -32,6 +32,19 @@ namespace RedmineTimePuncher.Models
             IsDefault = isDefault;
         }
 
+        public MyCustomFieldPossibleValue(MyUser user)
+        {
+            Label = user.Name;
+            Value = user.Id.ToString();
+        }
+
+        public MyCustomFieldPossibleValue(MyProject project, Redmine.Net.Api.Types.Version version, bool multiProject)
+        {
+            Label = multiProject ? project.CreateVersionLabel(version.Id) : version.Name;
+            Value = $"{project.CreateVersionValue(version.Id)}";
+        }
+
+
         public override string ToString()
         {
             return $"Label={Label}, Value={Value}";
