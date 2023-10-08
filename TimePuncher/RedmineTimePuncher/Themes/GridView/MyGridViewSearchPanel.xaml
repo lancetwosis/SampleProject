@@ -117,7 +117,7 @@
                           VerticalAlignment="Center">
                         <telerik:RadWatermarkTextBox x:Name="PART_SearchAsYouTypeTextBox"
                                                      MinWidth="160"
-                                                     MaxWidth="200"
+                                                     MaxWidth="400"
                                                      Padding="5,0,15,0"
                                                      VerticalAlignment="Center"
                                                      telerik:TextBoxBehavior.UpdateTextOnEnter="True"

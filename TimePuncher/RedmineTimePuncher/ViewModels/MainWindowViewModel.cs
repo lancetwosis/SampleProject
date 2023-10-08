@@ -36,8 +36,7 @@ using System.Windows.Media;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.ScheduleView;
 using Telerik.Windows.Controls.TreeMap;
-using RedmineTimePuncher.ViewModels.ShowTimeEntry;
-using RedmineTimePuncher.ViewModels.CountWikiPage;
+using RedmineTimePuncher.ViewModels.WikiPage;
 using RedmineTimePuncher.ViewModels.Bases;
 using System.Text.RegularExpressions;
 using RedmineTimePuncher.ViewModels.CreateTicket;
@@ -74,11 +73,10 @@ namespace RedmineTimePuncher.ViewModels
         private string url;
 
         public InputViewModel Input { get; set; }
-        public ShowTimeEntryViewModel ShowEntry { get; set; }
         public TableEditorViewModel TableEditor { get; set; }
         public CreateTicketViewModel CreateTicket { get; set; }
         public VisualizeViewModel Visualize { get; set; }
-        public CountWikiPageViewModel CountWiki { get; set; }
+        public WikiPageViewModel WikiPage { get; set; }
         public ObservableCollection<FunctionViewModelBase> Functions { get; set; }
 
         public MainWindowViewModel(string[] args)
@@ -151,14 +149,13 @@ namespace RedmineTimePuncher.ViewModels
             });
 
             Input = new InputViewModel(this).AddTo(disposables);
-            ShowEntry = new ShowTimeEntryViewModel(this).AddTo(disposables);
             TableEditor = new TableEditorViewModel(this).AddTo(disposables);
             CreateTicket = new CreateTicketViewModel(this).AddTo(disposables);
             Visualize = new VisualizeViewModel(this).AddTo(disposables);
-            CountWiki = new CountWikiPageViewModel(this).AddTo(disposables);
+            WikiPage = new WikiPageViewModel(this).AddTo(disposables);
 
             // 定義の順番が NavigationView での表示順と処理に影響するので注意すること
-            Functions = new ObservableCollection<FunctionViewModelBase>() { Input, ShowEntry, TableEditor, CreateTicket, Visualize, CountWiki };
+            Functions = new ObservableCollection<FunctionViewModelBase>() { Input, Visualize, TableEditor, CreateTicket, WikiPage };
 
             Redmine.CombineLatest(Functions.Select(f => f.ErrorMessage).Where(e => e != null).CombineLatest(), (r, errs) => (r, errs)).SubscribeWithErr(p =>
             {

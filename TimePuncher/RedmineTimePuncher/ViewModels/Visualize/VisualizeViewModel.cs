@@ -9,6 +9,7 @@ using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Bases;
 using RedmineTimePuncher.ViewModels.Visualize.Charts;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
@@ -74,10 +75,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     return null;
 
                 if (string.IsNullOrEmpty(p.name))
-                    return "(新規)";
+                    return $"{Resources.VisualizeNew}";
 
                 if (p.isEdited)
-                    return $"{p.name} (更新)";
+                    return $"{p.name} {Resources.VisualizeUpdated}";
                 else
                     return p.name;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
@@ -92,7 +93,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             }).AddTo(disposables);
 
             GetTimeEntriesCommand = new AsyncCommandBase(
-               "データ取得", Properties.Resources.icons8_database_down_48,
+               Resources.VisualizeCmdGetData, Resources.icons8_database_down_48,
                new[] { IsBusy.Select(i => i ? "" : null), Filters.IsValid }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
                async () =>
                {
@@ -105,7 +106,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                }).AddTo(disposables);
 
             UpdateTimeEntriesCommand = new AsyncCommandBase(
-               "再取得", Properties.Resources.reload,
+               Resources.VisualizeCmdUpdateData, Resources.reload,
                new[] { IsBusy.Select(i => i ? "" : null), Result.ObserveProperty(a => a.Model.HasValue).Select(h => h ? null : "") }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
                async () =>
                {
@@ -118,7 +119,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                }).AddTo(disposables);
 
             OpenResultCommand = new AsyncCommandBase(
-                "開く", Properties.Resources.open_icon,
+                Resources.VisualizeCmdOpen, Resources.open_icon,
                 new[] {
                     IsBusy.Select(a => !a),
                 }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
@@ -137,12 +138,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 }.CombineLatestValuesAreAllTrue();
 
             SaveResultCommand = new CommandBase(
-                "保存", Properties.Resources.save,
+                Resources.VisualizeCmdSave, Resources.save,
                 new[] { hasResult, Result.IsEdited, }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
                 () => Result.SaveToFile()).AddTo(disposables);
 
             SaveAsResultCommand = new CommandBase(
-                "名前を付けて保存", Properties.Resources.saveas_icon,
+                Resources.VisualizeCmdSaveAs, Resources.saveas_icon,
                 hasResult.Select(a => a ? null : ""),
                 () => Result.SaveAsToFile()).AddTo(disposables);
 

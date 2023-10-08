@@ -13,7 +13,7 @@
              xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
              xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
              xmlns:local="clr-namespace:RedmineTimePuncher.Views.Controls"
-             xmlns:m="clr-namespace:RedmineTimePuncher.Models.Visualize"
+             xmlns:m="clr-namespace:RedmineTimePuncher.Models.Visualize.Filters"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
              xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"

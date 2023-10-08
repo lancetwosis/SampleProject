@@ -20,6 +20,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ObservableCollectionSync;
+using RedmineTimePuncher.Models.Visualize.Filters;
 
 namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 {
@@ -69,7 +70,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 Factors.CollectionChangedAsObservable().StartWithDefault(),
                 FilterType, (_1, _2, _3, _4) => true).Select(_ =>
                 {
-                    var equals = FilterType.Value == Models.Visualize.FilterType.Equals ? "==" : "!=";
+                    var equals = FilterType.Value == Models.Visualize.Filters.FilterType.Equals ? "==" : "!=";
                     return $"{Type.Value} {equals} {string.Join(", ", Factors.Select(f => f.Name))}";
                 }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 

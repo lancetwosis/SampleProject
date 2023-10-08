@@ -11,6 +11,7 @@
              xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
              xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
              xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:math="http://hexinnovation.com/math"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
@@ -22,6 +23,7 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
     <UserControl.Resources>
+        <math:MathConverter x:Key="Math" />
         <converters:BooleanToInvertBooleanConverter x:Key="BooleanToInvertBooleanConverter" />
         <Style BasedOn="{StaticResource MyGridViewSearchPanelStyle}"
                TargetType="grid:GridViewSearchPanel" />
@@ -165,7 +167,11 @@
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="AUTO" />
                                     </Grid.ColumnDefinitions>
-                                    <telerik:RadGridView AutoGenerateColumns="False"
+                                    <telerik:RadGridView MaxWidth="{Binding RelativeSource={RelativeSource AncestorType=telerik:RadGridView},
+                                                                            Path=ActualWidth,
+                                                                            Converter={StaticResource Math},
+                                                                            ConverterParameter=x-70}"
+                                                         AutoGenerateColumns="False"
                                                          CanUserDeleteRows="True"
                                                          CanUserFreezeColumns="False"
                                                          CanUserInsertRows="True"

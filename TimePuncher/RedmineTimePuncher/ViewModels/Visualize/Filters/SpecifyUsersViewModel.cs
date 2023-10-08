@@ -9,6 +9,7 @@ using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.Filters;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using System;
@@ -53,20 +54,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             });
 
             var usersChanged = model.Users.CollectionChangedAsObservable().StartWithDefault();
-            IsValid = usersChanged.Select(_ =>
-            {
-                if (model.Users.Any())
-                    return null;
-                else
-                    return "ユーザを選択してください。";
-            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            IsValid = usersChanged.Select(_ => model.Users.Any() ? null : Resources.VisualizeUserErrMsg)
+                .ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             Label = IsEnabled.CombineLatest(IsValid, usersChanged, (_1, _2, _3) => true).Select(_ =>
             {
                 if (!IsEnabled.Value)
-                    return $"ユーザ: 指定なし";
+                    return $"{Resources.VisualizeUser}: {Resources.VisualizeNotSpecified}";
                 else if (IsValid.Value != null)
-                    return $"ユーザ: {NAN}";
+                    return $"{Resources.VisualizeUser} {NAN}";
 
                 if (model.Users.Count <= 3)
                     return $"{string.Join(", ", model.Users)}";
@@ -77,7 +73,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             Tooltip = IsEnabled.CombineLatest(IsValid, usersChanged, (_1, _2, _3) => true).Select(_ =>
             {
                 if (!IsEnabled.Value)
-                    return "あなたにアサインされているプロジェクトのメンバーが対象となります";
+                    return Resources.VisualizeUserMsg;
                 else if (IsValid.Value != null)
                     return null;
                 else

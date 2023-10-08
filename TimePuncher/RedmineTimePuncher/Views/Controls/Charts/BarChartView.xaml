@@ -120,9 +120,9 @@
                 <StackPanel.ContextMenu>
                     <ContextMenu Visibility="{Binding Presenter.DataContext.VisibleAllCommand, Converter={StaticResource NullToVisibilityConverter}}">
                         <MenuItem Command="{Binding Presenter.DataContext.VisibleAllCommand}"
-                                  Header="すべて表示する" />
+                                  Header="{x:Static props:Resources.VisualizeChartCmdVisibleAll}" />
                         <MenuItem Command="{Binding Presenter.DataContext.InvisibleAllCommand}"
-                                  Header="すべて非表示にする" />
+                                  Header="{x:Static props:Resources.VisualizeChartCmdInvisibleAll}" />
                     </ContextMenu>
                 </StackPanel.ContextMenu>
                 <CheckBox IsChecked="{Binding Presenter.DataContext.IsVisible.Value, Mode=TwoWay}" />
@@ -166,7 +166,7 @@
                 </telerik:RadCartesianChart.HorizontalAxis>
 
                 <telerik:RadCartesianChart.VerticalAxis>
-                    <telerik:LinearAxis Title="工数 (h)" />
+                    <telerik:LinearAxis Title="{x:Static props:Resources.VisualizeChartAxisHours}" />
                 </telerik:RadCartesianChart.VerticalAxis>
 
                 <telerik:RadCartesianChart.Behaviors>
@@ -217,7 +217,7 @@
                 </telerik:RadCartesianChart.HorizontalAxis>
 
                 <telerik:RadCartesianChart.VerticalAxis>
-                    <telerik:LinearAxis Title="工数 (h)" />
+                    <telerik:LinearAxis Title="{x:Static props:Resources.VisualizeChartAxisHours}" />
                 </telerik:RadCartesianChart.VerticalAxis>
 
                 <telerik:RadCartesianChart.Behaviors>

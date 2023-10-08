@@ -14,6 +14,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using System.Windows.Media;
+using RedmineTimePuncher.Properties;
 
 namespace RedmineTimePuncher.Models.Visualize.Factors
 {
@@ -93,7 +94,7 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
         {
         }
 
-        private static string NOT_SET = "未設定";
+        private static long INVALID_VALUE = long.MaxValue;
         private static long NOT_SET_VALUE = long.MaxValue - 1;
 
         public FactorModel(IssueCustomField customField, bool isDummy = false)
@@ -101,8 +102,8 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
         {
             if (isDummy)
             {
-                Name = "無効";
-                Value = long.MaxValue;
+                Name = Resources.VisualizeCustomFieldInvalid;
+                Value = INVALID_VALUE;
             }
             else if (customField.HasValue())
             {
@@ -125,6 +126,7 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
                 else if (Type.CustomField.Format == CustomFieldFormat.Version)
                 {
                     var versionIds = customField.Values.Select(v => v.Info).ToList();
+                    // Project と Version の ID から構成されているので EndWith で判定（MyProject の CreateVersionValue 参照）
                     var versions = Type.CustomField.PossibleValues.Where(v => versionIds.Any(id => v.Value.EndsWith(id))).ToList();
                     Name = string.Join(", ", versions.Select(u => u.Label));
                     Value = int.Parse(versions[0].Value);
@@ -132,7 +134,7 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
             }
             else
             {
-                Name = NOT_SET;
+                Name = Resources.VisualizeCustomFieldNotSet;
                 Value = NOT_SET_VALUE;
             }
         }
@@ -142,7 +144,7 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
         }
 
         public FactorModel(FactorType type, IdentifiableName idName)
-            : this(type, idName != null ? idName.Name : NOT_SET, idName != null ? idName.Id : NOT_SET_VALUE, idName)
+            : this(type, idName != null ? idName.Name : Resources.VisualizeCustomFieldNotSet, idName != null ? idName.Id : NOT_SET_VALUE, idName)
         {
         }
 

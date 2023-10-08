@@ -102,14 +102,9 @@
                                     <local:InputView />
                                 </libCont:OverwrapMessage>
                                 <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
-                                                         Visibility="{Binding ShowEntry.IsSelected.Value,
+                                                         Visibility="{Binding WikiPage.IsSelected.Value,
                                                                               Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <local:ShowEntryView />
-                                </libCont:OverwrapMessage>
-                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
-                                                         Visibility="{Binding CountWiki.IsSelected.Value,
-                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <local:CountWikiPageView />
+                                    <local:WikiPageView />
                                 </libCont:OverwrapMessage>
                                 <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
                                                          Visibility="{Binding CreateTicket.IsSelected.Value,

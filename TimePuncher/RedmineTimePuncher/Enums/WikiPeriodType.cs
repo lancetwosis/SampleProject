@@ -13,6 +13,8 @@ namespace RedmineTimePuncher.Enums
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum WikiPeriodType
     {
+        [LocalizedDescription(nameof(Resources.enumWikiPeriodTypeNone), typeof(Resources))]
+        None,
         [LocalizedDescription(nameof(Resources.enumWikiPeriodTypeLastHalfYear), typeof(Resources))]
         LastHalfYear,
         [LocalizedDescription(nameof(Resources.enumWikiPeriodTypeLast1Week), typeof(Resources))]
@@ -31,10 +33,12 @@ namespace RedmineTimePuncher.Enums
 
     public static class WikiPeriodTypeEx
     {
-        public static (DateTime, DateTime) GetPeriod(this WikiPeriodType type, int num, DateTime start, DateTime end)
+        public static (DateTime, DateTime)? GetPeriod(this WikiPeriodType type, int num, DateTime start, DateTime end)
         {
             switch (type)
             {
+                case WikiPeriodType.None:
+                    return null;
                 case WikiPeriodType.LastHalfYear:
                     return (DateTime.Today.AddMonths(-6), DateTime.Today);
                 case WikiPeriodType.Last1Weeks:

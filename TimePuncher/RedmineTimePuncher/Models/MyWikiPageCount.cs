@@ -81,8 +81,15 @@ namespace RedmineTimePuncher.Models
             }
         }
 
-        public async Task UpdateHistoriesAsync(RedmineManager redmine, (DateTime, DateTime) startEnd)
+        public async Task UpdateHistoriesAsync(RedmineManager redmine, (DateTime, DateTime)? startEndTarget)
         {
+            if (!startEndTarget.HasValue)
+            {
+                Histories = null;
+                return;
+            }
+            var startEnd = startEndTarget.Value;
+
             using (IsBusyUpdateHistories.ProcessStart())
             {
                 try

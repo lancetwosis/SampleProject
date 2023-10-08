@@ -446,56 +446,44 @@ Please set them correctly in the settings screen.</value>
   <data name="RibbonCmdMeasure" xml:space="preserve">
     <value>Measure</value>
   </data>
-  <data name="WikiCountResultAuthor" xml:space="preserve">
+  <data name="WikiPageResultAuthor" xml:space="preserve">
     <value>Author</value>
   </data>
-  <data name="WikiCountResultProject" xml:space="preserve">
+  <data name="WikiPageResultProject" xml:space="preserve">
     <value>Project:</value>
   </data>
-  <data name="WikiCountResultTitle" xml:space="preserve">
+  <data name="WikiPageResultTitle" xml:space="preserve">
     <value>Title</value>
   </data>
-  <data name="WikiCountResultUpdateOn" xml:space="preserve">
+  <data name="WikiPageResultUpdateOn" xml:space="preserve">
     <value>Updated</value>
   </data>
-  <data name="WikiCountResultNoOfChar" xml:space="preserve">
+  <data name="WikiPageResultNoOfChar" xml:space="preserve">
     <value>No. of chars</value>
   </data>
-  <data name="WikiCountResultNoOfLine" xml:space="preserve">
+  <data name="WikiPageResultNoOfLine" xml:space="preserve">
     <value>No. of lines</value>
   </data>
-  <data name="WikiCountResultNoOfCharIncluded" xml:space="preserve">
+  <data name="WikiPageResultNoOfCharIncluded" xml:space="preserve">
     <value>No. of chars include child pages</value>
   </data>
-  <data name="WikiCountResultNoOfLineIncluded" xml:space="preserve">
+  <data name="WikiPageResultNoOfLineIncluded" xml:space="preserve">
     <value>No. of lines include child pages</value>
   </data>
-  <data name="WikiCountResultParentPage" xml:space="preserve">
+  <data name="WikiPageResultParentPage" xml:space="preserve">
     <value>Parent Page:</value>
   </data>
-  <data name="ShowEntryGroupUserName" xml:space="preserve">
-    <value>User Name</value>
-  </data>
-  <data name="ShowEntryGroupIssueId" xml:space="preserve">
+  <data name="VisualizeIssueId" xml:space="preserve">
     <value>Issue Id</value>
   </data>
-  <data name="ShowEntryGroupActivity" xml:space="preserve">
-    <value>Activity</value>
-  </data>
-  <data name="ShowEntryDateFrom" xml:space="preserve">
+  <data name="VisualizeDateFrom" xml:space="preserve">
     <value>From:</value>
   </data>
-  <data name="ShowEntryDateTo" xml:space="preserve">
+  <data name="VisualizeDateTo" xml:space="preserve">
     <value>To:</value>
   </data>
   <data name="RibbonGroupView" xml:space="preserve">
     <value>View</value>
-  </data>
-  <data name="ShowEntryTargetUsers" xml:space="preserve">
-    <value>Users:</value>
-  </data>
-  <data name="ShowEntryGroupings" xml:space="preserve">
-    <value>Groupings:</value>
   </data>
   <data name="IssueGridFavorites" xml:space="preserve">
     <value>Favorites</value>
@@ -521,11 +509,8 @@ Please set them correctly in the settings screen.</value>
   <data name="AppModeInputTime" xml:space="preserve">
     <value>Input Time Entry</value>
   </data>
-  <data name="AppModeShowTimeEntry" xml:space="preserve">
-    <value>Show Time Entries</value>
-  </data>
-  <data name="AppModeCountWiki" xml:space="preserve">
-    <value>Measure Wiki</value>
+  <data name="AppModeWikiPage" xml:space="preserve">
+    <value>Wiki Pages</value>
   </data>
   <data name="SettingsDialog" xml:space="preserve">
     <value>Settings</value>
@@ -722,13 +707,13 @@ Do you want to exit the application?</value>
   <data name="SettingsExpoMsgExternalTool" xml:space="preserve">
     <value>An external tool can be launched with the CSV file exported "Spent time" as an argument.</value>
   </data>
-  <data name="WikiCountTitleToBeExcluded" xml:space="preserve">
+  <data name="WikiPageTitleToBeExcluded" xml:space="preserve">
     <value>Titles to exclude from measure:</value>
   </data>
-  <data name="WikiCountUseAsRegex" xml:space="preserve">
+  <data name="WikiPageUseAsRegex" xml:space="preserve">
     <value>Use as regular expression</value>
   </data>
-  <data name="WikiCountTopPage" xml:space="preserve">
+  <data name="WikiPageTopPage" xml:space="preserve">
     <value>Top page</value>
   </data>
   <data name="RedmineMngMsgIncorrectAdminAPIKey" xml:space="preserve">
@@ -1506,28 +1491,28 @@ The order of the lines is the order in which the filing conditions are applied.<
   <data name="saveas_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\saveas_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="WikiCountResultVersion" xml:space="preserve">
+  <data name="WikiPageResultVersion" xml:space="preserve">
     <value>Version</value>
   </data>
-  <data name="WikiCountResultComment" xml:space="preserve">
+  <data name="WikiPageResultComment" xml:space="preserve">
     <value>Comment</value>
   </data>
-  <data name="WikiCountResultInsertNoOfLine" xml:space="preserve">
+  <data name="WikiPageResultInsertNoOfLine" xml:space="preserve">
     <value>No. of lines added</value>
   </data>
-  <data name="WikiCountResultInsertNoOfChar" xml:space="preserve">
+  <data name="WikiPageResultInsertNoOfChar" xml:space="preserve">
     <value>No. of chars added</value>
   </data>
-  <data name="WikiCountResultDeleteNoOfLine" xml:space="preserve">
+  <data name="WikiPageResultDeleteNoOfLine" xml:space="preserve">
     <value>No. of lines deleted</value>
   </data>
-  <data name="WikiCountResultDeleteNoOfChar" xml:space="preserve">
+  <data name="WikiPageResultDeleteNoOfChar" xml:space="preserve">
     <value>No. of chars deleted</value>
   </data>
-  <data name="WikiCountHistories" xml:space="preserve">
+  <data name="WikiPageHistories" xml:space="preserve">
     <value>Histories</value>
   </data>
-  <data name="WikiCountPageList" xml:space="preserve">
+  <data name="WikiPagePageList" xml:space="preserve">
     <value>Wiki Page List</value>
   </data>
   <data name="enumWikiPeriodTypeLast1Week" xml:space="preserve">
@@ -1570,7 +1555,259 @@ The order of the lines is the order in which the filing conditions are applied.<
     <value>An error occurred while loading call history in Teams.
 [Settings] - [Appointments] - [Teams] - [Loading Call History] has been set to OFF.</value>
   </data>
-  <data name="SettingsExpoMsgExternalToolNotExist" xml:space="preserve">
+  <data name="SettingsExpoMsgExternalToolNotExist_Duplicate[1]" xml:space="preserve">
     <value>The selected external tool does not exist.</value>
+  </data>
+  <data name="enumVisualizeViewTypeBar" xml:space="preserve">
+    <value>Bar chart</value>
+  </data>
+  <data name="enumVisualizeViewTypePie" xml:space="preserve">
+    <value>Pie chart</value>
+  </data>
+  <data name="enumVisualizeViewTypeTreeMap" xml:space="preserve">
+    <value>Tree Map</value>
+  </data>
+  <data name="enumFactorTypeNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="enumFactorTypeDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
+  <data name="enumFactorTypeIssue" xml:space="preserve">
+    <value>Issue</value>
+  </data>
+  <data name="enumFactorTypeProject" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="enumFactorTypeUser" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="enumFactorTypeCategory" xml:space="preserve">
+    <value>Activity</value>
+  </data>
+  <data name="enumFactorTypeSortASC" xml:space="preserve">
+    <value>Ascending order</value>
+  </data>
+  <data name="enumFactorTypeSortDESC" xml:space="preserve">
+    <value>Descending order</value>
+  </data>
+  <data name="enumFactorTypePosCenter" xml:space="preserve">
+    <value>Center</value>
+  </data>
+  <data name="enumFactorTypePosTopLeft" xml:space="preserve">
+    <value>Top Left</value>
+  </data>
+  <data name="enumFactorTypePosTopRight" xml:space="preserve">
+    <value>Top Right</value>
+  </data>
+  <data name="enumFactorTypePosBottomLeft" xml:space="preserve">
+    <value>Bottom Left</value>
+  </data>
+  <data name="enumFactorTypePosBottomRight" xml:space="preserve">
+    <value>Bottom Right</value>
+  </data>
+  <data name="enumFactorTypeOnTime" xml:space="preserve">
+    <value>On / Over time</value>
+  </data>
+  <data name="enumFactorTypeFixedVersion" xml:space="preserve">
+    <value>Target version</value>
+  </data>
+  <data name="VisualizeCustomFieldNotSet" xml:space="preserve">
+    <value>Not Set</value>
+  </data>
+  <data name="VisualizeCustomFieldInvalid" xml:space="preserve">
+    <value>Invalid</value>
+  </data>
+  <data name="VisualizeFilterEquals" xml:space="preserve">
+    <value>Equals</value>
+  </data>
+  <data name="VisualizeFilterEqualsNot" xml:space="preserve">
+    <value>Not Equals</value>
+  </data>
+  <data name="VisualizeParentIssue" xml:space="preserve">
+    <value>Parent Issue</value>
+  </data>
+  <data name="VisualizeParentIssueMsg" xml:space="preserve">
+    <value>Target issues are for projects that are assigned to you.</value>
+  </data>
+  <data name="VisualizeParentIssueErrMsg" xml:space="preserve">
+    <value>Please select a parent issue.</value>
+  </data>
+  <data name="VisualizeNotSpecified" xml:space="preserve">
+    <value>Not Specified</value>
+  </data>
+  <data name="VisualizePeriodLastWeek" xml:space="preserve">
+    <value>Last Week</value>
+  </data>
+  <data name="VisualizePeriodLastMonth" xml:space="preserve">
+    <value>Last Month</value>
+  </data>
+  <data name="VisualizePeriodSpecify" xml:space="preserve">
+    <value>Specify Period</value>
+  </data>
+  <data name="VisualizePeriod" xml:space="preserve">
+    <value>Period</value>
+  </data>
+  <data name="VisualizePeriodErrMsg" xml:space="preserve">
+    <value>Please specify the period correctly.</value>
+  </data>
+  <data name="VisualizeProject" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="VisualizeProjectErrMsg" xml:space="preserve">
+    <value>Please select a project.</value>
+  </data>
+  <data name="VisualizeProjectMsg" xml:space="preserve">
+    <value>Target projects are assigned to you or for the parent issue.</value>
+  </data>
+  <data name="VisualizeUser" xml:space="preserve">
+    <value>User</value>
+  </data>
+  <data name="VisualizeUserErrMsg" xml:space="preserve">
+    <value>Please select a user.</value>
+  </data>
+  <data name="VisualizeUserMsg" xml:space="preserve">
+    <value>Target users are for projects that are assigned to you.</value>
+  </data>
+  <data name="VisualizeErrMsgEnterFilter" xml:space="preserve">
+    <value>Please select filters.</value>
+  </data>
+  <data name="enumWikiPeriodTypeNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="WikiPageStartDate" xml:space="preserve">
+    <value>Start:</value>
+  </data>
+  <data name="WikiPageEndDate" xml:space="preserve">
+    <value>End:</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExpand" xml:space="preserve">
+    <value>Expand</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdCollapse" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdGoToTicket" xml:space="preserve">
+    <value>Open issue</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExcludeAggregate" xml:space="preserve">
+    <value>Exclude from aggregate</value>
+  </data>
+  <data name="VisualizeFactorXAxis" xml:space="preserve">
+    <value>X Axis</value>
+  </data>
+  <data name="VisualizeFactorGrouping" xml:space="preserve">
+    <value>Grouping</value>
+  </data>
+  <data name="VisualizeFactorSort" xml:space="preserve">
+    <value>Sorting</value>
+  </data>
+  <data name="VisualizeFactorGrouping1" xml:space="preserve">
+    <value>First grouping</value>
+  </data>
+  <data name="VisualizeFactorGrouping2" xml:space="preserve">
+    <value>Second grouping</value>
+  </data>
+  <data name="VisualizeFactorGrouping3" xml:space="preserve">
+    <value>Third grouping</value>
+  </data>
+  <data name="VisualizeRibbonFilter" xml:space="preserve">
+    <value>Search Criteria</value>
+  </data>
+  <data name="VisualizeRibbonResult" xml:space="preserve">
+    <value>Search Results</value>
+  </data>
+  <data name="VisualizeSpecifyParent" xml:space="preserve">
+    <value>Specify parent issue</value>
+  </data>
+  <data name="VisualizeSpecifyPeriod" xml:space="preserve">
+    <value>Specify period</value>
+  </data>
+  <data name="VisualizeSpecifyUser" xml:space="preserve">
+    <value>Specify users</value>
+  </data>
+  <data name="VisualizeSpecifyProject" xml:space="preserve">
+    <value>Specify projects</value>
+  </data>
+  <data name="VisualizeFilter" xml:space="preserve">
+    <value>Filter</value>
+  </data>
+  <data name="VisualizeTicket" xml:space="preserve">
+    <value>Issue</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExpandRecursive" xml:space="preserve">
+    <value>Expand recursively</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdCollapseRecursive" xml:space="preserve">
+    <value>Collapse recursively</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdCollapseAll" xml:space="preserve">
+    <value>Collapse all</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExpandAll" xml:space="preserve">
+    <value>Expand all</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdAddAggregate" xml:space="preserve">
+    <value>Add to aggregate</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdAddAggregateRecursive" xml:space="preserve">
+    <value>Add to aggregate recursively</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExcludeAggregateRecursive" xml:space="preserve">
+    <value>Exclude from aggregate recursively</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdScroll" xml:space="preserve">
+    <value>Scroll to selected row</value>
+  </data>
+  <data name="VisualizeType" xml:space="preserve">
+    <value>Type: </value>
+  </data>
+  <data name="VisualizeChartCmdVisibleAll" xml:space="preserve">
+    <value>Show all</value>
+  </data>
+  <data name="VisualizeChartCmdInvisibleAll" xml:space="preserve">
+    <value>Hide all</value>
+  </data>
+  <data name="VisualizeChartAxisHours" xml:space="preserve">
+    <value>Work hous (h)</value>
+  </data>
+  <data name="VisualizeCmdGetData" xml:space="preserve">
+    <value>Retrieve data</value>
+  </data>
+  <data name="VisualizeCmdOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="VisualizeCmdSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="VisualizeCmdSaveAs" xml:space="preserve">
+    <value>Save as</value>
+  </data>
+  <data name="VisualizeCmdUpdateData" xml:space="preserve">
+    <value>Update data</value>
+  </data>
+  <data name="VisualizeNew" xml:space="preserve">
+    <value>(new)</value>
+  </data>
+  <data name="VisualizeUpdated" xml:space="preserve">
+    <value>(Updated)</value>
+  </data>
+  <data name="VisualizeTotal" xml:space="preserve">
+    <value>Total</value>
+  </data>
+  <data name="VisualizeDateGetAt" xml:space="preserve">
+    <value>Retrieved: </value>
+  </data>
+  <data name="VisualizeWorkHours" xml:space="preserve">
+    <value>Work hours</value>
+  </data>
+  <data name="VisualizeErrMsgFaildToCreateChart" xml:space="preserve">
+    <value>Failed to create charts.</value>
+  </data>
+  <data name="VisualizeErrMsgFailedToOpenResult" xml:space="preserve">
+    <value>Failed to open the result file.</value>
+  </data>
+  <data name="VisualizeMsgConfirmSave" xml:space="preserve">
+    <value>The current result will be discarded. Do you want to save the current results?</value>
   </data>
 </root>

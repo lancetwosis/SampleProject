@@ -7,6 +7,7 @@ using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.Filters;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using System;
@@ -53,16 +54,16 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                         return null;
                     }
                 }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            IsValid = parentIssue.Select(i => i != null ? null : "親チケットを指定してください。").ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            IsValid = parentIssue.Select(i => i != null ? null : Resources.VisualizeParentIssueErrMsg).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             GoToTicketCommand = parentIssue.Select(p => p != null).ToReactiveCommand().WithSubscribe(() => parentIssue.Value.GoToTicket()).AddTo(disposables);
 
             Label = IsEnabled.CombineLatest(IsValid, parentIssue, (_1, _2, _3) => true).Select(_ =>
             {
                 if (!IsEnabled.Value)
-                    return $"親チケット: 指定なし";
+                    return $"{Resources.VisualizeParentIssue}: {Resources.VisualizeNotSpecified}";
                 else if (IsValid.Value != null)
-                    return $"親チケット: {NAN}";
+                    return $"{Resources.VisualizeParentIssue}: {NAN}";
                 else
                     return $"#{ParentIssueId.Value}";
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
@@ -70,11 +71,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             Tooltip = IsEnabled.CombineLatest(IsValid, parentIssue, (_1, _2, _3) => true).Select(_ =>
             {
                 if (!IsEnabled.Value)
-                    return "アサインされているプロジェクトのチケットが対象となります。";
+                    return Resources.VisualizeParentIssueMsg;
                 else if (IsValid.Value != null)
                     return null;
                 else
-                    return $"親チケット: {parentIssue.Value.RawIssue.GetFullLabel()}";
+                    return $"{Resources.VisualizeParentIssue}: {parentIssue.Value.RawIssue.GetFullLabel()}";
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
     }

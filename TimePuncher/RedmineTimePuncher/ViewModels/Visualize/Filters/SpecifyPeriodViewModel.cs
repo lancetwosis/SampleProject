@@ -7,6 +7,7 @@ using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.Filters;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using System;
@@ -23,7 +24,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 {
     public class SpecifyPeriodViewModel : FilterGroupViewModelBase
     {
-        public ReactivePropertySlim<FilterPeriodType> PeriodMode { get; private set; }
+        public ReactivePropertySlim<PeriodType> PeriodMode { get; private set; }
         public ReactivePropertySlim<DateTime> Start { get; set; }
         public ReactivePropertySlim<DateTime> End { get; set; }
 
@@ -41,7 +42,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                     return null;
 
                 if (Start.Value > End.Value)
-                    return "期間を正しく設定してください。";
+                    return Resources.VisualizePeriodErrMsg;
                 else
                     return null;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
@@ -49,9 +50,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             Label = IsEnabled.CombineLatest(IsValid, PeriodMode, Start, End, (_1, _2, _3, _4, _5) => true).Select(_ =>
             {
                 if (!IsEnabled.Value)
-                    return $"期間: 指定なし";
+                    return $"{Resources.VisualizePeriod}: {Resources.VisualizeNotSpecified}";
                 else if (IsValid.Value != null)
-                    return $"期間: {NAN}";
+                    return $"{Resources.VisualizePeriod}: {NAN}";
 
                 if (createAt.HasValue)
                 {
@@ -59,11 +60,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                     var end = model.GetEnd(createAt.Value).ToString("yy/MM/dd");
                     switch (PeriodMode.Value)
                     {
-                        case FilterPeriodType.LastWeek:
-                            return $"直近一週間 ({start} - {end})";
-                        case FilterPeriodType.LastMonth:
-                            return $"直近一か月 ({start} - {end})";
-                        case FilterPeriodType.SpecifyPeriod:
+                        case PeriodType.LastWeek:
+                            return $"{Resources.VisualizePeriodLastWeek} ({start} - {end})";
+                        case PeriodType.LastMonth:
+                            return $"{Resources.VisualizePeriodLastMonth} ({start} - {end})";
+                        case PeriodType.SpecifyPeriod:
                             return $"{start} - {end}";
                         default:
                             throw new InvalidOperationException();
@@ -73,11 +74,11 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 {
                     switch (PeriodMode.Value)
                     {
-                        case FilterPeriodType.LastWeek:
-                            return "直近一週間";
-                        case FilterPeriodType.LastMonth:
-                            return "直近一か月";
-                        case FilterPeriodType.SpecifyPeriod:
+                        case PeriodType.LastWeek:
+                            return Resources.VisualizePeriodLastWeek;
+                        case PeriodType.LastMonth:
+                            return Resources.VisualizePeriodLastMonth;
+                        case PeriodType.SpecifyPeriod:
                             var start = model.GetStart(DateTime.Today).ToString("yy/MM/dd");
                             var end = model.GetEnd(DateTime.Today).ToString("yy/MM/dd");
                             return $"{start} - {end}";

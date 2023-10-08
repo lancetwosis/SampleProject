@@ -36,13 +36,15 @@
                        Text="{x:Static props:Resources.ItemsAll}" />
 
             <controls:FilterTextBox Grid.Row="1"
-                                    MaxWidth="99999"
+                                    MaxWidth="{Binding ElementName=fromListBox,
+                                                       Path=ActualWidth}"
                                     ClearTextCommand="{Binding ClearFromFilterCommand}"
                                     Text="{Binding FromFilter,
                                                    Mode=TwoWay,
                                                    UpdateSourceTrigger=PropertyChanged}" />
             <telerik:RadListBox x:Name="fromListBox"
                                 Grid.Row="2"
+                                MinWidth="160"
                                 telerik:ListBoxSelectedItemsBehavior.SelectedItemsSource="{Binding FromSelectedItems,
                                                                                                    Mode=TwoWay}"
                                 ItemsSource="{Binding FromItemsCVS}"

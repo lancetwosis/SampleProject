@@ -9,6 +9,7 @@ using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.Filters;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using System;
@@ -64,20 +65,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             });
 
             var projectsChanged = model.Projects.CollectionChangedAsObservable().StartWithDefault();
-            IsValid = projectsChanged.Select(_ =>
-            {
-                if (model.Projects.Any())
-                    return null;
-                else
-                    return "プロジェクトを選択してください。";
-            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            IsValid = projectsChanged.Select(_ => model.Projects.Any() ? null : Resources.VisualizeProjectErrMsg)
+                .ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             Label = IsEnabled.CombineLatest(IsValid, projectsChanged, (_1, _2, _3) => true).Select(_ =>
             {
                 if (!IsEnabled.Value)
-                    return $"プロジェクト: 指定なし";
+                    return $"{Resources.VisualizeProject}: {Resources.VisualizeNotSpecified}";
                 else if (IsValid.Value != null)
-                    return $"プロジェクト: {NAN}";
+                    return $"{Resources.VisualizeProject}: {NAN}";
 
                 if (model.Projects.Count <= 3)
                     return $"{string.Join(", ", model.Projects)}";
@@ -88,7 +84,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             Tooltip = IsEnabled.CombineLatest(IsValid, projectsChanged, (_1, _2, _3) => true).Select(_ =>
             {
                 if (!IsEnabled.Value)
-                    return "親チケットのプロジェクトもしくはあなたにアサインされているプロジェクトが対象となります";
+                    return Resources.VisualizeProjectMsg;
                 else if (IsValid.Value != null)
                     return null;
                 else

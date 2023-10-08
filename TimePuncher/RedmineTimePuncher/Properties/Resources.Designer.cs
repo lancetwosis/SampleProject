@@ -19,7 +19,7 @@ namespace RedmineTimePuncher.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -61,29 +61,11 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Measure Wiki に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string AppModeCountWiki {
-            get {
-                return ResourceManager.GetString("AppModeCountWiki", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Input Time Entry に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string AppModeInputTime {
             get {
                 return ResourceManager.GetString("AppModeInputTime", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Show Time Entries に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string AppModeShowTimeEntry {
-            get {
-                return ResourceManager.GetString("AppModeShowTimeEntry", resourceCulture);
             }
         }
         
@@ -120,6 +102,15 @@ namespace RedmineTimePuncher.Properties {
         public static string AppModeVisualize {
             get {
                 return ResourceManager.GetString("AppModeVisualize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Wiki Pages に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string AppModeWikiPage {
+            get {
+                return ResourceManager.GetString("AppModeWikiPage", resourceCulture);
             }
         }
         
@@ -301,6 +292,141 @@ namespace RedmineTimePuncher.Properties {
         public static string enumExportItemsWorkCategory {
             get {
                 return ResourceManager.GetString("enumExportItemsWorkCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Activity に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeCategory {
+            get {
+                return ResourceManager.GetString("enumFactorTypeCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Date に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeDate {
+            get {
+                return ResourceManager.GetString("enumFactorTypeDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Target version に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeFixedVersion {
+            get {
+                return ResourceManager.GetString("enumFactorTypeFixedVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeIssue {
+            get {
+                return ResourceManager.GetString("enumFactorTypeIssue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   None に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeNone {
+            get {
+                return ResourceManager.GetString("enumFactorTypeNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   On / Over time に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeOnTime {
+            get {
+                return ResourceManager.GetString("enumFactorTypeOnTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Bottom Left に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypePosBottomLeft {
+            get {
+                return ResourceManager.GetString("enumFactorTypePosBottomLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Bottom Right に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypePosBottomRight {
+            get {
+                return ResourceManager.GetString("enumFactorTypePosBottomRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Center に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypePosCenter {
+            get {
+                return ResourceManager.GetString("enumFactorTypePosCenter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Top Left に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypePosTopLeft {
+            get {
+                return ResourceManager.GetString("enumFactorTypePosTopLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Top Right に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypePosTopRight {
+            get {
+                return ResourceManager.GetString("enumFactorTypePosTopRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Project に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeProject {
+            get {
+                return ResourceManager.GetString("enumFactorTypeProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ascending order に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeSortASC {
+            get {
+                return ResourceManager.GetString("enumFactorTypeSortASC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Descending order に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeSortDESC {
+            get {
+                return ResourceManager.GetString("enumFactorTypeSortDESC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   User に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumFactorTypeUser {
+            get {
+                return ResourceManager.GetString("enumFactorTypeUser", resourceCulture);
             }
         }
         
@@ -503,6 +629,33 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Bar chart に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumVisualizeViewTypeBar {
+            get {
+                return ResourceManager.GetString("enumVisualizeViewTypeBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Pie chart に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumVisualizeViewTypePie {
+            get {
+                return ResourceManager.GetString("enumVisualizeViewTypePie", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Tree Map に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumVisualizeViewTypeTreeMap {
+            get {
+                return ResourceManager.GetString("enumVisualizeViewTypeTreeMap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   All に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumWikiPeriodTypeAll {
@@ -562,6 +715,15 @@ namespace RedmineTimePuncher.Properties {
         public static string enumWikiPeriodTypeLastNWeeks {
             get {
                 return ResourceManager.GetString("enumWikiPeriodTypeLastNWeeks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   None に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumWikiPeriodTypeNone {
+            get {
+                return ResourceManager.GetString("enumWikiPeriodTypeNone", resourceCulture);
             }
         }
         
@@ -3093,6 +3255,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   The selected external tool does not exist. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsExpoMsgExternalToolNotExist_Duplicate_1_ {
+            get {
+                return ResourceManager.GetString("SettingsExpoMsgExternalToolNotExist_Duplicate[1]", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   External tool configuration is not complete.
         ///Please configure the external tool settings from the Settings dialog. に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -3896,69 +4067,6 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   From: に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ShowEntryDateFrom {
-            get {
-                return ResourceManager.GetString("ShowEntryDateFrom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   To: に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ShowEntryDateTo {
-            get {
-                return ResourceManager.GetString("ShowEntryDateTo", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Activity に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ShowEntryGroupActivity {
-            get {
-                return ResourceManager.GetString("ShowEntryGroupActivity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Groupings: に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ShowEntryGroupings {
-            get {
-                return ResourceManager.GetString("ShowEntryGroupings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Issue Id に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ShowEntryGroupIssueId {
-            get {
-                return ResourceManager.GetString("ShowEntryGroupIssueId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   User Name に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ShowEntryGroupUserName {
-            get {
-                return ResourceManager.GetString("ShowEntryGroupUserName", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Users: に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ShowEntryTargetUsers {
-            get {
-                return ResourceManager.GetString("ShowEntryTargetUsers", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         public static System.Drawing.Bitmap teams16 {
@@ -4186,182 +4294,794 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Work hous (h) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeChartAxisHours {
+            get {
+                return ResourceManager.GetString("VisualizeChartAxisHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Hide all に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeChartCmdInvisibleAll {
+            get {
+                return ResourceManager.GetString("VisualizeChartCmdInvisibleAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Show all に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeChartCmdVisibleAll {
+            get {
+                return ResourceManager.GetString("VisualizeChartCmdVisibleAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Retrieve data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeCmdGetData {
+            get {
+                return ResourceManager.GetString("VisualizeCmdGetData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Open に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeCmdOpen {
+            get {
+                return ResourceManager.GetString("VisualizeCmdOpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Save に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeCmdSave {
+            get {
+                return ResourceManager.GetString("VisualizeCmdSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Save as に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeCmdSaveAs {
+            get {
+                return ResourceManager.GetString("VisualizeCmdSaveAs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Update data に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeCmdUpdateData {
+            get {
+                return ResourceManager.GetString("VisualizeCmdUpdateData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Invalid に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeCustomFieldInvalid {
+            get {
+                return ResourceManager.GetString("VisualizeCustomFieldInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Not Set に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeCustomFieldNotSet {
+            get {
+                return ResourceManager.GetString("VisualizeCustomFieldNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   From: に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeDateFrom {
+            get {
+                return ResourceManager.GetString("VisualizeDateFrom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Retrieved:  に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeDateGetAt {
+            get {
+                return ResourceManager.GetString("VisualizeDateGetAt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   To: に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeDateTo {
+            get {
+                return ResourceManager.GetString("VisualizeDateTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select filters. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeErrMsgEnterFilter {
+            get {
+                return ResourceManager.GetString("VisualizeErrMsgEnterFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to create charts. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeErrMsgFaildToCreateChart {
+            get {
+                return ResourceManager.GetString("VisualizeErrMsgFaildToCreateChart", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Failed to open the result file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeErrMsgFailedToOpenResult {
+            get {
+                return ResourceManager.GetString("VisualizeErrMsgFailedToOpenResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Grouping に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeFactorGrouping {
+            get {
+                return ResourceManager.GetString("VisualizeFactorGrouping", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   First grouping に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeFactorGrouping1 {
+            get {
+                return ResourceManager.GetString("VisualizeFactorGrouping1", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Second grouping に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeFactorGrouping2 {
+            get {
+                return ResourceManager.GetString("VisualizeFactorGrouping2", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Third grouping に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeFactorGrouping3 {
+            get {
+                return ResourceManager.GetString("VisualizeFactorGrouping3", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sorting に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeFactorSort {
+            get {
+                return ResourceManager.GetString("VisualizeFactorSort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   X Axis に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeFactorXAxis {
+            get {
+                return ResourceManager.GetString("VisualizeFactorXAxis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Filter に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeFilter {
+            get {
+                return ResourceManager.GetString("VisualizeFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Equals に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeFilterEquals {
+            get {
+                return ResourceManager.GetString("VisualizeFilterEquals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Not Equals に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeFilterEqualsNot {
+            get {
+                return ResourceManager.GetString("VisualizeFilterEqualsNot", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Issue Id に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeIssueId {
+            get {
+                return ResourceManager.GetString("VisualizeIssueId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The current result will be discarded. Do you want to save the current results? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeMsgConfirmSave {
+            get {
+                return ResourceManager.GetString("VisualizeMsgConfirmSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   (new) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeNew {
+            get {
+                return ResourceManager.GetString("VisualizeNew", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Not Specified に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeNotSpecified {
+            get {
+                return ResourceManager.GetString("VisualizeNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Parent Issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeParentIssue {
+            get {
+                return ResourceManager.GetString("VisualizeParentIssue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select a parent issue. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeParentIssueErrMsg {
+            get {
+                return ResourceManager.GetString("VisualizeParentIssueErrMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Target issues are for projects that are assigned to you. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeParentIssueMsg {
+            get {
+                return ResourceManager.GetString("VisualizeParentIssueMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Period に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizePeriod {
+            get {
+                return ResourceManager.GetString("VisualizePeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please specify the period correctly. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizePeriodErrMsg {
+            get {
+                return ResourceManager.GetString("VisualizePeriodErrMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last Month に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizePeriodLastMonth {
+            get {
+                return ResourceManager.GetString("VisualizePeriodLastMonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last Week に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizePeriodLastWeek {
+            get {
+                return ResourceManager.GetString("VisualizePeriodLastWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Specify Period に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizePeriodSpecify {
+            get {
+                return ResourceManager.GetString("VisualizePeriodSpecify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Project に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeProject {
+            get {
+                return ResourceManager.GetString("VisualizeProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select a project. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeProjectErrMsg {
+            get {
+                return ResourceManager.GetString("VisualizeProjectErrMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Target projects are assigned to you or for the parent issue. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeProjectMsg {
+            get {
+                return ResourceManager.GetString("VisualizeProjectMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Search Criteria に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeRibbonFilter {
+            get {
+                return ResourceManager.GetString("VisualizeRibbonFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Search Results に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeRibbonResult {
+            get {
+                return ResourceManager.GetString("VisualizeRibbonResult", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Specify parent issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeSpecifyParent {
+            get {
+                return ResourceManager.GetString("VisualizeSpecifyParent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Specify period に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeSpecifyPeriod {
+            get {
+                return ResourceManager.GetString("VisualizeSpecifyPeriod", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Specify projects に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeSpecifyProject {
+            get {
+                return ResourceManager.GetString("VisualizeSpecifyProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Specify users に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeSpecifyUser {
+            get {
+                return ResourceManager.GetString("VisualizeSpecifyUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicket {
+            get {
+                return ResourceManager.GetString("VisualizeTicket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Add to aggregate に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdAddAggregate {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdAddAggregate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Add to aggregate recursively に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdAddAggregateRecursive {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdAddAggregateRecursive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Collapse に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdCollapse {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdCollapse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Collapse all に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdCollapseAll {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdCollapseAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Collapse recursively に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdCollapseRecursive {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdCollapseRecursive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Exclude from aggregate に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdExcludeAggregate {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdExcludeAggregate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Exclude from aggregate recursively に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdExcludeAggregateRecursive {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdExcludeAggregateRecursive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Expand に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdExpand {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdExpand", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Expand all に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdExpandAll {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdExpandAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Expand recursively に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdExpandRecursive {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdExpandRecursive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Open issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdGoToTicket {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdGoToTicket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Scroll to selected row に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTicketTreeCmdScroll {
+            get {
+                return ResourceManager.GetString("VisualizeTicketTreeCmdScroll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Total に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeTotal {
+            get {
+                return ResourceManager.GetString("VisualizeTotal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Type:  に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeType {
+            get {
+                return ResourceManager.GetString("VisualizeType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   (Updated) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeUpdated {
+            get {
+                return ResourceManager.GetString("VisualizeUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   User に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeUser {
+            get {
+                return ResourceManager.GetString("VisualizeUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select a user. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeUserErrMsg {
+            get {
+                return ResourceManager.GetString("VisualizeUserErrMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Target users are for projects that are assigned to you. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeUserMsg {
+            get {
+                return ResourceManager.GetString("VisualizeUserMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Work hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string VisualizeWorkHours {
+            get {
+                return ResourceManager.GetString("VisualizeWorkHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   End: に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiPageEndDate {
+            get {
+                return ResourceManager.GetString("WikiPageEndDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Histories に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountHistories {
+        public static string WikiPageHistories {
             get {
-                return ResourceManager.GetString("WikiCountHistories", resourceCulture);
+                return ResourceManager.GetString("WikiPageHistories", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Wiki Page List に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountPageList {
+        public static string WikiPagePageList {
             get {
-                return ResourceManager.GetString("WikiCountPageList", resourceCulture);
+                return ResourceManager.GetString("WikiPagePageList", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Author に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultAuthor {
+        public static string WikiPageResultAuthor {
             get {
-                return ResourceManager.GetString("WikiCountResultAuthor", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultAuthor", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Comment に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultComment {
+        public static string WikiPageResultComment {
             get {
-                return ResourceManager.GetString("WikiCountResultComment", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultComment", resourceCulture);
             }
         }
         
         /// <summary>
         ///   No. of chars deleted に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultDeleteNoOfChar {
+        public static string WikiPageResultDeleteNoOfChar {
             get {
-                return ResourceManager.GetString("WikiCountResultDeleteNoOfChar", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultDeleteNoOfChar", resourceCulture);
             }
         }
         
         /// <summary>
         ///   No. of lines deleted に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultDeleteNoOfLine {
+        public static string WikiPageResultDeleteNoOfLine {
             get {
-                return ResourceManager.GetString("WikiCountResultDeleteNoOfLine", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultDeleteNoOfLine", resourceCulture);
             }
         }
         
         /// <summary>
         ///   No. of chars added に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultInsertNoOfChar {
+        public static string WikiPageResultInsertNoOfChar {
             get {
-                return ResourceManager.GetString("WikiCountResultInsertNoOfChar", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultInsertNoOfChar", resourceCulture);
             }
         }
         
         /// <summary>
         ///   No. of lines added に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultInsertNoOfLine {
+        public static string WikiPageResultInsertNoOfLine {
             get {
-                return ResourceManager.GetString("WikiCountResultInsertNoOfLine", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultInsertNoOfLine", resourceCulture);
             }
         }
         
         /// <summary>
         ///   No. of chars に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultNoOfChar {
+        public static string WikiPageResultNoOfChar {
             get {
-                return ResourceManager.GetString("WikiCountResultNoOfChar", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultNoOfChar", resourceCulture);
             }
         }
         
         /// <summary>
         ///   No. of chars include child pages に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultNoOfCharIncluded {
+        public static string WikiPageResultNoOfCharIncluded {
             get {
-                return ResourceManager.GetString("WikiCountResultNoOfCharIncluded", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultNoOfCharIncluded", resourceCulture);
             }
         }
         
         /// <summary>
         ///   No. of lines に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultNoOfLine {
+        public static string WikiPageResultNoOfLine {
             get {
-                return ResourceManager.GetString("WikiCountResultNoOfLine", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultNoOfLine", resourceCulture);
             }
         }
         
         /// <summary>
         ///   No. of lines include child pages に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultNoOfLineIncluded {
+        public static string WikiPageResultNoOfLineIncluded {
             get {
-                return ResourceManager.GetString("WikiCountResultNoOfLineIncluded", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultNoOfLineIncluded", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Parent Page: に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultParentPage {
+        public static string WikiPageResultParentPage {
             get {
-                return ResourceManager.GetString("WikiCountResultParentPage", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultParentPage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Project: に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultProject {
+        public static string WikiPageResultProject {
             get {
-                return ResourceManager.GetString("WikiCountResultProject", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultProject", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Title に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultTitle {
+        public static string WikiPageResultTitle {
             get {
-                return ResourceManager.GetString("WikiCountResultTitle", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultTitle", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Updated に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultUpdateOn {
+        public static string WikiPageResultUpdateOn {
             get {
-                return ResourceManager.GetString("WikiCountResultUpdateOn", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultUpdateOn", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Version に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountResultVersion {
+        public static string WikiPageResultVersion {
             get {
-                return ResourceManager.GetString("WikiCountResultVersion", resourceCulture);
+                return ResourceManager.GetString("WikiPageResultVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Start: に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string WikiPageStartDate {
+            get {
+                return ResourceManager.GetString("WikiPageStartDate", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Titles to exclude from measure: に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountTitleToBeExcluded {
+        public static string WikiPageTitleToBeExcluded {
             get {
-                return ResourceManager.GetString("WikiCountTitleToBeExcluded", resourceCulture);
+                return ResourceManager.GetString("WikiPageTitleToBeExcluded", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Top page に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountTopPage {
+        public static string WikiPageTopPage {
             get {
-                return ResourceManager.GetString("WikiCountTopPage", resourceCulture);
+                return ResourceManager.GetString("WikiPageTopPage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Use as regular expression に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string WikiCountUseAsRegex {
+        public static string WikiPageUseAsRegex {
             get {
-                return ResourceManager.GetString("WikiCountUseAsRegex", resourceCulture);
+                return ResourceManager.GetString("WikiPageUseAsRegex", resourceCulture);
             }
         }
         

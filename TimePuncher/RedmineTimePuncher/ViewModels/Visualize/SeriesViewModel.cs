@@ -65,7 +65,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             InvisibleAllCommand = invisibleAll;
         }
 
-        public SeriesViewModel(ViewType type) : this(type, "工数", null, null, null)
+        public SeriesViewModel(ViewType type) : this(type, Resources.VisualizeWorkHours, null, null, null)
         {
         }
 

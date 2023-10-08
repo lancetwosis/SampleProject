@@ -59,10 +59,10 @@
                 </telerik:RadRibbonView.Resources>
                 <telerik:RadRibbonView.Items>
                     <telerik:RadRibbonTab Header="{x:Static props:Resources.RibbonTabHome}">
-                        <telerik:RadRibbonGroup Header="検索条件">
+                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.VisualizeRibbonFilter}">
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.GetTimeEntriesCommand}" />
                         </telerik:RadRibbonGroup>
-                        <telerik:RadRibbonGroup Header="検索結果">
+                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.VisualizeRibbonResult}">
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.OpenResultCommand}" />
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.SaveResultCommand}" />
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.SaveAsResultCommand}" />
@@ -96,7 +96,7 @@
                                            FontSize="16"
                                            FontWeight="Bold"
                                            Foreground="{telerik1:Office2019Resource ResourceKey={x:Static telerik:Office2019ResourceKey.AccentBackgroundBrush}}"
-                                           Text="検索条件" />
+                                           Text="{x:Static props:Resources.VisualizeRibbonFilter}" />
                                 <charts:FilterLabelView Margin="5,0,0,0"
                                                         DataContext="{Binding Visualize.Filters.SpecifyParentIssue}"
                                                         Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
@@ -138,7 +138,7 @@
                                       Background="{Binding Visualize.Filters.SpecifyParentIssue.Background}">
                                 <GroupBox.Header>
                                     <CheckBox x:Name="parentIssueCheckBox"
-                                              Content="親チケット指定"
+                                              Content="{x:Static props:Resources.VisualizeSpecifyParent}"
                                               IsChecked="{Binding Visualize.Filters.SpecifyParentIssue.IsEnabled.Value}" />
                                 </GroupBox.Header>
                                 <Grid Margin="0,3,0,0"
@@ -148,7 +148,7 @@
                                         <ColumnDefinition Width="AUTO" />
                                         <ColumnDefinition Width="*" />
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="チケット番号" />
+                                    <TextBlock Text="{x:Static props:Resources.VisualizeIssueId}" />
                                     <TextBox Grid.Column="1"
                                              Margin="5,0,0,0"
                                              Text="{Binding Visualize.Filters.SpecifyParentIssue.ParentIssueId.Value,
@@ -169,7 +169,7 @@
                                       Background="{Binding Visualize.Filters.SpecifyPeriod.Background}">
                                 <GroupBox.Header>
                                     <CheckBox x:Name="periodCheckBox"
-                                              Content="期間指定"
+                                              Content="{x:Static props:Resources.VisualizeSpecifyPeriod}"
                                               IsChecked="{Binding Visualize.Filters.SpecifyPeriod.IsEnabled.Value}" />
                                 </GroupBox.Header>
                                 <Grid IsEnabled="{Binding ElementName=periodCheckBox, Path=IsChecked}">
@@ -179,14 +179,14 @@
                                         <RowDefinition Height="AUTO" />
                                     </Grid.RowDefinitions>
                                     <RadioButton Margin="0,5,0,0"
-                                                 Content="直近一週間"
+                                                 Content="{x:Static props:Resources.VisualizePeriodLastWeek}"
                                                  GroupName="SpecifyPeriod"
                                                  IsChecked="{Binding Visualize.Filters.SpecifyPeriod.PeriodMode.Value,
                                                                      Converter={StaticResource EnumToBooleanConverter},
                                                                      ConverterParameter=LastWeek}" />
                                     <RadioButton Grid.Row="1"
                                                  Margin="0,5,0,0"
-                                                 Content="直近一か月"
+                                                 Content="{x:Static props:Resources.VisualizePeriodLastMonth}"
                                                  GroupName="SpecifyPeriod"
                                                  IsChecked="{Binding Visualize.Filters.SpecifyPeriod.PeriodMode.Value,
                                                                      Converter={StaticResource EnumToBooleanConverter},
@@ -200,7 +200,7 @@
                                                                          Converter={StaticResource EnumToBooleanConverter},
                                                                          ConverterParameter=SpecifyPeriod}" />
                                         <TextBlock Margin="5,5,0,0"
-                                                   Text="開始:" />
+                                                   Text="{x:Static props:Resources.VisualizeDateFrom}" />
                                         <telerik:RadDateTimePicker Margin="5,2,0,0"
                                                                    InputMode="DatePicker"
                                                                    IsEnabled="{Binding ElementName=specifyPeriodCheckBox,
@@ -215,7 +215,7 @@
                                             </telerik:RadDateTimePicker.CalendarStyle>
                                         </telerik:RadDateTimePicker>
                                         <TextBlock Margin="5,5,0,0"
-                                                   Text="終了:" />
+                                                   Text="{x:Static props:Resources.VisualizeDateTo}" />
                                         <telerik:RadDateTimePicker Margin="5,2,0,0"
                                                                    InputMode="DatePicker"
                                                                    IsEnabled="{Binding ElementName=specifyPeriodCheckBox,
@@ -246,7 +246,7 @@
                                       Background="{Binding Visualize.Filters.SpecifyUsers.Background}">
                                 <GroupBox.Header>
                                     <CheckBox x:Name="userCheckBox"
-                                              Content="ユーザ指定"
+                                              Content="{x:Static props:Resources.VisualizeSpecifyUser}"
                                               IsChecked="{Binding Visualize.Filters.SpecifyUsers.IsEnabled.Value}" />
                                 </GroupBox.Header>
                                 <views:ExpandableTwinListBox DataContext="{Binding Visualize.Filters.SpecifyUsers.Users}"
@@ -258,7 +258,7 @@
                                       Background="{Binding Visualize.Filters.SpecifyProjects.Background}">
                                 <GroupBox.Header>
                                     <CheckBox x:Name="projectCheckBox"
-                                              Content="プロジェクト指定"
+                                              Content="{x:Static props:Resources.VisualizeSpecifyProject}"
                                               IsChecked="{Binding Visualize.Filters.SpecifyProjects.IsEnabled.Value}" />
                                 </GroupBox.Header>
                                 <views:ExpandableTwinListBox DataContext="{Binding Visualize.Filters.SpecifyProjects.Projects}"
@@ -291,7 +291,7 @@
                                    FontSize="16"
                                    FontWeight="Bold"
                                    Foreground="{telerik1:Office2019Resource ResourceKey={x:Static telerik:Office2019ResourceKey.AccentBackgroundBrush}}"
-                                   Text="検索結果" />
+                                   Text="{x:Static props:Resources.VisualizeRibbonResult}" />
                         <StackPanel Grid.Column="1"
                                     Orientation="Horizontal">
                             <Border Margin="5,3,0,3"
@@ -305,7 +305,7 @@
                                     <TextBlock Margin="5,0,0,0"
                                                VerticalAlignment="Center"
                                                Foreground="DimGray"
-                                               Text="取得日: " />
+                                               Text="{x:Static props:Resources.VisualizeDateGetAt}" />
                                     <TextBlock Margin="0,0,5,0"
                                                VerticalAlignment="Center"
                                                Foreground="DimGray"
@@ -349,7 +349,7 @@
                                    FontSize="16"
                                    FontWeight="Bold"
                                    Foreground="{telerik1:Office2019Resource ResourceKey={x:Static telerik:Office2019ResourceKey.AccentBackgroundBrush}}"
-                                   Text="フィルタ" />
+                                   Text="{x:Static props:Resources.VisualizeFilter}" />
                         <StackPanel Grid.Column="1"
                                     Orientation="Horizontal">
                             <Button Command="{Binding Visualize.AddFilterCommand}"
@@ -402,27 +402,27 @@
                             <telerik:RadTreeListView.ContextMenu>
                                 <ContextMenu>
                                     <MenuItem Command="{Binding Visualize.ExpandCommand}"
-                                              Header="展開する" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdExpand}" />
                                     <MenuItem Command="{Binding Visualize.ExpandRecursiveCommand}"
-                                              Header="再帰的に展開する" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdExpandRecursive}" />
                                     <MenuItem Command="{Binding Visualize.CollapseCommand}"
-                                              Header="折りたたむ" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdCollapse}" />
                                     <MenuItem Command="{Binding Visualize.CollapseRecursiveCommand}"
-                                              Header="再帰的に折りたたむ" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdCollapse}" />
                                     <Separator />
                                     <MenuItem Command="{Binding Visualize.ExpandAllCommand}"
-                                              Header="全て展開する" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdExpandAll}" />
                                     <MenuItem Command="{Binding Visualize.CollapseAllCommand}"
-                                              Header="全て折りたたむ" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdCollapseAll}" />
                                     <Separator />
                                     <MenuItem Command="{Binding Visualize.EnableCommand}"
-                                              Header="集計に加える" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdAddAggregate}" />
                                     <MenuItem Command="{Binding Visualize.EnableRecursiveCommand}"
-                                              Header="再帰的に集計に加える" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdAddAggregateRecursive}" />
                                     <MenuItem Command="{Binding Visualize.DisableCommand}"
-                                              Header="集計から除外する" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdExcludeAggregate}" />
                                     <MenuItem Command="{Binding Visualize.DisableRecursiveCommand}"
-                                              Header="再帰的に集計から除外する" />
+                                              Header="{x:Static props:Resources.VisualizeTicketTreeCmdExcludeAggregateRecursive}" />
                                 </ContextMenu>
                             </telerik:RadTreeListView.ContextMenu>
                             <telerik:RadTreeListView.ChildTableDefinitions>
@@ -437,7 +437,7 @@
                                         <Grid>
                                             <TextBlock Margin="0,3,0,0"
                                                        HorizontalAlignment="Left"
-                                                       Text="チケット"
+                                                       Text="{x:Static props:Resources.VisualizeTicket}"
                                                        TextAlignment="Center" />
                                             <Button HorizontalAlignment="Right"
                                                     Command="{Binding Visualize.ScrollToSelectedRowCommand}"
@@ -447,7 +447,7 @@
                                                                                                          AncestorType={x:Type telerik:RadTreeListView}},
                                                                           Path=DataContext}"
                                                     Style="{StaticResource GlyphButtonStyle}"
-                                                    ToolTip="選択行に移動">
+                                                    ToolTip="{x:Static props:Resources.VisualizeTicketTreeCmdScroll}">
                                                 <Button.Content>
                                                     <telerik:RadGlyph FontSize="13"
                                                                       Glyph="{StaticResource GlyphZoom}" />
@@ -483,7 +483,7 @@
                             <StackPanel Orientation="Horizontal">
                                 <StackPanel Orientation="Horizontal">
                                     <TextBlock VerticalAlignment="Center"
-                                               Text="種類: " />
+                                               Text="{x:Static props:Resources.VisualizeType}" />
                                     <telerik:RadComboBox Margin="5,0,0,0"
                                                          ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type visualizeEnums:ViewType}}}"
                                                          SelectedItem="{Binding Visualize.Result.ViewType.Value}" />

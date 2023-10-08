@@ -64,9 +64,9 @@
                 <StackPanel.ContextMenu>
                     <ContextMenu>
                         <MenuItem Command="{Binding Presenter.VisibleAllCommand}"
-                                  Header="すべて表示する" />
+                                  Header="{x:Static props:Resources.VisualizeChartCmdVisibleAll}" />
                         <MenuItem Command="{Binding Presenter.InvisibleAllCommand}"
-                                  Header="すべて非表示にする" />
+                                  Header="{x:Static props:Resources.VisualizeChartCmdInvisibleAll}" />
                     </ContextMenu>
                 </StackPanel.ContextMenu>
                 <CheckBox IsChecked="{Binding Presenter.IsVisible.Value, Mode=TwoWay}" />

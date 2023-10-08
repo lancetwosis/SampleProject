@@ -68,7 +68,7 @@
                                          DataContext="{Binding Query}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher,EntryViewer"
+                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
                                 Header="{x:Static props:Resources.SettingsCategoryUsers}">
                 <local:UserSettingsView Margin="5"
                                         DataContext="{Binding User}" />

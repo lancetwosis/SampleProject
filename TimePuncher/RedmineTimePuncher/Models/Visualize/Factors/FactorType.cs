@@ -25,7 +25,7 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
         public FactorType(FactorValueType type)
         {
             ValueType = type;
-            Name = type.ToString();
+            Name = type.GetDescription();
         }
 
         /// <summary>
@@ -55,16 +55,26 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
 
         public override bool Equals(object obj)
         {
-            return obj is FactorType type &&
-                   ValueType == type.ValueType &&
-                   Name == type.Name;
+            var type = obj as FactorType;
+            if (type == null)
+                return false;
+
+            if (ValueType != type.ValueType)
+                return false;
+
+            if (ValueType == FactorValueType.IssueCustomField)
+                // カスタムフィールドの場合、Name が一意に決まらないため、名前も含めて判定する
+                return Name == type.Name;
+            else
+                return true;
         }
 
         public override int GetHashCode()
         {
             int hashCode = -1979447941;
             hashCode = hashCode * -1521134295 + ValueType.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            if (ValueType == FactorValueType.IssueCustomField)
+                hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
             return hashCode;
         }
     }

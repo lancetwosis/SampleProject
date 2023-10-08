@@ -9,6 +9,7 @@ using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Models.Visualize.Factors;
+using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Bases;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
@@ -42,17 +43,17 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
         public PieChartViewModel(ResultViewModel parent) : base(ViewType.PieChart, parent)
         {
-            CombineType = new FactorTypeViewModel("グルーピング１", IsEnabled,
+            CombineType = new FactorTypeViewModel(Resources.VisualizeFactorGrouping1, IsEnabled,
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieCombine), FactorTypes.GetGroupings()).AddTo(disposables);
             CombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
 
-            SecondCombineType = new FactorTypeViewModel("グルーピング２", IsEnabled,
+            SecondCombineType = new FactorTypeViewModel(Resources.VisualizeFactorGrouping2, IsEnabled,
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieSecondCombine), FactorTypes.Get2ndGroupings()).AddTo(disposables);
             SecondCombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
             ShowSecondSeries = SecondCombineType.SelectedType.Select(a => a != FactorTypes.None).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            SortType = new FactorTypeViewModel("ソート", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieSort),
-                FactorTypes.None, FactorTypes.ASC, FactorTypes.DESC).AddTo(disposables);
+            SortType = new FactorTypeViewModel(Resources.VisualizeFactorSort, IsEnabled,
+                parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieSort), FactorTypes.GetSortDirections()).AddTo(disposables);
             SortType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
 
             ShowTotal = new TotalLabelViewModel(IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieShowTotal)).AddTo(disposables);

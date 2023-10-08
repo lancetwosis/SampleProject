@@ -1,5 +1,6 @@
 ﻿using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Models.Visualize.Factors;
+using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize.Charts;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
@@ -28,92 +29,76 @@ namespace RedmineTimePuncher.ViewModels.Visualize.TreeMapItems
 
         protected override void Apply(RadTreeMapItem treemapItem, object dataItem)
         {
-            if (dataItem is GroupingItemViewModel group)
+            if (dataItem is GroupingItemViewModel g)
             {
-                treemapItem.Background = GROUP_BRUSH_DIC[group.Depth];
+                treemapItem.Background = GROUP_BRUSH_DIC[g.Depth];
                 treemapItem.ToolTip = new TextBlock()
                 {
-                    Text = $"{group.ToolTip.Label} : Total {group.ToolTip.TotalHours.Value} h",
+                    Text = $"{g.ToolTip.Label} : Total {g.ToolTip.TotalHours.Value} h",
                 };
 
-                var expand = new MenuItem() { Header = "展開する" };
-                expand.Command = group.ExpandTicketCommand;
-                var collapse = new MenuItem() { Header = "折りたたむ" };
-                collapse.Command = group.CollapseTicketCommand;
-                var remove = new MenuItem() { Header = "集計から除外する" };
-                remove.Command = group.RemoveTicketCommand;
-
                 var contextMenu = new ContextMenu();
-                contextMenu.Items.Add(expand);
-                contextMenu.Items.Add(collapse);
+                contextMenu.Items.Add(createMenuItem(Resources.VisualizeTicketTreeCmdExpand, g.ExpandTicketCommand));
+                contextMenu.Items.Add(createMenuItem(Resources.VisualizeTicketTreeCmdCollapse, g.CollapseTicketCommand));
                 contextMenu.Items.Add(new System.Windows.Controls.Separator());
-                contextMenu.Items.Add(remove);
+                contextMenu.Items.Add(createMenuItem(Resources.VisualizeTicketTreeCmdExcludeAggregate, g.RemoveTicketCommand));
 
                 treemapItem.ContextMenu = contextMenu;
 
                 treemapItem.SetBinding(RadTreeMapItem.IsSelectedProperty, new Binding("DataItem.IsSelected") { Mode = BindingMode.TwoWay });
                 treemapItem.MouseRightButtonUp += treemapItem_MouseRightButtonUp;
             }
-            else if (dataItem is TicketItemViewModel ticket)
+            else if (dataItem is TicketItemViewModel t)
             {
-                treemapItem.Background = FactorTypes.Issue.GetColor(ticket.XLabel, ticket.Issue.Id);
+                treemapItem.Background = FactorTypes.Issue.GetColor(t.XLabel, t.Issue.Id);
 
                 var text = new FrameworkElementFactory(typeof(TextBlock));
                 text.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Center);
                 text.SetValue(TextBlock.TextWrappingProperty, TextWrapping.WrapWithOverflow);
-                text.SetValue(TextBlock.TextProperty, ticket.DisplayValue);
+                text.SetValue(TextBlock.TextProperty, t.DisplayValue);
 
                 var tmp = new DataTemplate();
                 tmp.VisualTree = text;
                 treemapItem.HeaderTemplate = tmp;
 
                 var tooltip = new TextBlock();
-                tooltip.Text = ticket.ToolTip.ShowTotal ?
-                    $"{ticket.ToolTip.Label} : Total {ticket.ToolTip.TotalHours.Value} h" :
-                    $"{ticket.ToolTip.Label} : {ticket.ToolTip.Hours} h";
+                tooltip.Text = t.ToolTip.ShowTotal ?
+                    $"{t.ToolTip.Label} : Total {t.ToolTip.TotalHours.Value} h" :
+                    $"{t.ToolTip.Label} : {t.ToolTip.Hours} h";
                 treemapItem.ToolTip = tooltip;
 
                 var button = new RadButton();
-                button.Command = ticket.GoToTicketCommand;
-                button.CommandParameter = ticket.Issue.Id;
+                button.Command = t.GoToTicketCommand;
+                button.CommandParameter = t.Issue.Id;
                 button.HorizontalAlignment = HorizontalAlignment.Right;
                 button.VerticalAlignment = VerticalAlignment.Bottom;
                 button.Style = Application.Current.FindResource("GotoTicketButtonStyle") as Style;
-                if (ticket.Children.Any())
-                {
+                if (t.Children.Any())
                     button.Margin = new Thickness(0, 0, 1, 0);
-                }
                 else
-                {
                     Grid.SetRow(button, 1);
-                }
 
                 var grid = treemapItem.ChildrenOfType<Grid>().ElementAt(1);
                 grid.Children.Add(button);
 
-                var goToTicket = new MenuItem() { Header = "チケットを開く" };
-                goToTicket.Command = ticket.GoToTicketCommand;
-                goToTicket.CommandParameter = ticket.Issue.Id;
-                var expand = new MenuItem() { Header = "展開する" };
-                expand.Command = ticket.ExpandTicketCommand;
-                var collapse = new MenuItem() { Header = "折りたたむ" };
-                collapse.Command = ticket.CollapseTicketCommand;
-                var remove = new MenuItem() { Header = "集計から除外する" };
-                remove.Command = ticket.RemoveTicketCommand;
-
                 var contextMenu = new ContextMenu();
-                contextMenu.Items.Add(goToTicket);
+                contextMenu.Items.Add(createMenuItem(Resources.VisualizeTicketTreeCmdGoToTicket, t.GoToTicketCommand, t.Issue.Id));
                 contextMenu.Items.Add(new System.Windows.Controls.Separator());
-                contextMenu.Items.Add(expand);
-                contextMenu.Items.Add(collapse);
+                contextMenu.Items.Add(createMenuItem(Resources.VisualizeTicketTreeCmdExpand, t.ExpandTicketCommand));
+                contextMenu.Items.Add(createMenuItem(Resources.VisualizeTicketTreeCmdCollapse, t.CollapseTicketCommand));
                 contextMenu.Items.Add(new System.Windows.Controls.Separator());
-                contextMenu.Items.Add(remove);
+                contextMenu.Items.Add(createMenuItem(Resources.VisualizeTicketTreeCmdExcludeAggregate, t.RemoveTicketCommand));
 
                 treemapItem.ContextMenu = contextMenu;
 
                 treemapItem.SetBinding(RadTreeMapItem.IsSelectedProperty, new Binding("DataItem.IsSelected") { Mode = BindingMode.TwoWay});
                 treemapItem.MouseRightButtonUp += treemapItem_MouseRightButtonUp;
             }
+        }
+
+        private MenuItem createMenuItem(string header, ICommand command, object parameter = null)
+        {
+            return new MenuItem() { Header = header, Command = command, CommandParameter = parameter };
         }
 
         // 右クリックでも選択状態になるようにする

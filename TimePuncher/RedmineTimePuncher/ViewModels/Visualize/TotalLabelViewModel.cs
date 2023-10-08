@@ -2,6 +2,7 @@
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Models.Visualize.Factors;
+using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
 using System.Collections.Generic;
@@ -22,7 +23,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public ReadOnlyReactivePropertySlim<VerticalAlignment> VerticalAlign { get; set; }
 
         public TotalLabelViewModel(ReadOnlyReactivePropertySlim<bool> isEnabled, ReactivePropertySlim<FactorType> selectedType)
-            : base("合計", isEnabled, selectedType, FactorTypes.None, FactorTypes.Center, FactorTypes.TopLeft, FactorTypes.TopRight, FactorTypes.BottomLeft, FactorTypes.BottomRight)
+            : base(Resources.VisualizeTotal, isEnabled, selectedType, FactorTypes.None, FactorTypes.Center, FactorTypes.TopLeft, FactorTypes.TopRight, FactorTypes.BottomLeft, FactorTypes.BottomRight)
         {
             IsVisible = SelectedType.Select(t =>
             {

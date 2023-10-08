@@ -14,7 +14,7 @@
                 <ControlTemplate TargetType="{x:Type cont:FilterTextBox}">
                     <Grid VerticalAlignment="Center">
                         <telerik:RadWatermarkTextBox MinWidth="160"
-                                                     MaxWidth="200"
+                                                     MaxWidth="{TemplateBinding MaxWidth}"
                                                      Padding="3,0,15,0"
                                                      VerticalAlignment="Center"
                                                      telerik:TextBoxBehavior.UpdateTextOnEnter="True"

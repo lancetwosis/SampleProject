@@ -10,7 +10,7 @@ namespace RedmineTimePuncher.Models
 {
     public class MyWikiPageItem : LibRedminePower.Models.Bases.ModelBase
     {
-        public string DisplayTitle => IsTopWiki ? $"{Title} ({Properties.Resources.WikiCountTopPage})" : Title;
+        public string DisplayTitle => IsTopWiki ? $"{Title} ({Properties.Resources.WikiPageTopPage})" : Title;
         public string UrlBase { get; set; }
         public string Url { get; set; }
         public string ProjectId { get; set; }

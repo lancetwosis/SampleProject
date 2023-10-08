@@ -9,6 +9,7 @@ using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Models.Visualize.Factors;
+using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Bases;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using RedmineTimePuncher.ViewModels.Visualize.TreeMapItems;
@@ -42,13 +43,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
         public TreeMapViewModel(ResultViewModel parent) : base(ViewType.TreeMap, parent)
         {
-            var groupings = new[] { FactorTypes.None, FactorTypes.Project, FactorTypes.User, FactorTypes.Category, FactorTypes.FixedVersion, FactorTypes.OnTime };
-            FirstGroupingType = new FactorTypeViewModel("グルーピング１", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.FirstGrouping), groupings).AddTo(disposables);
-            FirstGroupingType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
-            SecondGroupingType = new FactorTypeViewModel("グルーピング２", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.SecondGrouping), groupings).AddTo(disposables);
-            SecondGroupingType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
-            ThirdGroupingType = new FactorTypeViewModel("グルーピング３", IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.ThirdGrouping), groupings).AddTo(disposables);
-            ThirdGroupingType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
+            FirstGroupingType = createGrouping(Resources.VisualizeFactorGrouping1, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.FirstGrouping));
+            SecondGroupingType = createGrouping(Resources.VisualizeFactorGrouping2, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.SecondGrouping), FirstGroupingType);
+            ThirdGroupingType = createGrouping(Resources.VisualizeFactorGrouping3, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.ThirdGrouping), FirstGroupingType, SecondGroupingType);
 
             Points = new ReactivePropertySlim<ObservableCollection<TreeMapItemViewModelBase>>().AddTo(disposables);
             SelectedPoints = new ObservableCollection<TreeMapItemViewModelBase>();
@@ -68,6 +65,21 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             ExpandCommand = new ReactiveCommand().WithSubscribe(() => exec(i => parent.ExpandAll(i))).AddTo(disposables);
             CollapseCommand = new ReactiveCommand().WithSubscribe(() => exec(i => parent.CollapseAll(i))).AddTo(disposables);
             RemoveCommand = new ReactiveCommand().WithSubscribe(() => exec(i => parent.RemoveTicket(i))).AddTo(disposables);
+        }
+
+        private FactorTypeViewModel createGrouping(string title, ReactivePropertySlim<FactorType> selectedType, params FactorTypeViewModel[] groupings)
+        {
+            var isEnabled = IsEnabled;
+            if (groupings.Any())
+            {
+                isEnabled = IsEnabled.CombineLatest(groupings.Select(g => g.IsEnabled.CombineLatest(g.SelectedType, (i, t) => i && t != FactorTypes.None)).CombineLatest(),
+                    (i, gs) => i && gs.All(a => a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            }
+
+            var grouping = new FactorTypeViewModel(title, isEnabled, selectedType,
+                FactorTypes.None, FactorTypes.Project, FactorTypes.User, FactorTypes.Category, FactorTypes.FixedVersion, FactorTypes.OnTime).AddTo(disposables);
+            grouping.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
+            return grouping;
         }
 
         private void exec(Action<int> action)

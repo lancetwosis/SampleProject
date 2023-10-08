@@ -54,5 +54,15 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
             fs.Insert(0, FactorTypes.None);
             return fs.ToArray();
         }
+
+        public static FactorType[] GetSortDirections()
+        {
+            return new FactorType[]
+            {
+                FactorTypes.None,
+                FactorTypes.ASC,
+                FactorTypes.DESC
+            };
+        }
     }
 }

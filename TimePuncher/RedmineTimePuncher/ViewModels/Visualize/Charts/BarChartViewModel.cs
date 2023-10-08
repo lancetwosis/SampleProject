@@ -9,6 +9,7 @@ using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Models.Visualize.Factors;
+using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Bases;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using System;
@@ -38,17 +39,16 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
         public BarChartViewModel(ResultViewModel parent) : base(ViewType.BarChart, parent)
         {
-            XAxisType = new FactorTypeViewModel("X軸", IsEnabled,
+            XAxisType = new FactorTypeViewModel(Resources.VisualizeFactorXAxis, IsEnabled,
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarXAxis), FactorTypes.GetGroupings()).AddTo(disposables);
             XAxisType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
-            CombineType = new FactorTypeViewModel("グルーピング", IsEnabled,
+            CombineType = new FactorTypeViewModel(Resources.VisualizeFactorGrouping, IsEnabled,
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarCombine), FactorTypes.Get2ndGroupings()).AddTo(disposables);
             CombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
 
-            SortType = new FactorTypeViewModel("ソート",
+            SortType = new FactorTypeViewModel(Resources.VisualizeFactorSort,
                 IsEnabled.CombineLatest(XAxisType.IsContinuous, (ie, ic) => ie && !ic).ToReadOnlyReactivePropertySlim().AddTo(disposables),
-                parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarSort),
-                FactorTypes.None, FactorTypes.ASC, FactorTypes.DESC).AddTo(disposables);
+                parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarSort), FactorTypes.GetSortDirections()).AddTo(disposables);
             SortType.SelectedType.Skip(1).Subscribe(_ => reorderXLabels()).AddTo(disposables);
 
             Serieses = new ObservableCollection<SeriesViewModel>();

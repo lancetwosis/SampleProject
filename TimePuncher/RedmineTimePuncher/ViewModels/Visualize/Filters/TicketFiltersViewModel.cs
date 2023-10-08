@@ -7,6 +7,7 @@ using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
+using RedmineTimePuncher.Models.Visualize.Filters;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize;
 using System;
@@ -36,11 +37,18 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
         {
             this.parent = parent;
 
-            var json = Properties.Settings.Default.VisualizeFilters;
-            if (!string.IsNullOrEmpty(json))
-                Model = CloneExtentions.ToObject<TicketFiltersModel>(json);
-            else
+            try
+            {
+                var json = Properties.Settings.Default.VisualizeFilters;
+                if (!string.IsNullOrEmpty(json))
+                    Model = CloneExtentions.ToObject<TicketFiltersModel>(json);
+                else
+                    Model = new TicketFiltersModel();
+            }
+            catch
+            {
                 Model = new TicketFiltersModel();
+            }
 
             setup();
         }
@@ -62,7 +70,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             return groups.Select(g => g.IsEnabled.CombineLatest(g.IsValid, (_, __) => true)).CombineLatest().Select(_ =>
             {
                 if (!SpecifyParentIssue.IsEnabled.Value && !SpecifyPeriod.IsEnabled.Value)
-                    return "検索条件を選択してください。";
+                    return Resources.VisualizeErrMsgEnterFilter;
 
                 foreach (var g in groups)
                 {

@@ -20,16 +20,14 @@ namespace RedmineTimePuncher.Enums
         Unselected  = -1,
         [LocalizedDescription(nameof(Resources.AppModeInputTime), typeof(Resources))]
         TimePuncher,
-        [LocalizedDescription(nameof(Resources.AppModeShowTimeEntry), typeof(Resources))]
-        EntryViewer,
+        [LocalizedDescription(nameof(Resources.AppModeVisualize), typeof(Resources))]
+        Visualizer,
         [LocalizedDescription(nameof(Resources.AppModeTableEditor), typeof(Resources))]
         TableEditor,
         [LocalizedDescription(nameof(Resources.AppModeTicketCreater), typeof(Resources))]
         TicketCreater,
-        [LocalizedDescription(nameof(Resources.AppModeVisualize), typeof(Resources))]
-        Visualizer,
-        [LocalizedDescription(nameof(Resources.AppModeCountWiki), typeof(Resources))]
-        WikiPageCounter,
+        [LocalizedDescription(nameof(Resources.AppModeWikiPage), typeof(Resources))]
+        WikiPage,
     }
 
     public static class ApplicationModeEx
@@ -40,9 +38,7 @@ namespace RedmineTimePuncher.Enums
             {
                 case ApplicationMode.TimePuncher:
                     return Resources.rtp32.ToBitmapSource();
-                case ApplicationMode.EntryViewer:
-                    return Resources.icons8_select_all_files_48.ToBitmapSource();
-                case ApplicationMode.WikiPageCounter:
+                case ApplicationMode.WikiPage:
                     return Resources.icons8_wiki_32.ToBitmapSource();
                 case ApplicationMode.TicketCreater:
                     return Resources.icons8_review.ToBitmapSource();

@@ -20,6 +20,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using ObservableCollectionSync;
+using RedmineTimePuncher.Models.Visualize.Filters;
 
 namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 {

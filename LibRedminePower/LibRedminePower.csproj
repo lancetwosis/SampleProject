@@ -88,9 +88,11 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Extended\ColumnDefinitionExtended.cs" />
     <Compile Include="Converters\ZeroToCollapsedConverter.cs" />
     <Compile Include="Converters\VisibilityAnyConverter.cs" />
     <Compile Include="Converters\IsNullConverter.cs" />
+    <Compile Include="Extended\RowDefinitionExtended.cs" />
     <Compile Include="Extentions\HsbColorEx.cs" />
     <Compile Include="Extentions\IssueExtentions.cs" />
     <Compile Include="ViewModels\EditableGridViewModel.cs" />

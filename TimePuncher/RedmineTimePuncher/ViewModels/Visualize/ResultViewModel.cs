@@ -8,6 +8,7 @@ using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Models.Visualize.Factors;
+using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Visualize.Charts;
 using RedmineTimePuncher.ViewModels.Visualize.Enums;
 using RedmineTimePuncher.ViewModels.Visualize.Filters;
@@ -174,7 +175,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 Model.HasValue = false;
                 clear();
 
-                throw new ApplicationException("チャートの作成に失敗しました。", e);
+                throw new ApplicationException(Resources.VisualizeErrMsgFaildToCreateChart, e);
             }
         }
 
@@ -248,7 +249,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             }
             catch
             {
-                throw new ApplicationException($"結果ファイルを開けませんでした。{Environment.NewLine}{dialog.FileName}");
+                throw new ApplicationException($"{Resources.VisualizeErrMsgFailedToOpenResult}{Environment.NewLine}{dialog.FileName}");
             }
 
             Model = desirialized;
@@ -262,7 +263,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             if (!Model.HasValue || (!string.IsNullOrEmpty(Model.FileName) && !IsEdited.Value))
                 return false;
 
-            var needsSave = MessageBoxHelper.ConfirmQuestion("現在の結果が破棄されます。現在の結果を保存しますか？", MessageBoxHelper.ButtonType.YesNoCancel);
+            var needsSave = MessageBoxHelper.ConfirmQuestion(Resources.VisualizeMsgConfirmSave, MessageBoxHelper.ButtonType.YesNoCancel);
             if (!needsSave.HasValue)
                 return null;
 

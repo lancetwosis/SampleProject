@@ -376,56 +376,44 @@
   <data name="RibbonCmdMeasure" xml:space="preserve">
     <value>計測</value>
   </data>
-  <data name="WikiCountResultProject" xml:space="preserve">
+  <data name="WikiPageResultProject" xml:space="preserve">
     <value>プロジェクト:</value>
   </data>
-  <data name="WikiCountResultTitle" xml:space="preserve">
+  <data name="WikiPageResultTitle" xml:space="preserve">
     <value>タイトル</value>
   </data>
-  <data name="WikiCountResultUpdateOn" xml:space="preserve">
+  <data name="WikiPageResultUpdateOn" xml:space="preserve">
     <value>更新日</value>
   </data>
-  <data name="WikiCountResultAuthor" xml:space="preserve">
+  <data name="WikiPageResultAuthor" xml:space="preserve">
     <value>作成者</value>
   </data>
-  <data name="WikiCountResultNoOfChar" xml:space="preserve">
+  <data name="WikiPageResultNoOfChar" xml:space="preserve">
     <value>文字数</value>
   </data>
-  <data name="WikiCountResultNoOfLine" xml:space="preserve">
+  <data name="WikiPageResultNoOfLine" xml:space="preserve">
     <value>行数</value>
   </data>
-  <data name="WikiCountResultNoOfCharIncluded" xml:space="preserve">
+  <data name="WikiPageResultNoOfCharIncluded" xml:space="preserve">
     <value>子ページを含む文字数</value>
   </data>
-  <data name="WikiCountResultNoOfLineIncluded" xml:space="preserve">
+  <data name="WikiPageResultNoOfLineIncluded" xml:space="preserve">
     <value>子ページを含む行数</value>
   </data>
-  <data name="WikiCountResultParentPage" xml:space="preserve">
+  <data name="WikiPageResultParentPage" xml:space="preserve">
     <value>親ページ:</value>
   </data>
-  <data name="ShowEntryGroupUserName" xml:space="preserve">
-    <value>ユーザ名</value>
-  </data>
-  <data name="ShowEntryGroupIssueId" xml:space="preserve">
+  <data name="VisualizeIssueId" xml:space="preserve">
     <value>チケット番号</value>
   </data>
-  <data name="ShowEntryGroupActivity" xml:space="preserve">
-    <value>作業分類</value>
+  <data name="VisualizeDateFrom" xml:space="preserve">
+    <value>開始:</value>
   </data>
-  <data name="ShowEntryDateFrom" xml:space="preserve">
-    <value>開始日:</value>
-  </data>
-  <data name="ShowEntryDateTo" xml:space="preserve">
-    <value>終了日:</value>
+  <data name="VisualizeDateTo" xml:space="preserve">
+    <value>終了:</value>
   </data>
   <data name="RibbonGroupView" xml:space="preserve">
     <value>表示</value>
-  </data>
-  <data name="ShowEntryTargetUsers" xml:space="preserve">
-    <value>ユーザ:</value>
-  </data>
-  <data name="ShowEntryGroupings" xml:space="preserve">
-    <value>グルーピング:</value>
   </data>
   <data name="IssueGridFavorites" xml:space="preserve">
     <value>お気に入り</value>
@@ -451,11 +439,8 @@
   <data name="AppModeInputTime" xml:space="preserve">
     <value>時間入力</value>
   </data>
-  <data name="AppModeShowTimeEntry" xml:space="preserve">
-    <value>データ表示</value>
-  </data>
-  <data name="AppModeCountWiki" xml:space="preserve">
-    <value>Wiki計測</value>
+  <data name="AppModeWikiPage" xml:space="preserve">
+    <value>Wiki ページ</value>
   </data>
   <data name="SettingsDialog" xml:space="preserve">
     <value>設定</value>
@@ -649,13 +634,13 @@ APIアクセスキー</value>
   <data name="SettingsExpoExternalToolCmdArg" xml:space="preserve">
     <value>コマンド引数</value>
   </data>
-  <data name="WikiCountTitleToBeExcluded" xml:space="preserve">
+  <data name="WikiPageTitleToBeExcluded" xml:space="preserve">
     <value>集計から除外するタイトル:</value>
   </data>
-  <data name="WikiCountUseAsRegex" xml:space="preserve">
+  <data name="WikiPageUseAsRegex" xml:space="preserve">
     <value>正規表現として扱う</value>
   </data>
-  <data name="WikiCountTopPage" xml:space="preserve">
+  <data name="WikiPageTopPage" xml:space="preserve">
     <value>トップページ</value>
   </data>
   <data name="RedmineMngMsgIncorrectAdminAPIKey" xml:space="preserve">
@@ -1415,31 +1400,31 @@ Outlookの状態を確認してください。</value>
     <value>Teamsの通話履歴の読み込みでエラーが発生しました。
 [設定]-[予定項目]-[Teams]-[通話履歴の読み込み]をOFFに設定しました。</value>
   </data>
-  <data name="SettingsExpoMsgExternalToolNotExist" xml:space="preserve">
+  <data name="SettingsExpoMsgExternalToolNotExist_Duplicate[1]" xml:space="preserve">
     <value>設定された外部ツールが存在しません。</value>
   </data>
-  <data name="WikiCountResultVersion" xml:space="preserve">
+  <data name="WikiPageResultVersion" xml:space="preserve">
     <value>バージョン</value>
   </data>
-  <data name="WikiCountResultComment" xml:space="preserve">
+  <data name="WikiPageResultComment" xml:space="preserve">
     <value>コメント</value>
   </data>
-  <data name="WikiCountResultInsertNoOfLine" xml:space="preserve">
+  <data name="WikiPageResultInsertNoOfLine" xml:space="preserve">
     <value>追加行数</value>
   </data>
-  <data name="WikiCountResultInsertNoOfChar" xml:space="preserve">
+  <data name="WikiPageResultInsertNoOfChar" xml:space="preserve">
     <value>追加文字数</value>
   </data>
-  <data name="WikiCountResultDeleteNoOfLine" xml:space="preserve">
+  <data name="WikiPageResultDeleteNoOfLine" xml:space="preserve">
     <value>削除行数</value>
   </data>
-  <data name="WikiCountResultDeleteNoOfChar" xml:space="preserve">
+  <data name="WikiPageResultDeleteNoOfChar" xml:space="preserve">
     <value>削除文字数</value>
   </data>
-  <data name="WikiCountHistories" xml:space="preserve">
+  <data name="WikiPageHistories" xml:space="preserve">
     <value>変更履歴</value>
   </data>
-  <data name="WikiCountPageList" xml:space="preserve">
+  <data name="WikiPagePageList" xml:space="preserve">
     <value>Wikiページ一覧</value>
   </data>
   <data name="enumWikiPeriodTypeBetween" xml:space="preserve">
@@ -1465,5 +1450,260 @@ Outlookの状態を確認してください。</value>
   </data>
   <data name="DiffHistories" xml:space="preserve">
     <value>差分を比較</value>
+  </data>
+  <data name="enumVisualizeViewTypeBar" xml:space="preserve">
+    <value>棒グラフ</value>
+  </data>
+  <data name="enumVisualizeViewTypePie" xml:space="preserve">
+    <value>円グラフ</value>
+  </data>
+  <data name="enumVisualizeViewTypeTreeMap" xml:space="preserve">
+    <value>ツリーマップ</value>
+  </data>
+  <data name="enumFactorTypeNone" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="enumFactorTypeDate" xml:space="preserve">
+    <value>日付</value>
+  </data>
+  <data name="enumFactorTypeIssue" xml:space="preserve">
+    <value>チケット</value>
+  </data>
+  <data name="enumFactorTypeProject" xml:space="preserve">
+    <value>プロジェクト</value>
+  </data>
+  <data name="enumFactorTypeUser" xml:space="preserve">
+    <value>ユーザ</value>
+  </data>
+  <data name="enumFactorTypeCategory" xml:space="preserve">
+    <value>作業分類</value>
+  </data>
+  <data name="enumFactorTypeSortASC" xml:space="preserve">
+    <value>昇順</value>
+  </data>
+  <data name="enumFactorTypeSortDESC" xml:space="preserve">
+    <value>降順</value>
+  </data>
+  <data name="enumFactorTypePosCenter" xml:space="preserve">
+    <value>上下中央</value>
+  </data>
+  <data name="enumFactorTypePosTopLeft" xml:space="preserve">
+    <value>左上</value>
+  </data>
+  <data name="enumFactorTypePosTopRight" xml:space="preserve">
+    <value>右上</value>
+  </data>
+  <data name="enumFactorTypePosBottomLeft" xml:space="preserve">
+    <value>左下</value>
+  </data>
+  <data name="enumFactorTypePosBottomRight" xml:space="preserve">
+    <value>右下</value>
+  </data>
+  <data name="enumFactorTypeOnTime" xml:space="preserve">
+    <value>定時内/定時外</value>
+  </data>
+  <data name="enumFactorTypeFixedVersion" xml:space="preserve">
+    <value>対象バージョン</value>
+  </data>
+  <data name="VisualizeCustomFieldNotSet" xml:space="preserve">
+    <value>未設定</value>
+  </data>
+  <data name="VisualizeCustomFieldInvalid" xml:space="preserve">
+    <value>無効</value>
+  </data>
+  <data name="VisualizeFilterEquals" xml:space="preserve">
+    <value>等しい</value>
+  </data>
+  <data name="VisualizeFilterEqualsNot" xml:space="preserve">
+    <value>等しくない</value>
+  </data>
+  <data name="VisualizeParentIssue" xml:space="preserve">
+    <value>親チケット</value>
+  </data>
+  <data name="VisualizeParentIssueMsg" xml:space="preserve">
+    <value>アサインされているプロジェクトのチケットが対象となります。</value>
+  </data>
+  <data name="VisualizeParentIssueErrMsg" xml:space="preserve">
+    <value>親チケットを指定してください。</value>
+  </data>
+  <data name="VisualizeNotSpecified" xml:space="preserve">
+    <value>指定なし</value>
+  </data>
+  <data name="VisualizePeriodLastWeek" xml:space="preserve">
+    <value>直近一週間</value>
+  </data>
+  <data name="VisualizePeriodLastMonth" xml:space="preserve">
+    <value>直近一か月</value>
+  </data>
+  <data name="VisualizePeriodSpecify" xml:space="preserve">
+    <value>期間指定</value>
+  </data>
+  <data name="VisualizePeriod" xml:space="preserve">
+    <value>期間</value>
+  </data>
+  <data name="VisualizePeriodErrMsg" xml:space="preserve">
+    <value>期間を正しく設定してください。</value>
+  </data>
+  <data name="VisualizeProject" xml:space="preserve">
+    <value>プロジェクト</value>
+  </data>
+  <data name="VisualizeProjectErrMsg" xml:space="preserve">
+    <value>プロジェクトを選択してください。</value>
+  </data>
+  <data name="VisualizeProjectMsg" xml:space="preserve">
+    <value>親チケットのプロジェクトもしくはあなたにアサインされているプロジェクトが対象となります。</value>
+  </data>
+  <data name="VisualizeUser" xml:space="preserve">
+    <value>ユーザ</value>
+  </data>
+  <data name="VisualizeUserErrMsg" xml:space="preserve">
+    <value>ユーザを選択してください。</value>
+  </data>
+  <data name="VisualizeUserMsg" xml:space="preserve">
+    <value>あなたにアサインされているプロジェクトのメンバーが対象となります。</value>
+  </data>
+  <data name="VisualizeErrMsgEnterFilter" xml:space="preserve">
+    <value>検索条件を選択してください。</value>
+  </data>
+  <data name="SettingsExpoFormat" xml:space="preserve">
+    <value>出力フォーマット</value>
+  </data>
+  <data name="enumWikiPeriodTypeNone" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="WikiPageStartDate" xml:space="preserve">
+    <value>開始:</value>
+  </data>
+  <data name="WikiPageEndDate" xml:space="preserve">
+    <value>終了:</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExpand" xml:space="preserve">
+    <value>展開する</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdCollapse" xml:space="preserve">
+    <value>折りたたむ</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdGoToTicket" xml:space="preserve">
+    <value>チケットを開く</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExcludeAggregate" xml:space="preserve">
+    <value>集計から除外する</value>
+  </data>
+  <data name="VisualizeFactorGrouping" xml:space="preserve">
+    <value>グルーピング</value>
+  </data>
+  <data name="VisualizeFactorSort" xml:space="preserve">
+    <value>ソート</value>
+  </data>
+  <data name="VisualizeFactorXAxis" xml:space="preserve">
+    <value>X軸</value>
+  </data>
+  <data name="VisualizeFactorGrouping1" xml:space="preserve">
+    <value>グルーピング１</value>
+  </data>
+  <data name="VisualizeFactorGrouping2" xml:space="preserve">
+    <value>グルーピング２</value>
+  </data>
+  <data name="VisualizeFactorGrouping3" xml:space="preserve">
+    <value>グルーピング３</value>
+  </data>
+  <data name="VisualizeRibbonFilter" xml:space="preserve">
+    <value>検索条件</value>
+  </data>
+  <data name="VisualizeRibbonResult" xml:space="preserve">
+    <value>検索結果</value>
+  </data>
+  <data name="VisualizeSpecifyParent" xml:space="preserve">
+    <value>親チケット指定</value>
+  </data>
+  <data name="VisualizeSpecifyPeriod" xml:space="preserve">
+    <value>期間指定</value>
+  </data>
+  <data name="VisualizeSpecifyUser" xml:space="preserve">
+    <value>ユーザ指定</value>
+  </data>
+  <data name="VisualizeSpecifyProject" xml:space="preserve">
+    <value>プロジェクト指定</value>
+  </data>
+  <data name="VisualizeFilter" xml:space="preserve">
+    <value>フィルタ</value>
+  </data>
+  <data name="VisualizeTicket" xml:space="preserve">
+    <value>チケット</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExpandRecursive" xml:space="preserve">
+    <value>再帰的に展開する</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdCollapseRecursive" xml:space="preserve">
+    <value>再帰的に折りたたむ</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExpandAll" xml:space="preserve">
+    <value>すべて展開する</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdCollapseAll" xml:space="preserve">
+    <value>すべて折りたたむ</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdAddAggregate" xml:space="preserve">
+    <value>集計に加える</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdAddAggregateRecursive" xml:space="preserve">
+    <value>再帰的に集計に加える</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdExcludeAggregateRecursive" xml:space="preserve">
+    <value>再帰的に集計から除外する</value>
+  </data>
+  <data name="VisualizeTicketTreeCmdScroll" xml:space="preserve">
+    <value>選択行に移動</value>
+  </data>
+  <data name="VisualizeType" xml:space="preserve">
+    <value>種類: </value>
+  </data>
+  <data name="VisualizeChartCmdVisibleAll" xml:space="preserve">
+    <value>すべて表示する</value>
+  </data>
+  <data name="VisualizeChartCmdInvisibleAll" xml:space="preserve">
+    <value>すべて非表示にする</value>
+  </data>
+  <data name="VisualizeChartAxisHours" xml:space="preserve">
+    <value>工数 (h)</value>
+  </data>
+  <data name="VisualizeCmdGetData" xml:space="preserve">
+    <value>データ取得</value>
+  </data>
+  <data name="VisualizeCmdOpen" xml:space="preserve">
+    <value>開く</value>
+  </data>
+  <data name="VisualizeCmdSave" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="VisualizeCmdSaveAs" xml:space="preserve">
+    <value>名前を付けて保存</value>
+  </data>
+  <data name="VisualizeCmdUpdateData" xml:space="preserve">
+    <value>再取得</value>
+  </data>
+  <data name="VisualizeNew" xml:space="preserve">
+    <value>(新規)</value>
+  </data>
+  <data name="VisualizeUpdated" xml:space="preserve">
+    <value>(更新)</value>
+  </data>
+  <data name="VisualizeTotal" xml:space="preserve">
+    <value>合計</value>
+  </data>
+  <data name="VisualizeDateGetAt" xml:space="preserve">
+    <value>取得日: </value>
+  </data>
+  <data name="VisualizeWorkHours" xml:space="preserve">
+    <value>工数</value>
+  </data>
+  <data name="VisualizeErrMsgFaildToCreateChart" xml:space="preserve">
+    <value>チャートの作成に失敗しました。</value>
+  </data>
+  <data name="VisualizeErrMsgFailedToOpenResult" xml:space="preserve">
+    <value>結果ファイルを開けませんでした。</value>
+  </data>
+  <data name="VisualizeMsgConfirmSave" xml:space="preserve">
+    <value>現在の結果が破棄されます。現在の結果を保存しますか？</value>
   </data>
 </root>

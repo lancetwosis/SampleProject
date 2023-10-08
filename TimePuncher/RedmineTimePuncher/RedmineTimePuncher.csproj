@@ -148,9 +148,8 @@
     <Compile Include="Enums\CreateTicketMode.cs" />
     <Compile Include="Enums\CustomFieldFormat.cs" />
     <Compile Include="Enums\ExportItems.cs" />
-    <Compile Include="Enums\FilterPeriodType.cs" />
+    <Compile Include="Models\Visualize\Filters\PeriodType.cs" />
     <Compile Include="Enums\FilterType.cs" />
-    <Compile Include="Enums\GroupingType.cs" />
     <Compile Include="Enums\LocaleType.cs" />
     <Compile Include="Enums\HeaderLevel.cs" />
     <Compile Include="Enums\OutputTargetTypes.cs" />
@@ -186,11 +185,12 @@
     <Compile Include="Models\Visualize\Factors\FactorType.cs" />
     <Compile Include="Models\Visualize\Factors\FactorTypes.cs" />
     <Compile Include="Models\Visualize\Factors\FactorValueType.cs" />
-    <Compile Include="Models\Visualize\ResultFilterModel.cs" />
+    <Compile Include="Models\Visualize\Filters\FilterType.cs" />
+    <Compile Include="Models\Visualize\Filters\ResultFilterModel.cs" />
     <Compile Include="Models\Visualize\TicketModel.cs" />
     <Compile Include="Models\Visualize\ResultModel.cs" />
     <Compile Include="Models\Visualize\ChartSettingsModel.cs" />
-    <Compile Include="Models\Visualize\TicketFiltersModel.cs" />
+    <Compile Include="Models\Visualize\Filters\TicketFiltersModel.cs" />
     <Compile Include="Models\Visualize\Factors\FactorModel.cs" />
     <Compile Include="Models\Visualize\PersonHourModel.cs" />
     <Compile Include="Models\Visualize\PersonHourReportModel.cs" />
@@ -222,12 +222,12 @@
     <Compile Include="Models\WikiLine.cs" />
     <Compile Include="Models\WikiUserSummary.cs" />
     <Compile Include="ViewModels\Bases\FunctionViewModelBase.cs" />
-    <Compile Include="ViewModels\CountWikiPage\Charts\DateItem.cs" />
-    <Compile Include="ViewModels\CountWikiPage\Charts\SeriesViewModelBase.cs" />
-    <Compile Include="ViewModels\CountWikiPage\Charts\UserSeriesViewModel.cs" />
-    <Compile Include="ViewModels\CountWikiPage\Charts\WikiSeriesViewModel.cs" />
-    <Compile Include="ViewModels\CountWikiPage\CountWikiPageViewModel.cs" />
-    <Compile Include="ViewModels\CountWikiPage\Charts\CustomSeriesDescriptorSelector.cs" />
+    <Compile Include="ViewModels\WikiPage\Charts\DateItem.cs" />
+    <Compile Include="ViewModels\WikiPage\Charts\SeriesViewModelBase.cs" />
+    <Compile Include="ViewModels\WikiPage\Charts\UserSeriesViewModel.cs" />
+    <Compile Include="ViewModels\WikiPage\Charts\WikiSeriesViewModel.cs" />
+    <Compile Include="ViewModels\WikiPage\WikiPageViewModel.cs" />
+    <Compile Include="ViewModels\WikiPage\Charts\CustomSeriesDescriptorSelector.cs" />
     <Compile Include="ViewModels\CreateTicket\CreateTicketViewModel.cs" />
     <Compile Include="ViewModels\CreateTicket\MemberViewModel.cs" />
     <Compile Include="ViewModels\Input\Controls\CustomScheduleViewDialogHostFactory.cs" />
@@ -293,7 +293,6 @@
     <Compile Include="ViewModels\Settings\TermViewModel.cs" />
     <Compile Include="ViewModels\Settings\UserSettingsViewModel.cs" />
     <Compile Include="ViewModels\Input\Slots\ResourceSlot.cs" />
-    <Compile Include="ViewModels\ShowTimeEntry\ShowTimeEntryViewModel.cs" />
     <Compile Include="ViewModels\TableEditor\TableEditorViewModel.cs" />
     <Compile Include="ViewModels\VersionDialogViewModel.cs" />
     <Compile Include="ViewModels\Visualize\Charts\ChartViewModelBase.cs" />
@@ -415,17 +414,14 @@
     <Compile Include="Views\InputView.xaml.cs">
       <DependentUpon>InputView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CountWikiPageView.xaml.cs">
-      <DependentUpon>CountWikiPageView.xaml</DependentUpon>
+    <Compile Include="Views\WikiPageView.xaml.cs">
+      <DependentUpon>WikiPageView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\CreateTicketView.xaml.cs">
       <DependentUpon>CreateTicketView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VisualizeView.xaml.cs">
       <DependentUpon>VisualizeView.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Views\ShowEntryView.xaml.cs">
-      <DependentUpon>ShowEntryView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VersionDialog.xaml.cs">
       <DependentUpon>VersionDialog.xaml</DependentUpon>
@@ -670,7 +666,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\CountWikiPageView.xaml">
+    <Page Include="Views\WikiPageView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -679,10 +675,6 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\VisualizeView.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\ShowEntryView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -753,6 +745,9 @@
     </PackageReference>
     <PackageReference Include="FastEnum">
       <Version>1.6.1</Version>
+    </PackageReference>
+    <PackageReference Include="MathConverter">
+      <Version>2.2.0</Version>
     </PackageReference>
     <PackageReference Include="NetOfficeFw.Outlook">
       <Version>1.8.1</Version>
