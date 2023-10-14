@@ -1,4 +1,5 @@
-﻿using RedmineTimePuncher.Models;
+﻿using LibRedminePower.Extentions;
+using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.ViewModels.Input.Resources;
 using RedmineTimePuncher.ViewModels.Input.Resources.Bases;
@@ -120,14 +121,17 @@ namespace RedmineTimePuncher.Behaviors
                 }
             }
             // ScheduleView 内でのドラッグ
-            else if (state.Appointment is MyAppointment)
+            else if (state.Appointment is MyAppointment myAppo)
             {
+                var destSlot = state.DestinationSlots.First();
+
                 // MyWorks 以外には、ドロップすることができない
-                if (!state.DestinationSlots.First().Resources.Cast<MyResourceBase>().Any(a => a.IsMyWorks()))
+                if (!destSlot.Resources.Cast<MyResourceBase>().Any(a => a.IsMyWorks()))
                     return false;
 
-                // MyWorks 以外からドラッグの場合は、強制コピーモードとする。
-                if (state.SourceResources != null && !state.SourceResources.Cast<MyResourceBase>().Any(a => a.IsMyWorks()))
+                // MyWorks 以外からドラッグ or 日を跨いでのドラッグの場合は、強制コピーモードとする。
+                if ((state.SourceResources != null && !state.SourceResources.Cast<MyResourceBase>().Any(a => a.IsMyWorks())) ||
+                    myAppo.Start.GetDateOnly() != destSlot.Start.GetDateOnly())
                 {
                     state.IsControlPressed = true;
                 }
