@@ -137,6 +137,7 @@
     <Compile Include="Behaviors\RadScheduleViewSelectedAppointmentsBehavior.cs" />
     <Compile Include="Converters\AppointmentTypeToOpacityConverter.cs" />
     <Compile Include="Converters\BoolToTextStrikethroughConverter .cs" />
+    <Compile Include="Converters\DateTimeToHeaderBackgroundConverter.cs" />
     <Compile Include="Converters\SliderValueToVisibilityConverter.cs" />
     <Compile Include="Converters\PeriodToIsEnabledConverter.cs" />
     <Compile Include="Converters\BoolToFontBoldConverter.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="Enums\CreateTicketMode.cs" />
     <Compile Include="Enums\CustomFieldFormat.cs" />
     <Compile Include="Enums\ExportItems.cs" />
+    <Compile Include="Enums\InputPeriodType.cs" />
     <Compile Include="Models\Visualize\Filters\PeriodType.cs" />
     <Compile Include="Enums\FilterType.cs" />
     <Compile Include="Enums\LocaleType.cs" />
@@ -337,6 +339,7 @@
     <Compile Include="Views\Controls\Charts\BarChartView.xaml.cs">
       <DependentUpon>BarChartView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Controls\MyWeekViewDefinition.cs" />
     <Compile Include="Views\Controls\ResourceSettingListBox.xaml.cs">
       <DependentUpon>ResourceSettingListBox.xaml</DependentUpon>
     </Compile>
@@ -430,7 +433,7 @@
   <ItemGroup>
     <Compile Include="Behaviors\MyGridViewDragDropBehavior.cs" />
     <Compile Include="Behaviors\MyScheduleViewDragDropBehavior.cs" />
-    <Compile Include="Converters\DateTimeToBackColorConverter.cs" />
+    <Compile Include="Converters\DateTimeToTickBackgroundConverter.cs" />
     <Compile Include="Converters\TickConverter.cs" />
     <Compile Include="Enums\AppointmentType.cs" />
     <Compile Include="Enums\TickLengthType.cs" />

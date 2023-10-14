@@ -88,10 +88,21 @@ namespace RedmineTimePuncher.Views
             }
         }
 
+        // NavigationView 対応の影響？で FirstVisibleTime での設定ができなくなったため
+        // Loaded のタイミングで手動でスクロールする
+        // https://docs.telerik.com/devtools/wpf/controls/radscheduleview/features/timeruler/scrolling
         private void scheduleView_Loaded(object sender, RoutedEventArgs e)
         {
-            // NavigationView 対応の影響？で FirstVisibleTime での設定がなぜかできなくなったためこちらで代替する
-            var schedule = sender as RadScheduleView;
+            scrollToWorkStartTime(sender as RadScheduleView);
+        }
+
+        private void scheduleView_VisibleRangeChanged(object sender, EventArgs e)
+        {
+            scrollToWorkStartTime(sender as RadScheduleView);
+        }
+
+        private void scrollToWorkStartTime(RadScheduleView schedule)
+        {
             var vm = schedule.DataContext as MainWindowViewModel;
             schedule.ScrollTimeRuler(vm.Settings.Schedule.WorkStartTime, true);
         }

@@ -258,10 +258,10 @@
     <value>Today</value>
   </data>
   <data name="RibbonCmdPreviousDay" xml:space="preserve">
-    <value>Previous Day</value>
+    <value>Back</value>
   </data>
   <data name="RibbonCmdNextDay" xml:space="preserve">
-    <value>Next Day</value>
+    <value>Next</value>
   </data>
   <data name="RibbonCmdOpenIssue" xml:space="preserve">
     <value>Open
@@ -1809,5 +1809,29 @@ The order of the lines is the order in which the filing conditions are applied.<
   </data>
   <data name="VisualizeMsgConfirmSave" xml:space="preserve">
     <value>The current result will be discarded. Do you want to save the current results?</value>
+  </data>
+  <data name="enumInputPeriodType1Day" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="enumInputPeriodTypeThisWeek" xml:space="preserve">
+    <value>Week</value>
+  </data>
+  <data name="enumInputPeriodType3Days" xml:space="preserve">
+    <value>Last 3 days</value>
+  </data>
+  <data name="enumInputPeriodType7Days" xml:space="preserve">
+    <value>Last 7 days</value>
+  </data>
+  <data name="enumInputPeriodTypeWorkingDays" xml:space="preserve">
+    <value>Working days</value>
+  </data>
+  <data name="enumTimeEntryTypeNotSpecified" xml:space="preserve">
+    <value>Not Specified</value>
+  </data>
+  <data name="enumTimeEntryTypeOnTime" xml:space="preserve">
+    <value>On Time</value>
+  </data>
+  <data name="enumTimeEntryTypeOverTime" xml:space="preserve">
+    <value>Over Time</value>
   </data>
 </root>

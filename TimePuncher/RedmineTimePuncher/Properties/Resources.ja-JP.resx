@@ -224,10 +224,10 @@
     <value>今日</value>
   </data>
   <data name="RibbonCmdPreviousDay" xml:space="preserve">
-    <value>前日</value>
+    <value>戻る</value>
   </data>
   <data name="RibbonCmdNextDay" xml:space="preserve">
-    <value>翌日</value>
+    <value>進む</value>
   </data>
   <data name="RibbonCmdOpenIssue" xml:space="preserve">
     <value>チケットを
@@ -1705,5 +1705,29 @@ Outlookの状態を確認してください。</value>
   </data>
   <data name="VisualizeMsgConfirmSave" xml:space="preserve">
     <value>現在の結果が破棄されます。現在の結果を保存しますか？</value>
+  </data>
+  <data name="enumInputPeriodType1Day" xml:space="preserve">
+    <value>日</value>
+  </data>
+  <data name="enumInputPeriodType3Days" xml:space="preserve">
+    <value>過去 3 日</value>
+  </data>
+  <data name="enumInputPeriodType7Days" xml:space="preserve">
+    <value>過去 7 日</value>
+  </data>
+  <data name="enumInputPeriodTypeThisWeek" xml:space="preserve">
+    <value>週</value>
+  </data>
+  <data name="enumInputPeriodTypeWorkingDays" xml:space="preserve">
+    <value>稼働日</value>
+  </data>
+  <data name="enumTimeEntryTypeNotSpecified" xml:space="preserve">
+    <value>指定なし</value>
+  </data>
+  <data name="enumTimeEntryTypeOnTime" xml:space="preserve">
+    <value>定時内</value>
+  </data>
+  <data name="enumTimeEntryTypeOverTime" xml:space="preserve">
+    <value>定時外</value>
   </data>
 </root>

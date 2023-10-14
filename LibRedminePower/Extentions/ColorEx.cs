@@ -69,5 +69,13 @@ namespace LibRedminePower.Extentions
             };
             return 0.2126 * toRgb(color.R) + 0.7152 * toRgb(color.G) + 0.0722 * toRgb(color.B);
         }
+
+        /// <summary>
+        /// "#cce7ff" や "Cyan" などの文字列を SolidColorBrush に変換する
+        /// </summary>
+        public static System.Windows.Media.SolidColorBrush ToBrush(this string code)
+        {
+            return new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(code));
+        }
     }
 }

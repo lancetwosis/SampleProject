@@ -31,7 +31,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
         // https://www.colordic.org/colorsample/fff7f0
         public SpecifyUsersViewModel(TicketFiltersModel model, ReactivePropertySlim<RedmineManager> redmine)
-            : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyUsers), Color.FromRgb(0xFF, 0xF7, 0xF0))
+            : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyUsers), ColorEx.ToBrush("#fff7f0"))
         {
             CompositeDisposable myDisposables = null;
             redmine.Where(r => r != null).Subscribe(r =>

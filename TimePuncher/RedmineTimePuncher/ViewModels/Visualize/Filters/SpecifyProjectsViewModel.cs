@@ -31,7 +31,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
         // https://www.colordic.org/colorsample/fff1e6
         public SpecifyProjectsViewModel(TicketFiltersModel model, ReactivePropertySlim<RedmineManager> redmine)
-            : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyProjects), Color.FromRgb(0xFF, 0xF1, 0xE6))
+            : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyProjects), ColorEx.ToBrush("#fff1e6"))
         {
             CompositeDisposable myDisposables = null;
             redmine.Where(r => r != null).Subscribe(r =>

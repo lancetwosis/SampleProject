@@ -30,7 +30,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
         // https://www.colordic.org/colorsample/f7f0ff
         public SpecifyPeriodViewModel(TicketFiltersModel model, DateTime? createAt)
-            : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyPeriod), Color.FromRgb(0xF7, 0xF0, 0xFF))
+            : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyPeriod), ColorEx.ToBrush("#f7f0ff"))
         {
             PeriodMode = model.ToReactivePropertySlimAsSynchronized(a => a.PeriodMode).AddTo(disposables);
             Start = model.ToReactivePropertySlimAsSynchronized(a => a.Start).AddTo(disposables);

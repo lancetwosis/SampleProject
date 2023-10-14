@@ -11,31 +11,50 @@
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/SearchTypeToolTipText.xaml" />
+        <ResourceDictionary>
+            <converters:DateTimeToHeaderBackgroundConverter x:Key="DateTimeToHeaderBackgroundConverter" />
+        </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
     <selectors:MyGroupHeaderContentTemplateSelector x:Key="MyGroupHeaderContentTemplateSelector">
         <selectors:MyGroupHeaderContentTemplateSelector.HorizontalTemplate>
             <DataTemplate>
-                <Grid>
-                    <ContentPresenter MinHeight="18"
-                                      Margin="4"
-                                      HorizontalAlignment="Center"
-                                      VerticalAlignment="Center"
-                                      Content="{Binding FormattedName}" />
-                    <controls1:FilterTextBox Margin="2,0,3,0"
-                                             HorizontalAlignment="Left"
-                                             ClearTextCommand="{Binding DataContext.Input.ClearSearchText,
-                                                                        RelativeSource={RelativeSource Mode=FindAncestor,
-                                                                                                       AncestorType={x:Type Window}}}"
-                                             Text="{Binding DataContext.Input.SearchText.Value,
-                                                            Mode=TwoWay,
-                                                            UpdateSourceTrigger=PropertyChanged,
-                                                            RelativeSource={RelativeSource Mode=FindAncestor,
-                                                                                           AncestorType={x:Type Window}}}"
-                                             ToolTip="{StaticResource SearchTypeToolTipText}"
-                                             ToolTipService.ShowDuration="30000" />
+                <Border BorderBrush="LightGray"
+                        BorderThickness="0,0,1,1">
+                    <Grid>
+                        <Grid.Background>
+                            <MultiBinding Converter="{StaticResource DateTimeToHeaderBackgroundConverter}">
+                                <Binding Path="Name" />
+                                <Binding Path="DataContext.Settings.Calendar"
+                                         RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                         AncestorType=telerik:RadRibbonWindow}" />
+                            </MultiBinding>
+                        </Grid.Background>
 
-                </Grid>
+                        <ContentPresenter MinHeight="18"
+                                          Margin="4"
+                                          HorizontalAlignment="Center"
+                                          VerticalAlignment="Center"
+                                          Content="{Binding FormattedName}" />
+                        <controls1:FilterTextBox Margin="2,0,3,0"
+                                                 HorizontalAlignment="Left"
+                                                 ClearTextCommand="{Binding DataContext.Input.ClearSearchText,
+                                                                            RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                           AncestorType={x:Type Window}}}"
+                                                 Text="{Binding DataContext.Input.SearchText.Value,
+                                                                Mode=TwoWay,
+                                                                UpdateSourceTrigger=PropertyChanged,
+                                                                RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                               AncestorType={x:Type Window}}}"
+                                                 ToolTip="{StaticResource SearchTypeToolTipText}"
+                                                 ToolTipService.ShowDuration="30000"
+                                                 Visibility="{Binding DataContext.Input.PeriodType.Value,
+                                                                      RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                     AncestorType={x:Type Window}},
+                                                                      Converter={StaticResource EnumToVisibilityConverter},
+                                                                      ConverterParameter=OneDay}" />
+                    </Grid>
+                </Border>
             </DataTemplate>
         </selectors:MyGroupHeaderContentTemplateSelector.HorizontalTemplate>
 

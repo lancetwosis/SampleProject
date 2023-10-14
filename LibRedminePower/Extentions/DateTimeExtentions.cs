@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Telerik.Windows.Controls.ScheduleView;
 
 namespace LibRedminePower.Extentions
 {
@@ -64,6 +65,24 @@ namespace LibRedminePower.Extentions
             }
 
             return days;
+        }
+
+        /// <summary>
+        /// 週の最初の日曜日の 00:00:00 の DateTime を返す
+        /// </summary>
+        public static DateTime GetFirstDayOfWeek(this DateTime currentDate)
+        {
+            return CalendarHelper.GetFirstDayOfWeek(currentDate, DayOfWeek.Sunday);
+        }
+
+        /// <summary>
+        /// 週の最後の土曜日の 00:00:00 の DateTime を返す
+        /// </summary>
+        public static DateTime GetLastDayOfWeek(this DateTime currentDate)
+        {
+            // CalendarHelper.GetLastDayOfWeek では最後の曜日（weekStart が Sun なら Sut）の 23:59:59 が返る
+            var lastTime = CalendarHelper.GetLastDayOfWeek(currentDate, DayOfWeek.Sunday);
+            return lastTime.GetDateOnly();
         }
     }
 }

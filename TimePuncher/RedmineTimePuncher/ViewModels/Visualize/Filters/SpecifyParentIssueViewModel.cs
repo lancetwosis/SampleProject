@@ -30,7 +30,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
         // https://www.colordic.org/colorsample/f0fff7
         public SpecifyParentIssueViewModel(TicketFiltersModel model, ReactivePropertySlim<RedmineManager> redmine)
-            : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyParentIssue), Color.FromRgb(0xF0, 0xFF, 0xF7))
+            : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyParentIssue), ColorEx.ToBrush("#f0fff7"))
         {
             ParentIssueId = model.ToReactivePropertySlimAsSynchronized(a => a.ParentIssueId).AddTo(disposables);
 

@@ -431,6 +431,51 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Day に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumInputPeriodType1Day {
+            get {
+                return ResourceManager.GetString("enumInputPeriodType1Day", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last 3 days に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumInputPeriodType3Days {
+            get {
+                return ResourceManager.GetString("enumInputPeriodType3Days", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last 7 days に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumInputPeriodType7Days {
+            get {
+                return ResourceManager.GetString("enumInputPeriodType7Days", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Week に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumInputPeriodTypeThisWeek {
+            get {
+                return ResourceManager.GetString("enumInputPeriodTypeThisWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Working days に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumInputPeriodTypeWorkingDays {
+            get {
+                return ResourceManager.GetString("enumInputPeriodTypeWorkingDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   CSV Export に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumOutputTargetCsvExport {
@@ -625,6 +670,33 @@ namespace RedmineTimePuncher.Properties {
         public static string enumTickLength5 {
             get {
                 return ResourceManager.GetString("enumTickLength5", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Not Specified に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumTimeEntryTypeNotSpecified {
+            get {
+                return ResourceManager.GetString("enumTimeEntryTypeNotSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   On Time に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumTimeEntryTypeOnTime {
+            get {
+                return ResourceManager.GetString("enumTimeEntryTypeOnTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Over Time に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumTimeEntryTypeOverTime {
+            get {
+                return ResourceManager.GetString("enumTimeEntryTypeOverTime", resourceCulture);
             }
         }
         
@@ -2381,7 +2453,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Next Day に類似しているローカライズされた文字列を検索します。
+        ///   Next に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RibbonCmdNextDay {
             get {
@@ -2400,7 +2472,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Previous Day に類似しているローカライズされた文字列を検索します。
+        ///   Back に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RibbonCmdPreviousDay {
             get {

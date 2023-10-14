@@ -35,7 +35,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 var fields = Enum.GetValues(typeof(IssuePropertyType)).Cast<IssuePropertyType>().Where(a => a.IsTargetParrent()).Select(a => new FieldViewModel(new FieldModel(a), null)).ToList();
                 if (c != null && c.Any())
                 {
-                    fields.AddRange(c.Where(a => a.Visible && a.CustomizedType == "issue").Select(a => new FieldViewModel(new FieldModel(a.Id), a)));
+                    fields.AddRange(c.Where(a => a.Visible).Select(a => new FieldViewModel(new FieldModel(a.Id), a)));
                 }
 
                 return fields;

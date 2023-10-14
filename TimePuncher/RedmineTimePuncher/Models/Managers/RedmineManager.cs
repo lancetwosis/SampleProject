@@ -186,8 +186,8 @@ namespace RedmineTimePuncher.Models.Managers
 
         public List<ProjectMembership> GetMemberships(int projectId)
         {
-            return dicMemberShips.GetOrAdd(projectId.ToString(),
-                getObjectsByMasterManager<ProjectMembership>(new NameValueCollection() { { RedmineKeys.PROJECT_ID, projectId.ToString() } }));
+            return dicMemberShips.GetOrAdd(projectId.ToString(), _ => getObjectsByMasterManager<ProjectMembership>(
+                new NameValueCollection() { { RedmineKeys.PROJECT_ID, projectId.ToString() } }));
         }
 
         public string GetTicketNo(params string[] contents)
@@ -233,13 +233,13 @@ namespace RedmineTimePuncher.Models.Managers
 
         public Project GetProject(string id)
         {
-            return dicProjects.GetOrAdd(id,
-                Manager.GetObjectWithErrConv<Project>(id, new NameValueCollection { { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES } }));
+            return dicProjects.GetOrAdd(id, _ => Manager.GetObjectWithErrConv<Project>(id,
+                new NameValueCollection() { { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES } }));
         }
 
         public List<Redmine.Net.Api.Types.Version> GetVersions(int projectId)
         {
-            return dicVersions.GetOrAdd(projectId, Manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId));
+            return dicVersions.GetOrAdd(projectId, _ => Manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId));
         }
 
         public IEnumerable<MyIssue> GetMyTickets()
@@ -427,19 +427,18 @@ namespace RedmineTimePuncher.Models.Managers
         /// </summary>
         public TimeEntry GetTimeEntry(string subject)
         {
-            if (dicTimeEntries.TryGetValue(subject, out var result))
-                return result;
-
-            var parameters = new NameValueCollection()
+            return dicTimeEntries.GetOrAdd(subject, _ =>
             {
-                // 「~」を追加することで文字列が正規表現として扱われる
-                { RedmineKeys.COMMENTS, $"~{System.Web.HttpUtility.UrlEncode(subject)}" },
-                { RedmineKeys.LIMIT, "1" },
-                { RedmineKeys.USER_ID, $"{MyUserId}" },
-            };
-            var entries = Manager.GetObjectsWithErrConv<TimeEntry>(parameters);
-            dicTimeEntries[subject] = entries != null ? entries.FirstOrDefault() : null;
-            return dicTimeEntries[subject];
+                var parameters = new NameValueCollection()
+                {
+                    // 「~」を追加することで文字列が正規表現として扱われる
+                    { RedmineKeys.COMMENTS, $"~{System.Web.HttpUtility.UrlEncode(subject)}" },
+                    { RedmineKeys.LIMIT, "1" },
+                    { RedmineKeys.USER_ID, $"{MyUserId}" },
+                };
+                var entries = Manager.GetObjectsWithErrConv<TimeEntry>(parameters);
+                return entries != null ? entries.FirstOrDefault() : null;
+            });
         }
 
         /// <summary>
@@ -706,7 +705,7 @@ namespace RedmineTimePuncher.Models.Managers
             if (reload)
                 dicJournalIssues.TryRemove(ticketNo, out _);
 
-            return dicJournalIssues.GetOrAdd(ticketNo, getIssueJournalApi(ticketNo));
+            return dicJournalIssues.GetOrAdd(ticketNo, _ => getIssueJournalApi(ticketNo));
         }
 
         private Issue getIssueJournalApi(string ticketNo)

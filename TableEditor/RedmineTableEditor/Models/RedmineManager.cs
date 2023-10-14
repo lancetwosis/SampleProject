@@ -54,7 +54,8 @@ namespace RedmineTableEditor.Models
             await Task.Run(() =>
             {
                 allTrackers = manager.GetObjectsWithErrConv<Tracker>();
-                allCustomFields = masterManager.GetObjectsWithErrConv<CustomField>();
+                allCustomFields = masterManager.GetObjectsWithErrConv<CustomField>()
+                    .Where(c => c.Trackers != null && c.Trackers.Any() && c.CustomizedType == "issue").ToList();
 
                 Statuses = manager.GetObjectsWithErrConv<IssueStatus>();
                 Priorities = manager.GetObjectsWithErrConv<IssuePriority>();
@@ -76,7 +77,7 @@ namespace RedmineTableEditor.Models
                 {
                     // 全プロジェクト向けのクエリだった場合、そのクエリで取得した Issue に紐づくすべてのプロジェクトを対象とする
                     var issues = GetIssues(query);
-                    if (issues == null)
+                    if (issues == null || issues.Count == 0)
                     {
                         Trackers = new List<Tracker>();
                         CustomFields = new List<CustomField>();

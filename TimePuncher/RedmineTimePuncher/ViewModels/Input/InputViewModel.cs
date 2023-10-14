@@ -51,6 +51,11 @@ namespace RedmineTimePuncher.ViewModels.Input
 
         #region "スケジュール"
         public ReactivePropertySlim<DateTime> CurrentDate { get; set; }
+        public ReactivePropertySlim<InputPeriodType> PeriodType { get; set; }
+        /// <summary>
+        /// ScheduleView の ActiveViewDefinitionIndex と TwoWay でバインドするため ReadOnly にはしない
+        /// </summary>
+        public ReactivePropertySlim<int> ActiveViewIndex { get; set; }
         public ObservableCollection<MyAppointment> Appointments { get; set; }
         public ReactiveProperty<List<MyAppointment>> SelectedAppointments { get; set; }
         public ReadOnlyReactivePropertySlim<int> SelectedAppointmentsCount { get; set; }
@@ -123,6 +128,12 @@ namespace RedmineTimePuncher.ViewModels.Input
             this.Parent = parent;
 
             CurrentDate = new ReactivePropertySlim<DateTime>(DateTime.Today).AddTo(disposables);
+            PeriodType = new ReactivePropertySlim<InputPeriodType>().AddTo(disposables);
+            ActiveViewIndex = new ReactivePropertySlim<int>().AddTo(disposables);
+            PeriodType.Skip(1).Subscribe(p =>
+            {
+                ActiveViewIndex.Value = p.ToIndex();
+            });
 
             Appointments = new ObservableCollection<MyAppointment>();
             DeletedAppointments = new ObservableCollection<MyAppointment>();
@@ -173,8 +184,14 @@ namespace RedmineTimePuncher.ViewModels.Input
                 MyAppointment.IsAutoSameName = a;
             }).AddTo(disposables);
 
-            StartTime = CurrentDate.Select(a => a.Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            EndTime = CurrentDate.Select(a => a.AddDays(1).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            StartTime = CurrentDate.CombineLatest(PeriodType, (d, p) => p.GetStartDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            EndTime = CurrentDate.CombineLatest(PeriodType, (d, p) => p.GetEndDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            // StartTime と EndTime の値が更新されてから実行したいのでここで定義する
+            PeriodType.Skip(1).Subscribe(async p =>
+            {
+                if (!skipLoadAppointments.IsBusy)
+                    await ReloadCommand.Command.ExecuteAsync();
+            });
 
             // タイムマーカーを作成する。
             TimeMarkers = new ObservableCollection<TimeMarker>();
@@ -336,11 +353,11 @@ namespace RedmineTimePuncher.ViewModels.Input
             DecreaseDateCommand = new CommandBase(
                 Properties.Resources.RibbonCmdPreviousDay, Properties.Resources.back32,
                 Parent.Redmine.Select(a => a != null ? null : ""),
-                () => CurrentDate.Value = CurrentDate.Value.AddDays(-1)).AddTo(disposables);
+                () => CurrentDate.Value = CurrentDate.Value.AddDays(-1 * PeriodType.Value.GetIntervalDays())).AddTo(disposables);
             IncreaseDateCommand = new CommandBase(
                 Properties.Resources.RibbonCmdNextDay, Properties.Resources.next32,
                 Parent.Redmine.Select(a => a != null ? null : ""),
-                () => CurrentDate.Value = CurrentDate.Value.AddDays(1)).AddTo(disposables);
+                () => CurrentDate.Value = CurrentDate.Value.AddDays(PeriodType.Value.GetIntervalDays())).AddTo(disposables);
             #endregion
 
             #region ""********* リボン（全般） *********"
@@ -491,6 +508,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     using (skipLoadAppointments.ProcessStart())
                     {
                         CurrentDate.Value = Properties.Settings.Default.LastSelectedDate;
+                        PeriodType.Value = (InputPeriodType)Properties.Settings.Default.LastInputPeriodType;
                         if (!string.IsNullOrEmpty(Properties.Settings.Default.LastAppointments))
                         {
                             var items = CloneExtentions.ToObject<List<MyAppointmentSave>>(Properties.Settings.Default.LastAppointments);
@@ -568,6 +586,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     Properties.Settings.Default.LastAppointments = null;
                 }
             }
+            Properties.Settings.Default.LastInputPeriodType = (int)PeriodType.Value;
 
             // TicketGridViewの設定を保存
             if (Redmine.TicketList.Value != null)

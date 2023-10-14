@@ -31,10 +31,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
         protected string NAN = "NaN";
 
-        public FilterGroupViewModelBase(ReactivePropertySlim<bool> isEnabled, Color background)
+        public FilterGroupViewModelBase(ReactivePropertySlim<bool> isEnabled, SolidColorBrush background)
         {
             IsEnabled = isEnabled.AddTo(disposables);
-            Background = new SolidColorBrush(background);
+            Background = background;
         }
     }
 }

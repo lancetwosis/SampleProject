@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 namespace RedmineTimePuncher.Enums
 {
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
-
     // 定義の順番が NavigationView での表示順と処理に影響するので注意すること
     public enum ApplicationMode
     {

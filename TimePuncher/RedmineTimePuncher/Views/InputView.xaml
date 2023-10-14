@@ -8,6 +8,8 @@
              xmlns:controls="clr-namespace:RedmineTimePuncher.Views.Controls"
              xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:enums="clr-namespace:RedmineTimePuncher.Enums"
+             xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
              xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
              xmlns:inputControl="clr-namespace:RedmineTimePuncher.ViewModels.Input.Controls"
              xmlns:interactivity="clr-namespace:Reactive.Bindings.Interactivity;assembly=ReactiveProperty.WPF"
@@ -140,6 +142,17 @@
                     </telerik:RadRibbonGroup>
                     <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupCalendar}">
                         <telerik:RadCollapsiblePanel>
+                            <TextBlock Style="{StaticResource RibbonTextBlockKStyle}"
+                                       Text="表示形式:" />
+                            <telerik:RadRibbonComboBox Margin="5,5,3,0"
+                                                       VerticalAlignment="Top"
+                                                       IsEditable="False"
+                                                       ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enums:InputPeriodType}}}"
+                                                       OpenDropDownOnFocus="False"
+                                                       SelectedItem="{Binding Input.PeriodType.Value}" />
+                        </telerik:RadCollapsiblePanel>
+                        <telerik:Separator />
+                        <telerik:RadCollapsiblePanel>
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Input.SetTodayCommand}" />
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Input.DecreaseDateCommand}" />
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Input.IncreaseDateCommand}" />
@@ -236,6 +249,8 @@
                     </Grid>
                     <Grid Grid.Column="1">
                         <telerikScheduleView:RadScheduleView x:Name="scheduleView"
+                                                             ActiveViewDefinitionIndex="{Binding Input.ActiveViewIndex.Value,
+                                                                                                 Mode=TwoWay}"
                                                              AppointmentStyleSelector="{StaticResource MyAppointmentItemStyleSelector}"
                                                              AppointmentsSource="{Binding Input.Appointments}"
                                                              CurrentDate="{Binding Input.CurrentDate.Value,
@@ -246,6 +261,7 @@
                                                              InlineEditingTemplate="{StaticResource MyInlineEditTemplate}"
                                                              IsInlineEditingEnabled="True"
                                                              Loaded="scheduleView_Loaded"
+                                                             VisibleRangeChanged="scheduleView_VisibleRangeChanged"
                                                              MinAppointmentWidth="20"
                                                              ResizeHighlightStyle="{StaticResource MyResizeHighlightStyle}"
                                                              ResourceTypesSource="{Binding Input.ResourceTypes}"
@@ -323,6 +339,11 @@
                                                               StretchGroupHeaders="True"
                                                               TimerulerMajorTickStringFormat="{}{0:HH}:{0:mm}    "
                                                               TimerulerMinorTickStringFormat="{}{0:mm}" />
+                                <!--  複数日（ThisWeek, WorkingDays, Last3Days, Last7Days）の分だけ定義し Index での切り替えに対応する  -->
+                                <controls:MyWeekViewDefinition DataContext="{Binding DataContext.Input, ElementName=scheduleView}" />
+                                <controls:MyWeekViewDefinition DataContext="{Binding DataContext.Input, ElementName=scheduleView}" />
+                                <controls:MyWeekViewDefinition DataContext="{Binding DataContext.Input, ElementName=scheduleView}" />
+                                <controls:MyWeekViewDefinition DataContext="{Binding DataContext.Input, ElementName=scheduleView}" />
                             </telerikScheduleView:RadScheduleView.ViewDefinitions>
 
                             <telerikScheduleView:RadScheduleView.ContextMenu>

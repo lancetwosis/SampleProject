@@ -17,26 +17,26 @@ namespace LibRedminePower.Extentions
     {
         public static User GetCurrentUserWithErrConv(this IRedmineManager manager, NameValueCollection parameters = null)
         {
-            return exec(() => manager.GetCurrentUser(parameters), nameof(GetCurrentUserWithErrConv));
+            return getObject(() => manager.GetCurrentUser(parameters), nameof(GetCurrentUserWithErrConv));
         }
 
         public static T GetObjectWithErrConv<T>(this IRedmineManager manager, string id, NameValueCollection parameters = null) where T : class, new()
         {
-            return exec(() => manager.GetObject<T>(id, parameters != null ? parameters : new NameValueCollection()), HttpVerbs.GET);
+            return getObject(() => manager.GetObject<T>(id, parameters != null ? parameters : new NameValueCollection()), HttpVerbs.GET);
         }
 
         public static List<T> GetObjectsWithErrConv<T>(this IRedmineManager manager, params string[] include) where T : class, new()
         {
-            return exec(() => manager.GetObjects<T>(include), HttpVerbs.GET);
+            return getObjects(() => manager.GetObjects<T>(include), HttpVerbs.GET);
         }
 
         public static List<T> GetObjectsWithErrConv<T>(this IRedmineManager manager, NameValueCollection parameters) where T : class, new()
         {
-            return exec(() => manager.GetObjects<T>(parameters), HttpVerbs.GET);
+            return getObjects(() => manager.GetObjects<T>(parameters), HttpVerbs.GET);
         }
         public static List<T> GetObjectsWithErrConv<T>(this IRedmineManager manager, int projectId) where T : class, new()
         {
-            return exec(() => manager.GetObjects<T>(new NameValueCollection { { RedmineKeys.PROJECT_ID, projectId.ToString() } }), HttpVerbs.GET);
+            return getObjects(() => manager.GetObjects<T>(new NameValueCollection { { RedmineKeys.PROJECT_ID, projectId.ToString() } }), HttpVerbs.GET);
         }
 
         public static List<T> GetObjectsWithErrConv<T>(this IRedmineManager manager, string redmineKey, List<string> values, NameValueCollection param = null) where T : class, new()
@@ -45,12 +45,12 @@ namespace LibRedminePower.Extentions
                 param.Add(redmineKey, string.Join(",", values));
             else
                 param = new NameValueCollection() { { redmineKey, string.Join(",", values) } };
-            return exec(() => manager.GetObjects<T>(param), HttpVerbs.GET);
+            return getObjects(() => manager.GetObjects<T>(param), HttpVerbs.GET);
         }
 
         public static T CreateObjectWithErrConv<T>(this IRedmineManager manager, T obj) where T : class, new()
         {
-            return exec(() => manager.CreateObject(obj, null), HttpVerbs.POST);
+            return getObject(() => manager.CreateObject(obj, null), HttpVerbs.POST);
         }
 
         public static void UpdateObjectWithErrConv<T>(this IRedmineManager manager, string id, T obj) where T : class, new()
@@ -65,7 +65,7 @@ namespace LibRedminePower.Extentions
 
         public static List<WikiPage> GetAllWikiPagesWithErrConv(this IRedmineManager manager, string projIdentifier)
         {
-            return exec(() => manager.GetAllWikiPages(projIdentifier), HttpVerbs.GET);
+            return getObjects(() => manager.GetAllWikiPages(projIdentifier), HttpVerbs.GET);
         }
 
         private static void exec<T>(Action action, string method)
@@ -81,7 +81,7 @@ namespace LibRedminePower.Extentions
             }
         }
 
-        private static T exec<T>(Func<T> action, string method)
+        private static T getObject<T>(Func<T> action, string method)
         {
             try
             {
@@ -94,11 +94,12 @@ namespace LibRedminePower.Extentions
             }
         }
 
-        private static List<T> exec<T>(Func<List<T>> action, string method)
+        private static List<T> getObjects<T>(Func<List<T>> action, string method)
         {
             try
             {
-                return action.Invoke();
+                var result = action.Invoke();
+                return result != null ? result : new List<T>();
             }
             catch (Exception e)
             {

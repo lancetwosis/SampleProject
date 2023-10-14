@@ -26,6 +26,8 @@ namespace RedmineTimePuncher.Models.Settings
         public PersonalHolidaySettingModel OffTimeFromCatetories { get; set; }
         public PersonalHolidaySettingModel OffTimeFromSubject { get; set; }
 
+        private WorkingDaySettingModel[] daysOfWeek { get; set; }
+
         public CalendarSettingsModel()
         {
             Sun = new WorkingDaySettingModel(DayOfWeek.Sunday,    false);
@@ -35,6 +37,7 @@ namespace RedmineTimePuncher.Models.Settings
             Thu = new WorkingDaySettingModel(DayOfWeek.Thursday,  true);
             Fri = new WorkingDaySettingModel(DayOfWeek.Friday,    true);
             Sat = new WorkingDaySettingModel(DayOfWeek.Saturday,  false);
+            daysOfWeek = new[] { Sun, Mon, Tue, Wed, Thu, Fri, Sat };
 
             SpecialDates = new ObservableCollection<DateTime>();
 
@@ -44,8 +47,6 @@ namespace RedmineTimePuncher.Models.Settings
 
         public bool IsWorkingDay(DateTime date)
         {
-            var daysOfWeek = new[] { Sun, Mon, Tue, Wed, Thu, Fri, Sat };
-
             var special = SpecialDates.FirstOrDefault(d => d == date);
             if (special != default(DateTime))
                 return !daysOfWeek.First(w => w.DayOfWeek == special.DayOfWeek).IsWorkingDay;
@@ -56,6 +57,26 @@ namespace RedmineTimePuncher.Models.Settings
         public bool IsOnTimeAppointment(MyAppointment appo)
         {
             return !OffTimeFromSubject.IsMatch(appo.Subject) && !OffTimeFromCatetories.IsMatch(appo.OutlookCategories);
+        }
+
+        public DateTime GetFirstWorkingDayOfWeek(DateTime currentDate)
+        {
+            var firstDay = currentDate.GetFirstDayOfWeek();
+            var workingDay = daysOfWeek.FirstOrDefault(d => d.IsWorkingDay);
+            if (workingDay != null)
+                return firstDay.AddDays(workingDay.DayOfWeek - firstDay.DayOfWeek);
+            else
+                return firstDay;
+        }
+
+        public DateTime GetLastWorkingDayOfWeek(DateTime currentDate)
+        {
+            var lastDay = currentDate.GetLastDayOfWeek();
+            var workingDay = daysOfWeek.LastOrDefault(d => d.IsWorkingDay);
+            if (workingDay != null)
+                return lastDay.AddDays(workingDay.DayOfWeek - lastDay.DayOfWeek);
+            else
+                return lastDay;
         }
     }
 
