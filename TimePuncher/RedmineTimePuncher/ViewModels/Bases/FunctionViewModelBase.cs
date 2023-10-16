@@ -1,6 +1,8 @@
-﻿using Reactive.Bindings;
+﻿using LibRedminePower.Applications;
+using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
+using RedmineTimePuncher.Models.Managers;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -24,6 +26,8 @@ namespace RedmineTimePuncher.ViewModels.Bases
         public ReadOnlyReactivePropertySlim<bool> IsSelected { get; set; }
         [JsonIgnore]
         public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
+        [JsonIgnore]
+        public ReadOnlyReactivePropertySlim<string> Title { get; set; }
 
         public FunctionViewModelBase() { }
 
@@ -32,6 +36,12 @@ namespace RedmineTimePuncher.ViewModels.Bases
             Mode = mode;
             Icon = mode.GetIcon();
             IsSelected = parent.Mode.Select(m => m == mode).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = parent.Redmine.Select(r => getTitle(r)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+        }
+
+        protected string getTitle(RedmineManager r)
+        {
+            return $"{r?.MyUser.Name}  -  {ApplicationInfo.Title}";
         }
 
         /// <summary>

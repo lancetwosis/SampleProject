@@ -187,11 +187,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             StartTime = CurrentDate.CombineLatest(PeriodType, (d, p) => p.GetStartDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             EndTime = CurrentDate.CombineLatest(PeriodType, (d, p) => p.GetEndDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             // StartTime と EndTime の値が更新されてから実行したいのでここで定義する
-            PeriodType.Skip(1).Subscribe(async p =>
-            {
-                if (!skipLoadAppointments.IsBusy)
-                    await ReloadCommand.Command.ExecuteAsync();
-            });
+            PeriodType.Skip(1).Subscribe(async p => await ReloadIfNeededAsync());
 
             // タイムマーカーを作成する。
             TimeMarkers = new ObservableCollection<TimeMarker>();
@@ -481,6 +477,9 @@ namespace RedmineTimePuncher.ViewModels.Input
 
                 e.Handled = true;
             }).AddTo(disposables);
+
+            Title = parent.Redmine.CombineLatest(CurrentDate, (r, c) =>
+                $"{c.ToString("yyyy/MM/dd (ddd)")}  {getTitle(r)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         private DateTime getMyToday()
@@ -494,6 +493,12 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 return DateTime.Today;
             }
+        }
+
+        public async Task ReloadIfNeededAsync()
+        {
+            if (IsSelected.Value && !skipLoadAppointments.IsBusy)
+                await ReloadCommand.Command.ExecuteAsync();
         }
 
         public override void OnWindowLoaded(RoutedEventArgs e)

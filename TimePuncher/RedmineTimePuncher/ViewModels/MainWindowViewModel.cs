@@ -125,6 +125,8 @@ namespace RedmineTimePuncher.ViewModels
                             }
 
                             Redmine.Value = manager;
+
+                            await Input.ReloadIfNeededAsync();
                         }
                         catch (Exception ex)
                         {
@@ -165,20 +167,8 @@ namespace RedmineTimePuncher.ViewModels
                 }
             });
 
-            Title = Mode.CombineLatest(
-                Input.CurrentDate,
-                TableEditor.ViewModel.TitlePrefix,
-                Visualize.TitlePrefix, (m, c, p, p2) =>
-            {
-                if (m == ApplicationMode.TimePuncher)
-                    return $"{c.ToString("yyyy/MM/dd (ddd)")}  -  {ApplicationInfo.Title}";
-                else if (m == ApplicationMode.TableEditor)
-                    return $"{p}  -  {ApplicationInfo.Title}";
-                else if (m == ApplicationMode.Visualizer)
-                    return string.IsNullOrEmpty(p2) ? $"{ApplicationInfo.Title}" : $"{p2}  -  {ApplicationInfo.Title}";
-                else
-                    return $"{ApplicationInfo.Title}";
-            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = Functions.Select(f => f.Title).CombineLatest().CombineLatest(Mode, (ts, m) => true)
+                .Select(_ => Functions.First(f => f.IsSelected.Value).Title.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             // バージョンダイアログを開く
             ShowVersionDialogCommand = new ReactiveCommand().WithSubscribe(() =>

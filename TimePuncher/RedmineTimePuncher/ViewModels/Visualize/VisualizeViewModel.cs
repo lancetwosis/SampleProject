@@ -195,6 +195,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             {
                 Result.AddNewFilter();
             }).AddTo(disposables);
+
+            Title = parent.Redmine.CombineLatest(TitlePrefix, (r, p) => 
+                string.IsNullOrEmpty(p) ? getTitle(r) : $"{p}  {getTitle(r)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         public override void OnWindowClosed()

@@ -31,6 +31,8 @@ namespace RedmineTimePuncher.ViewModels.TableEditor
                 if (i)
                     ViewModel.LoadFirstSettings(fileName);
             }).AddTo(disposables);
+
+            Title = parent.Redmine.CombineLatest(ViewModel.TitlePrefix, (r, p) => $"{p}  {getTitle(r)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         private string fileName;

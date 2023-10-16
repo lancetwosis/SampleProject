@@ -395,7 +395,7 @@ namespace RedmineTimePuncher.Models
             Category = ProjectCategories.Value.SingleOrDefault(a => a.Id == entry.ActivityId.Value);
             TimeEntryId = entry.Entry.Id;
             FromEntryId = entry.FromId;
-            TimeEntryType = entry.Type == Enums.TimeEntryType.OverTime ? "(定時外)" : null ;
+            TimeEntryType = entry.Type == Enums.TimeEntryType.OverTime ? $"({Enums.TimeEntryType.OverTime.GetDescription()})" : null ;
         }
 
         public MyAppointment(IResource resource, MyTimeEntry entry, MyAppointment parent) : this(resource, entry)
