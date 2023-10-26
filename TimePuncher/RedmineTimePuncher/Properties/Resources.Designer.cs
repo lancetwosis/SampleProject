@@ -1249,6 +1249,18 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Do you want to export spent times of the following date?
+        ///(The selected date or the date with the last selected appointment is the target of export)
+        ///
+        ///- {0} に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string msgConfExport {
+            get {
+                return ResourceManager.GetString("msgConfExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   The appointments are overlapped. Align them so that they do not overlap. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string msgErrDuplicateAppointment {
@@ -1321,6 +1333,15 @@ namespace RedmineTimePuncher.Properties {
         public static string msgErrSelectAppoOtherThanSpentTime {
             get {
                 return ResourceManager.GetString("msgErrSelectAppoOtherThanSpentTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   You cannot hide all calendars. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string msgErrSelectOneOrMore {
+            get {
+                return ResourceManager.GetString("msgErrSelectOneOrMore", resourceCulture);
             }
         }
         

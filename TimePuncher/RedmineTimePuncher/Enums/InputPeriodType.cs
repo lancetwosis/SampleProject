@@ -16,6 +16,7 @@ namespace RedmineTimePuncher.Enums
     [TypeConverter(typeof(EnumDescriptionTypeConverter))]
     public enum InputPeriodType
     {
+        // RadScheduleView.ViewDefinitions に影響するので定義順に注意。
         [LocalizedDescription(nameof(Resources.enumInputPeriodType1Day), typeof(Resources))]
         OneDay,
         [LocalizedDescription(nameof(Resources.enumInputPeriodTypeThisWeek), typeof(Resources))]
@@ -30,28 +31,6 @@ namespace RedmineTimePuncher.Enums
 
     public static class InputPeriodTypeEx
     {
-        /// <summary>
-        /// RadScheduleView.ViewDefinitions の定義順を返す。
-        /// </summary>
-        public static int ToIndex(this InputPeriodType type)
-        {
-            switch (type)
-            {
-                case InputPeriodType.OneDay:
-                    return 0;
-                case InputPeriodType.ThisWeek:
-                    return 1;
-                case InputPeriodType.WorkingDays:
-                    return 2;
-                case InputPeriodType.Last3Days:
-                    return 3;
-                case InputPeriodType.Last7Days:
-                    return 4;
-                default:
-                    throw new InvalidOperationException();
-            }
-        }
-
         public static DateTime GetStartDate(this InputPeriodType type, DateTime currentDate, CalendarSettingsModel calendar)
         {
             switch (type)

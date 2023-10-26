@@ -1730,4 +1730,13 @@ Outlookの状態を確認してください。</value>
   <data name="enumTimeEntryTypeOverTime" xml:space="preserve">
     <value>定時外</value>
   </data>
+  <data name="msgErrSelectOneOrMore" xml:space="preserve">
+    <value>カレンダーをすべて非表示にすることはできません。</value>
+  </data>
+  <data name="msgConfExport" xml:space="preserve">
+    <value>以下の日付の作業実績を出力します。よろしいですか？
+（選択された日付もしくは最後に選択された予定のある日付が出力の対象となります）
+
+- {0}</value>
+  </data>
 </root>

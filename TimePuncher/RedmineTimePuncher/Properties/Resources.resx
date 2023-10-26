@@ -1834,4 +1834,13 @@ The order of the lines is the order in which the filing conditions are applied.<
   <data name="enumTimeEntryTypeOverTime" xml:space="preserve">
     <value>Over Time</value>
   </data>
+  <data name="msgErrSelectOneOrMore" xml:space="preserve">
+    <value>You cannot hide all calendars.</value>
+  </data>
+  <data name="msgConfExport" xml:space="preserve">
+    <value>Do you want to export spent times of the following date?
+(The selected date or the date with the last selected appointment is the target of export)
+
+- {0}</value>
+  </data>
 </root>

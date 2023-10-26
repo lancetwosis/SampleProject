@@ -261,7 +261,6 @@
                                                              InlineEditingTemplate="{StaticResource MyInlineEditTemplate}"
                                                              IsInlineEditingEnabled="True"
                                                              Loaded="scheduleView_Loaded"
-                                                             VisibleRangeChanged="scheduleView_VisibleRangeChanged"
                                                              MinAppointmentWidth="20"
                                                              ResizeHighlightStyle="{StaticResource MyResizeHighlightStyle}"
                                                              ResourceTypesSource="{Binding Input.ResourceTypes}"
@@ -278,7 +277,8 @@
                                                              TimeRulerItemTemplateSelector="{StaticResource MyTimeRulerItemTemplateSelector}"
                                                              TodayButtonVisibility="Visible"
                                                              ToolTipService.ShowDuration="10000"
-                                                             ToolTipTemplate="{StaticResource MyTooltipTemplate}">
+                                                             ToolTipTemplate="{StaticResource MyTooltipTemplate}"
+                                                             VisibleRangeChanged="scheduleView_VisibleRangeChanged">
                             <telerik:RadScheduleView.SchedulerDialogHostFactory>
                                 <inputControl:CustomScheduleViewDialogHostFactory />
                             </telerik:RadScheduleView.SchedulerDialogHostFactory>

@@ -353,9 +353,13 @@ namespace RedmineTimePuncher.ViewModels.Input
                 canExport,
                 async () =>
                 {
+                    var targetDate = confirmExportIfNeeded();
+                    if (!targetDate.HasValue)
+                        return;
+
                     TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(ToCSVCommand) + ".Executed");
 
-                    parent.Parent.Settings.OutputData.CsvExport.Export(parent.CurrentDate.Value, MyWorksApos);
+                    parent.Parent.Settings.OutputData.CsvExport.Export(targetDate.Value, MyWorksApos);
                     await Task.CompletedTask;
                 }).AddTo(disposables);
 
@@ -371,9 +375,13 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }).CombineLatestFirstOrDefault(a => a != null),
                 async () =>
                 {
+                    var targetDate = confirmExportIfNeeded();
+                    if (!targetDate.HasValue)
+                        return;
+
                     TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(ToExtToolCommand) + ".Executed");
 
-                    parent.Parent.Settings.OutputData.Exec(parent.CurrentDate.Value, MyWorksApos);
+                    parent.Parent.Settings.OutputData.Exec(targetDate.Value, MyWorksApos);
                     await Task.CompletedTask;
                 }).AddTo(disposables);
 
@@ -699,6 +707,22 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             parent.Appointments.RemoveAll(a => removeApos.Contains(a));
             parent.Appointments.AddRange(result);
+        }
+
+        private DateTime? confirmExportIfNeeded()
+        {
+            var targetDate = parent.CurrentDate.Value;
+            if (parent.PeriodType.Value == InputPeriodType.OneDay)
+                return targetDate;
+
+            if (parent.SelectedAppointments.Value.Any())
+                targetDate = parent.SelectedAppointments.Value.Last().Start.GetDateOnly();
+
+            var result = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfExport, targetDate.ToString("yyyy/MM/dd(ddd)")));
+            if (!result.HasValue || !result.Value)
+                return null;
+            else
+                return targetDate;
         }
     }
 }

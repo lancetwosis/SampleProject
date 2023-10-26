@@ -42,9 +42,13 @@
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
-                        <CheckBox Margin="2"
-                                  Content="{Binding DisplayName}"
-                                  IsChecked="{Binding IsEnabled}" />
+                        <Grid Margin="2"
+                              ToolTip="{Binding ToolTip.Value}">
+                            <CheckBox Content="{Binding DisplayName}"
+                                      IsChecked="{Binding IsEnabled}"
+                                      IsEnabled="{Binding IsLastEnabled.Value,
+                                                          Converter={StaticResource InvertedBooleanConverter}}" />
+                        </Grid>
                     </DataTemplate>
                 </ItemsControl.ItemTemplate>
             </ItemsControl>

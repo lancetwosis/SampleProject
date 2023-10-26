@@ -52,9 +52,6 @@ namespace RedmineTimePuncher.ViewModels.Input
         #region "スケジュール"
         public ReactivePropertySlim<DateTime> CurrentDate { get; set; }
         public ReactivePropertySlim<InputPeriodType> PeriodType { get; set; }
-        /// <summary>
-        /// ScheduleView の ActiveViewDefinitionIndex と TwoWay でバインドするため ReadOnly にはしない
-        /// </summary>
         public ReactivePropertySlim<int> ActiveViewIndex { get; set; }
         public ObservableCollection<MyAppointment> Appointments { get; set; }
         public ReactiveProperty<List<MyAppointment>> SelectedAppointments { get; set; }
@@ -128,11 +125,23 @@ namespace RedmineTimePuncher.ViewModels.Input
             this.Parent = parent;
 
             CurrentDate = new ReactivePropertySlim<DateTime>(DateTime.Today).AddTo(disposables);
+
             PeriodType = new ReactivePropertySlim<InputPeriodType>().AddTo(disposables);
             ActiveViewIndex = new ReactivePropertySlim<int>().AddTo(disposables);
+            var nowChanging = new BusyNotifier();
             PeriodType.Skip(1).Subscribe(p =>
             {
-                ActiveViewIndex.Value = p.ToIndex();
+                if (nowChanging.IsBusy) return;
+
+                using (nowChanging.ProcessStart())
+                    ActiveViewIndex.Value = (int)p;
+            });
+            ActiveViewIndex.Skip(1).Subscribe(i =>
+            {
+                if (nowChanging.IsBusy) return;
+                // View で日付をダブルクリックすると「１日表示」に切り替わるため設定に反映する
+                using (nowChanging.ProcessStart())
+                    PeriodType.Value = (InputPeriodType)i;
             });
 
             Appointments = new ObservableCollection<MyAppointment>();
@@ -218,6 +227,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             if (Properties.Settings.Default.ResourcesUnVisibles == null)
                 Properties.Settings.Default.ResourcesUnVisibles = new System.Collections.Specialized.StringCollection();
             ResourceSettingList = MyType.Resources.ToReadOnlyReactiveCollection(a => new ResourceSettingViewModel(a as MyResourceBase)).AddTo(disposables);
+            ResourceSettingList.CollectionChangedAsObservable().StartWithDefault().Subscribe(_ => ResourceSettingList.ToList().ForEach(r => r.SetIsLastEnabled(ResourceSettingList))).AddTo(disposables);
 
             GroupFilter = ResourceSettingList.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
                 ResourceSettingList.ObserveElementProperty(a => a.IsEnabled).StartWithDefault(), (_, __) =>
