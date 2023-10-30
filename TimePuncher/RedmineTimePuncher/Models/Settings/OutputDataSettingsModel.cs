@@ -16,7 +16,7 @@ namespace RedmineTimePuncher.Models.Settings
 
         public static string FILE_NAME = "{filename}";
 
-        public Process Exec(DateTime curDate, IEnumerable<MyAppointment> target)
+        public Process ExportToExtTool(DateTime curDate, IEnumerable<MyAppointment> targets)
         {
             if (!System.IO.File.Exists(ExtTool.FileName))
             {
@@ -29,9 +29,7 @@ namespace RedmineTimePuncher.Models.Settings
 
             // ファイルを出力する。
             var argFileName = System.IO.Path.GetTempFileName();
-            System.IO.File.WriteAllLines(argFileName,
-                target.OrderBy(a => a.Start).Select(a => a.ToCsvLine(CsvExport.ExportItems)),
-                Encoding.GetEncoding("Shift_JIS"));
+            CsvExport.Export(argFileName, targets);
 
             var argment = string.IsNullOrEmpty(ExtTool.Argument) ? FILE_NAME : ExtTool.Argument;
             var arg = Regex.Replace(argment, FILE_NAME, argFileName, RegexOptions.IgnoreCase);

@@ -264,5 +264,15 @@ namespace RedmineTimePuncher.Models.Settings
 
             return results;
         }
+
+        /// <summary>
+        /// target が date に含まれる予定かどうかを返す
+        /// </summary>
+        public bool Contains(DateTime date, MyAppointment target)
+        {
+            var start = date.GetDateOnly().Add(DayStartTime);
+            var end = date.GetDateOnly().Add(DayStartTime).AddDays(1);
+            return start <= target.Start && target.End <= end;
+        }
     }
 }

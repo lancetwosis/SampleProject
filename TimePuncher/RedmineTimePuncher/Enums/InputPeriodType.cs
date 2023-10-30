@@ -31,6 +31,9 @@ namespace RedmineTimePuncher.Enums
 
     public static class InputPeriodTypeEx
     {
+        /// <summary>
+        /// 開始日の 00:00:00 を返す
+        /// </summary>
         public static DateTime GetStartDate(this InputPeriodType type, DateTime currentDate, CalendarSettingsModel calendar)
         {
             switch (type)
@@ -50,6 +53,9 @@ namespace RedmineTimePuncher.Enums
             }
         }
 
+        /// <summary>
+        /// 終了日の次の日の 00:00:00 を返す。例えば、週の最後が土曜日だった場合、日曜日の日付の 00:00:00 を返す。
+        /// </summary>
         public static DateTime GetEndDate(this InputPeriodType type, DateTime currentDate, CalendarSettingsModel calendar)
         {
             switch (type)
@@ -78,6 +84,33 @@ namespace RedmineTimePuncher.Enums
                 case InputPeriodType.WorkingDays:
                 case InputPeriodType.Last7Days:
                     return 7;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        /// <summary>
+        /// currentDate と type から表示範囲を割り出し、そこに targetDate が含まれるかどうかを返す。
+        /// </summary>
+        public static bool Contains(this InputPeriodType type, DateTime currentDate, DateTime targetDate, CalendarSettingsModel calendar)
+        {
+            switch (type)
+            {
+                case InputPeriodType.OneDay:
+                case InputPeriodType.Last3Days:
+                case InputPeriodType.Last7Days:
+                    {
+                        var start = type.GetStartDate(currentDate, calendar);
+                        var end = type.GetEndDate(currentDate, calendar);
+                        return start <= targetDate && targetDate < end;
+                    }
+                case InputPeriodType.ThisWeek:
+                case InputPeriodType.WorkingDays:
+                    {
+                        var start = currentDate.GetFirstDayOfWeek();
+                        var end = currentDate.GetLastDayOfWeek();
+                        return start <= targetDate && targetDate < end;
+                    }
                 default:
                     throw new InvalidOperationException();
             }

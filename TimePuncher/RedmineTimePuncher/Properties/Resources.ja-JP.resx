@@ -697,10 +697,6 @@ APIアクセスキー</value>
   <data name="RibbonCmdMsgNotExistUpdatedAppointment" xml:space="preserve">
     <value>更新された予定がありません。</value>
   </data>
-  <data name="RibbonCmdMsgNotExistSpentTimes" xml:space="preserve">
-    <value>作業実績に予定がありません。
-予定を登録してください。</value>
-  </data>
   <data name="RibbonCmdMsgSelectNonCollaboAppointment" xml:space="preserve">
     <value>共同作業以外の予定を選択してください。</value>
   </data>
@@ -1735,7 +1731,12 @@ Outlookの状態を確認してください。</value>
   </data>
   <data name="msgConfExport" xml:space="preserve">
     <value>以下の日付の作業実績を出力します。よろしいですか？
-（選択された日付もしくは最後に選択された予定のある日付が出力の対象となります）
+
+- {0}</value>
+  </data>
+  <data name="msgConfExportEmpty" xml:space="preserve">
+    <value>以下の日付の作業実績を出力します。
+対象となる作業実績が存在しませんが、出力を続けますか？
 
 - {0}</value>
   </data>

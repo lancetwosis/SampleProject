@@ -770,10 +770,6 @@ Please register the appointment with error correctly.</value>
   <data name="RibbonCmdMsgNotExistUpdatedAppointment" xml:space="preserve">
     <value>There are no updated appointments.</value>
   </data>
-  <data name="RibbonCmdMsgNotExistSpentTimes" xml:space="preserve">
-    <value>There is no schedule in spent time.
-Please register an appointment.</value>
-  </data>
   <data name="RibbonCmdMsgSelectNonCollaboAppointment" xml:space="preserve">
     <value>Please select a non-collaborative appointment.</value>
   </data>
@@ -1839,7 +1835,12 @@ The order of the lines is the order in which the filing conditions are applied.<
   </data>
   <data name="msgConfExport" xml:space="preserve">
     <value>Do you want to export spent times of the following date?
-(The selected date or the date with the last selected appointment is the target of export)
+
+- {0}</value>
+  </data>
+  <data name="msgConfExportEmpty" xml:space="preserve">
+    <value>It is trying to export spent times for the following date.
+The target spent time does not exist, would you like to continue exporting?
 
 - {0}</value>
   </data>

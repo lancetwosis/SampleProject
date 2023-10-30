@@ -38,12 +38,12 @@ namespace RedmineTimePuncher.ViewModels.Input
 
         public ReadOnlyReactivePropertySlim<ReactiveTimer> Timer { get; set; }
 
-        public IFilteredReadOnlyObservableCollection<MyAppointment> MyWorksApos { get; set; }
         public ReadOnlyReactivePropertySlim<bool> IsEditedApos { get; set; }
 
         public bool IsOutputed { get; set; }
 
         private InputViewModel parent;
+        private IFilteredReadOnlyObservableCollection<MyAppointment> myWorksApos { get; set; }
 
         public MyWorksViewModel(InputViewModel parent) : base()
         {
@@ -51,43 +51,51 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             Resource = new MyWorksResource(parent.UrlBase);
 
-            MyWorksApos = parent.Appointments.ToFilteredReadOnlyObservableCollection(a => a.IsMyWork.Value && a.ApoType != AppointmentType.RedmineTimeEntryMember).AddTo(disposables);
-            MyWorksApos.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
-                MyWorksApos.ObserveElementProperty(a => a.Start).StartWithDefault(),
-                MyWorksApos.ObserveElementProperty(a => a.End).StartWithDefault(),
-                MyWorksApos.ObserveElementProperty(a => a.TicketNo).StartWithDefault(),
-                MyWorksApos.ObserveElementProperty(a => a.Category).StartWithDefault(), (_1, _2, _3, _4, _5) => true).SubscribeWithErr(_ => IsOutputed = false);
+            myWorksApos = parent.Appointments.ToFilteredReadOnlyObservableCollection(a => a.IsMyWork.Value && a.ApoType != AppointmentType.RedmineTimeEntryMember).AddTo(disposables);
+            myWorksApos.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
+                myWorksApos.ObserveElementProperty(a => a.Start).StartWithDefault(),
+                myWorksApos.ObserveElementProperty(a => a.End).StartWithDefault(),
+                myWorksApos.ObserveElementProperty(a => a.TicketNo).StartWithDefault(),
+                myWorksApos.ObserveElementProperty(a => a.Category).StartWithDefault(), (_1, _2, _3, _4, _5) => true).SubscribeWithErr(_ => IsOutputed = false);
 
-            var myWorksChanged = MyWorksApos.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
-               MyWorksApos.ObserveElementProperty(a => a.Start).StartWithDefault(),
-               MyWorksApos.ObserveElementProperty(a => a.End).StartWithDefault(), (_, __, ___) => _).ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe).AddTo(disposables);
+            var myWorksChanged = myWorksApos.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
+               myWorksApos.ObserveElementProperty(a => a.Start).StartWithDefault(),
+               myWorksApos.ObserveElementProperty(a => a.End).StartWithDefault(), (_, __, ___) => _).ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe).AddTo(disposables);
             var tickLength = parent.Parent.Settings.ObserveProperty(a => a.Schedule.TickLength).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var myWorksError = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(myWorksChanged, (sche, __) =>
+            var myWorksError = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(parent.CurrentDate, myWorksChanged, (sche, currentDate, __) =>
             {
+                var targetApos = myWorksApos.Where(a => sche.Contains(currentDate, a)).ToList();
+                if (targetApos.Count == 0)
+                    return null;
+
                 var terms = sche.SpecialTerms.SelectMany(a => a.Split((int)tickLength.Value)).ToList();
-                var termsDateTime = terms.Select(t => t.Start >= sche.DayStartTime ? (parent.CurrentDate.Value, t) : (parent.CurrentDate.Value.AddDays(1), t));
+                var termsDateTime = terms.Select(t => t.Start >= sche.DayStartTime ? (currentDate, t) : (currentDate.AddDays(1), t));
                 var errors = termsDateTime.Where(a =>
-                    (a.t.ValidationType == TermInputValidationType.RequiredInput && !MyWorksApos.Any(b => b.Include(a.t, a.Item1))) ||
-                    (a.t.ValidationType == TermInputValidationType.ProhibitedInput && MyWorksApos.Any(b => b.Include(a.t, a.Item1))));
+                    (a.t.ValidationType == TermInputValidationType.RequiredInput && !targetApos.Any(b => b.Include(a.t, a.Item1))) ||
+                    (a.t.ValidationType == TermInputValidationType.ProhibitedInput && targetApos.Any(b => b.Include(a.t, a.Item1))));
                 if (errors.Any())
                 {
                     return string.Join(Environment.NewLine, errors.Select(a => a.t).GroupBy(a => a.ValidationType).Select(g => g.Merge().Select(a => a.GetMessage())).SelectMany(a => a));
                 }
 
                 // 重なりをチェック
-                if (MyWorksApos.Any(a => MyWorksApos.Except(new[] { a }).Any(b => b.IntersectsWith(a))))
+                if (targetApos.Any(a => targetApos.Except(new[] { a }).Any(b => b.IntersectsWith(a))))
                 {
                     return Properties.Resources.msgErrDuplicateAppointment;
                 }
                 return null;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var myWorksWarn = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(myWorksChanged, (sche, __) =>
+            var myWorksWarn = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(parent.CurrentDate, myWorksChanged, (sche, currentDate, __) =>
             {
+                var targetApos = myWorksApos.Where(a => sche.Contains(currentDate, a)).ToList();
+                if (targetApos.Count == 0)
+                    return null;
+
                 var terms = sche.SpecialTerms.SelectMany(a => a.Split((int)tickLength.Value)).ToList();
-                var termsDateTime = terms.Select(t => t.Start >= sche.DayStartTime ? (parent.CurrentDate.Value, t) : (parent.CurrentDate.Value.AddDays(1), t));
+                var termsDateTime = terms.Select(t => t.Start >= sche.DayStartTime ? (currentDate, t) : (currentDate.AddDays(1), t));
                 var errors = termsDateTime.Where(a =>
-                    (a.t.ValidationType == TermInputValidationType.InputWarning && MyWorksApos.Any(b => b.Include(a.t, a.Item1))) ||
-                    (a.t.ValidationType == TermInputValidationType.NotInputWarning && !MyWorksApos.Any(b => b.Include(a.t, a.Item1))));
+                    (a.t.ValidationType == TermInputValidationType.InputWarning && targetApos.Any(b => b.Include(a.t, a.Item1))) ||
+                    (a.t.ValidationType == TermInputValidationType.NotInputWarning && !targetApos.Any(b => b.Include(a.t, a.Item1))));
 
                 if (errors.Any())
                     return string.Join(Environment.NewLine, errors.Select(a => a.t).GroupBy(a => a.ValidationType).Select(g => g.Merge().Select(a => a.GetMessage())).SelectMany(a => a));
@@ -98,9 +106,9 @@ namespace RedmineTimePuncher.ViewModels.Input
             // 作業実績変更時は、入力禁止、重なっている時間帯の予定を削除する。
             var isDoingMyWorksChanged = new BusyNotifier();
             new[] {
-                MyWorksApos.ObserveAddChanged<MyAppointment>().Select(_ => ""),
-                MyWorksApos.ObserveElementProperty(a => a.Start).Select(_ => ""),
-                MyWorksApos.ObserveElementProperty(a => a.End).Select(_ => ""),
+                myWorksApos.ObserveAddChanged<MyAppointment>().Select(_ => ""),
+                myWorksApos.ObserveElementProperty(a => a.Start).Select(_ => ""),
+                myWorksApos.ObserveElementProperty(a => a.End).Select(_ => ""),
                 parent.Parent.Settings.ObserveProperty(a => a.Schedule).Select(_ => ""),
             }.CombineLatest().Where(_ => !isDoingMyWorksChanged.IsBusy && parent.Parent.Redmine.Value != null).Delay(TimeSpan.FromMilliseconds(10)).ObserveOnUIDispatcher().SubscribeWithErr(_ =>
             {
@@ -111,7 +119,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                         //------------------------------------
                         // 入力禁止の時間帯の予定を削除する。
                         //------------------------------------
-                        foreach (var item in MyWorksApos.ToList())
+                        foreach (var item in myWorksApos.ToList())
                         {
                             var prohibitedTerms = parent.Parent.Settings.Schedule.SpecialTerms
                                 .Where(a => a.ValidationType == TermInputValidationType.ProhibitedInput)
@@ -163,7 +171,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                         //------------------------------------
                         // 重複している予定を削除する。
                         //------------------------------------
-                        var dupApos = MyWorksApos.Where(a => MyWorksApos.Any(b => b.IntersectsWith(a))).ToList();
+                        var dupApos = myWorksApos.Where(a => myWorksApos.Any(b => b.IntersectsWith(a))).ToList();
                         if (dupApos.Count() > 1)
                         {
                             // 予定の重なりを展開する。
@@ -284,7 +292,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 (new[] {
                     parent.Parent.IsBusy.Select(a => a ? "" : null),
                     parent.Parent.Redmine.Select(a => a == null ? Properties.Resources.RibbonCmdMsgNeedsRedmineSettings : null),
-                    MyWorksApos.AnyAsObservable(a => a.IsError.Value, a => a.IsError.Value).Select(a  => a ? Properties.Resources.RibbonCmdMsgExistsUnsavedAppointment : null),
+                    myWorksApos.AnyAsObservable(a => a.IsError.Value, a => a.IsError.Value).Select(a  => a ? Properties.Resources.RibbonCmdMsgExistsUnsavedAppointment : null),
                     myWorksError.Select(a => !string.IsNullOrEmpty(a) ? a : null),
                     IsEditedApos.Inverse().Select(a  => a ? Properties.Resources.RibbonCmdMsgNotExistUpdatedAppointment : null),
                 }).CombineLatestFirstOrDefault(a => a != null),
@@ -299,7 +307,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     await execUpdateAsync(parent, async () =>
                     {
                         // 更新された予定を、Redmineに反映する。
-                        var targetApos = MyWorksApos.ToList();
+                        var targetApos = myWorksApos.ToList();
                         parent.Parent.Redmine.Value.SetEntryApos(parent.Parent.Settings, targetApos, out setFails);
 
                         // 削除された予定を、Redmineに反映する。
@@ -340,8 +348,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 parent.Parent.IsBusy.Select(a => a ? "" : null),
                 parent.Parent.Redmine.Select(a => a == null ? Properties.Resources.RibbonCmdMsgNeedsRedmineSettings : null),
-                MyWorksApos.AnyAsObservable().Inverse().Select(a => a ? Properties.Resources.RibbonCmdMsgNotExistSpentTimes  : null),
-                MyWorksApos.AnyAsObservable(a => a.IsError.Value, a => a.IsError.Value).Select(a  => a ? Properties.Resources.RibbonCmdMsgExistsUnsavedAppointment : null),
+                myWorksApos.AnyAsObservable(a => a.IsError.Value, a => a.IsError.Value).Select(a  => a ? Properties.Resources.RibbonCmdMsgExistsUnsavedAppointment : null),
                 myWorksError.Select(a => !string.IsNullOrEmpty(a) ? a : null),
             }).CombineLatestFirstOrDefault(a => a != null).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             // CSVエクスポートに出力する。
@@ -353,20 +360,20 @@ namespace RedmineTimePuncher.ViewModels.Input
                 canExport,
                 async () =>
                 {
-                    var targetDate = confirmExportIfNeeded();
-                    if (!targetDate.HasValue)
+                    var r = confirmExportIfNeeded();
+                    if (!r.Date.HasValue)
                         return;
 
                     TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(ToCSVCommand) + ".Executed");
 
-                    parent.Parent.Settings.OutputData.CsvExport.Export(targetDate.Value, MyWorksApos);
+                    parent.Parent.Settings.OutputData.CsvExport.Export(r.Date.Value, r.Appointments);
                     await Task.CompletedTask;
                 }).AddTo(disposables);
 
             // 外部ツールに登録する。
             ToExtToolCommand = new AsyncCommandBase(
                 Properties.Resources.RibbonCmdExternalTool,
-                                w => OutputTargetTypes.ExtTool.GetIconResource(w),
+                w => OutputTargetTypes.ExtTool.GetIconResource(w),
                 Properties.Resources.RibbonCmdExternalToolTooltip,
                 myWorksWarn,
                 (new[] {
@@ -375,13 +382,13 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }).CombineLatestFirstOrDefault(a => a != null),
                 async () =>
                 {
-                    var targetDate = confirmExportIfNeeded();
-                    if (!targetDate.HasValue)
+                    var r = confirmExportIfNeeded();
+                    if (!r.Date.HasValue)
                         return;
 
                     TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(ToExtToolCommand) + ".Executed");
 
-                    parent.Parent.Settings.OutputData.Exec(targetDate.Value, MyWorksApos);
+                    parent.Parent.Settings.OutputData.ExportToExtTool(r.Date.Value, r.Appointments);
                     await Task.CompletedTask;
                 }).AddTo(disposables);
 
@@ -523,7 +530,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     .Where(a => a.ValidationType == TermInputValidationType.ProhibitedInput || a.ValidationType == TermInputValidationType.InputWarning)
                     .Where(a => slot.IntersectsWith(a)).ToList();
                     var slotCount = ((int)(slot.End - slot.Start).TotalMinutes - (prohibitedTerms.Sum(a => (a.End - a.Start).TotalMinutes))) / (int)tickLength.Value;
-                    var apos = MyWorksApos.Where(a => a.IntersectsWith(slot)).ToList();
+                    var apos = myWorksApos.Where(a => a.IntersectsWith(slot)).ToList();
                     if (!apos.Any()) return;
 
                     // 予定から一旦、削除する。
@@ -583,7 +590,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 save = SaveCommand.Command.CanExecuteChangedAsObservable().StartWithDefault().Select(a => SaveCommand.Command.CanExecute()).ToReactiveCommand().WithSubscribe(() =>
                 {
                     // 更新された予定を、、Redmineに反映する。
-                    var targetApos = MyWorksApos.ToList();
+                    var targetApos = myWorksApos.ToList();
                     parent.Parent.Redmine.Value.SetEntryApos(parent.Parent.Settings, targetApos, out var failList1);
 
                     // 削除された予定を、Redmineに反映する。
@@ -709,20 +716,27 @@ namespace RedmineTimePuncher.ViewModels.Input
             parent.Appointments.AddRange(result);
         }
 
-        private DateTime? confirmExportIfNeeded()
+        private (DateTime? Date, List<MyAppointment> Appointments) confirmExportIfNeeded()
         {
             var targetDate = parent.CurrentDate.Value;
+            var targetApos = myWorksApos.Where(a => parent.Parent.Settings.Schedule.Contains(parent.CurrentDate.Value, a)).ToList();
+            if (targetApos.Count == 0)
+            {
+                var r1 = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfExportEmpty, targetDate.ToString("yyyy/MM/dd(ddd)")));
+                if (r1.HasValue && r1.Value)
+                    return (targetDate, targetApos);
+                else
+                    return (null, null);
+            }
+
             if (parent.PeriodType.Value == InputPeriodType.OneDay)
-                return targetDate;
+                return (targetDate, targetApos);
 
-            if (parent.SelectedAppointments.Value.Any())
-                targetDate = parent.SelectedAppointments.Value.Last().Start.GetDateOnly();
-
-            var result = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfExport, targetDate.ToString("yyyy/MM/dd(ddd)")));
-            if (!result.HasValue || !result.Value)
-                return null;
+            var r2 = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfExport, targetDate.ToString("yyyy/MM/dd(ddd)")));
+            if (r2.HasValue && r2.Value)
+                return (targetDate, targetApos);
             else
-                return targetDate;
+                return (null, null);
         }
     }
 }

@@ -1250,13 +1250,24 @@ namespace RedmineTimePuncher.Properties {
         
         /// <summary>
         ///   Do you want to export spent times of the following date?
-        ///(The selected date or the date with the last selected appointment is the target of export)
         ///
         ///- {0} に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string msgConfExport {
             get {
                 return ResourceManager.GetString("msgConfExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   It is trying to export spent times for the following date.
+        ///The target spent time does not exist, would you like to continue exporting?
+        ///
+        ///- {0} に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string msgConfExportEmpty {
+            get {
+                return ResourceManager.GetString("msgConfExportEmpty", resourceCulture);
             }
         }
         
@@ -2442,16 +2453,6 @@ namespace RedmineTimePuncher.Properties {
         public static string RibbonCmdMsgNeedsRedmineSettings {
             get {
                 return ResourceManager.GetString("RibbonCmdMsgNeedsRedmineSettings", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   There is no schedule in spent time.
-        ///Please register an appointment. に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string RibbonCmdMsgNotExistSpentTimes {
-            get {
-                return ResourceManager.GetString("RibbonCmdMsgNotExistSpentTimes", resourceCulture);
             }
         }
         

@@ -23,14 +23,13 @@ namespace RedmineTimePuncher.Models.Settings
         public bool IsOepn { get; set; } = true;
         public int ExportNum { get; set; } = 30;
 
-        public void Export(DateTime curDate, IEnumerable<MyAppointment> target)
+        public void Export(DateTime curDate, IEnumerable<MyAppointment> targets)
         {
             // 出力先フォルダを取得する。
-            var folderName = ExportDir;
-            if (string.IsNullOrEmpty(folderName))
-                folderName = System.IO.Path.Combine(
-                    System.Environment.GetFolderPath(Environment.SpecialFolder.Personal),
-                    ApplicationInfo.Title);
+            var folderName = string.IsNullOrEmpty(ExportDir) ?
+                System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), ApplicationInfo.Title) :
+                ExportDir;
+
             if (!System.IO.Directory.Exists(folderName))
                 System.IO.Directory.CreateDirectory(folderName);
 
@@ -57,14 +56,19 @@ namespace RedmineTimePuncher.Models.Settings
                 prefix + curDate.ToString("yyyyMMdd") + ".csv");
 
             // ファイルを出力する。
-            System.IO.File.WriteAllLines(
-                fileName, 
-                target.OrderBy(a => a.Start).Select(a => a.ToCsvLine(ExportItems)), 
-                Encoding.GetEncoding("Shift_JIS"));
+            Export(fileName, targets);
 
             // 出力したファイルを開く
             if (IsOepn) 
                 Process.Start(fileName);
+        }
+
+        public void Export(string fileName, IEnumerable<MyAppointment> targets)
+        {
+            System.IO.File.WriteAllLines(
+                fileName,
+                targets.OrderBy(a => a.Start).Select(a => a.ToCsvLine(ExportItems)),
+                Encoding.GetEncoding("Shift_JIS"));
         }
     }
 }

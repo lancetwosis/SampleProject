@@ -150,6 +150,8 @@ namespace RedmineTimePuncher.ViewModels.Input
             SelectedAppointments = new ReactiveProperty<List<MyAppointment>>().AddTo(disposables);
             SelectedAppointmentsCount = SelectedAppointments.Select(a => a?.Count ?? 0).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             IsSelectedAppointments = SelectedAppointments.Select(a => a?.Any() ?? false).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            SelectedAppointments.Where(a => a != null && a.Any()).Subscribe(a => CurrentDate.Value = a.Last().Start.GetDateOnly());
+
             SelectedSlot = new ReactivePropertySlim<Slot>().AddTo(disposables);
             SearchText = new ReactivePropertySlim<string>().AddTo(disposables);
             ClearSearchText = new ReactiveCommand().WithSubscribe(() => SearchText.Value = null).AddTo(disposables);
@@ -324,7 +326,10 @@ namespace RedmineTimePuncher.ViewModels.Input
             // 日付選択された場合の動作を作成する。
             CurrentDate.Pairwise().SubscribeWithErr(async p =>
             {
-                if (skipLoadAppointments.IsBusy || Parent.Redmine.Value == null) return;
+                if (skipLoadAppointments.IsBusy || Parent.Redmine.Value == null ||
+                    // 変更後の日付がすでに ScheduleView に表示中だった場合何もしない
+                    PeriodType.Value.Contains(p.OldItem, p.NewItem, Parent.Settings.Calendar))
+                    return;
 
                 if (MyWorks.IsEditedApos.Value)
                 {
