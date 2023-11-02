@@ -125,6 +125,56 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap calendar_3_48 {
+            get {
+                object obj = ResourceManager.GetObject("calendar_3_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap calendar_7_48 {
+            get {
+                object obj = ResourceManager.GetObject("calendar_7_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap calendar_oneday_48 {
+            get {
+                object obj = ResourceManager.GetObject("calendar_oneday_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap calendar_week_48 {
+            get {
+                object obj = ResourceManager.GetObject("calendar_week_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap calendar_workdays_48 {
+            get {
+                object obj = ResourceManager.GetObject("calendar_workdays_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Activity に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string CategoryListBoxTitle {
@@ -2437,6 +2487,33 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Back に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdMoveBack {
+            get {
+                return ResourceManager.GetString("RibbonCmdMoveBack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Next に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdMoveNext {
+            get {
+                return ResourceManager.GetString("RibbonCmdMoveNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Move date to {0} に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdMoveToolTip {
+            get {
+                return ResourceManager.GetString("RibbonCmdMoveToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Some appointments have not been registered yet.
         ///Please register the appointment with error correctly. に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -2475,30 +2552,12 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Next に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string RibbonCmdNextDay {
-            get {
-                return ResourceManager.GetString("RibbonCmdNextDay", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Open
         ///Issue に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RibbonCmdOpenIssue {
             get {
                 return ResourceManager.GetString("RibbonCmdOpenIssue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Back に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string RibbonCmdPreviousDay {
-            get {
-                return ResourceManager.GetString("RibbonCmdPreviousDay", resourceCulture);
             }
         }
         

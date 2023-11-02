@@ -30,7 +30,7 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             // 日付変更、もしくは１分間隔でTeamsのステータスを読み取る
             var teamsStatusSlots = Observable.Merge(
-                parent.CurrentDate.Where(a => a != DateTime.MinValue).Select(_ => ""),
+                parent.SelectedDate.Where(a => a != DateTime.MinValue).Select(_ => ""),
                 Observable.Interval(TimeSpan.FromMinutes(1)).Select(_ => ""))
                 .Select(_ => parent.Parent.Teams.GetStatus(Resource, parent.StartTime.Value, parent.EndTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             teamsStatusSlots.ObserveOnUIDispatcher().SubscribeWithErr(t =>

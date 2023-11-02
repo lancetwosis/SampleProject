@@ -1,4 +1,5 @@
-﻿using Reactive.Bindings.Extensions;
+﻿using LibRedminePower.Extentions;
+using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.ViewModels.Input;
 using System;
@@ -48,7 +49,7 @@ namespace RedmineTimePuncher.Views.Controls
 
         protected override string FormatVisibleRangeText(IFormatProvider formatInfo, DateTime rangeStart, DateTime rangeEnd, DateTime currentDate)
         {
-            return currentDate.ToString("yyyy/MM/dd (ddd)", formatInfo);
+            return currentDate.ToDateString(formatInfo);
         }
 
         protected override DateTime GetVisibleRangeStart(DateTime currentDate, CultureInfo culture, DayOfWeek? firstDayOfWeek)
@@ -57,7 +58,7 @@ namespace RedmineTimePuncher.Views.Controls
                 return base.GetVisibleRangeStart(currentDate, culture, firstDayOfWeek);
 
             var vm = DataContext as InputViewModel;
-            return vm.PeriodType.Value.GetStartDate(vm.CurrentDate.Value, vm.Parent.Settings.Calendar);
+            return vm.PeriodType.Value.GetStartDate(vm.SelectedDate.Value, vm.Parent.Settings.Calendar);
         }
 
         protected override DateTime GetVisibleRangeEnd(DateTime currentDate, CultureInfo culture, DayOfWeek? firstDayOfWeek)
@@ -66,7 +67,7 @@ namespace RedmineTimePuncher.Views.Controls
                 return base.GetVisibleRangeEnd(currentDate, culture, firstDayOfWeek);
 
             var vm = DataContext as InputViewModel;
-            return vm.PeriodType.Value.GetEndDate(vm.CurrentDate.Value, vm.Parent.Settings.Calendar);
+            return vm.PeriodType.Value.GetEndDate(vm.SelectedDate.Value, vm.Parent.Settings.Calendar);
         }
     }
 }

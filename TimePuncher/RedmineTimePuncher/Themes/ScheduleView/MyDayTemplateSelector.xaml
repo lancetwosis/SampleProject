@@ -1,0 +1,69 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:controls1="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+                    xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+                    xmlns:selectors="clr-namespace:RedmineTimePuncher.Selectors"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                    xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+                    xmlns:telerikScheduleView="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.ScheduleView"
+                    xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels">
+
+    <selectors:MyDayTemplateSelector x:Key="MyDayTemplateSelector">
+        <selectors:MyDayTemplateSelector.DefaultTemplate>
+            <DataTemplate>
+                <Grid x:Name="DefaultDay"
+                      Width="30"
+                      Height="32">
+                    <TextBlock HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="{Binding Text}" />
+                </Grid>
+                <DataTemplate.Triggers>
+                    <Trigger SourceName="DefaultDay" Property="IsMouseOver" Value="True">
+                        <Setter TargetName="DefaultDay" Property="Background" Value="#E6F2FA" />
+                    </Trigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </selectors:MyDayTemplateSelector.DefaultTemplate>
+        <selectors:MyDayTemplateSelector.SelectedTemplate>
+            <DataTemplate>
+                <Grid x:Name="SelectedDay"
+                      Width="30"
+                      Height="32"
+                      Background="{telerik1:Office2019Resource ResourceKey=AccentBackgroundBrush}">
+                    <TextBlock x:Name="SelectedDayText"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               FontWeight="Bold"
+                               Foreground="White"
+                               Text="{Binding Text}" />
+                </Grid>
+                <DataTemplate.Triggers>
+                    <Trigger SourceName="SelectedDay" Property="IsMouseOver" Value="True">
+                        <Setter TargetName="SelectedDay" Property="Background" Value="#E6F2FA" />
+                        <Setter TargetName="SelectedDayText" Property="Foreground" Value="Black" />
+                    </Trigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </selectors:MyDayTemplateSelector.SelectedTemplate>
+        <selectors:MyDayTemplateSelector.DisplayedTemplate>
+            <DataTemplate>
+                <Grid x:Name="DisplayedDay"
+                      Width="30"
+                      Height="32"
+                      Background="#CDE6F7">
+                    <TextBlock x:Name="DisplayedDayText"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Text="{Binding Text}" />
+                </Grid>
+                <DataTemplate.Triggers>
+                    <Trigger SourceName="DisplayedDay" Property="IsMouseOver" Value="True">
+                        <Setter TargetName="DisplayedDay" Property="Background" Value="#E6F2FA" />
+                        <Setter TargetName="DisplayedDayText" Property="Foreground" Value="Black" />
+                    </Trigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </selectors:MyDayTemplateSelector.DisplayedTemplate>
+    </selectors:MyDayTemplateSelector>
+</ResourceDictionary>

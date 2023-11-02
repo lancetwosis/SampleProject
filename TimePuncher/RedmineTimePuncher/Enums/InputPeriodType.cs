@@ -78,8 +78,9 @@ namespace RedmineTimePuncher.Enums
             switch (type)
             {
                 case InputPeriodType.OneDay:
-                case InputPeriodType.Last3Days:
                     return 1;
+                case InputPeriodType.Last3Days:
+                    return 3;
                 case InputPeriodType.ThisWeek:
                 case InputPeriodType.WorkingDays:
                 case InputPeriodType.Last7Days:
@@ -108,7 +109,7 @@ namespace RedmineTimePuncher.Enums
                 case InputPeriodType.WorkingDays:
                     {
                         var start = currentDate.GetFirstDayOfWeek();
-                        var end = currentDate.GetLastDayOfWeek();
+                        var end = currentDate.GetLastDayOfWeek().AddDays(1);
                         return start <= targetDate && targetDate < end;
                     }
                 default:

@@ -7,6 +7,7 @@ using RedmineTimePuncher.ViewModels.Input.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
@@ -46,8 +47,33 @@ namespace RedmineTimePuncher.Views
             DragDropManager.AddDragOverHandler(this.scheduleView, OnScheduleViewDragOver, true);
             dragDropHighlightStyleCache = this.scheduleView.DragDropHighlightStyle;
             dragDropHighlightStyle = (Style)this.Resources["AppointmentDragDropHighlightStyle"];
+
+            DataContextChanged += InputView_DataContextChanged;
         }
 
+        private void InputView_DataContextChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+            if (DataContext == null)
+                return;
+
+            var vm = (DataContext as MainWindowViewModel).Input;
+            vm.SelectedDate.Subscribe(d =>
+            {
+                this.calendar.DisplayDate = d;
+                applyDayTemplate();
+            });
+            vm.DisplayStartTime.CombineLatest(vm.DisplayEndTime, (_, __) => true).Subscribe(_ =>
+            {
+                applyDayTemplate();
+            });
+        }
+
+        private void applyDayTemplate()
+        {
+            // DayTemplate を適用するために DisplayDate を切り替えて SelectTemplate を実行させる
+            this.calendar.DisplayDate = this.calendar.DisplayDate.AddMonths(1);
+            this.calendar.DisplayDate = this.calendar.DisplayDate.AddMonths(-1);
+        }
 
         private void OnScheduleViewDragOver(object sender, Telerik.Windows.DragDrop.DragEventArgs e)
         {

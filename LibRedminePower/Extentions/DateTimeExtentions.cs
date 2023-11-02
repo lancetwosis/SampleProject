@@ -84,5 +84,13 @@ namespace LibRedminePower.Extentions
             var lastTime = CalendarHelper.GetLastDayOfWeek(currentDate, DayOfWeek.Sunday);
             return lastTime.GetDateOnly();
         }
+
+        /// <summary>
+        /// yyyy/MM/dd (ddd) 形式の文字列を返す
+        /// </summary>
+        public static string ToDateString(this DateTime date, IFormatProvider formatInfo = null)
+        {
+            return formatInfo != null ? date.ToString("yyyy/MM/dd (ddd)", formatInfo) : date.ToString("yyyy/MM/dd (ddd)");
+        }
     }
 }

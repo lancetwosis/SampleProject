@@ -257,10 +257,10 @@
   <data name="RibbonCmdToday" xml:space="preserve">
     <value>Today</value>
   </data>
-  <data name="RibbonCmdPreviousDay" xml:space="preserve">
+  <data name="RibbonCmdMoveBack" xml:space="preserve">
     <value>Back</value>
   </data>
-  <data name="RibbonCmdNextDay" xml:space="preserve">
+  <data name="RibbonCmdMoveNext" xml:space="preserve">
     <value>Next</value>
   </data>
   <data name="RibbonCmdOpenIssue" xml:space="preserve">
@@ -1843,5 +1843,23 @@ The order of the lines is the order in which the filing conditions are applied.<
 The target spent time does not exist, would you like to continue exporting?
 
 - {0}</value>
+  </data>
+  <data name="calendar_3_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\calendar-3-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="calendar_7_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\calendar-7-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="calendar_oneday_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\calendar-oneday-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="calendar_week_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\calendar-week-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="calendar_workdays_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\calendar-workdays-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RibbonCmdMoveToolTip" xml:space="preserve">
+    <value>Move date to {0}</value>
   </data>
 </root>

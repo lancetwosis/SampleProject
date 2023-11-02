@@ -50,8 +50,16 @@ namespace RedmineTimePuncher.ViewModels.Input
         public ReadOnlyReactivePropertySlim<string> UrlBase { get; set; }
 
         #region "スケジュール"
+        /// <summary>
+        /// 選択中の日付。Calendar の選択中の日付や ScheduleView の選択中の予定などよって決まる。
+        /// </summary>
+        public ReactivePropertySlim<DateTime> SelectedDate { get; set; }
+        /// <summary>
+        /// ScheduleView の CurrentDate とバインドするプロパティ。
+        /// </summary>
         public ReactivePropertySlim<DateTime> CurrentDate { get; set; }
         public ReactivePropertySlim<InputPeriodType> PeriodType { get; set; }
+        public ReadOnlyReactivePropertySlim<string> PeriodTypeStr { get; set; }
         public ReactivePropertySlim<int> ActiveViewIndex { get; set; }
         public ObservableCollection<MyAppointment> Appointments { get; set; }
         public ReactiveProperty<List<MyAppointment>> SelectedAppointments { get; set; }
@@ -69,6 +77,8 @@ namespace RedmineTimePuncher.ViewModels.Input
         public ReadOnlyReactivePropertySlim<TimeSpan> DayEndTime { get; set; }
         public ReadOnlyReactivePropertySlim<DateTime> StartTime { get; set; }
         public ReadOnlyReactivePropertySlim<DateTime> EndTime { get; set; }
+        public ReactivePropertySlim<DateTime> DisplayStartTime { get; set; }
+        public ReactivePropertySlim<DateTime> DisplayEndTime { get; set; }
         public ReactivePropertySlim<double> MinTimeRulerExtent { get; set; }
         public ReactivePropertySlim<double> ScalingSliderValue { get; set; }
         public ObservableCollection<Slot> SpecialSlots { get; set; }
@@ -88,6 +98,7 @@ namespace RedmineTimePuncher.ViewModels.Input
         public CommandBase SetTodayCommand { get; }
         public CommandBase DecreaseDateCommand { get; set; }
         public CommandBase IncreaseDateCommand { get; }
+        public ReactiveCommand<string> ChangePeriodCommand { get; set; }
 
         public CommandBase SelectAposCommand { get; }
         #endregion
@@ -124,25 +135,12 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             this.Parent = parent;
 
-            CurrentDate = new ReactivePropertySlim<DateTime>(DateTime.Today).AddTo(disposables);
+            SelectedDate = new ReactivePropertySlim<DateTime>(DateTime.Today).AddTo(disposables);
+            CurrentDate = new ReactivePropertySlim<DateTime>().AddTo(disposables);
 
             PeriodType = new ReactivePropertySlim<InputPeriodType>().AddTo(disposables);
+            PeriodTypeStr = PeriodType.CombineLatest(SelectedDate, CurrentDate, (t, s, c) => s != c ? null : t.ToString()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             ActiveViewIndex = new ReactivePropertySlim<int>().AddTo(disposables);
-            var nowChanging = new BusyNotifier();
-            PeriodType.Skip(1).Subscribe(p =>
-            {
-                if (nowChanging.IsBusy) return;
-
-                using (nowChanging.ProcessStart())
-                    ActiveViewIndex.Value = (int)p;
-            });
-            ActiveViewIndex.Skip(1).Subscribe(i =>
-            {
-                if (nowChanging.IsBusy) return;
-                // View で日付をダブルクリックすると「１日表示」に切り替わるため設定に反映する
-                using (nowChanging.ProcessStart())
-                    PeriodType.Value = (InputPeriodType)i;
-            });
 
             Appointments = new ObservableCollection<MyAppointment>();
             DeletedAppointments = new ObservableCollection<MyAppointment>();
@@ -150,7 +148,6 @@ namespace RedmineTimePuncher.ViewModels.Input
             SelectedAppointments = new ReactiveProperty<List<MyAppointment>>().AddTo(disposables);
             SelectedAppointmentsCount = SelectedAppointments.Select(a => a?.Count ?? 0).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             IsSelectedAppointments = SelectedAppointments.Select(a => a?.Any() ?? false).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            SelectedAppointments.Where(a => a != null && a.Any()).Subscribe(a => CurrentDate.Value = a.Last().Start.GetDateOnly());
 
             SelectedSlot = new ReactivePropertySlim<Slot>().AddTo(disposables);
             SearchText = new ReactivePropertySlim<string>().AddTo(disposables);
@@ -195,10 +192,13 @@ namespace RedmineTimePuncher.ViewModels.Input
                 MyAppointment.IsAutoSameName = a;
             }).AddTo(disposables);
 
-            StartTime = CurrentDate.CombineLatest(PeriodType, (d, p) => p.GetStartDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            EndTime = CurrentDate.CombineLatest(PeriodType, (d, p) => p.GetEndDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            StartTime = SelectedDate.CombineLatest(PeriodType, (d, p) => p.GetStartDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            EndTime = SelectedDate.CombineLatest(PeriodType, (d, p) => p.GetEndDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             // StartTime と EndTime の値が更新されてから実行したいのでここで定義する
             PeriodType.Skip(1).Subscribe(async p => await ReloadIfNeededAsync());
+
+            DisplayStartTime = new ReactivePropertySlim<DateTime>(StartTime.Value).AddTo(disposables);
+            DisplayEndTime = new ReactivePropertySlim<DateTime>(EndTime.Value).AddTo(disposables);
 
             // タイムマーカーを作成する。
             TimeMarkers = new ObservableCollection<TimeMarker>();
@@ -301,6 +301,9 @@ namespace RedmineTimePuncher.ViewModels.Input
                 {
                     Logger.Info("ReloadCommand Start");
 
+                    DisplayStartTime.Value = PeriodType.Value.GetStartDate(SelectedDate.Value, Parent.Settings.Calendar);
+                    DisplayEndTime.Value = PeriodType.Value.GetEndDate(SelectedDate.Value, Parent.Settings.Calendar);
+
                     Parent.Redmine.Value.ClearCash();
 
                     // 現在実行中のコマンドがあれば、キャンセルする。
@@ -324,12 +327,52 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             #region "********* 日付関連コマンド ************"
             // 日付選択された場合の動作を作成する。
-            CurrentDate.Pairwise().SubscribeWithErr(async p =>
+            var periodChanging = new BusyNotifier();
+            PeriodType.Skip(1).Subscribe(p =>
             {
-                if (skipLoadAppointments.IsBusy || Parent.Redmine.Value == null ||
-                    // 変更後の日付がすでに ScheduleView に表示中だった場合何もしない
-                    PeriodType.Value.Contains(p.OldItem, p.NewItem, Parent.Settings.Calendar))
+                if (periodChanging.IsBusy) return;
+
+                using (periodChanging.ProcessStart())
+                    ActiveViewIndex.Value = (int)p;
+            });
+            ActiveViewIndex.Skip(1).Subscribe(i =>
+            {
+                if (periodChanging.IsBusy) return;
+                // View で日付をダブルクリックすると「１日表示」に切り替わるため設定に反映する
+                using (periodChanging.ProcessStart())
+                {
+                    PeriodType.Value = (InputPeriodType)i;
+                    SelectedDate.Value = CurrentDate.Value;
+                }
+            });
+
+            // ScheduleView で予定をクリック、もしくは予定がないところをクリックしたら、「選択中の日付」を更新
+            SelectedAppointments.Where(a => a != null && a.Any()).Subscribe(a =>
+            {
+                SelectedDate.Value = a.Last().Start.GetDateOnly();
+            });
+            SelectedSlot.Where(s => s != null).Subscribe(s =>
+            {
+                SelectedDate.Value = s.Start.GetDateOnly();
+            });
+
+            // ScheduleView の CurrentDate が更新されたら「選択中の日付」を更新
+            CurrentDate.Skip(1).Subscribe(d => SelectedDate.Value = d);
+
+            SelectedDate.Pairwise().SubscribeWithErr(async p =>
+            {
+                if (skipLoadAppointments.IsBusy || Parent.Redmine.Value == null)
                     return;
+
+                // 変更後の日付がすでに ScheduleView に表示中だった場合何もしない
+                if (PeriodType.Value.Contains(CurrentDate.Value, p.NewItem, Parent.Settings.Calendar))
+                {
+                    if (PeriodType.Value != InputPeriodType.Last3Days &&
+                        PeriodType.Value != InputPeriodType.Last7Days)
+                        CurrentDate.Value = p.NewItem;
+
+                    return;
+                }
 
                 if (MyWorks.IsEditedApos.Value)
                 {
@@ -338,11 +381,13 @@ namespace RedmineTimePuncher.ViewModels.Input
                     {
                         using (skipLoadAppointments.ProcessStart())
                         {
-                            CurrentDate.Value = p.OldItem;
+                            SelectedDate.Value = p.OldItem;
                         }
                         return;
                     }
                 }
+
+                CurrentDate.Value = p.NewItem;
 
                 DeletedAppointments.RemoveAll();
 
@@ -360,15 +405,31 @@ namespace RedmineTimePuncher.ViewModels.Input
             SetTodayCommand = new CommandBase(
                 Properties.Resources.RibbonCmdToday, Properties.Resources.today32,
                 Parent.Redmine.Select(a => a != null ? null : ""),
-                () => { if (CurrentDate.Value != DateTime.Today) CurrentDate.Value = getMyToday(); }).AddTo(disposables);
+                () => { if (SelectedDate.Value != DateTime.Today) SelectedDate.Value = getMyToday(); }).AddTo(disposables);
+            var tooltip = PeriodType.CombineLatest(SelectedDate, (t, s) => (Period: t, Date: s));
             DecreaseDateCommand = new CommandBase(
-                Properties.Resources.RibbonCmdPreviousDay, Properties.Resources.back32,
+                Properties.Resources.RibbonCmdMoveBack, Properties.Resources.back32,
+                tooltip.Select(p => string.Format(Properties.Resources.RibbonCmdMoveToolTip, p.Date.AddDays(-1 * p.Period.GetIntervalDays()).ToDateString())),
                 Parent.Redmine.Select(a => a != null ? null : ""),
-                () => CurrentDate.Value = CurrentDate.Value.AddDays(-1 * PeriodType.Value.GetIntervalDays())).AddTo(disposables);
+                () => SelectedDate.Value = SelectedDate.Value.AddDays(-1 * PeriodType.Value.GetIntervalDays())).AddTo(disposables);
             IncreaseDateCommand = new CommandBase(
-                Properties.Resources.RibbonCmdNextDay, Properties.Resources.next32,
+                Properties.Resources.RibbonCmdMoveNext, Properties.Resources.next32,
+                tooltip.Select(p => string.Format(Properties.Resources.RibbonCmdMoveToolTip, p.Date.AddDays(p.Period.GetIntervalDays()).ToDateString())),
                 Parent.Redmine.Select(a => a != null ? null : ""),
-                () => CurrentDate.Value = CurrentDate.Value.AddDays(PeriodType.Value.GetIntervalDays())).AddTo(disposables);
+                () => SelectedDate.Value = SelectedDate.Value.AddDays(PeriodType.Value.GetIntervalDays())).AddTo(disposables);
+            
+            ChangePeriodCommand = new ReactiveCommand<string>().WithSubscribe(async str =>
+            {
+                var type = FastEnumUtility.FastEnum.Parse<InputPeriodType>(str);
+                if (type == PeriodType.Value && CurrentDate.Value == SelectedDate.Value)
+                    return;
+
+                CurrentDate.Value = SelectedDate.Value;
+                if (PeriodType.Value != type)
+                    PeriodType.Value = type;
+                else
+                    await ReloadIfNeededAsync();
+            }).AddTo(disposables);
             #endregion
 
             #region ""********* リボン（全般） *********"
@@ -493,8 +554,8 @@ namespace RedmineTimePuncher.ViewModels.Input
                 e.Handled = true;
             }).AddTo(disposables);
 
-            Title = parent.Redmine.CombineLatest(CurrentDate, (r, c) =>
-                $"{c.ToString("yyyy/MM/dd (ddd)")}  {getTitle(r)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = parent.Redmine.CombineLatest(SelectedDate, (r, c) =>
+                $"{c.ToDateString()}  {getTitle(r)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         private DateTime getMyToday()
@@ -527,6 +588,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 {
                     using (skipLoadAppointments.ProcessStart())
                     {
+                        SelectedDate.Value = Properties.Settings.Default.LastSelectedDate;
                         CurrentDate.Value = Properties.Settings.Default.LastSelectedDate;
                         PeriodType.Value = (InputPeriodType)Properties.Settings.Default.LastInputPeriodType;
                         if (!string.IsNullOrEmpty(Properties.Settings.Default.LastAppointments))
@@ -553,11 +615,13 @@ namespace RedmineTimePuncher.ViewModels.Input
                 catch (Exception ex)
                 {
                     Logger.Warn($"Apo restore error. {ex.ToString()}");
+                    SelectedDate.Value = getMyToday();
                     CurrentDate.Value = getMyToday();
                 }
             }
             else
             {
+                SelectedDate.Value = getMyToday();
                 CurrentDate.Value = getMyToday();
             }
         }
@@ -584,7 +648,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 if (!MyWorks.IsOutputed)
                 {
-                    Properties.Settings.Default.LastSelectedDate = CurrentDate.Value;
+                    Properties.Settings.Default.LastSelectedDate = SelectedDate.Value;
                     Properties.Settings.Default.LastTimeIndicatorMyWorks = MyWorks.Resource.Updater.Indicator.DateTime;
                     Properties.Settings.Default.LastTimeIndicatorRedmine = Redmine.Resource.Updater.Indicator.DateTime;
                     if (OutlookTeams.Resource != null)

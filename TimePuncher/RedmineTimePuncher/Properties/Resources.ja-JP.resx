@@ -223,10 +223,10 @@
   <data name="RibbonCmdToday" xml:space="preserve">
     <value>今日</value>
   </data>
-  <data name="RibbonCmdPreviousDay" xml:space="preserve">
+  <data name="RibbonCmdMoveBack" xml:space="preserve">
     <value>戻る</value>
   </data>
-  <data name="RibbonCmdNextDay" xml:space="preserve">
+  <data name="RibbonCmdMoveNext" xml:space="preserve">
     <value>進む</value>
   </data>
   <data name="RibbonCmdOpenIssue" xml:space="preserve">
@@ -1739,5 +1739,8 @@ Outlookの状態を確認してください。</value>
 対象となる作業実績が存在しませんが、出力を続けますか？
 
 - {0}</value>
+  </data>
+  <data name="RibbonCmdMoveToolTip" xml:space="preserve">
+    <value>{0} に移動します。</value>
   </data>
 </root>

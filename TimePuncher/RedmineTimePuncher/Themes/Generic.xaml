@@ -13,6 +13,7 @@
         <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/MyTooltipTemplate.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/SpecialSlotStyles.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/TimeIndicatorStyles.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/ScheduleView/MyDayTemplateSelector.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/GroupingTypeDefinitions.xaml" />
         <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/Settings/HelpTextBlockStyle.xaml" />
     </ResourceDictionary.MergedDictionaries>

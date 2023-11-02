@@ -101,6 +101,7 @@
             <Setter Property="Focusable" Value="False" />
         </Style>
 
+        <converters:PeriodTypeSelectionConverter x:Key="PeriodTypeSelectionConverter" />
     </UserControl.Resources>
 
     <Grid>
@@ -142,21 +143,71 @@
                     </telerik:RadRibbonGroup>
                     <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupCalendar}">
                         <telerik:RadCollapsiblePanel>
-                            <TextBlock Style="{StaticResource RibbonTextBlockKStyle}"
-                                       Text="表示形式:" />
-                            <telerik:RadRibbonComboBox Margin="5,5,3,0"
-                                                       VerticalAlignment="Top"
-                                                       IsEditable="False"
-                                                       ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enums:InputPeriodType}}}"
-                                                       OpenDropDownOnFocus="False"
-                                                       SelectedItem="{Binding Input.PeriodType.Value}" />
-                        </telerik:RadCollapsiblePanel>
-                        <telerik:Separator />
-                        <telerik:RadCollapsiblePanel>
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Input.SetTodayCommand}" />
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Input.DecreaseDateCommand}" />
                             <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Input.IncreaseDateCommand}" />
                         </telerik:RadCollapsiblePanel>
+                        <telerik:Separator />
+                        <telerik:RadRibbonRadioButton Margin="3,0,0,0"
+                                                      CollapseToMedium="WhenGroupIsMedium"
+                                                      CollapseToSmall="WhenGroupIsSmall"
+                                                      Command="{Binding Input.ChangePeriodCommand}"
+                                                      CommandParameter="OneDay"
+                                                      GroupName="PeriodSelect"
+                                                      IsChecked="{Binding Input.PeriodTypeStr.Value,
+                                                                          Mode=OneWay,
+                                                                          Converter={StaticResource PeriodTypeSelectionConverter},
+                                                                          ConverterParameter=OneDay}"
+                                                      LargeImage="../Images/calendar-oneday-48.png"
+                                                      Size="Large"
+                                                      Text="{x:Static props:Resources.enumInputPeriodType1Day}" />
+                        <telerik:RadRibbonRadioButton CollapseToMedium="WhenGroupIsMedium"
+                                                      CollapseToSmall="WhenGroupIsSmall"
+                                                      Command="{Binding Input.ChangePeriodCommand}"
+                                                      CommandParameter="WorkingDays"
+                                                      GroupName="PeriodSelect"
+                                                      IsChecked="{Binding Input.PeriodTypeStr.Value,
+                                                                          Mode=OneWay,
+                                                                          Converter={StaticResource PeriodTypeSelectionConverter},
+                                                                          ConverterParameter=WorkingDays}"
+                                                      LargeImage="../Images/calendar-workdays-48.png"
+                                                      Size="Large"
+                                                      Text="{x:Static props:Resources.enumInputPeriodTypeWorkingDays}" />
+                        <StackPanel Orientation="Vertical">
+                            <telerik:RadRibbonRadioButton HorizontalAlignment="Left"
+                                                          Command="{Binding Input.ChangePeriodCommand}"
+                                                          CommandParameter="ThisWeek"
+                                                          GroupName="PeriodSelect"
+                                                          IsChecked="{Binding Input.PeriodTypeStr.Value,
+                                                                              Mode=OneWay,
+                                                                              Converter={StaticResource PeriodTypeSelectionConverter},
+                                                                              ConverterParameter=ThisWeek}"
+                                                          LargeImage="../Images/calendar-week-48.png"
+                                                          Size="Medium"
+                                                          Text="{x:Static props:Resources.enumInputPeriodTypeThisWeek}" />
+                            <telerik:RadRibbonRadioButton HorizontalAlignment="Left"
+                                                          Command="{Binding Input.ChangePeriodCommand}"
+                                                          CommandParameter="Last3Days"
+                                                          GroupName="PeriodSelect"
+                                                          IsChecked="{Binding Input.PeriodTypeStr.Value,
+                                                                              Mode=OneWay,
+                                                                              Converter={StaticResource PeriodTypeSelectionConverter},
+                                                                              ConverterParameter=Last3Days}"
+                                                          LargeImage="../Images/calendar-3-48.png"
+                                                          Size="Medium"
+                                                          Text="{x:Static props:Resources.enumInputPeriodType3Days}" />
+                            <telerik:RadRibbonRadioButton HorizontalAlignment="Left"
+                                                          Command="{Binding Input.ChangePeriodCommand}"
+                                                          CommandParameter="Last7Days"
+                                                          GroupName="PeriodSelect"
+                                                          IsChecked="{Binding Input.PeriodTypeStr.Value,
+                                                                              Mode=OneWay,
+                                                                              Converter={StaticResource PeriodTypeSelectionConverter},
+                                                                              ConverterParameter=Last7Days}"
+                                                          LargeImage="../Images/calendar-7-48.png"
+                                                          Size="Medium"
+                                                          Text="{x:Static props:Resources.enumInputPeriodType7Days}" />
+                        </StackPanel>
                     </telerik:RadRibbonGroup>
 
                     <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupSelectedAppos}">
@@ -221,13 +272,13 @@
                             <RowDefinition Height="{Binding Source={x:Static props:Settings.Default}, Path=GridRowHeight3, Mode=TwoWay}" />
                         </Grid.RowDefinitions>
 
-                        <telerik:RadCalendar Grid.Row="0"
+                        <telerik:RadCalendar x:Name="calendar"
+                                             Grid.Row="0"
                                              Margin="10"
                                              AreWeekNumbersVisible="False"
                                              BorderBrush="{x:Null}"
-                                             DisplayDate="{Binding Input.CurrentDate.Value,
-                                                                   Mode=OneWay}"
-                                             SelectedDate="{Binding Input.CurrentDate.Value,
+                                             DayTemplateSelector="{StaticResource MyDayTemplateSelector}"
+                                             SelectedDate="{Binding Input.SelectedDate.Value,
                                                                     Mode=TwoWay}" />
 
                         <GridSplitter Grid.Row="1"

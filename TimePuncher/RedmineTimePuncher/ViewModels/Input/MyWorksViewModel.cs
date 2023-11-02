@@ -62,7 +62,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                myWorksApos.ObserveElementProperty(a => a.Start).StartWithDefault(),
                myWorksApos.ObserveElementProperty(a => a.End).StartWithDefault(), (_, __, ___) => _).ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe).AddTo(disposables);
             var tickLength = parent.Parent.Settings.ObserveProperty(a => a.Schedule.TickLength).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var myWorksError = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(parent.CurrentDate, myWorksChanged, (sche, currentDate, __) =>
+            var myWorksError = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(parent.SelectedDate, myWorksChanged, (sche, currentDate, __) =>
             {
                 var targetApos = myWorksApos.Where(a => sche.Contains(currentDate, a)).ToList();
                 if (targetApos.Count == 0)
@@ -79,13 +79,13 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }
 
                 // 重なりをチェック
-                if (targetApos.Any(a => targetApos.Except(new[] { a }).Any(b => b.IntersectsWith(a))))
+                if (targetApos.Any(a => targetApos.Any(b => a != b && b.IntersectsWith(a))))
                 {
                     return Properties.Resources.msgErrDuplicateAppointment;
                 }
                 return null;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var myWorksWarn = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(parent.CurrentDate, myWorksChanged, (sche, currentDate, __) =>
+            var myWorksWarn = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(parent.SelectedDate, myWorksChanged, (sche, currentDate, __) =>
             {
                 var targetApos = myWorksApos.Where(a => sche.Contains(currentDate, a)).ToList();
                 if (targetApos.Count == 0)
@@ -171,7 +171,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                         //------------------------------------
                         // 重複している予定を削除する。
                         //------------------------------------
-                        var dupApos = myWorksApos.Where(a => myWorksApos.Any(b => b.IntersectsWith(a))).ToList();
+                        var dupApos = myWorksApos.Where(a => myWorksApos.Any(b => a != b && b.IntersectsWith(a))).ToList();
                         if (dupApos.Count() > 1)
                         {
                             // 予定の重なりを展開する。
@@ -188,7 +188,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                                 result.Add(apo);
 
                                 // その予定と重なっている他の予定を抽出する。
-                                var targetApos = dupApos.Where(a => a != apo).Where(a => apo.IntersectsWith(a)).ToList();
+                                var targetApos = dupApos.Where(a => a != apo && apo.IntersectsWith(a)).ToList();
 
                                 // 重複している予定は、一旦、登録済み予定から削除する。
                                 removeApos.AddRange(targetApos.Concat(new[] { apo }));
@@ -635,7 +635,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             var apos = parent.Appointments
                 .Where(a => res.Any(b => a.Resources.Contains(b)))
                 .Where(a => a.ApoType != AppointmentType.RedmineTimeEntryMember)
-                .Where(a => targets.Any(b => b.IntersectsWith(a)))
+                .Where(a => targets.Any(b => a != b && b.IntersectsWith(a)))
                 .ToList();
 
             // 予定の重なりを展開する。
@@ -651,7 +651,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 result.Add(apo);
 
                 // その予定と重なっている他の予定を抽出する。
-                var targetApos = apos.Where(a => a != apo).Where(a => apo.IntersectsWith(a));
+                var targetApos = apos.Where(a => a != apo && apo.IntersectsWith(a));
 
                 // 重複している予定は、登録済み予定から削除する。
                 removeApos.AddRange(targetApos.Concat(new[] { apo }));
@@ -718,11 +718,11 @@ namespace RedmineTimePuncher.ViewModels.Input
 
         private (DateTime? Date, List<MyAppointment> Appointments) confirmExportIfNeeded()
         {
-            var targetDate = parent.CurrentDate.Value;
-            var targetApos = myWorksApos.Where(a => parent.Parent.Settings.Schedule.Contains(parent.CurrentDate.Value, a)).ToList();
+            var targetDate = parent.SelectedDate.Value;
+            var targetApos = myWorksApos.Where(a => parent.Parent.Settings.Schedule.Contains(parent.SelectedDate.Value, a)).ToList();
             if (targetApos.Count == 0)
             {
-                var r1 = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfExportEmpty, targetDate.ToString("yyyy/MM/dd(ddd)")));
+                var r1 = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfExportEmpty, targetDate.ToDateString()));
                 if (r1.HasValue && r1.Value)
                     return (targetDate, targetApos);
                 else
@@ -732,7 +732,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             if (parent.PeriodType.Value == InputPeriodType.OneDay)
                 return (targetDate, targetApos);
 
-            var r2 = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfExport, targetDate.ToString("yyyy/MM/dd(ddd)")));
+            var r2 = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfExport, targetDate.ToDateString()));
             if (r2.HasValue && r2.Value)
                 return (targetDate, targetApos);
             else

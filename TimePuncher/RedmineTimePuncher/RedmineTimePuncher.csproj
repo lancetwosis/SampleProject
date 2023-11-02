@@ -145,6 +145,7 @@
     <Compile Include="Converters\EnumerableToStringConverter.cs" />
     <Compile Include="Converters\DeleteConfirmMessageConverter.cs" />
     <Compile Include="Converters\IntToMargineConverter.cs" />
+    <Compile Include="Converters\PeriodTypeSelectionConverter.cs" />
     <Compile Include="Enums\ApplicationMode.cs" />
     <Compile Include="Enums\CreateTicketMode.cs" />
     <Compile Include="Enums\CustomFieldFormat.cs" />
@@ -339,6 +340,7 @@
     <Compile Include="Views\Controls\Charts\BarChartView.xaml.cs">
       <DependentUpon>BarChartView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Selectors\MyDayTemplateSelector.cs" />
     <Compile Include="Views\Controls\MyWeekViewDefinition.cs" />
     <Compile Include="Views\Controls\ResourceSettingListBox.xaml.cs">
       <DependentUpon>ResourceSettingListBox.xaml</DependentUpon>
@@ -500,6 +502,10 @@
     <Page Include="Themes\ScheduleView\MyDeleteAppointmentConfirmDialogStyle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\ScheduleView\MyDayTemplateSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Themes\ScheduleView\TimeIndicatorStyles.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -911,6 +917,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\icons8-compare-16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\calendar-oneday-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\calendar-workdays-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\calendar-3-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\calendar-7-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\calendar-week-48.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

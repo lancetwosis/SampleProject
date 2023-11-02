@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LibRedminePower.Extentions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,7 +12,7 @@ namespace RedmineTimePuncher.Views.Controls
     {
         protected override string FormatVisibleRangeText(IFormatProvider formatInfo, DateTime rangeStart, DateTime rangeEnd, DateTime currentDate)
         {
-            return currentDate.ToString("yyyy/MM/dd (ddd)", formatInfo);
+            return currentDate.ToDateString(formatInfo);
         }
     }
 }
