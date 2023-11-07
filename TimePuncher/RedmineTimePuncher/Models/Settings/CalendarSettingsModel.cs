@@ -54,6 +54,19 @@ namespace RedmineTimePuncher.Models.Settings
                 return daysOfWeek.First(w => w.DayOfWeek == date.DayOfWeek).IsWorkingDay;
         }
 
+        public DateTime GetMostRecentWorkingDay(DateTime date, bool moveNext)
+        {
+            while (true)
+            {
+                if (IsWorkingDay(date))
+                    return date;
+                if (moveNext)
+                    date = date.AddDays(1);
+                else
+                    date = date.AddDays(-1);
+            }
+        }
+
         public bool IsOnTimeAppointment(MyAppointment appo)
         {
             return !OffTimeFromSubject.IsMatch(appo.Subject) && !OffTimeFromCatetories.IsMatch(appo.OutlookCategories);

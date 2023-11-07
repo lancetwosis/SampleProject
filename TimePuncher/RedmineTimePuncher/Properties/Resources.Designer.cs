@@ -193,6 +193,26 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap copy2back_48 {
+            get {
+                object obj = ResourceManager.GetObject("copy2back_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap copy2next_48 {
+            get {
+                object obj = ResourceManager.GetObject("copy2next_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Boolean に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string CustomFieldFormatBool {
@@ -2396,6 +2416,72 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   {0} is out of the display range. Do you want to continue copying?
+        ///
+        ///The display range will be updated as the copy is executed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdCopyToConfirmMsgDisplay {
+            get {
+                return ResourceManager.GetString("RibbonCmdCopyToConfirmMsgDisplay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   {0} is set as a holiday. The most recent working date is {1}.
+        ///Please select the date to copy to. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdCopyToConfirmMsgHolidy {
+            get {
+                return ResourceManager.GetString("RibbonCmdCopyToConfirmMsgHolidy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select a spent time. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdCopyToErrMsgSelectMyWork {
+            get {
+                return ResourceManager.GetString("RibbonCmdCopyToErrMsgSelectMyWork", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   You cannot copy anything other than spent time. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdCopyToErrMsgSelectMyWorkOnly {
+            get {
+                return ResourceManager.GetString("RibbonCmdCopyToErrMsgSelectMyWorkOnly", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Multiple copies of multi-day work results are not allowed. If multiple copies are made, they must be work results from the same day. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdCopyToErrMsgSelectSameDay {
+            get {
+                return ResourceManager.GetString("RibbonCmdCopyToErrMsgSelectSameDay", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Copy to next day に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdCopyToNext {
+            get {
+                return ResourceManager.GetString("RibbonCmdCopyToNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Copy to previous day に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdCopyToPrevious {
+            get {
+                return ResourceManager.GetString("RibbonCmdCopyToPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Copy to
         ///Spent time に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -2652,20 +2738,20 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Calendar に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string RibbonGroupCalendar {
-            get {
-                return ResourceManager.GetString("RibbonGroupCalendar", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Collaboration に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RibbonGroupCollaboration {
             get {
                 return ResourceManager.GetString("RibbonGroupCollaboration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Period に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonGroupDisplayMode {
+            get {
+                return ResourceManager.GetString("RibbonGroupDisplayMode", resourceCulture);
             }
         }
         
@@ -2684,6 +2770,15 @@ namespace RedmineTimePuncher.Properties {
         public static string RibbonGroupGeneral {
             get {
                 return ResourceManager.GetString("RibbonGroupGeneral", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Move に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonGroupMove {
+            get {
+                return ResourceManager.GetString("RibbonGroupMove", resourceCulture);
             }
         }
         
@@ -2711,6 +2806,15 @@ namespace RedmineTimePuncher.Properties {
         public static string RibbonGroupView {
             get {
                 return ResourceManager.GetString("RibbonGroupView", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Calendar に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonTabCalendar {
+            get {
+                return ResourceManager.GetString("RibbonTabCalendar", resourceCulture);
             }
         }
         

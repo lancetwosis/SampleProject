@@ -144,7 +144,9 @@
                                 Orientation="Horizontal">
                         <telerik:RadButton x:Name="DeleteButton"
                                            ClickMode="Release"
-                                           Command="{x:Static telerikScheduleView:RadScheduleViewCommands.DeleteAppointment}"
+                                           Command="{Binding Path=DataContext.Input.MyWorks.DeleteCommand.Command,
+                                                             RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                            AncestorType=telerik:RadRibbonWindow}}"
                                            CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                            Foreground="{Binding RelativeSource={RelativeSource TemplatedParent},
                                                                 Path=Foreground}"

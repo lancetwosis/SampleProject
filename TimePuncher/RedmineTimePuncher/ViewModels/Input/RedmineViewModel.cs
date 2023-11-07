@@ -141,7 +141,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 {
                     categories = settings.Select(c => new MyCategory(c)).ToList();
                 }
-                MessageBroker.Default.Publish(categories);
+                MyAppointment.AllCategories.Value = categories;
                 MyTimeEntry.DicCategory = categories.ToDictionary(b => b.Id);
             }).AddTo(disposables);
 

@@ -13,6 +13,8 @@
         <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/SearchTypeToolTipText.xaml" />
         <ResourceDictionary>
             <converters:DateTimeToHeaderBackgroundConverter x:Key="DateTimeToHeaderBackgroundConverter" />
+            <converters:DateTimeToHeaderForegroundConverter x:Key="DateTimeToHeaderForegroundConverter" />
+            <converters:DateTimeToHeaderFontWeightConverter x:Key="DateTimeToHeaderFontWeightConverter" />
         </ResourceDictionary>
     </ResourceDictionary.MergedDictionaries>
 
@@ -28,14 +30,33 @@
                                 <Binding Path="DataContext.Settings.Calendar"
                                          RelativeSource="{RelativeSource Mode=FindAncestor,
                                                                          AncestorType=telerik:RadRibbonWindow}" />
+                                <Binding Path="DataContext.Input.SelectedDate.Value"
+                                         RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                         AncestorType=telerik:RadRibbonWindow}" />
                             </MultiBinding>
                         </Grid.Background>
-
-                        <ContentPresenter MinHeight="18"
-                                          Margin="4"
-                                          HorizontalAlignment="Center"
-                                          VerticalAlignment="Center"
-                                          Content="{Binding FormattedName}" />
+                        <TextBlock MinHeight="18"
+                                   Margin="4"
+                                   HorizontalAlignment="Center"
+                                   VerticalAlignment="Center"
+                                   Text="{Binding FormattedName}">
+                            <TextBlock.Foreground>
+                                <MultiBinding Converter="{StaticResource DateTimeToHeaderForegroundConverter}">
+                                    <Binding Path="Name" />
+                                    <Binding Path="DataContext.Input.SelectedDate.Value"
+                                             RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                             AncestorType=telerik:RadRibbonWindow}" />
+                                </MultiBinding>
+                            </TextBlock.Foreground>
+                            <TextBlock.FontWeight>
+                                <MultiBinding Converter="{StaticResource DateTimeToHeaderFontWeightConverter}">
+                                    <Binding Path="Name" />
+                                    <Binding Path="DataContext.Input.SelectedDate.Value"
+                                             RelativeSource="{RelativeSource Mode=FindAncestor,
+                                                                             AncestorType=telerik:RadRibbonWindow}" />
+                                </MultiBinding>
+                            </TextBlock.FontWeight>
+                        </TextBlock>
                         <controls1:FilterTextBox Margin="2,0,3,0"
                                                  HorizontalAlignment="Left"
                                                  ClearTextCommand="{Binding DataContext.Input.ClearSearchText,

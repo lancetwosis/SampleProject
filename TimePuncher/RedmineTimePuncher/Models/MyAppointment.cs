@@ -34,6 +34,7 @@ namespace RedmineTimePuncher.Models
         public static bool IsAutoSameName { get; set; }
         public static TimeMarker EditMarker { get; set; }
         public static RedmineManager Redmine { get; set; }
+        public static ReactivePropertySlim<List<MyCategory>> AllCategories { get; set; } = new ReactivePropertySlim<List<MyCategory>>();
 
         public static string UrlBase { get; set; }
 
@@ -244,9 +245,6 @@ namespace RedmineTimePuncher.Models
                 ticketRp.ForceNotify(); // 終了時間を変更した場合は、作業カテゴリの自動振り分けを行う。
         }
 
-        // 引数なしのコンストラクタを定義するため MessageBroker を使用する。
-        private static ReadOnlyReactivePropertySlim<List<MyCategory>> categories = MessageBroker.Default.ToObservable<List<MyCategory>>().ToReadOnlyReactivePropertySlim();
-
         /// <summary>
         /// 予定の新規作成ができるように、引数なしコンストラクタを定義しておく。
         /// </summary>
@@ -273,12 +271,12 @@ namespace RedmineTimePuncher.Models
 
             ProjectCategories = new[]
             {
-                categories.Select(_ => ""),     // 「作業分類」の一覧が更新されたり
-                ticketRp.Where(a => a != null).Select(_ => ""),       // チケットが更新されたりしたら
+                AllCategories.Select(_ => ""),                  // 「作業分類」の一覧が更新されたり
+                ticketRp.Where(a => a != null).Select(_ => ""), // チケットが更新されたりしたら
             }.CombineLatest().Where(_ => Redmine != null).Select(_ =>
             {
-                var proj = Redmine.GetProject(ticketRp.Value.Project.Id.ToString());
-                return categories.Value.Where(a => proj.TimeEntryActivities.Any(b => b.Id == a.Id)).ToList();
+                var proj = Redmine.Projects.Value.First(p => p.Id == ticketRp.Value.Project.Id);
+                return AllCategories.Value.Where(a => proj.TimeEntryActivities.Any(b => b.Id == a.Id)).ToList();
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             // チケットが変更されたら
@@ -296,13 +294,12 @@ namespace RedmineTimePuncher.Models
 
             GotoTicketCommand = ticketRp.Select(a => a != null).ToReactiveCommand().WithSubscribe(() => ticketRp.Value.GoToTicket()).AddTo(disposables);
 
-            apoRp.SubscribeWithErr(a => this.TimeMarker = a == Enums.AppointmentType.Manual ? MyAppointment.EditMarker : null).AddTo(disposables);
+            apoRp.SubscribeWithErr(a => this.TimeMarker = a == AppointmentType.Manual ? MyAppointment.EditMarker : null).AddTo(disposables);
 
             IsMyWork = this.Resources.CollectionChangedAsObservable().StartWithDefault().Select(_ =>
-            this.Resources.OfType<MyResourceBase>().Any(a => a.IsMyWorks())).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+                this.Resources.OfType<MyResourceBase>().Any(a => a.IsMyWorks())).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            CanResize = IsMyWork.CombineLatest(apoRp, (im, apo) => im && (apo != AppointmentType.RedmineTimeEntryMember))
-                .ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            CanResize = IsMyWork.CombineLatest(apoRp, (im, apo) => im && (apo != AppointmentType.RedmineTimeEntryMember)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             CanDelete = IsMyWork.ToReadOnlyReactivePropertySlim().AddTo(disposables);
             CanDrag = apoRp.Select(a => a != AppointmentType.RedmineTimeEntryMember).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
@@ -311,18 +308,15 @@ namespace RedmineTimePuncher.Models
                 if (!isMy) return null;
                 if (ticket == null) return Properties.Resources.MyAppoMsgRegisterIssue;
                 if (cateogry == null) return Properties.Resources.MyAppoMsgRegisterActivity;
-
-                if (ProjectCategories.Value != null)
-                    if (!ProjectCategories.Value.Contains(cateogry)) return string.Format(Properties.Resources.MyAppoMsgCantSetActivityToThisProject, cateogry.ToString());
+                if (ProjectCategories.Value != null && !ProjectCategories.Value.Contains(cateogry))
+                    return string.Format(Properties.Resources.MyAppoMsgCantSetActivityToThisProject, cateogry.ToString());
                 return null;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             IsError = ErrorMessage.Select(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-
-
         }
 
-        public MyAppointment(IResource resource, Enums.AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo) : this()
+        public MyAppointment(IResource resource, AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo) : this()
         {
             this.Subject = subject;
             this.Body = body;
@@ -333,7 +327,7 @@ namespace RedmineTimePuncher.Models
             this.TicketNo = ticketNo;
         }
 
-        public MyAppointment(IResource resource, Enums.AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo, MyIssue issue = null) : this()
+        public MyAppointment(IResource resource, AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo, MyIssue issue = null) : this()
         {
             this.Subject = subject;
             this.Body = body;
@@ -348,7 +342,7 @@ namespace RedmineTimePuncher.Models
         /// <summary>
         /// 起動時の前回の予定の復元処理用のコンストラクタ
         /// </summary>
-        public MyAppointment(IResource resource, Enums.AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo, MyIssue issue, TicketTreeModel ticketTree, string categoryName) : this()
+        public MyAppointment(IResource resource, AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo, MyIssue issue, TicketTreeModel ticketTree, string categoryName) : this()
         {
             this.Subject = subject;
             this.Body = body;
@@ -360,21 +354,26 @@ namespace RedmineTimePuncher.Models
             using (disableGetTicketList.ProcessStart()) this.Ticket = issue;
             TicketTree = ticketTree;
 
-            // ProjectCategories.Value がまだ null であるため categories から設定する
-            // この段階の categories は JSON から復元した Settings.Category.Items になっている
+            // ProjectCategories.Value がまだ null であるため AllCategories から設定する
+            // この段階の AllCategories は JSON から復元した Settings.Category.Items になっている
             // そのため、システム作業分類のチェックが外れていると Id が異なったものになっている
-            // よって、ProjectCategories.Value が設定されたら Category を設定しなおす
-            Category = categories.Value.FirstOrDefault(c => c.DisplayName == categoryName);
+            // よって、プロジェクトで有効になっている作業分類が更新されたら Category を設定しなおす
+            Category = AllCategories.Value.FirstOrDefault(c => c.DisplayName == categoryName);
             ProjectCategories.Where(a => a != null).Subscribe(_ =>
             {
                 Category = ProjectCategories.Value.FirstOrDefault(a => a.DisplayName == categoryName);
             }).AddTo(disposables);
         }
 
-        public MyAppointment(IResource resource, Enums.AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo, MyIssue issue, int categoryId) :
+        public MyAppointment(IResource resource, AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo, MyIssue issue, int categoryId) :
             this(resource, type, subject, body, start, end, ticketNo, issue)
         {
             Category = ProjectCategories.Value.FirstOrDefault(a => a.Id == categoryId);
+            // プロジェクトで有効になっている作業分類が更新されたら Category を設定しなおす
+            ProjectCategories.Where(a => a != null).Subscribe(_ =>
+            {
+                Category = ProjectCategories.Value.FirstOrDefault(a => a.Id == categoryId);
+            }).AddTo(disposables);
         }
 
         public MyAppointment(IResource resource, MyTimeEntry entry) : this()
@@ -393,6 +392,11 @@ namespace RedmineTimePuncher.Models
             ApoType = AppointmentType.RedmineTimeEntry;
             TicketNo = issueId.ToString();
             Category = ProjectCategories.Value.SingleOrDefault(a => a.Id == entry.ActivityId.Value);
+            // プロジェクトで有効になっている作業分類が更新されたら Category を設定しなおす
+            ProjectCategories.Where(a => a != null).Subscribe(_ =>
+            {
+                Category = ProjectCategories.Value.FirstOrDefault(a => a.Id == entry.ActivityId.Value);
+            }).AddTo(disposables);
             TimeEntryId = entry.Entry.Id;
             FromEntryId = entry.FromId;
             TimeEntryType = entry.Type == Enums.TimeEntryType.OverTime ? $"({Enums.TimeEntryType.OverTime.GetDescription()})" : null ;
@@ -442,8 +446,8 @@ namespace RedmineTimePuncher.Models
                     }
                     else
                     {
-                        this.ApoType = Enums.AppointmentType.SkypeCall; // PropertyChangedを走らせるため
-                        this.ApoType = Enums.AppointmentType.Manual;
+                        this.ApoType = AppointmentType.SkypeCall; // PropertyChangedを走らせるため
+                        this.ApoType = AppointmentType.Manual;
                     }
                     this.MemberAppointments = otherApo.MemberAppointments;
                     // TimeEntryIdと、FromEntryIdは、

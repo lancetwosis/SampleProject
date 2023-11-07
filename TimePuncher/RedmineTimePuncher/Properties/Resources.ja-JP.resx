@@ -193,7 +193,7 @@
   <data name="RibbonGroupExport" xml:space="preserve">
     <value>データ出力</value>
   </data>
-  <data name="RibbonGroupCalendar" xml:space="preserve">
+  <data name="RibbonTabCalendar" xml:space="preserve">
     <value>カレンダー</value>
   </data>
   <data name="RibbonGroupSelectedAppos" xml:space="preserve">
@@ -1742,5 +1742,35 @@ Outlookの状態を確認してください。</value>
   </data>
   <data name="RibbonCmdMoveToolTip" xml:space="preserve">
     <value>{0} に移動します。</value>
+  </data>
+  <data name="RibbonGroupMove" xml:space="preserve">
+    <value>移動</value>
+  </data>
+  <data name="RibbonGroupDisplayMode" xml:space="preserve">
+    <value>表示形式</value>
+  </data>
+  <data name="RibbonCmdCopyToNext" xml:space="preserve">
+    <value>翌日にコピー</value>
+  </data>
+  <data name="RibbonCmdCopyToPrevious" xml:space="preserve">
+    <value>前日にコピー</value>
+  </data>
+  <data name="RibbonCmdCopyToConfirmMsgDisplay" xml:space="preserve">
+    <value>{0} は表示範囲外です。コピーを続けますか？
+
+コピーが実行されると表示範囲が更新されます。</value>
+  </data>
+  <data name="RibbonCmdCopyToConfirmMsgHolidy" xml:space="preserve">
+    <value>{0} は休日に設定されています。直近の稼働日は {1} です。
+コピー先の日付を選択してください。</value>
+  </data>
+  <data name="RibbonCmdCopyToErrMsgSelectMyWork" xml:space="preserve">
+    <value>作業実績を選択してください。</value>
+  </data>
+  <data name="RibbonCmdCopyToErrMsgSelectMyWorkOnly" xml:space="preserve">
+    <value>作業実績以外のコピーはできません。</value>
+  </data>
+  <data name="RibbonCmdCopyToErrMsgSelectSameDay" xml:space="preserve">
+    <value>複数日の作業実績のコピーはできません。複数のコピーを行う場合、同日の作業実績である必要があります。</value>
   </data>
 </root>

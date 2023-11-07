@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using Telerik.Windows.Controls;
@@ -16,22 +17,19 @@ using Telerik.Windows.Controls.ScheduleView;
 
 namespace RedmineTimePuncher.Converters
 {
-    public class DateTimeToHeaderBackgroundConverter : IMultiValueConverter
+    public class DateTimeToHeaderFontWeightConverter : IMultiValueConverter
     {
         public object Convert(object[] values, Type targetType, object parameter, CultureInfo culture)
         {
-            if (values.Length != 3 ||
+            if (values.Length != 2 ||
                 !(values[0] is DateTime date) ||
-                !(values[1] is CalendarSettingsModel calendar) ||
-                !(values[2] is DateTime selectedDate))
+                !(values[1] is DateTime selectedDate))
                 return null;
 
             if (selectedDate == date)
-                return new SolidColorBrush(Office2019Palette.Palette.AccentBackgroundColor);
-            else if (calendar.IsWorkingDay(date))
-                return TimeEntryType.OnTime.GetColor();
+                return FontWeights.SemiBold;
             else
-                return TimeEntryType.OverTime.GetColor();
+                return FontWeights.Normal;
         }
 
         public object[] ConvertBack(object value, Type[] targetTypes, object parameter, CultureInfo culture)

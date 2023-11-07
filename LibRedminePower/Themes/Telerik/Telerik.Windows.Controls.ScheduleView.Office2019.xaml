@@ -3072,11 +3072,12 @@
                 </Setter>
                 <Setter TargetName="Border" Property="BorderThickness" Value="1,1,0,0" />
             </Trigger>
-            <Trigger Property="IsToday" Value="True">
+            <!--  Today のハイライトを消すためにコメントアウト  -->
+            <!--<Trigger Property="IsToday" Value="True">
                 <Setter Property="Background" Value="{telerik1:Office2019Resource ResourceKey=AccentMouseOverBorderBrush}" />
                 <Setter Property="BorderBrush" Value="{telerik1:Office2019Resource ResourceKey=AccentMouseOverBorderBrush}" />
                 <Setter Property="Foreground" Value="{telerik1:Office2019Resource ResourceKey=CheckedForegroundBrush}" />
-            </Trigger>
+            </Trigger>-->
             <MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="IsCommandAttached" Value="True" />
@@ -3111,13 +3112,14 @@
             <Trigger Property="IsEnabled" Value="False">
                 <Setter Property="Foreground" Value="{telerik1:Office2019Resource ResourceKey=DisabledForegroundBrush}" />
             </Trigger>
-            <MultiTrigger>
+            <!--  Today のハイライトを消すためにコメントアウト  -->
+            <!--<MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="IsEnabled" Value="False" />
                     <Condition Property="IsToday" Value="True" />
                 </MultiTrigger.Conditions>
                 <Setter Property="Foreground" Value="{telerik1:Office2019Resource ResourceKey=DisabledCheckedForegroundBrush}" />
-            </MultiTrigger>
+            </MultiTrigger>-->
         </Style.Triggers>
     </Style>
     <ControlTemplate x:Key="GroupHeaderTemplate"
@@ -3145,7 +3147,8 @@
                 <Setter TargetName="Header" Property="VerticalAlignment" Value="Stretch" />
                 <Setter TargetName="Header" Property="HorizontalAlignment" Value="Left" />
             </Trigger>
-            <MultiTrigger>
+            <!--  Today のハイライトを消すためにコメントアウト  -->
+            <!--<MultiTrigger>
                 <MultiTrigger.Conditions>
                     <Condition Property="Orientation" Value="Vertical" />
                     <Condition Property="IsToday" Value="True" />
@@ -3158,7 +3161,7 @@
                     <Condition Property="IsToday" Value="True" />
                 </MultiTrigger.Conditions>
                 <Setter TargetName="BorderVisual" Property="BorderThickness" Value="{StaticResource VerticalGroupHeaderTodayBorderThickness}" />
-            </MultiTrigger>
+            </MultiTrigger>-->
         </ControlTemplate.Triggers>
     </ControlTemplate>
     <Style x:Key="GroupHeaderBaseStyle"
@@ -3275,6 +3278,8 @@
         <Setter Property="Padding" Value="0,3,0,20" />
         <Setter Property="MinHeight" Value="100" />
     </Style>
+    <!--  Today のハイライトを消すため以下を修正  -->
+    <!--  Before: HorizontalTodayStyle="{StaticResource HorizontalTodayGroupHeaderStyle}"  -->
     <telerikScheduleView:OrientedGroupHeaderStyleSelector x:Key="GroupHeaderStyleSelector"
                                                           AgendaViewBottomLevelStyle="{StaticResource AgendaViewBottomLevelGroupHeaderStyle}"
                                                           AgendaViewStyle="{StaticResource AgendaViewGroupHeaderStyle}"
@@ -3283,7 +3288,7 @@
                                                           HorizontalBottomLevelStyle="{StaticResource HorizontalBottomLevelGroupHeaderStyle}"
                                                           HorizontalStyle="{StaticResource HorizontalGroupHeaderStyle}"
                                                           HorizontalTodayBottomLevelStyle="{StaticResource HorizontalBottomLevelTodayGroupHeaderStyle}"
-                                                          HorizontalTodayStyle="{StaticResource HorizontalTodayGroupHeaderStyle}"
+                                                          HorizontalTodayStyle="{StaticResource HorizontalGroupHeaderStyle}"
                                                           MonthViewBottomLevelWeekGroupStyle="{StaticResource MonthViewBottomLevelWeekGroupStyle}"
                                                           MonthViewWeekGroupStyle="{StaticResource MonthViewWeekGroupStyle}"
                                                           VerticalBottomLevelStyle="{StaticResource VerticalBottomLevelGroupHeaderStyle}"

@@ -93,6 +93,8 @@ namespace RedmineTimePuncher.ViewModels.Input
 
 
         #region "リボン"
+        public int RibbonIndex { get; set; }
+
         public AsyncCommandBase ReloadCommand { get; }
 
         public CommandBase SetTodayCommand { get; }
@@ -194,8 +196,6 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             StartTime = SelectedDate.CombineLatest(PeriodType, (d, p) => p.GetStartDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             EndTime = SelectedDate.CombineLatest(PeriodType, (d, p) => p.GetEndDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            // StartTime と EndTime の値が更新されてから実行したいのでここで定義する
-            PeriodType.Skip(1).Subscribe(async p => await ReloadIfNeededAsync());
 
             DisplayStartTime = new ReactivePropertySlim<DateTime>(StartTime.Value).AddTo(disposables);
             DisplayEndTime = new ReactivePropertySlim<DateTime>(EndTime.Value).AddTo(disposables);
@@ -301,8 +301,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 {
                     Logger.Info("ReloadCommand Start");
 
-                    DisplayStartTime.Value = PeriodType.Value.GetStartDate(SelectedDate.Value, Parent.Settings.Calendar);
-                    DisplayEndTime.Value = PeriodType.Value.GetEndDate(SelectedDate.Value, Parent.Settings.Calendar);
+                    updateDisplayRange();
 
                     Parent.Redmine.Value.ClearCash();
 
@@ -333,7 +332,10 @@ namespace RedmineTimePuncher.ViewModels.Input
                 if (periodChanging.IsBusy) return;
 
                 using (periodChanging.ProcessStart())
+                {
                     ActiveViewIndex.Value = (int)p;
+                    updateDisplayRange();
+                }
             });
             ActiveViewIndex.Skip(1).Subscribe(i =>
             {
@@ -343,6 +345,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 {
                     PeriodType.Value = (InputPeriodType)i;
                     SelectedDate.Value = CurrentDate.Value;
+                    updateDisplayRange();
                 }
             });
 
@@ -350,10 +353,12 @@ namespace RedmineTimePuncher.ViewModels.Input
             SelectedAppointments.Where(a => a != null && a.Any()).Subscribe(a =>
             {
                 SelectedDate.Value = a.Last().Start.GetDateOnly();
+                RibbonIndex = 0;
             });
             SelectedSlot.Where(s => s != null).Subscribe(s =>
             {
                 SelectedDate.Value = s.Start.GetDateOnly();
+                RibbonIndex = 0;
             });
 
             // ScheduleView の CurrentDate が更新されたら「選択中の日付」を更新
@@ -374,49 +379,70 @@ namespace RedmineTimePuncher.ViewModels.Input
                     return;
                 }
 
-                if (MyWorks.IsEditedApos.Value)
+                var r = confirmClearIfNeeded();
+                if (!r.HasValue || !r.Value)
                 {
-                    var isOk = MessageBoxHelper.ConfirmQuestion(Properties.Resources.msgConfDeleteEditedAppointment);
-                    if (!isOk.HasValue || !isOk.Value)
-                    {
-                        using (skipLoadAppointments.ProcessStart())
-                        {
-                            SelectedDate.Value = p.OldItem;
-                        }
-                        return;
-                    }
+                    SetValueWithoutLoading(() => SelectedDate.Value = p.OldItem);
+                    return;
                 }
 
                 CurrentDate.Value = p.NewItem;
 
-                DeletedAppointments.RemoveAll();
+                await reloadAllAsync();
+            }).AddTo(disposables);
 
-                // 日付変更時に読み込みをしていたらキャンセルする。
-                await Task.WhenAll(defaultResouces.SelectMany(a => a.GetReloads()).Where(a => a.CancelCommand.CanExecute()).Select(a => a.CancelCommand.ExecuteAsync()));
+            PeriodType.Pairwise().SubscribeWithErr(async p =>
+            {
+                if (skipLoadAppointments.IsBusy || Parent.Redmine.Value == null)
+                    return;
 
-                Appointments.Clear();
+                var r = confirmClearIfNeeded();
+                if (!r.HasValue || !r.Value)
+                {
+                    SetValueWithoutLoading(() =>
+                    {
+                        if (Appointments.Any())
+                            CurrentDate.Value = Appointments.Max(a => a.Start).Date;
+                        PeriodType.Value = p.OldItem;
+                    });
+                    return;
+                }
 
-                if (!ReloadCommand.Command.CanExecute())
-                    await ReloadCommand.Command.CanExecuteChangedAsObservable().ToReadOnlyReactivePropertySlim();
-                await ReloadCommand.Command.ExecuteAsync();
+                await reloadAllAsync();
             }).AddTo(disposables);
 
             //--- 日付関連コマンド
             SetTodayCommand = new CommandBase(
                 Properties.Resources.RibbonCmdToday, Properties.Resources.today32,
+                Observable.Return(Properties.Resources.RibbonCmdToday),
                 Parent.Redmine.Select(a => a != null ? null : ""),
-                () => { if (SelectedDate.Value != DateTime.Today) SelectedDate.Value = getMyToday(); }).AddTo(disposables);
+                () =>
+                {
+                    if (SelectedDate.Value != DateTime.Today)
+                    {
+                        SelectedDate.Value = getMyToday();
+                        RibbonIndex = 1;
+                    }
+                }).AddTo(disposables);
             var tooltip = PeriodType.CombineLatest(SelectedDate, (t, s) => (Period: t, Date: s));
             DecreaseDateCommand = new CommandBase(
                 Properties.Resources.RibbonCmdMoveBack, Properties.Resources.back32,
-                tooltip.Select(p => string.Format(Properties.Resources.RibbonCmdMoveToolTip, p.Date.AddDays(-1 * p.Period.GetIntervalDays()).ToDateString())),
+                tooltip.Select(p => p.Period.GetMoveCommandToolTip(p.Date, true, Parent.Settings.Calendar)),
                 Parent.Redmine.Select(a => a != null ? null : ""),
-                () => SelectedDate.Value = SelectedDate.Value.AddDays(-1 * PeriodType.Value.GetIntervalDays())).AddTo(disposables);
+                () =>
+                {
+                    SelectedDate.Value = SelectedDate.Value.AddDays(-1 * PeriodType.Value.GetIntervalDays());
+                    RibbonIndex = 1;
+                }).AddTo(disposables);
             IncreaseDateCommand = new CommandBase(
                 Properties.Resources.RibbonCmdMoveNext, Properties.Resources.next32,
-                tooltip.Select(p => string.Format(Properties.Resources.RibbonCmdMoveToolTip, p.Date.AddDays(p.Period.GetIntervalDays()).ToDateString())),
+                tooltip.Select(p => p.Period.GetMoveCommandToolTip(p.Date, false, Parent.Settings.Calendar)),
                 Parent.Redmine.Select(a => a != null ? null : ""),
-                () => SelectedDate.Value = SelectedDate.Value.AddDays(PeriodType.Value.GetIntervalDays())).AddTo(disposables);
+                () =>
+                {
+                    SelectedDate.Value = SelectedDate.Value.AddDays(PeriodType.Value.GetIntervalDays());
+                    RibbonIndex = 1;
+                }).AddTo(disposables);
             
             ChangePeriodCommand = new ReactiveCommand<string>().WithSubscribe(async str =>
             {
@@ -571,6 +597,49 @@ namespace RedmineTimePuncher.ViewModels.Input
             }
         }
 
+        private bool? confirmClearIfNeeded()
+        {
+            if (!MyWorks.IsEditedApos.Value)
+                return true;
+
+            var isOk = MessageBoxHelper.ConfirmQuestion(Properties.Resources.msgConfDeleteEditedAppointment);
+            if (isOk.HasValue && isOk.Value)
+                return true;
+            else
+                return null;
+        }
+
+        private async Task reloadAllAsync()
+        {
+            DeletedAppointments.RemoveAll();
+
+            // 日付変更時に読み込みをしていたらキャンセルする。
+            await Task.WhenAll(defaultResouces.SelectMany(a => a.GetReloads()).Where(a => a.CancelCommand.CanExecute()).Select(a => a.CancelCommand.ExecuteAsync()));
+
+            Appointments.Clear();
+
+            if (!ReloadCommand.Command.CanExecute())
+                await ReloadCommand.Command.CanExecuteChangedAsObservable().ToReadOnlyReactivePropertySlim();
+            await ReloadCommand.Command.ExecuteAsync();
+        }
+
+        /// <summary>
+        /// Calendar の背景色の範囲を更新する
+        /// </summary>
+        private void updateDisplayRange()
+        {
+            DisplayStartTime.Value = PeriodType.Value.GetStartDate(SelectedDate.Value, Parent.Settings.Calendar);
+            DisplayEndTime.Value = PeriodType.Value.GetEndDate(SelectedDate.Value, Parent.Settings.Calendar);
+        }
+
+        public void SetValueWithoutLoading(Action setValue)
+        {
+            using (skipLoadAppointments.ProcessStart())
+            {
+                setValue.Invoke();
+            }
+        }
+
         public async Task ReloadIfNeededAsync()
         {
             if (IsSelected.Value && !skipLoadAppointments.IsBusy)
@@ -586,7 +655,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 try
                 {
-                    using (skipLoadAppointments.ProcessStart())
+                    SetValueWithoutLoading(() =>
                     {
                         SelectedDate.Value = Properties.Settings.Default.LastSelectedDate;
                         CurrentDate.Value = Properties.Settings.Default.LastSelectedDate;
@@ -610,7 +679,8 @@ namespace RedmineTimePuncher.ViewModels.Input
                         {
                             DeletedAppointments.AddRange(CloneExtentions.ToObject<List<MyAppointmentSave>>(Properties.Settings.Default.LastDeletedAppointments).Select(a => a.ToMyAppointment(ResourceTypes)));
                         }
-                    }
+
+                    });
                 }
                 catch (Exception ex)
                 {

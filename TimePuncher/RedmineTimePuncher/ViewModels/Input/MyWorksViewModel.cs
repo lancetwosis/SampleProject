@@ -35,6 +35,8 @@ namespace RedmineTimePuncher.ViewModels.Input
         public CommandBase CopyToMyWorksCommand { get; }
         public CommandBase DeleteCommand { get; }
         public CommandBase AlignEvenlyCommand { get; }
+        public CommandBase CopyToNextDayCommand { get; }
+        public CommandBase CopyToPreviousDayCommand { get; }
 
         public ReadOnlyReactivePropertySlim<ReactiveTimer> Timer { get; set; }
 
@@ -307,8 +309,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     await execUpdateAsync(parent, async () =>
                     {
                         // 更新された予定を、Redmineに反映する。
-                        var targetApos = myWorksApos.ToList();
-                        parent.Parent.Redmine.Value.SetEntryApos(parent.Parent.Settings, targetApos, out setFails);
+                        parent.Parent.Redmine.Value.SetEntryApos(parent.Parent.Settings, myWorksApos.ToList(), out setFails);
 
                         // 削除された予定を、Redmineに反映する。
                         parent.Parent.Redmine.Value.DelEntryApos(parent.DeletedAppointments.ToList(), out delFails);
@@ -503,13 +504,15 @@ namespace RedmineTimePuncher.ViewModels.Input
                 {
                     TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(DeleteCommand) + ".Executed");
 
-                    var r = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfDeleteSelectedAppointments, parent.SelectedAppointments.Value.Count()));
-                    if (r.HasValue && r.Value)
+                    if (parent.SelectedAppointments.Value.Count() > 1)
                     {
-                        parent.DeletedAppointments.AddRange(parent.SelectedAppointments.Value.Where(a => a.TimeEntryId > 0));
-
-                        parent.SelectedAppointments.Value.ToList().ForEach(a => parent.Appointments.Remove(a));
+                        var r = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfDeleteSelectedAppointments, parent.SelectedAppointments.Value.Count()));
+                        if (!r.HasValue || !r.Value)
+                            return;
                     }
+
+                    parent.DeletedAppointments.AddRange(parent.SelectedAppointments.Value.Where(a => a.TimeEntryId > 0));
+                    parent.SelectedAppointments.Value.ToList().ForEach(a => parent.Appointments.Remove(a));
                 }).AddTo(disposables);
 
             // 選択範囲内のスロットになる予定を均等に整列
@@ -576,6 +579,37 @@ namespace RedmineTimePuncher.ViewModels.Input
                     parent.Appointments.AddRange(result);
                 }).AddTo(disposables);
             AlignEvenlyCommand.MenuText = Properties.Resources.ScheduleViewCmdAlignEvenly;
+
+            var canExecCopy = parent.SelectedAppointments.Select(apos =>
+            {
+                if (apos == null || !apos.Any(a => a.IsMyWork.Value))
+                    return Properties.Resources.RibbonCmdCopyToErrMsgSelectMyWork;
+                if (apos.Any(a => !a.IsMyWork.Value))
+                    return Properties.Resources.RibbonCmdCopyToErrMsgSelectMyWorkOnly;
+
+                var targets = apos.Where(a => a.IsMyWork.Value).ToList();
+                var targetDay = targets.Last().Start.Date;
+                if (targets.Any(a => a.Start.Date != targetDay))
+                    return Properties.Resources.RibbonCmdCopyToErrMsgSelectSameDay;
+
+                return null;
+            });
+            CopyToPreviousDayCommand = new CommandBase(
+                Properties.Resources.RibbonCmdCopyToPrevious, 'P', Properties.Resources.copy2back_48,
+                canExecCopy,
+                () =>
+                {
+                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(CopyToPreviousDayCommand) + ".Executed");
+                    copyToOtherDay(parent.SelectedDate.Value.AddDays(-1).Date, false);
+                }).AddTo(disposables);
+            CopyToNextDayCommand = new CommandBase(
+                Properties.Resources.RibbonCmdCopyToNext, 'N', Properties.Resources.copy2next_48,
+                canExecCopy,
+                () =>
+                {
+                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(CopyToNextDayCommand) + ".Executed");
+                    copyToOtherDay(parent.SelectedDate.Value.AddDays(1).Date, true);
+                }).AddTo(disposables);
         }
 
         private ReactiveCommand save;
@@ -590,8 +624,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 save = SaveCommand.Command.CanExecuteChangedAsObservable().StartWithDefault().Select(a => SaveCommand.Command.CanExecute()).ToReactiveCommand().WithSubscribe(() =>
                 {
                     // 更新された予定を、、Redmineに反映する。
-                    var targetApos = myWorksApos.ToList();
-                    parent.Parent.Redmine.Value.SetEntryApos(parent.Parent.Settings, targetApos, out var failList1);
+                    parent.Parent.Redmine.Value.SetEntryApos(parent.Parent.Settings, myWorksApos.ToList(), out var failList1);
 
                     // 削除された予定を、Redmineに反映する。
                     parent.Parent.Redmine.Value.DelEntryApos(parent.DeletedAppointments.ToList(), out var failList2);
@@ -737,6 +770,101 @@ namespace RedmineTimePuncher.ViewModels.Input
                 return (targetDate, targetApos);
             else
                 return (null, null);
+        }
+
+        private void copyToOtherDay(DateTime toDate, bool moveNext)
+        {
+            // コピー先の日が表示範囲外かどうか？（コピー後に表示範囲の更新が必要かどうか？）
+            var needsChangeSelectedDate = toDate < parent.DisplayStartTime.Value ||  parent.DisplayEndTime.Value <= toDate;
+            if (needsChangeSelectedDate)
+            {
+                var r = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.RibbonCmdCopyToConfirmMsgDisplay, toDate.ToDateString()));
+                if (!r.HasValue || !r.Value)
+                    return;
+            }
+
+            // コピー先の日が休みの日かどうか？
+            var isToDateHoliday = !parent.Parent.Settings.Calendar.IsWorkingDay(toDate);
+            if (isToDateHoliday)
+            {
+                // コピー先の日を「直近の稼働日」に変更するかどうか確認する
+                var recentWorkDay = parent.Parent.Settings.Calendar.GetMostRecentWorkingDay(toDate, moveNext);
+                var msg = string.Format(Properties.Resources.RibbonCmdCopyToConfirmMsgHolidy, toDate.ToDateString(), recentWorkDay.ToDateString());
+                var selectedIndex = MessageBoxHelper.Select(msg, toDate.ToDateString(), recentWorkDay.ToDateString());
+                if (!selectedIndex.HasValue)
+                    return;
+
+                if (selectedIndex.Value == 1)
+                {
+                    toDate = recentWorkDay;
+                    needsChangeSelectedDate = toDate < parent.DisplayStartTime.Value || parent.DisplayEndTime.Value <= toDate;
+                    isToDateHoliday = false;
+                }
+            }
+
+            // CopyToNextDayCommand の実行条件で SelectedAppointments には、単一の日の作業実績の予定のみが含まれるようになっている
+            var targets = parent.SelectedAppointments.Value.Select(a =>
+            {
+                var copied = a.Copy() as MyAppointment;
+                copied.Start = new DateTime(toDate.Year, toDate.Month, toDate.Day, copied.Start.Hour, copied.Start.Minute, copied.Start.Second);
+                copied.End = new DateTime(toDate.Year, toDate.Month, toDate.Day, copied.End.Hour, copied.End.Minute, copied.End.Second);
+                copied.MemberAppointments.Clear();
+                copied.Resources.Clear();
+                copied.Resources.Add(Resource);
+                return copied;
+            }).ToList();
+
+            // 表示範囲外にコピーしようとした場合、コピー先の日を SelectedDate に設定する
+            if (needsChangeSelectedDate)
+            {
+                var removed = new List<MyAppointment>();
+                // コピー後の使い勝手を良くするため、特定の表示形式の場合は、コピー処理に伴ってそれを変更する
+                if (parent.PeriodType.Value == InputPeriodType.OneDay)
+                {
+                    // 表示形式が「日」だった場合、コピー後に「過去3日」に変更する
+                    parent.SetValueWithoutLoading(() => parent.PeriodType.Value = InputPeriodType.Last3Days);
+
+                    // 新しい表示範囲に含まれる編集中の予定は退避させておき、更新の処理が走った後に追加する
+                    // これにより形式変更後も表示範囲に含まれる予定に関しては、削除の確認ダイアログが出ないようにしている
+                    var editedApos = parent.Appointments.Where(a => a.IsMyWork.Value && a.ApoType == AppointmentType.Manual).ToList();
+                    removed = editedApos.Where(a => InputPeriodType.Last3Days.Contains(toDate, a.Start.Date, parent.Parent.Settings.Calendar)).ToList();
+                    foreach (var a in removed)
+                    {
+                        parent.Appointments.Remove(a);
+                        targets.Add(a);
+                    }
+                }
+                else if (parent.PeriodType.Value == InputPeriodType.WorkingDays)
+                {
+                    // 表示形式が「稼働日」で、コピー先の日が休みの日だった場合（金曜→土曜のようなコピーを想定）
+                    if (isToDateHoliday)
+                    {
+                        // 表示形式をコピー後に「週」に変更する（コピー先の日も表示されるようにする）
+                        parent.SetValueWithoutLoading(() => parent.PeriodType.Value = InputPeriodType.ThisWeek);
+
+                        var editedApos = parent.Appointments.Where(a => a.IsMyWork.Value && a.ApoType == AppointmentType.Manual).ToList();
+                        removed = editedApos.Where(a => InputPeriodType.ThisWeek.Contains(toDate, a.Start.Date, parent.Parent.Settings.Calendar)).ToList();
+                        foreach (var a in removed)
+                        {
+                            parent.Appointments.Remove(a);
+                            targets.Add(a);
+                        }
+                    }
+                }
+
+                parent.SelectedDate.Value = toDate;
+
+                // 編集済みの予定があった場合、保存するかどうかを確認し、キャンセルされた場合、SelectedDate は更新されない。
+                // この場合、本機能も何もせずに終了する。
+                if (parent.SelectedDate.Value != toDate)
+                {
+                    if (removed.Any())
+                        parent.Appointments.AddRange(removed);
+                    return;
+                }
+            }
+
+            parent.Appointments.AddRange(targets);
         }
     }
 }

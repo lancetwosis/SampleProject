@@ -90,6 +90,21 @@ namespace RedmineTimePuncher.Enums
             }
         }
 
+        public static string GetMoveCommandToolTip(this InputPeriodType type, DateTime date, bool moveBack, CalendarSettingsModel calendar)
+        {
+            var toDate = date.AddDays(moveBack ? -1 * type.GetIntervalDays() : type.GetIntervalDays());
+            if (type == InputPeriodType.OneDay)
+            {
+                return string.Format(Resources.RibbonCmdMoveToolTip, toDate.ToDateString());
+            }
+            else
+            {
+                var start = type.GetStartDate(toDate, calendar);
+                var end = type.GetEndDate(toDate, calendar).AddDays(-1);
+                return string.Format(Resources.RibbonCmdMoveToolTip, $"{start.ToDateString()} - {end.ToDateString()}");
+            }
+        }
+
         /// <summary>
         /// currentDate と type から表示範囲を割り出し、そこに targetDate が含まれるかどうかを返す。
         /// </summary>

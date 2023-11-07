@@ -137,6 +137,8 @@
     <Compile Include="Behaviors\RadScheduleViewSelectedAppointmentsBehavior.cs" />
     <Compile Include="Converters\AppointmentTypeToOpacityConverter.cs" />
     <Compile Include="Converters\BoolToTextStrikethroughConverter .cs" />
+    <Compile Include="Converters\DateTimeToHeaderFontWeightConverter.cs" />
+    <Compile Include="Converters\DateTimeToHeaderForegroundConverter.cs" />
     <Compile Include="Converters\DateTimeToHeaderBackgroundConverter.cs" />
     <Compile Include="Converters\SliderValueToVisibilityConverter.cs" />
     <Compile Include="Converters\PeriodToIsEnabledConverter.cs" />
@@ -932,6 +934,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\calendar-week-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\copy2back-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\copy2next-48.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

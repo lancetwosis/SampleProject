@@ -1,5 +1,7 @@
 ﻿using LibRedminePower.Applications;
+using LibRedminePower.Extentions;
 using System;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using Telerik.Windows.Controls;
@@ -175,6 +177,42 @@ namespace LibRedminePower.Helpers
             var result = show(parameter);
             if (result.HasValue && result.Value)
                 return (int)updown.Value;
+            else
+                return null;
+        }
+
+        public static int? Select(string message, params string[] options)
+        {
+            var parameter = new DialogParameters();
+
+            parameter.WindowStyle = (Style)Application.Current.Resources["ConfirmWindowStyle"];
+            parameter.Header = ApplicationInfo.Title;
+            parameter.DefaultFocusedButton = ResponseButton.None;
+            parameter.IconTemplate = createIcon(IconType.Question);
+            parameter.ContentStyle = createStyle(ButtonType.OkCancel);
+
+            var panel = new StackPanel() { Orientation = Orientation.Vertical };
+            panel.Children.Add(new TextBlock() { Text = message, Margin = new Thickness(0, 5, 0, 0), TextWrapping = TextWrapping.Wrap });
+
+            var radioButtons = options.Indexed().Select(p =>
+            {
+                return new RadioButton()
+                {
+                    Content = p.v,
+                    IsChecked = p.isFirst,
+                    GroupName = "MessageBoxHelperSelect",
+                    Margin = new Thickness(5, 2, 0, 0),
+                };
+            }).ToList();
+            foreach (var b in radioButtons)
+            {
+                panel.Children.Add(b);
+            }
+            parameter.Content = panel;
+
+            var result = show(parameter);
+            if (result.HasValue && result.Value)
+                return radioButtons.Indexed().First(p => p.v.IsChecked.Value).i;
             else
                 return null;
         }
