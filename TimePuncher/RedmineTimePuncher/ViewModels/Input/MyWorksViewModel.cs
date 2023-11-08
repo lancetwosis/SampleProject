@@ -668,7 +668,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             var apos = parent.Appointments
                 .Where(a => res.Any(b => a.Resources.Contains(b)))
                 .Where(a => a.ApoType != AppointmentType.RedmineTimeEntryMember)
-                .Where(a => targets.Any(b => a != b && b.IntersectsWith(a)))
+                .Where(a => targets.Any(b => b.IntersectsWith(a)))
                 .ToList();
 
             // 予定の重なりを展開する。

@@ -83,15 +83,8 @@ namespace RedmineTimePuncher.ViewModels.Input
                         {
                             if (string.IsNullOrEmpty(Properties.Settings.Default.FavoriteIssueIds))
                                 return new List<MyIssue>();
-                            try
-                            {
-                                return r.GetTicketsByIds(Properties.Settings.Default.FavoriteIssueIds.Split(',').ToList()).ToList();
-                            }
-                            catch
-                            {
-                                // お気に入りのチケットをすべて削除すると例外が発生する。ユーザの操作によって発生するので例外は無視する。
-                                return new List<MyIssue>();
-                            }
+
+                            return r.GetTicketsByIds(Properties.Settings.Default.FavoriteIssueIds.Split(',').ToList()).ToList();
                         },
                         columnPropsList.SingleOrDefault(g => g.UniqueName == Properties.Resources.IssueGridFavorites), true);
                     grids.Insert(1, FavoriteTickets);
