@@ -8,14 +8,26 @@
                     xmlns:telerikScheduleView="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.ScheduleView"
                     xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels">
 
+    <Style x:Key="DefaultDayTextBlockStyle"
+           BasedOn="{StaticResource {x:Type TextBlock}}"
+           TargetType="TextBlock">
+        <Setter Property="HorizontalAlignment" Value="Center" />
+        <Setter Property="VerticalAlignment" Value="Center" />
+    </Style>
+    <Style x:Key="SelectedDayTextStyle"
+           BasedOn="{StaticResource DefaultDayTextBlockStyle}"
+           TargetType="TextBlock">
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="White" />
+    </Style>
+
     <selectors:MyDayTemplateSelector x:Key="MyDayTemplateSelector">
         <selectors:MyDayTemplateSelector.DefaultTemplate>
             <DataTemplate>
                 <Grid x:Name="DefaultDay"
                       Width="30"
                       Height="32">
-                    <TextBlock HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
+                    <TextBlock Style="{StaticResource DefaultDayTextBlockStyle}"
                                Text="{Binding Text}" />
                 </Grid>
                 <DataTemplate.Triggers>
@@ -25,6 +37,22 @@
                 </DataTemplate.Triggers>
             </DataTemplate>
         </selectors:MyDayTemplateSelector.DefaultTemplate>
+        <selectors:MyDayTemplateSelector.TodayTemplate>
+            <DataTemplate>
+                <Grid x:Name="TodayDay"
+                      Width="30"
+                      Height="32">
+                    <TextBlock Style="{StaticResource DefaultDayTextBlockStyle}"
+                               Text="{Binding Text}"
+                               TextDecorations="Underline" />
+                </Grid>
+                <DataTemplate.Triggers>
+                    <Trigger SourceName="TodayDay" Property="IsMouseOver" Value="True">
+                        <Setter TargetName="TodayDay" Property="Background" Value="#E6F2FA" />
+                    </Trigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </selectors:MyDayTemplateSelector.TodayTemplate>
         <selectors:MyDayTemplateSelector.SelectedTemplate>
             <DataTemplate>
                 <Grid x:Name="SelectedDay"
@@ -32,10 +60,7 @@
                       Height="32"
                       Background="{telerik1:Office2019Resource ResourceKey=AccentBackgroundBrush}">
                     <TextBlock x:Name="SelectedDayText"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
-                               FontWeight="Bold"
-                               Foreground="White"
+                               Style="{StaticResource SelectedDayTextStyle}"
                                Text="{Binding Text}" />
                 </Grid>
                 <DataTemplate.Triggers>
@@ -46,6 +71,25 @@
                 </DataTemplate.Triggers>
             </DataTemplate>
         </selectors:MyDayTemplateSelector.SelectedTemplate>
+        <selectors:MyDayTemplateSelector.SelectedTodayTemplate>
+            <DataTemplate>
+                <Grid x:Name="SelectedToday"
+                      Width="30"
+                      Height="32"
+                      Background="{telerik1:Office2019Resource ResourceKey=AccentBackgroundBrush}">
+                    <TextBlock x:Name="SelectedTodayText"
+                               Style="{StaticResource SelectedDayTextStyle}"
+                               Text="{Binding Text}"
+                               TextDecorations="Underline" />
+                </Grid>
+                <DataTemplate.Triggers>
+                    <Trigger SourceName="SelectedToday" Property="IsMouseOver" Value="True">
+                        <Setter TargetName="SelectedToday" Property="Background" Value="#E6F2FA" />
+                        <Setter TargetName="SelectedTodayText" Property="Foreground" Value="Black" />
+                    </Trigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </selectors:MyDayTemplateSelector.SelectedTodayTemplate>
         <selectors:MyDayTemplateSelector.DisplayedTemplate>
             <DataTemplate>
                 <Grid x:Name="DisplayedDay"
@@ -53,8 +97,7 @@
                       Height="32"
                       Background="#CDE6F7">
                     <TextBlock x:Name="DisplayedDayText"
-                               HorizontalAlignment="Center"
-                               VerticalAlignment="Center"
+                               Style="{StaticResource DefaultDayTextBlockStyle}"
                                Text="{Binding Text}" />
                 </Grid>
                 <DataTemplate.Triggers>
@@ -65,5 +108,24 @@
                 </DataTemplate.Triggers>
             </DataTemplate>
         </selectors:MyDayTemplateSelector.DisplayedTemplate>
+        <selectors:MyDayTemplateSelector.DisplayedTodayTemplate>
+            <DataTemplate>
+                <Grid x:Name="DisplayedToday"
+                      Width="30"
+                      Height="32"
+                      Background="#CDE6F7">
+                    <TextBlock x:Name="DisplayedTodayText"
+                               Style="{StaticResource DefaultDayTextBlockStyle}"
+                               Text="{Binding Text}"
+                               TextDecorations="Underline" />
+                </Grid>
+                <DataTemplate.Triggers>
+                    <Trigger SourceName="DisplayedToday" Property="IsMouseOver" Value="True">
+                        <Setter TargetName="DisplayedToday" Property="Background" Value="#E6F2FA" />
+                        <Setter TargetName="DisplayedTodayText" Property="Foreground" Value="Black" />
+                    </Trigger>
+                </DataTemplate.Triggers>
+            </DataTemplate>
+        </selectors:MyDayTemplateSelector.DisplayedTodayTemplate>
     </selectors:MyDayTemplateSelector>
 </ResourceDictionary>

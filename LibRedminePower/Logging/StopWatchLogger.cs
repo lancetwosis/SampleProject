@@ -27,4 +27,11 @@ namespace LibRedminePower.Logging
             Logger.Info($"{proccessName} was finished. Time = {ms} [sec]");
         }
     }
+
+    public class StopWatchLogger<T> : StopWatchLogger
+    {
+        public StopWatchLogger(string proccessName) : base($"{typeof(T).Name} {proccessName}")
+        {
+        }
+    }
 }

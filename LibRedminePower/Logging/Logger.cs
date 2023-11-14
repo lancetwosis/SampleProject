@@ -53,5 +53,6 @@ namespace LibRedminePower.Logging
         }
 
         public static StopWatchLogger CreateProcess(string processName) => new StopWatchLogger(processName);
+        public static StopWatchLogger CreateProcess<T>(string processName) => new StopWatchLogger<T>(processName);
     }
 }

@@ -55,7 +55,7 @@ namespace LibRedminePower.Models.Manager
 
         public async Task<List<ActivityModel>> GetActivitiesAsync(CancellationToken token, int userId, DateTime start, DateTime end)
         {
-            using (var log = Logger.CreateProcess($"GetActivities {start.ToShortDateString()} - {end.ToShortDateString()}"))
+            using (var log = Logger.CreateProcess<RedmineWebManager>($"GetActivities {start.ToShortDateString()} - {end.ToShortDateString()}"))
             {
                 await loginAsync(token);
 
@@ -90,7 +90,7 @@ namespace LibRedminePower.Models.Manager
 
         private async Task loginAsync(CancellationToken token)
         {
-            using (var log = Logger.CreateProcess("loginAsync"))
+            using (var log = Logger.CreateProcess<RedmineWebManager>("loginAsync"))
             using (var response = await client.GetAsync(new Uri(new Uri(urlBase), "login").AbsoluteUri, token))
             using (var stream = await response.Content.ReadAsStreamAsync())
             using (var reader = new StreamReader(stream, Encoding.GetEncoding("UTF-8")))
@@ -156,7 +156,7 @@ namespace LibRedminePower.Models.Manager
 
         private async Task<IHtmlDocument> getWebActivityAsync(CancellationToken token, int userId, DateTime targetDate)
         {
-            using (var log = Logger.CreateProcess($"getWebActivityAsync {targetDate.ToShortDateString()}"))
+            using (var log = Logger.CreateProcess<RedmineWebManager>($"getWebActivityAsync {targetDate.ToShortDateString()}"))
             {
                 // 活動ページへ移動する。
                 var fromStr = $"from={targetDate.ToString("yyyy-MM-dd")}";

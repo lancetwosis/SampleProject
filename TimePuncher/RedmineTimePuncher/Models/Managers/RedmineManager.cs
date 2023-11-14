@@ -384,7 +384,7 @@ namespace RedmineTimePuncher.Models.Managers
         /// </summary>
         private T exec<T>(string name, Func<T> func, Func<Exception, string> errmsgCreator)
         {
-            using (Logger.CreateProcess(name))
+            using (Logger.CreateProcess<RedmineManager>(name))
             {
                 try
                 {

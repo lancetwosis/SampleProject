@@ -137,8 +137,7 @@
     <Compile Include="Behaviors\RadScheduleViewSelectedAppointmentsBehavior.cs" />
     <Compile Include="Converters\AppointmentTypeToOpacityConverter.cs" />
     <Compile Include="Converters\BoolToTextStrikethroughConverter .cs" />
-    <Compile Include="Converters\DateTimeToHeaderFontWeightConverter.cs" />
-    <Compile Include="Converters\DateTimeToHeaderForegroundConverter.cs" />
+    <Compile Include="Converters\DateTimeToHeaderTextStyleConverter.cs" />
     <Compile Include="Converters\DateTimeToHeaderBackgroundConverter.cs" />
     <Compile Include="Converters\SliderValueToVisibilityConverter.cs" />
     <Compile Include="Converters\PeriodToIsEnabledConverter.cs" />

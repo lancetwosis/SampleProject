@@ -94,7 +94,7 @@ namespace RedmineTimePuncher.ViewModels
 
             // 各種マネージャーを作成する。
             Outlook = new OutlookManager(Settings.ObserveProperty(a => a.Appointment.Outlook).ToReadOnlyReactivePropertySlim().AddTo(disposables)).AddTo(disposables);
-            Teams = new TeamsManager(Settings.ObserveProperty(a => a.Appointment.Teams).ToReadOnlyReactivePropertySlim().AddTo(disposables)).AddTo(disposables);
+            Teams = new TeamsManager(Settings).AddTo(disposables);
             Redmine = new ReactivePropertySlim<RedmineManager>().AddTo(disposables);
             ErrorMessage = new TextNotifier().AddTo(disposables);
             Settings.ObserveProperty(a => a.Redmine).SubscribeWithErr(async s =>

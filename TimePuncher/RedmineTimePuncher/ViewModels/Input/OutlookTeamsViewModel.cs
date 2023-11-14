@@ -28,18 +28,6 @@ namespace RedmineTimePuncher.ViewModels.Input
             if (parent.Parent.Outlook.IsInstalled || parent.Parent.Teams.IsInstalled)
                 Resource = new OutlookTeamsResource(parent.Parent.Outlook, parent.Parent.Teams).AddTo(disposables);
 
-            // 日付変更、もしくは１分間隔でTeamsのステータスを読み取る
-            var teamsStatusSlots = Observable.Merge(
-                parent.SelectedDate.Where(a => a != DateTime.MinValue).Select(_ => ""),
-                Observable.Interval(TimeSpan.FromMinutes(1)).Select(_ => ""))
-                .Select(_ => parent.Parent.Teams.GetStatus(Resource, parent.StartTime.Value, parent.EndTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            teamsStatusSlots.ObserveOnUIDispatcher().SubscribeWithErr(t =>
-            {
-                parent.SpecialSlots.RemoveAll(a => a is TeamsStatusSlot);
-                if (t != null)
-                    parent.SpecialSlots.AddRange(t);
-            }).AddTo(disposables);
-
             // Outlookの読込コマンド
             if (parent.Parent.Outlook.IsInstalled)
             {
@@ -66,6 +54,16 @@ namespace RedmineTimePuncher.ViewModels.Input
             // Teamsの読込コマンド
             if (parent.Parent.Teams.IsInstalled)
             {
+                // 表示範囲の変更、もしくは１分間隔でTeamsのステータスを読み取る
+                parent.DisplayStartTime.CombineLatest(parent.DisplayEndTime, Observable.Interval(TimeSpan.FromMinutes(1)).StartWithDefault(), (s, e, _) => (Start: s, End: e))
+                    .Throttle(TimeSpan.FromMilliseconds(100)).ObserveOnUIDispatcher().SubscribeWithErr(p =>
+                    {
+                        var status = parent.Parent.Teams.GetStatus(Resource, p.Start, p.End);
+                        parent.SpecialSlots.RemoveAll(a => a is TeamsStatusSlot);
+                        if (status != null)
+                            parent.SpecialSlots.AddRange(status);
+                    }).AddTo(disposables);
+
                 Resource.Updater2.SetUpdateCommand(parent.Parent.Redmine.Select(a => a != null), async (ct) =>
                 {
                     await execUpdateAsync(parent, async () =>
