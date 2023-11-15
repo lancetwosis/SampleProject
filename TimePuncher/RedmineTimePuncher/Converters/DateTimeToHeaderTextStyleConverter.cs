@@ -41,7 +41,10 @@ namespace RedmineTimePuncher.Converters
             }
 
             if (date == DateTime.Today)
+            {
+                style.Setters.Add(new Setter() { Property = TextBlock.FontWeightProperty, Value = FontWeights.SemiBold });
                 style.Setters.Add(new Setter() { Property = TextBlock.TextDecorationsProperty, Value = TextDecorations.Underline });
+            }
 
             return style;
         }

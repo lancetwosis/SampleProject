@@ -12,6 +12,7 @@ namespace RedmineTimePuncher.Models
 {
     public class TicketTreeModel : LibRedminePower.Models.Bases.ModelBase
     {
+        public string ProjectName => Items.Any() ? Items.Last().Issue.Project.Name : null;
         public List<TicketTreeItemModel> Items { get; set; } = new List<TicketTreeItemModel>();
 
         [JsonIgnore]

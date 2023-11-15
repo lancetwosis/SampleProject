@@ -42,7 +42,8 @@
                 <Grid x:Name="TodayDay"
                       Width="30"
                       Height="32">
-                    <TextBlock Style="{StaticResource DefaultDayTextBlockStyle}"
+                    <TextBlock FontWeight="Bold"
+                               Style="{StaticResource DefaultDayTextBlockStyle}"
                                Text="{Binding Text}"
                                TextDecorations="Underline" />
                 </Grid>
@@ -115,6 +116,7 @@
                       Height="32"
                       Background="#CDE6F7">
                     <TextBlock x:Name="DisplayedTodayText"
+                               FontWeight="Bold"
                                Style="{StaticResource DefaultDayTextBlockStyle}"
                                Text="{Binding Text}"
                                TextDecorations="Underline" />

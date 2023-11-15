@@ -40,11 +40,31 @@
                                Foreground="{Binding Appointment.Category.ForeBrush}"
                                Text="{Binding Appointment.Category.DisplayName}" />
                 </Border>
-                <controls:TicketTree x:Name="ticketTree"
-                                     Margin="0,0,0,3"
-                                     DataContext="{Binding Appointment.TicketTree}"
-                                     Visibility="{Binding HasItem.Value,
-                                                          Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <StackPanel x:Name="ticketTree"
+                            Margin="0,0,0,3"
+                            Orientation="Vertical"
+                            Visibility="{Binding Appointment.TicketTree.HasItem.Value,
+                                                 Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <TextBlock FontWeight="SemiBold"
+                               Foreground="#505050"
+                               Text="{Binding Appointment.TicketTree.ProjectName}" />
+                    <ItemsControl Margin="8,0,0,0"
+                                  ItemsSource="{Binding Appointment.TicketTree.Items}">
+                        <ItemsControl.Resources>
+                            <converters:IntToMargineConverter x:Key="IntToMargineConverter" />
+                            <converters:BoolToFontBoldConverter x:Key="BoolToFontBoldConverter" />
+                        </ItemsControl.Resources>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Margin="{Binding No,
+                                                            Converter={StaticResource IntToMargineConverter}}"
+                                           FontWeight="{Binding IsLastChild,
+                                                                Converter={StaticResource BoolToFontBoldConverter}}"
+                                           Text="{Binding Issue.Label}" />
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </StackPanel>
                 <Separator Margin="0,0,0,3">
                     <Separator.Visibility>
                         <MultiBinding Converter="{StaticResource VisibilityAnyConverter}">
@@ -57,6 +77,7 @@
                         </MultiBinding>
                     </Separator.Visibility>
                 </Separator>
+
                 <TextBlock Text="{Binding Subject}"
                            TextWrapping="Wrap" />
                 <StackPanel Margin="5,1,0,0"

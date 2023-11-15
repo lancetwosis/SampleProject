@@ -360,9 +360,6 @@
     <Compile Include="Views\Controls\ReportItemsControl.xaml.cs">
       <DependentUpon>ReportItemsControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\TicketTree.xaml.cs">
-      <DependentUpon>TicketTree.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
@@ -595,10 +592,6 @@
     <Page Include="Views\Controls\ReportItemsControl.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Views\Controls\TicketTree.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
