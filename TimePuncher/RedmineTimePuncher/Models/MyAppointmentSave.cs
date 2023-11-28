@@ -13,6 +13,7 @@ namespace RedmineTimePuncher.Models
     {
         public string UniqueId { get; set; }
         public string Subject { get; set; }
+        public string ProjectPostfix { get; set; }
         public string Body { get; set; }
 
         public DateTime Start { get; set; }
@@ -40,6 +41,7 @@ namespace RedmineTimePuncher.Models
         {
             this.UniqueId = from.UniqueId;
             this.Subject = from.Subject;
+            this.ProjectPostfix = from.ProjectPostfix;
             this.Body = from.Body;
             this.Start = from.Start;
             this.End = from.End;
@@ -62,7 +64,7 @@ namespace RedmineTimePuncher.Models
             var res = resourceTypes[0].Resources.FirstOrDefault(a => ResourceName == a.ResourceName);
             if (res == null) return null;
 
-            return new MyAppointment(res, ApoType, Subject, Body, Start, End, TicketNo, Issue, TicketLinks, CategoryName) 
+            return new MyAppointment(res, this)
             {
                 TimeEntryId = this.TimeEntryId,
                 FromEntryId = this.FromEntryId,

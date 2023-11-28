@@ -202,6 +202,7 @@ namespace RedmineTimePuncher.Models
         public ReadOnlyReactivePropertySlim<bool> CanDrag { get; set; }
 
         public string OutlookCategories { get; set; }
+        public string ProjectPostfix { get; set; }
 
         public string ToolTipBody
         {
@@ -291,6 +292,11 @@ namespace RedmineTimePuncher.Models
                 if (Category == null)
                     Category = ProjectCategories.Value.OrderBy(a => a.Model.Order).FirstOrDefault(a => a.IsMatch(TicketTree.Items.Select(b => b.Issue).ToList(), Redmine.MyUserId, IsAutoSameName));
             }).AddTo(disposables);
+            //ticketRp への Subscribe では達成できなかったため以下のようにする。（TODO: いずれ整理すること）
+            this.ObserveProperty(a => a.Ticket).Subscribe(t =>
+            {
+                ProjectPostfix = t != null ? $" - {t.Project.Name}" : null;
+            }).AddTo(disposables);
 
             GotoTicketCommand = ticketRp.Select(a => a != null).ToReactiveCommand().WithSubscribe(() => ticketRp.Value.GoToTicket()).AddTo(disposables);
 
@@ -342,26 +348,27 @@ namespace RedmineTimePuncher.Models
         /// <summary>
         /// 起動時の前回の予定の復元処理用のコンストラクタ
         /// </summary>
-        public MyAppointment(IResource resource, AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo, MyIssue issue, TicketTreeModel ticketTree, string categoryName) : this()
+        public MyAppointment(IResource resource, MyAppointmentSave saved) : this()
         {
-            this.Subject = subject;
-            this.Body = body;
-            this.Start = start;
-            this.End = end;
+            this.Subject = saved.Subject;
+            this.ProjectPostfix = saved.ProjectPostfix;
+            this.Body = saved.Body;
+            this.Start = saved.Start;
+            this.End = saved.End;
             this.Resources.Add(resource);
-            this.ApoType = type;
-            using (disableGetTicket.ProcessStart()) this.TicketNo = ticketNo;
-            using (disableGetTicketList.ProcessStart()) this.Ticket = issue;
-            TicketTree = ticketTree;
+            this.ApoType = saved.ApoType;
+            using (disableGetTicket.ProcessStart()) this.TicketNo = saved.TicketNo;
+            using (disableGetTicketList.ProcessStart()) this.Ticket = saved.Issue;
+            TicketTree = saved.TicketLinks;
 
             // ProjectCategories.Value がまだ null であるため AllCategories から設定する
             // この段階の AllCategories は JSON から復元した Settings.Category.Items になっている
             // そのため、システム作業分類のチェックが外れていると Id が異なったものになっている
             // よって、プロジェクトで有効になっている作業分類が更新されたら Category を設定しなおす
-            Category = AllCategories.Value.FirstOrDefault(c => c.DisplayName == categoryName);
+            Category = AllCategories.Value.FirstOrDefault(c => c.DisplayName == saved.CategoryName);
             ProjectCategories.Where(a => a != null).Subscribe(_ =>
             {
-                Category = ProjectCategories.Value.FirstOrDefault(a => a.DisplayName == categoryName);
+                Category = ProjectCategories.Value.FirstOrDefault(a => a.DisplayName == saved.CategoryName);
             }).AddTo(disposables);
         }
 

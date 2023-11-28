@@ -99,16 +99,20 @@
                             </ToolTipService.ToolTip>
                         </ContentControl>
                     </StackPanel>
-                    <ContentPresenter x:Name="Content"
-                                      Grid.Row="1"
-                                      Grid.Column="1"
-                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                                      TextBlock.FontStyle="{Binding Path=Category.Model.IsItalic,
-                                                                    Converter={StaticResource BoolToFontItalicConverter}}"
-                                      TextBlock.FontWeight="{Binding Path=Category.Model.IsBold,
-                                                                     Converter={StaticResource BoolToFontBoldConverter}}"
-                                      TextBlock.Foreground="{Binding Path=Category.ForeBrush}" />
+                    <TextBlock x:Name="Content"
+                               Grid.Row="1"
+                               Grid.Column="1"
+                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                               FontStyle="{Binding Path=Category.Model.IsItalic,
+                                                   Converter={StaticResource BoolToFontItalicConverter}}"
+                               FontWeight="{Binding Path=Category.Model.IsBold,
+                                                    Converter={StaticResource BoolToFontBoldConverter}}"
+                               Foreground="{Binding Path=Category.ForeBrush}"
+                               TextWrapping="Wrap">
+                        <Run Text="{Binding Appointment.Subject}" />
+                        <Run Text="{Binding Appointment.ProjectPostfix}" />
+                    </TextBlock>
                     <telerik:RadGlyph x:Name="ExtendedArrowEnd"
                                       Grid.Row="2"
                                       Grid.ColumnSpan="2"
