@@ -1898,4 +1898,7 @@ Please select the date to copy to.</value>
   <data name="RibbonCmdCopyToErrMsgSelectSameDay" xml:space="preserve">
     <value>Multiple copies of multi-day work results are not allowed. If multiple copies are made, they must be work results from the same day.</value>
   </data>
+  <data name="RibbonGroupColorcodingAppos" xml:space="preserve">
+    <value>Color-coding of Appointments</value>
+  </data>
 </root>

@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
+using Telerik.Windows.Controls.ChartView;
 
 namespace RedmineTimePuncher.Models
 {
@@ -12,6 +14,8 @@ namespace RedmineTimePuncher.Models
         public string Identifier { get; set; }
 
         public List<Redmine.Net.Api.Types.Version> Versions { get; set; } = new List<Redmine.Net.Api.Types.Version>();
+
+        public static List<Brush> COLORS { get; } = ChartPalettes.Windows8.GlobalEntries.Select(a => a.Fill).ToList();
 
         public MyProject() { }
 

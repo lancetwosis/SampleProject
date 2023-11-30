@@ -77,5 +77,27 @@ namespace LibRedminePower.Extentions
         {
             return new System.Windows.Media.SolidColorBrush((System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(code));
         }
+
+        /// <summary>
+        /// colors の中から id を使ってユニークな SolidColorBrush を返す。colors, id が等しければ戻り値は同じ値になる。
+        /// </summary>
+        public static System.Windows.Media.SolidColorBrush GetUniqueColorById(this List<System.Windows.Media.Brush> colors, int id)
+        {
+            // id から元となる色を決定
+            var brush = colors[id % colors.Count] as System.Windows.Media.SolidColorBrush;
+
+            // id の各桁の合計で明度を調整
+            var digiSum = id.ToString().ToCharArray().Select(a => int.Parse(a.ToString())).Sum();
+            var brightness = 0.08 * (digiSum % 5);
+
+            var hsb = brush.Color.ToHsb();
+            if (hsb.Brightness + brightness < 0.97)
+                hsb.Brightness += brightness;
+            else
+                hsb.Brightness -= brightness;
+
+            return new System.Windows.Media.SolidColorBrush(hsb.ToRgb());
+        }
+
     }
 }

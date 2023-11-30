@@ -78,6 +78,9 @@ namespace RedmineTimePuncher.ViewModels.Input
         public ReadOnlyReactivePropertySlim<DateTime> StartTime { get; set; }
         public ReadOnlyReactivePropertySlim<DateTime> EndTime { get; set; }
         public ReactivePropertySlim<DateTime> DisplayStartTime { get; set; }
+        /// <summary>
+        /// ScheduleView の表示領域の最後の日の翌日の 0:00:00 例）表示が 10/30 までなら 11/1 0:00:00 が格納されている
+        /// </summary>
         public ReactivePropertySlim<DateTime> DisplayEndTime { get; set; }
         public ReactivePropertySlim<double> MinTimeRulerExtent { get; set; }
         public ReactivePropertySlim<double> ScalingSliderValue { get; set; }
@@ -101,6 +104,9 @@ namespace RedmineTimePuncher.ViewModels.Input
         public CommandBase DecreaseDateCommand { get; set; }
         public CommandBase IncreaseDateCommand { get; }
         public ReactiveCommand<string> ChangePeriodCommand { get; set; }
+
+        public ReadOnlyReactivePropertySlim<AppointmentColorType> AppointmentColorType { get; set; }
+        public ReactiveCommand<string> ChangeAppointmentColorCommand { get; set; }
 
         public CommandBase SelectAposCommand { get; }
         #endregion
@@ -492,7 +498,13 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }).AddTo(disposables);
             SelectAposCommand.MenuText = Properties.Resources.ScheduleViewCmdSelectAll;
 
-            #endregion 
+            #endregion
+
+            AppointmentColorType = MyAppointment.ColorType.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            ChangeAppointmentColorCommand = new ReactiveCommand<string>().WithSubscribe(str =>
+            {
+                setAppointmentColorType(str);
+            }).AddTo(disposables);
 
             AppointmentDeletedCommand = new ReactiveCommand<AppointmentDeletedEventArgs>().WithSubscribe(e =>
             {
@@ -586,15 +598,10 @@ namespace RedmineTimePuncher.ViewModels.Input
 
         private DateTime getMyToday()
         {
-            var now = DateTime.Now;
-            if (now < DateTime.Today + Parent.Settings.Schedule.DayStartTime)
-            {
+            if (DateTime.Now < Parent.Settings.Schedule.GetToday())
                 return DateTime.Today.AddDays(-1);
-            }
             else
-            {
                 return DateTime.Today;
-            }
         }
 
         private bool? confirmClearIfNeeded()
@@ -630,6 +637,11 @@ namespace RedmineTimePuncher.ViewModels.Input
         {
             DisplayStartTime.Value = PeriodType.Value.GetStartDate(SelectedDate.Value, Parent.Settings.Calendar);
             DisplayEndTime.Value = PeriodType.Value.GetEndDate(SelectedDate.Value, Parent.Settings.Calendar);
+        }
+
+        private void setAppointmentColorType(string str)
+        {
+            MyAppointment.ColorType.Value = FastEnumUtility.FastEnum.Parse<AppointmentColorType>(str);
         }
 
         public void SetValueWithoutLoading(Action setValue)
@@ -680,6 +692,10 @@ namespace RedmineTimePuncher.ViewModels.Input
                             DeletedAppointments.AddRange(CloneExtentions.ToObject<List<MyAppointmentSave>>(Properties.Settings.Default.LastDeletedAppointments).Select(a => a.ToMyAppointment(ResourceTypes)));
                         }
 
+                        if (!string.IsNullOrEmpty(Properties.Settings.Default.LastAppointmentColorType))
+                        {
+                            setAppointmentColorType(Properties.Settings.Default.LastAppointmentColorType);
+                        }
                     });
                 }
                 catch (Exception ex)
@@ -718,7 +734,12 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 if (!MyWorks.IsOutputed)
                 {
-                    Properties.Settings.Default.LastSelectedDate = SelectedDate.Value;
+                    // 表示範囲を維持するため「過去3日」「過去7日」の場合は最後の日を保存しておく
+                    if (PeriodType.Value == InputPeriodType.Last3Days || PeriodType.Value == InputPeriodType.Last7Days)
+                        Properties.Settings.Default.LastSelectedDate = DisplayEndTime.Value.Date.AddDays(-1);
+                    else
+                        Properties.Settings.Default.LastSelectedDate = SelectedDate.Value;
+
                     Properties.Settings.Default.LastTimeIndicatorMyWorks = MyWorks.Resource.Updater.Indicator.DateTime;
                     Properties.Settings.Default.LastTimeIndicatorRedmine = Redmine.Resource.Updater.Indicator.DateTime;
                     if (OutlookTeams.Resource != null)
@@ -741,6 +762,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }
             }
             Properties.Settings.Default.LastInputPeriodType = (int)PeriodType.Value;
+            Properties.Settings.Default.LastAppointmentColorType = AppointmentColorType.Value.ToString();
 
             // TicketGridViewの設定を保存
             if (Redmine.TicketList.Value != null)

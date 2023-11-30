@@ -581,6 +581,7 @@
         <Grid>
             <telerik:RadGlyph HorizontalAlignment="Center"
                               VerticalAlignment="Center"
+                              Background="White"
                               FontSize="{StaticResource ScheduleViewGlyphSize}"
                               Foreground="{telerik1:Office2019Resource ResourceKey=ValidationBrush}"
                               Glyph="{StaticResource GlyphWarning}" />

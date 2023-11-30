@@ -1773,4 +1773,7 @@ Outlookの状態を確認してください。</value>
   <data name="RibbonCmdCopyToErrMsgSelectSameDay" xml:space="preserve">
     <value>複数日の作業実績のコピーはできません。複数のコピーを行う場合、同日の作業実績である必要があります。</value>
   </data>
+  <data name="RibbonGroupColorcodingAppos" xml:space="preserve">
+    <value>予定の色分け</value>
+  </data>
 </root>

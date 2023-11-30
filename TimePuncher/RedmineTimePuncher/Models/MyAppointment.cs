@@ -23,6 +23,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.VisualStyles;
+using System.Windows.Media;
 using System.Windows.Threading;
 using Telerik.Windows.Controls;
 using Telerik.Windows.Controls.ScheduleView;
@@ -32,6 +33,7 @@ namespace RedmineTimePuncher.Models
     public class MyAppointment : Appointment, IPeriod
     {
         public static bool IsAutoSameName { get; set; }
+        public static ReactivePropertySlim<AppointmentColorType> ColorType { get; set; } = new ReactivePropertySlim<AppointmentColorType>();
         public static TimeMarker EditMarker { get; set; }
         public static RedmineManager Redmine { get; set; }
         public static ReactivePropertySlim<List<MyCategory>> AllCategories { get; set; } = new ReactivePropertySlim<List<MyCategory>>();
@@ -200,6 +202,8 @@ namespace RedmineTimePuncher.Models
         public ReadOnlyReactivePropertySlim<bool> CanResize { get; set; }
         public ReadOnlyReactivePropertySlim<bool> CanDelete { get; set; }
         public ReadOnlyReactivePropertySlim<bool> CanDrag { get; set; }
+        public ReadOnlyReactivePropertySlim<Brush> ProjectColor { get; set; }
+        public ReadOnlyReactivePropertySlim<Brush> Background { get; set; }
 
         public string OutlookCategories { get; set; }
         public string ProjectPostfix { get; set; }
@@ -297,6 +301,22 @@ namespace RedmineTimePuncher.Models
             {
                 ProjectPostfix = t != null ? $" - {t.Project.Name}" : null;
             }).AddTo(disposables);
+
+            ProjectColor = this.ObserveProperty(a => a.Ticket).ObserveOnUIDispatcher().Select(_ =>
+            {
+                if (Ticket != null)
+                    return MyProject.COLORS.GetUniqueColorById(Ticket.Project.Id) as Brush;
+                else
+                    return null;
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Background = this.ObserveProperty(a => a.Category).CombineLatest(ProjectColor, ColorType, (_, __, ___) => true)
+                .ObserveOnUIDispatcher().Select(_ =>
+            {
+                if (ColorType.Value == AppointmentColorType.Category)
+                    return Category is MyCategory mc ? mc.CategoryBrush : null;
+                else
+                    return ProjectColor.Value;
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             GotoTicketCommand = ticketRp.Select(a => a != null).ToReactiveCommand().WithSubscribe(() => ticketRp.Value.GoToTicket()).AddTo(disposables);
 

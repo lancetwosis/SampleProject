@@ -2747,6 +2747,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Color-coding of Appointments に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonGroupColorcodingAppos {
+            get {
+                return ResourceManager.GetString("RibbonGroupColorcodingAppos", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Period に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RibbonGroupDisplayMode {

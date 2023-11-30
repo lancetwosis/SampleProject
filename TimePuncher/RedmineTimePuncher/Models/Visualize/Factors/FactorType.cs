@@ -85,7 +85,6 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
 
         private static List<Brush> issueColors = getColors(ChartPalettes.Flower);
         private static List<Brush> userColors = getColors(ChartPalettes.Spring);
-        private static List<Brush> projectColors = getColors(ChartPalettes.Windows8);
         private static List<Brush> defaultColors = getColors(ChartPalettes.Office2019);
 
         private static List<Brush> getColors(params ChartPalette[] palettes)
@@ -104,37 +103,19 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
             switch (type.ValueType)
             {
                 case FactorValueType.Issue:
-                    colorDic[(type, title)] = getModifiedBrush(id.Value, issueColors);
+                    colorDic[(type, title)] = issueColors.GetUniqueColorById(id.Value);
                     return colorDic[(type, title)];
                 case FactorValueType.User:
-                    colorDic[(type, title)] = getModifiedBrush(id.Value, userColors);
+                    colorDic[(type, title)] = userColors.GetUniqueColorById(id.Value);
                     return colorDic[(type, title)];
                 case FactorValueType.Project:
-                    colorDic[(type, title)] = getModifiedBrush(id.Value, projectColors);
+                    colorDic[(type, title)] = MyProject.COLORS.GetUniqueColorById(id.Value);
                     return colorDic[(type, title)];
                 default:
                     colorDic[(type, title)] = defaultColors[index % defaultColors.Count];
                     index++;
                     return colorDic[(type, title)];
             }
-        }
-
-        private static SolidColorBrush getModifiedBrush(int id, List<Brush> colors)
-        {
-            // id から元となる色を決定
-            var brush = colors[id % colors.Count] as SolidColorBrush;
-
-            // id の各桁の合計で明度を調整
-            var digiSum = id.ToString().ToCharArray().Select(a => int.Parse(a.ToString())).Sum();
-            var brightness = 0.08 * (digiSum % 5);
-
-            var hsb = brush.Color.ToHsb();
-            if (hsb.Brightness + brightness < 0.97)
-                hsb.Brightness += brightness;
-            else
-                hsb.Brightness -= brightness;
-
-            return new SolidColorBrush(hsb.ToRgb());
         }
     }
 }

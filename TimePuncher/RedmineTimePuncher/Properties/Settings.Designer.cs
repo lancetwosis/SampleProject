@@ -376,5 +376,17 @@ namespace RedmineTimePuncher.Properties {
                 this["LastInputPeriodType"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string LastAppointmentColorType {
+            get {
+                return ((string)(this["LastAppointmentColorType"]));
+            }
+            set {
+                this["LastAppointmentColorType"] = value;
+            }
+        }
     }
 }

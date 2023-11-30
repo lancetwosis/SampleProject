@@ -159,6 +159,35 @@
                         </telerik:RadCollapsiblePanel>
                     </telerik:RadRibbonGroup>
 
+                    <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupColorcodingAppos}">
+                        <telerik:RadCollapsiblePanel>
+                            <telerik:RadRibbonRadioButton HorizontalAlignment="Left"
+                                                          CollapseToSmall="WhenGroupIsSmall"
+                                                          Command="{Binding Input.ChangeAppointmentColorCommand}"
+                                                          CommandParameter="Category"
+                                                          GroupName="AppointmentColorType"
+                                                          IsChecked="{Binding Input.AppointmentColorType.Value,
+                                                                              Mode=OneWay,
+                                                                              Converter={StaticResource EnumToBooleanConverter},
+                                                                              ConverterParameter=Category}"
+                                                          LargeImage="../Resources/work16.png"
+                                                          Size="Medium"
+                                                          Text="{x:Static props:Resources.enumFactorTypeCategory}" />
+                            <telerik:RadRibbonRadioButton HorizontalAlignment="Left"
+                                                          CollapseToSmall="WhenGroupIsSmall"
+                                                          Command="{Binding Input.ChangeAppointmentColorCommand}"
+                                                          CommandParameter="Project"
+                                                          GroupName="AppointmentColorType"
+                                                          IsChecked="{Binding Input.AppointmentColorType.Value,
+                                                                              Mode=OneWay,
+                                                                              Converter={StaticResource EnumToBooleanConverter},
+                                                                              ConverterParameter=Project}"
+                                                          LargeImage="../Images/redmine16.png"
+                                                          Size="Medium"
+                                                          Text="{x:Static props:Resources.enumFactorTypeProject}" />
+                        </telerik:RadCollapsiblePanel>
+                    </telerik:RadRibbonGroup>
+
                     <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupCollaboration}">
                         <telerik:RadCollapsiblePanel>
                             <telerik:RadRibbonDropDownButton helpers:ButtonSetupHelper.Data="{Binding Input.Members.AddMemberCommand}" />

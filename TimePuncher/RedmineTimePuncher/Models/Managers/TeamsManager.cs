@@ -82,8 +82,13 @@ namespace RedmineTimePuncher.Models.Managers
 
             if (debugDataManager.IsExist) return debugDataManager.GetData(resource, start, end, AppointmentType.TeamsCall);
 
+            var today = settings.Schedule.GetToday();
+            // 未来の日付が指定されたら履歴は存在しないのでファイルの読み込みは行わず空を返す
+            if (today.AddDays(1) < start)
+                return new List<MyAppointment>();
+
             // 表示領域に「今日」の DayStartTime 以降が含まれていなかったら再取得はせずキャッシュから復元する
-            var useCache = allAppos != null && end <= DateTime.Today.Add(settings.Schedule.DayStartTime);
+            var useCache = allAppos != null && end <= today;
             using (Logger.CreateProcess<TeamsManager>($"GetCallAsync {start} - {end} (useCache={useCache})"))
             {
                 if (useCache)

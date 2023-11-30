@@ -57,7 +57,8 @@
                         Background="{telerik1:Office2019Resource ResourceKey=AccentBackgroundBrush}"
                         Opacity="0" />
                 <Border x:Name="PART_Category"
-                        Background="{Binding Path=Category.CategoryBrush}" />
+                        Background="{Binding Path=Appointment.Background.Value,
+                                             Mode=OneWay}" />
                 <Border x:Name="Border"
                         BorderBrush="{telerik1:Office2019Resource ResourceKey=AccentMouseOverBorderBrush}"
                         BorderThickness="0" />
@@ -73,6 +74,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />
                         <RowDefinition Height="Auto" />
@@ -99,8 +101,17 @@
                             </ToolTipService.ToolTip>
                         </ContentControl>
                     </StackPanel>
-                    <TextBlock x:Name="Content"
-                               Grid.Row="1"
+                    <ContentPresenter x:Name="Content"
+                                      Grid.Row="1"
+                                      Grid.Column="1"
+                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                      TextBlock.FontStyle="{Binding Path=Category.Model.IsItalic,
+                                                                    Converter={StaticResource BoolToFontItalicConverter}}"
+                                      TextBlock.FontWeight="{Binding Path=Category.Model.IsBold,
+                                                                     Converter={StaticResource BoolToFontBoldConverter}}"
+                                      TextBlock.Foreground="{Binding Path=Category.ForeBrush}" />
+                    <TextBlock Grid.Row="2"
                                Grid.Column="1"
                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -109,12 +120,10 @@
                                FontWeight="{Binding Path=Category.Model.IsBold,
                                                     Converter={StaticResource BoolToFontBoldConverter}}"
                                Foreground="{Binding Path=Category.ForeBrush}"
-                               TextWrapping="Wrap">
-                        <Run Text="{Binding Appointment.Subject}" />
-                        <Run Text="{Binding Appointment.ProjectPostfix}" />
-                    </TextBlock>
+                               Text="{Binding Appointment.ProjectPostfix}"
+                               TextWrapping="Wrap" />
                     <telerik:RadGlyph x:Name="ExtendedArrowEnd"
-                                      Grid.Row="2"
+                                      Grid.Row="3"
                                       Grid.ColumnSpan="2"
                                       HorizontalAlignment="Center"
                                       VerticalAlignment="Bottom"
@@ -218,7 +227,8 @@
                  Padding="2,0"
                  VerticalAlignment="Center"
                  VerticalContentAlignment="Stretch"
-                 Background="{Binding Appointment.Category.CategoryBrush}"
+                 Background="{Binding Appointment.Background.Value,
+                                      Mode=OneWay}"
                  Foreground="{Binding Appointment.Category.ForeBrush}"
                  Text="{Binding Appointment.Subject,
                                 Mode=TwoWay}"
