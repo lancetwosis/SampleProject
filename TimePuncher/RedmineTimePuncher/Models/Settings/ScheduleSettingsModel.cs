@@ -103,7 +103,7 @@ namespace RedmineTimePuncher.Models.Settings
         public DateTime GetLastDayOfMonth()
         {
             var today = GetToday();
-            var lastDay = new DateTime(today.Year, today.Month + 1, 1, today.Hour, today.Minute, today.Second);
+            var lastDay = new DateTime(today.Year, today.AddMonths(1).Month, 1, today.Hour, today.Minute, today.Second);
 
             // 今日が１日で、かつ、現在時刻が DayStartTime 以下である場合、先月に属すると判定する
             if (today.Day == 1 && DateTime.Now < today)
