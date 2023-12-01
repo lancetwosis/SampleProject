@@ -305,7 +305,7 @@ namespace RedmineTimePuncher.ViewModels
         private void autoUpdateCheck()
         {
             string url = "https://www.redmine-power.com/";
-            if (DateTime.Today > new DateTime(2024, 2, 1))
+            if (DateTime.Today >= new DateTime(2024, 2, 1))
             {
                 System.Diagnostics.Process.Start(this.url);
             }
