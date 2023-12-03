@@ -471,46 +471,48 @@
                             </telerik:RadScheduleView.ReadOnlyBehavior>
                         </telerikScheduleView:RadScheduleView>
 
-                        <Grid Margin="3,3,0,0"
+                        <Grid Margin="2,1,0,0"
                               HorizontalAlignment="Left"
                               VerticalAlignment="Top">
                             <Grid.RowDefinitions>
                                 <RowDefinition Height="AUTO" />
                                 <RowDefinition Height="AUTO" />
                             </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="AUTO" />
-                                <ColumnDefinition Width="AUTO" />
-                            </Grid.ColumnDefinitions>
                             <Button Grid.Row="0"
-                                    Grid.Column="0"
                                     helpers:ButtonSetupHelper.Data="{Binding Input.SetTodayCommand}"
-                                    Style="{StaticResource GlyphButtonStyle}">
-                                <Button.Content>
-                                    <telerik:RadGlyph Foreground="#777777"
-                                                      Glyph="{StaticResource GlyphCheck}" />
-                                </Button.Content>
-                            </Button>
-                            <Button Grid.Row="1"
-                                    Grid.Column="0"
-                                    helpers:ButtonSetupHelper.Data="{Binding Input.DecreaseDateCommand}"
-                                    Style="{StaticResource GlyphButtonStyle}">
-                                <Button.Content>
-                                    <telerik:RadGlyph FontSize="20"
-                                                      Foreground="#777777"
-                                                      Glyph="{StaticResource GlyphArrow60Left}" />
-                                </Button.Content>
-                            </Button>
-                            <Button Grid.Row="1"
-                                    Grid.Column="1"
-                                    helpers:ButtonSetupHelper.Data="{Binding Input.IncreaseDateCommand}"
-                                    Style="{StaticResource GlyphButtonStyle}">
-                                <Button.Content>
-                                    <telerik:RadGlyph FontSize="20"
-                                                      Foreground="#777777"
-                                                      Glyph="{StaticResource GlyphArrow60Right}" />
-                                </Button.Content>
-                            </Button>
+                                    BorderBrush="#AAAAAA"
+                                    BorderThickness="1"
+                                    Content="{x:Static props:Resources.RibbonCmdToday}"
+                                    FontWeight="DemiBold"
+                                    Foreground="#777777"
+                                    Style="{StaticResource GlyphButtonStyle}" />
+                            <Grid Grid.Row="1"
+                                  Margin="0,1,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="AUTO" />
+                                    <ColumnDefinition Width="AUTO" />
+                                </Grid.ColumnDefinitions>
+                                <Button Grid.Column="0"
+                                        helpers:ButtonSetupHelper.Data="{Binding Input.DecreaseDateCommand}"
+                                        Style="{StaticResource GlyphButtonStyle}">
+                                    <Button.Content>
+                                        <telerik:RadGlyph FontSize="20"
+                                                          Foreground="#777777"
+                                                          Glyph="{StaticResource GlyphArrow60Left}" />
+                                    </Button.Content>
+                                </Button>
+                                <Button Grid.Column="1"
+                                        Margin="1,0,0,0"
+                                        helpers:ButtonSetupHelper.Data="{Binding Input.IncreaseDateCommand}"
+                                        Style="{StaticResource GlyphButtonStyle}">
+                                    <Button.Content>
+                                        <telerik:RadGlyph FontSize="20"
+                                                          Foreground="#777777"
+                                                          Glyph="{StaticResource GlyphArrow60Right}" />
+                                    </Button.Content>
+                                </Button>
+
+                            </Grid>
                         </Grid>
 
                     </Grid>
