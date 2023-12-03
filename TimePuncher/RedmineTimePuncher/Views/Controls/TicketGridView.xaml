@@ -57,6 +57,7 @@
                              IsBusy="{Binding IsBusy.IsBusy}"
                              IsFilteringAllowed="False"
                              IsReadOnly="True"
+                             IsSearchingDeferred="True"
                              ItemsSource="{Binding Items.Value}"
                              RowHeight="18"
                              RowIndicatorVisibility="Collapsed"

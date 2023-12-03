@@ -1542,10 +1542,10 @@ The order of the lines is the order in which the filing conditions are applied.<
     <value>View Differences</value>
   </data>
   <data name="SettingsAppoTeamsStatus" xml:space="preserve">
-    <value>Loading Call History</value>
+    <value>Loading Status</value>
   </data>
   <data name="SettingsAppoTeamsCallHistory" xml:space="preserve">
-    <value>Loading Status</value>
+    <value>Loading call histories</value>
   </data>
   <data name="msgErrLoadingCallHistoryOff" xml:space="preserve">
     <value>An error occurred while loading call history in Teams.
