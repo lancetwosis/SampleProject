@@ -30,32 +30,18 @@ namespace RedmineTimePuncher.Models.Managers
     {
         public static int TickLength;
 
-        public Lazy<List<Project>> Projects { get; set; }
-        public Lazy<List<Tracker>> Trackers { get; set; }
-        public Lazy<List<IssueStatus>> Statuss { get; set; }
-        public Lazy<List<IssuePriority>> Priorities { get; set; }
-        public Lazy<List<TimeEntryActivity>> TimeEntryActivities { get; set; }
-
-        public Lazy<List<CustomField>> CustomFields { get; set; }
-        public Lazy<List<MyUser>> Users { get; set; }
-
         public string Host => Manager.Host;
-        public MyUser MyUser { get; set; }
-        public int MyUserId => MyUser.Id;
-        public MarkupLangType MarkupLang { get; set; }
 
         public IRedmineManager Manager { get; set; }
         public IRedmineManager MasterManager { get; set; }
-
+        public RedmineSettingsModel Settings { get; }
         private RedmineWebManager webManager;
 
-        private ConcurrentDictionary<string, Project> dicProjects;
         private ConcurrentDictionary<string, Issue> dicJournalIssues;
+        private ConcurrentDictionary<string, int> dicIssueCount;
         private ConcurrentDictionary<string, TimeEntry> dicTimeEntries;
         private ConcurrentDictionary<string, List<ProjectMembership>> dicMemberShips;
         private ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>> dicVersions;
-
-        private RedmineSettingsModel redmineSettings;
 
         private Regex regIssuePattern = new Regex(@"#\d+", RegexOptions.Compiled);
         private Regex regIssue2Pattern = new Regex(@"issues/\d+", RegexOptions.Compiled);
@@ -64,11 +50,10 @@ namespace RedmineTimePuncher.Models.Managers
 
         public RedmineManager(RedmineSettingsModel settings)
         {
-            this.redmineSettings = settings;
+            this.Settings = settings;
 
             ClearCash();
             var sem = new SemaphoreSlim(settings.ConcurrencyMax);
-
             if (settings.UseBasicAuth)
             {
                 // ログインに失敗してしまう現象があるため、「Redmine.Net.Api.RedmineManager」よりも前に RedmineWebManager を生成する。
@@ -76,10 +61,18 @@ namespace RedmineTimePuncher.Models.Managers
                 Manager = LoggingAdvice<IRedmineManager>.Create(
                     new Redmine.Net.Api.RedmineManager(settings.UrlBase, settings.UserNameOfBasicAuth, settings.PasswordOfBasicAuth, settings.ApiKey),
                     () => sem.Wait(), () => sem.Release(),
-                    s => {
-                        if (!s.StartsWith("get_Host")) Logger.Info(s);
-                    },
+                    s => { if (!s.StartsWith("get_Host")) Logger.Info(s); },
                     s => Logger.Error(s), o => o?.ToString());
+
+                if (!string.IsNullOrEmpty(Settings.AdminApiKey))
+                {
+                    var sem2 = new SemaphoreSlim(Settings.ConcurrencyMax);
+                    MasterManager = LoggingAdvice<IRedmineManager>.Create(
+                        new Redmine.Net.Api.RedmineManager(Settings.UrlBase, Settings.UserNameOfBasicAuth, Settings.PasswordOfBasicAuth, Settings.AdminApiKey),
+                        () => sem.Wait(), () => sem.Release(),
+                        s => { if (!s.StartsWith("get_Host")) Logger.Info(s); },
+                        s => Logger.Error(s), o => o?.ToString());
+                }
             }
             else
             {
@@ -87,50 +80,62 @@ namespace RedmineTimePuncher.Models.Managers
                 Manager = LoggingAdvice<IRedmineManager>.Create(
                     new Redmine.Net.Api.RedmineManager(settings.UrlBase, settings.UserName, settings.Password),
                     () => sem.Wait(), () => sem.Release(),
-                    s => {
-                        if (!s.StartsWith("get_Host")) Logger.Info(s);
-                    },
+                    s => { if (!s.StartsWith("get_Host")) Logger.Info(s); },
                     s => Logger.Error(s), o => o?.ToString());
-            }
 
-            // Lazy型を使っているので、アクセスされた場合に、初めて実行され、キャッシュされる。
-            // アクセスされなければ、無駄な通信やメモリ確保が発生しない。
-            Projects = new Lazy<List<Project>>(() => Manager.GetObjectsWithErrConv<Project>(RedmineKeys.TIME_ENTRY_ACTIVITIES));
-            Trackers = new Lazy<List<Tracker>>(() => Manager.GetObjectsWithErrConv<Tracker>(new NameValueCollection()));
-            Statuss = new Lazy<List<IssueStatus>>(() => Manager.GetObjectsWithErrConv<IssueStatus>(new NameValueCollection()));
-            Priorities = new Lazy<List<IssuePriority>>(() => Manager.GetObjectsWithErrConv<IssuePriority>(new NameValueCollection()));
-            TimeEntryActivities = new Lazy<List<TimeEntryActivity>>(() => Manager.GetObjectsWithErrConv<TimeEntryActivity>(new NameValueCollection()));
+                if (!string.IsNullOrEmpty(Settings.AdminApiKey))
+                {
+                    var sem2 = new SemaphoreSlim(Settings.ConcurrencyMax);
+                    MasterManager = LoggingAdvice<IRedmineManager>.Create(
+                        new Redmine.Net.Api.RedmineManager(Settings.UrlBase, Settings.UserName, Settings.Password, Settings.AdminApiKey),
+                        () => sem.Wait(), () => sem.Release(),
+                        s => { if (!s.StartsWith("get_Host")) Logger.Info(s); },
+                        s => Logger.Error(s), o => o?.ToString());
+                }
+            }
         }
 
         public void ClearCash()
         {
-            dicProjects = new ConcurrentDictionary<string, Project>();
             dicJournalIssues = new ConcurrentDictionary<string, Issue>();
+            dicIssueCount = new ConcurrentDictionary<string, int>();
             dicTimeEntries = new ConcurrentDictionary<string, TimeEntry>();
             dicMemberShips = new ConcurrentDictionary<string, List<ProjectMembership>>();
             dicVersions = new ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>>();
+        }
+
+        public List<Project> GetProjects() =>
+            Manager.GetObjectsWithErrConv<Project>(RedmineKeys.TIME_ENTRY_ACTIVITIES, RedmineKeys.TRACKERS, RedmineKeys.ENABLED_MODULES);
+        public List<Tracker> GetTrackers() =>
+            Manager.GetObjectsWithErrConv<Tracker>();
+        public List<IssueStatus> GetStatuss() =>
+            Manager.GetObjectsWithErrConv<IssueStatus>();
+        public List<IssuePriority> GetPriorities() => 
+            Manager.GetObjectsWithErrConv<IssuePriority>();
+        public List<TimeEntryActivity> GetTimeEntryActivities() =>
+            Manager.GetObjectsWithErrConv<TimeEntryActivity>();
+        public List<CustomField> GetCustomFields() => 
+            getObjectsByMasterManager<CustomField>();
+        public List<MyUser> GetUsers() =>
+            getObjectsByMasterManager<User>().Select(u => new MyUser(u)).ToList();
+        public MyUser GetMyUser() =>
+            new MyUser(Manager.GetCurrentUserWithErrConv(new NameValueCollection() { { RedmineKeys.INCLUDE, RedmineKeys.MEMBERSHIPS } }));
+        public List<Query> GetQueries() => 
+            Manager.GetObjectsWithErrConv<Query>();
+        public async Task<MarkupLangType> GetMarkupLangTypeAsync()
+        {
+            var issues = await Task.Run(() => Manager.GetObjectsWithErrConv<Issue>(new NameValueCollection() { { RedmineKeys.LIMIT, "1" } }));
+            if (issues == null || !issues.Any())
+                return MarkupLangType.Textile;
+            else
+                return await webManager.GetMarkupLangTypeFromTicketAsync($"{Settings.UrlBase}issues/{issues[0].Id}");
         }
 
         public async Task CheckConnectAsync()
         {
             try
             {
-                var t1 = Task.Run(async () =>
-                {
-                    var user = await Task.Run(() => Manager.GetCurrentUserWithErrConv(new NameValueCollection() { { RedmineKeys.INCLUDE, RedmineKeys.MEMBERSHIPS } }));
-                    MyUser = new MyUser(user);
-                });
-
-                var t2 = Task.Run(async () =>
-                {
-                    var issues = Manager.GetObjectsWithErrConv<Issue>(new NameValueCollection() { { RedmineKeys.LIMIT, "1" } });
-                    if (issues == null || !issues.Any())
-                        MarkupLang = MarkupLangType.Textile;
-                    else
-                        MarkupLang = await webManager.GetMarkupLangTypeFromTicketAsync($"{redmineSettings.UrlBase}issues/{issues[0].Id}");
-                });
-
-                await Task.WhenAll(t1, t2);
+                await Task.Run(() => GetMyUser());
             }
             catch (Exception ex)
             {
@@ -140,26 +145,8 @@ namespace RedmineTimePuncher.Models.Managers
                     throw new RedmineConnectionException(ex);
             }
 
-            if (!string.IsNullOrEmpty(redmineSettings.AdminApiKey))
+            if (!CanUseAdminApiKey())
             {
-                var sem = new SemaphoreSlim(redmineSettings.ConcurrencyMax);
-                if (redmineSettings.UseBasicAuth)
-                {
-                    MasterManager = LoggingAdvice<IRedmineManager>.Create(
-                        new Redmine.Net.Api.RedmineManager(redmineSettings.UrlBase, redmineSettings.UserNameOfBasicAuth, redmineSettings.PasswordOfBasicAuth, redmineSettings.AdminApiKey),
-                        () => sem.Wait(), () => sem.Release(),
-                        s => { if (!s.StartsWith("get_Host")) Logger.Info(s); },
-                        s => Logger.Error(s), o => o?.ToString());
-                }
-                else
-                {
-                    MasterManager = LoggingAdvice<IRedmineManager>.Create(
-                        new Redmine.Net.Api.RedmineManager(redmineSettings.UrlBase, redmineSettings.UserName, redmineSettings.Password, redmineSettings.AdminApiKey),
-                        () => sem.Wait(), () => sem.Release(),
-                        s => { if (!s.StartsWith("get_Host")) Logger.Info(s); },
-                        s => Logger.Error(s), o => o?.ToString());
-                }
-
                 try
                 {
                     await Task.Run(() => MasterManager.GetCurrentUserWithErrConv());
@@ -169,16 +156,12 @@ namespace RedmineTimePuncher.Models.Managers
                     throw new ApplicationException(Properties.Resources.RedmineMngMsgIncorrectAdminAPIKey);
                 }
             }
-
-            CustomFields = new Lazy<List<CustomField>>(() => getObjectsByMasterManager<CustomField>());
-            Users = new Lazy<List<MyUser>>(() => getObjectsByMasterManager<User>().Select(u => new MyUser(u)).ToList());
         }
 
         private List<T> getObjectsByMasterManager<T>(NameValueCollection prms = null) where T : class, new()
         {
-            if (MasterManager == null)
+            if (!CanUseAdminApiKey())
                 throw new ApplicationException(Properties.Resources.RedmineMngMsgAdminAPIKeyNotSet);
-
             return MasterManager.GetObjectsWithErrConv<T>(prms != null ? prms : new NameValueCollection());
         }
 
@@ -197,11 +180,11 @@ namespace RedmineTimePuncher.Models.Managers
                 foreach (var line in content.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries))
                 {
                     var result = regIssuePattern.Matches(line).Cast<Match>().Select(a => a.Value).FirstOrDefault()?.Substring(1);
-                    if (!string.IsNullOrEmpty(result)) return result;
-                    if (line.Contains(redmineSettings.UrlBase))
+                    if (!string.IsNullOrEmpty(result) && getCount(result) > 0) return result;
+                    if (line.Contains(Settings.UrlBase))
                     {
                         result = regIssue2Pattern.Matches(line).Cast<Match>().Select(a => a.Value).FirstOrDefault()?.Split('/').Last();
-                        if (!string.IsNullOrEmpty(result)) return result;
+                        if (!string.IsNullOrEmpty(result) && getCount(result) > 0) return result;
                     }
                 }
             }
@@ -217,7 +200,11 @@ namespace RedmineTimePuncher.Models.Managers
                     var result = ptrn.Matches(line).Cast<Match>().Select(a => a.Value).FirstOrDefault();
                     if (!string.IsNullOrEmpty(result))
                     {
-                        return result.Substring(result.IndexOf('#') + 1);
+                        var result2 = result.Substring(result.IndexOf('#') + 1);
+                        if (getCount(result2) > 0)
+                        {
+                            return result2;
+                        }                        
                     }
                 }
             }
@@ -231,12 +218,6 @@ namespace RedmineTimePuncher.Models.Managers
             return null;
         }
 
-        public Project GetProject(string id)
-        {
-            return dicProjects.GetOrAdd(id, _ => Manager.GetObjectWithErrConv<Project>(id,
-                new NameValueCollection() { { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES } }));
-        }
-
         public List<Redmine.Net.Api.Types.Version> GetVersions(int projectId)
         {
             return dicVersions.GetOrAdd(projectId, _ => Manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId));
@@ -247,7 +228,7 @@ namespace RedmineTimePuncher.Models.Managers
             return exec(nameof(GetMyTickets),
                 () =>
                 {
-                    var results = Manager.GetObjectsWithErrConv<Issue>(new NameValueCollection { { "assigned_to_id", $"{MyUser.Id}" } });
+                    var results = Manager.GetObjectsWithErrConv<Issue>(new NameValueCollection { { "assigned_to_id", $"{CacheManager.Default.MyUser.Value.Id}" } });
                     return results != null ? results.Select(a => new MyIssue(a)) : Enumerable.Empty<MyIssue>();
                 },
                 e => Properties.Resources.RedmineMngMsgFailedToGetMyTicket);
@@ -270,14 +251,6 @@ namespace RedmineTimePuncher.Models.Managers
             return exec(nameof(GetTicketsById),
                 () => new MyIssue(Manager.GetObjectWithErrConv<Issue>(id, new NameValueCollection())),
                 e => $"{Properties.Resources.RedmineMngMsgFailedToGetTicket} (Id={id} Message={e.Message})");
-        }
-
-
-        public List<Query> GetQueries()
-        {
-            return exec(nameof(GetQueries),
-                () => Manager.GetObjectsWithErrConv<Query>(new NameValueCollection()),
-                e => e.Message);
         }
 
         public IEnumerable<MyIssue> GetTicketsByQuery(MyQuery query)
@@ -397,7 +370,7 @@ namespace RedmineTimePuncher.Models.Managers
             }
         }
 
-        public string GetTicketUrl(string no) => redmineSettings.UrlBase + $"issues/{no}";
+        public string GetTicketUrl(string no) => Settings.UrlBase + $"issues/{no}";
 
         public MyIssue GetTicketIncludeJournal(string id, out string error)
         {
@@ -434,7 +407,7 @@ namespace RedmineTimePuncher.Models.Managers
                     // 「~」を追加することで文字列が正規表現として扱われる
                     { RedmineKeys.COMMENTS, $"~{System.Web.HttpUtility.UrlEncode(subject)}" },
                     { RedmineKeys.LIMIT, "1" },
-                    { RedmineKeys.USER_ID, $"{MyUserId}" },
+                    { RedmineKeys.USER_ID, $"{CacheManager.Default.MyUser.Value.Id}" },
                 };
                 var entries = Manager.GetObjectsWithErrConv<TimeEntry>(parameters);
                 return entries != null ? entries.FirstOrDefault() : null;
@@ -447,7 +420,7 @@ namespace RedmineTimePuncher.Models.Managers
         public List<MyTimeEntry> GetTimeEntries(List<MemberResource> memberResources, DateTime start, DateTime end, out List<int> errorIds)
         {
             var userIds = new List<string>();
-            userIds.Add(MyUserId.ToString());
+            userIds.Add(CacheManager.Default.MyUser.Value.Id.ToString());
             userIds.AddRange(memberResources.Select(a => a.ResourceName));
             return GetTimeEntries(userIds, start, end, out errorIds);
         }
@@ -457,7 +430,7 @@ namespace RedmineTimePuncher.Models.Managers
         /// </summary>
         public List<MyTimeEntry> GetMyTimeEntries(DateTime start, DateTime end, out List<int> errorIds)
         {
-            return GetTimeEntries(new List<string>() { MyUserId.ToString() }, start, end, out errorIds);
+            return GetTimeEntries(new List<string>() { CacheManager.Default.MyUser.Value.Id.ToString() }, start, end, out errorIds);
         }
 
         public List<MyTimeEntry> GetTimeEntries(List<string> userIds, DateTime start, DateTime end, out List<int> errorIds)
@@ -501,7 +474,7 @@ namespace RedmineTimePuncher.Models.Managers
             foreach (var entry in allEntries.Where(a => a.Entry.Hours > 0))
             {
                 var res =
-                    (entry.UserId == MyUser.Id) ? myResource :
+                    (entry.UserId == CacheManager.Default.MyUser.Value.Id) ? myResource :
                     memberResources.FirstOrDefault(a => a.ResourceName == entry.UserId.ToString());
                 MyAppointment apo = null;
                 if (res != null && entry.Entry.Issue != null)
@@ -517,7 +490,7 @@ namespace RedmineTimePuncher.Models.Managers
                     {
                         if (!fromEntries.Any(a => a.UserId == memberId.v))
                         {
-                            var res2 = (memberId.v == MyUser.Id) ? myResource :
+                            var res2 = (memberId.v == CacheManager.Default.MyUser.Value.Id) ? myResource :
                                 memberResources.FirstOrDefault(a => a.ResourceName == memberId.v.ToString());
                             if (res2 != null)
                             {
@@ -669,7 +642,7 @@ namespace RedmineTimePuncher.Models.Managers
             if (debugDataManager.IsExist) return debugDataManager.GetData(resource, start, end, Enums.AppointmentType.RedmineActivity);
 
             // WEBから活動を取得する。
-            var items = await webManager.GetActivitiesAsync(token, MyUserId, start, end);
+            var items = await webManager.GetActivitiesAsync(token, CacheManager.Default.MyUser.Value.Id, start, end);
             // WEB活動からそのときのチケットを復元する。
             var issueItems = items.Where(a => a.IssueId != null).ToList();
             var tasks = issueItems.Select(a => a.ToIssueAtTheTimeAsync(this)).ToList();
@@ -708,13 +681,19 @@ namespace RedmineTimePuncher.Models.Managers
             return dicJournalIssues.GetOrAdd(ticketNo, _ => getIssueJournalApi(ticketNo));
         }
 
+        private int getCount(string ticketNo)
+        {
+            return dicIssueCount.GetOrAdd(ticketNo, 
+                _ => Manager.Count<Issue>(new NameValueCollection { { RedmineKeys.ISSUE_ID, ticketNo } }));
+        }
+
         private Issue getIssueJournalApi(string ticketNo)
         {
             try
             {
                 return Manager.GetObjectWithErrConv<Issue>(ticketNo, new NameValueCollection { { RedmineKeys.INCLUDE, RedmineKeys.JOURNALS } });
             }
-            catch (ForbiddenException)
+            catch (Exception)
             {
                 // 見つからなかった場合は、NULL応答をする。
                 // これ以外の例外の場合は、集約例外に通知する
@@ -781,19 +760,19 @@ namespace RedmineTimePuncher.Models.Managers
 
         public List<MyProject> GetMyProjectsOnlyWikiEnabled()
         {
-            var allProjects = Manager.GetObjectsWithErrConv<Project>(RedmineKeys.ENABLED_MODULES);
-            var myProjects = allProjects.Where(p => MyUser.Memberships.Any(m => p.Name == m.Project.Name)).ToList();
+            var allProjects = CacheManager.Default.Projects.Value;
+            var myProjects = allProjects.Where(p => CacheManager.Default.MyUser.Value.Memberships.Any(m => p.Id == m.Project.Id)).ToList();
             return myProjects.Where(p => p.EnabledModules.Any(m => m.Name == RedmineKeys.WIKI)).Select(p => new MyProject(p)).ToList();
         }
 
         public List<MyWikiPageItem> GetAllWikiPages(string projIdentifier)
         {
-            return Manager.GetAllWikiPagesWithErrConv(projIdentifier).Select(w => new MyWikiPageItem(redmineSettings.UrlBase, projIdentifier, w)).ToList();
+            return Manager.GetAllWikiPagesWithErrConv(projIdentifier).Select(w => new MyWikiPageItem(Settings.UrlBase, projIdentifier, w)).ToList();
         }
 
         public MyWikiPage GetWikiPage(string projectId, string title, int? version = null)
         {
-            return new MyWikiPage(redmineSettings.UrlBase, projectId, Manager.GetWikiPage(projectId, null, title, version.HasValue ? (uint)version.Value : 0));
+            return new MyWikiPage(Settings.UrlBase, projectId, Manager.GetWikiPage(projectId, null, title, version.HasValue ? (uint)version.Value : 0));
         }
 
         public Issue CreateTicket(Issue issue)
@@ -809,8 +788,8 @@ namespace RedmineTimePuncher.Models.Managers
 
         public string CreateShowAllPointIssues(Issue parent, int trackerId)
         {
-            var proj = GetProject(parent.Project.Id.ToString());
-            var url = $"{redmineSettings.UrlBase}/projects/{proj.Identifier}/issues?";
+            var proj = CacheManager.Default.Projects.Value.Single(a => a.Id == parent.Project.Id);
+            var url = $"{Settings.UrlBase}/projects/{proj.Identifier}/issues?";
             url += $"utf8=%E2%9C%93&set_filter=1&sort=id:desc";
             url += $"&f[]=parent_id&op[parent_id]=~&v[parent_id][]={parent.Id}";
             url += $"&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]={trackerId}";
@@ -820,8 +799,8 @@ namespace RedmineTimePuncher.Models.Managers
 
         public string CreatePointIssueURL(Issue parent, int trackerId, string detectionProcess, string saveReviewer)
         {
-            var proj = GetProject(parent.Project.Id.ToString());
-            var url = $"{redmineSettings.UrlBase}/projects/{proj.Identifier}/issues/new?";
+            var proj = CacheManager.Default.Projects.Value.Single(a => a.Id == parent.Project.Id);
+            var url = $"{Settings.UrlBase}/projects/{proj.Identifier}/issues/new?";
             url += $"issue[tracker_id]={trackerId}";
             url += $"&issue[parent_issue_id]={parent.Id}";
             url += $"&issue[category_id]={parent.Category?.Id}";

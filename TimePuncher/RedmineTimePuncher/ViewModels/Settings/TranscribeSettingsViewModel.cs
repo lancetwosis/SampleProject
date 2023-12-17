@@ -43,7 +43,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 }
             }).AddTo(disposables);
 
-            var canUseTranscribe = redmine.Select(r => (r != null && r.MarkupLang == MarkupLangType.None) ? Resources.SettingsReviErrMsgCannotUseTranscribe : null);
+            var canUseTranscribe = CacheManager.Default.MarkupLang.Select(m => (m == MarkupLangType.None) ? Resources.SettingsReviErrMsgCannotUseTranscribe : null);
             ErrorMessage = new IObservable<string>[] { errorMessage, transcribe.IsBusy, canUseTranscribe }
                 .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 

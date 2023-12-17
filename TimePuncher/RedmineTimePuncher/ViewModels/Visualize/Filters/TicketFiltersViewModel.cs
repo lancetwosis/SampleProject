@@ -59,7 +59,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
             SpecifyParentIssue = new SpecifyParentIssueViewModel(Model, parent.Parent.Redmine).AddTo(disposables);
             SpecifyPeriod = new SpecifyPeriodViewModel(Model, createAt).AddTo(disposables);
-            SpecifyUsers = new SpecifyUsersViewModel(Model, parent.Parent.Redmine).AddTo(disposables);
+            SpecifyUsers = new SpecifyUsersViewModel(Model).AddTo(disposables);
             SpecifyProjects = new SpecifyProjectsViewModel(Model, parent.Parent.Redmine).AddTo(disposables);
 
             IsValid = createIsValid(SpecifyParentIssue, SpecifyPeriod, SpecifyUsers, SpecifyProjects);

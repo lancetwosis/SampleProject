@@ -592,8 +592,8 @@ namespace RedmineTimePuncher.ViewModels.Input
                 e.Handled = true;
             }).AddTo(disposables);
 
-            Title = parent.Redmine.CombineLatest(SelectedDate, (r, c) =>
-                $"{c.ToDateString()}  {getTitle(r)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = CacheManager.Default.MyUser.CombineLatest(SelectedDate, (u, c) =>
+                $"{c.ToDateString()}  {getTitle(u)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         private DateTime getMyToday()

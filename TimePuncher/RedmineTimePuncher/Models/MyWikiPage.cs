@@ -29,6 +29,10 @@ namespace RedmineTimePuncher.Models
     {
         public WikiPage RawWikiPage;
 
+        // レビュー
+        public MyWikiPage()
+        { }
+
         public MyWikiPage(string urlBase, string projectId, WikiPage rawWikiPage, MyWikiPage parent = null) :base(urlBase, projectId, rawWikiPage)
         {
             this.RawWikiPage = rawWikiPage;

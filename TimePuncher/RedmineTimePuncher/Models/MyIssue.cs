@@ -6,18 +6,16 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models
 {
-    public class MyIssue : IdName, IComparable<MyIssue>
+    public class MyIssue : IdName, IComparable<MyIssue>, IDisposable
     {
         public static string UrlBase;
-        public static Task<List<IssuePriority>> PrioritiesTask;
-        public static Task<List<IssueStatus>> StatussTask { get; set; }
-        public static Task<List<Tracker>> TrakersTask { get; set; }
 
         public int? ParentId { get; set; }
         public MyPriority Priority { get; set; } = new MyPriority();
@@ -42,6 +40,10 @@ namespace RedmineTimePuncher.Models
         public string LimitedDescription => string.IsNullOrEmpty(RawIssue.Description) ? null : RawIssue.Description.LimitRows(20);
 
         public Issue RawIssue { get; set; }
+
+        [NonSerialized]
+        protected CompositeDisposable disposables = new CompositeDisposable();
+        public virtual void Dispose() => disposables.Dispose();
 
         [Obsolete("For Serialize", true)]
         public MyIssue()
@@ -71,11 +73,11 @@ namespace RedmineTimePuncher.Models
             UpdatedOn = issue.UpdatedOn;
 
             IsExpired = DueDate < DateTime.Today;
-            IsClosed = StatussTask.Result.First(s => s.Id == issue.Status.Id).IsClosed;
+            IsClosed = CacheManager.Default.Statuss.Value.First(s => s.Id == issue.Status.Id).IsClosed;
 
-            var priority = PrioritiesTask.Result.Indexed().First(a => a.v.Id == Priority.Id);
-            var defaultPriority = PrioritiesTask.Result.Indexed().First(a => a.v.IsDefault);
-            IsHgihPriority = PrioritiesTask.Result.Indexed().FirstOrDefault(a => a.v.Id == Priority.Id).i > defaultPriority.i;
+            var priority = CacheManager.Default.Priorities.Value.Indexed().First(a => a.v.Id == Priority.Id);
+            var defaultPriority = CacheManager.Default.Priorities.Value.Indexed().First(a => a.v.IsDefault);
+            IsHgihPriority = CacheManager.Default.Priorities.Value.Indexed().FirstOrDefault(a => a.v.Id == Priority.Id).i > defaultPriority.i;
 
             initRx(1);
         }
@@ -83,10 +85,10 @@ namespace RedmineTimePuncher.Models
         private void initRx(int skipCount)
         {
             this.ObserveProperty(a => a.Project.Id).Skip(skipCount).SubscribeWithErr(id => throw new InvalidProgramException("Not supported Project.Id")).AddTo(disposables);
-            this.ObserveProperty(a => a.Tracker.Id).Skip(skipCount).SubscribeWithErr(id => Tracker.Name = TrakersTask.Result.FirstOrDefault(a => a.Id == id)?.Name).AddTo(disposables);
+            this.ObserveProperty(a => a.Tracker.Id).Skip(skipCount).SubscribeWithErr(id => Tracker.Name = CacheManager.Default.Trackers.Value.FirstOrDefault(a => a.Id == id)?.Name).AddTo(disposables);
             this.ObserveProperty(a => a.Status.Id).Skip(skipCount).SubscribeWithErr(id =>
             {
-                var status = StatussTask.Result.FirstOrDefault(a => a.Id == id);
+                var status = CacheManager.Default.Statuss.Value.FirstOrDefault(a => a.Id == id);
                 if(status != null)
                 {
                     Status.Name = status.Name;
@@ -130,9 +132,9 @@ namespace RedmineTimePuncher.Models
             if(journal == null || journal.Details == null ) return ToString();
             var statusDetail = journal.Details.FirstOrDefault(a => a.Name == "status_id");
             if (statusDetail == null) return ToString();
-            var statusOld = StatussTask.Result.FirstOrDefault(a => a.Id.ToString() == statusDetail.OldValue)?.Name;
+            var statusOld = CacheManager.Default.Statuss.Value.FirstOrDefault(a => a.Id.ToString() == statusDetail.OldValue)?.Name;
             if(string.IsNullOrEmpty(statusOld)) return ToString();
-            var statusNew = StatussTask.Result.FirstOrDefault(a => a.Id.ToString() == statusDetail.NewValue)?.Name;
+            var statusNew = CacheManager.Default.Statuss.Value.FirstOrDefault(a => a.Id.ToString() == statusDetail.NewValue)?.Name;
             if (string.IsNullOrEmpty(statusNew)) return ToString();
             if (statusOld == statusNew) return ToString();
 

@@ -88,7 +88,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
                 return;
             }
 
-            var projects = redmine.Projects.Value;
+            var projects = CacheManager.Default.Projects.Value;
             var notAsigned = appointments.Select(a => a.Ticket).FirstOrDefault(t => !projects.Any(pro => pro.Id == t.Project.Id));
             if (notAsigned != null)
             {

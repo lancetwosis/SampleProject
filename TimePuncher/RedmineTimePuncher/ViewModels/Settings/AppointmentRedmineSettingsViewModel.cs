@@ -26,7 +26,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReactivePropertySlim<bool> IsIgnoreText { get; set; }
         public ReactivePropertySlim<string> IgnoreText { get; set; }
 
-        public AppointmentRedmineSettingsViewModel(AppointmentRedmineSettingsModel model, ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(model)
+        public AppointmentRedmineSettingsViewModel(AppointmentRedmineSettingsModel model, ReactivePropertySlim<string> errorMessage) : base(model)
         {
             var error1 = errorMessage.ToReadOnlyReactivePropertySlim().AddTo(disposables);
             var error2 = new ReactivePropertySlim<string>().AddTo(disposables);
@@ -38,19 +38,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
             IsIgnoreText = model.ToReactivePropertySlimAsSynchronized(a => a.IsIgnoreText).AddTo(disposables);
             IgnoreText = model.ToReactivePropertySlimAsSynchronized(a => a.IgnoreText).AddTo(disposables);
 
-            redmine.Where(a => a != null).SubscribeWithErr(async r =>
-            {
-                try
-                {
-                    error2.Value = Resources.SettingsMsgNowGettingData;
-                    Trackers = await Task.Run(() => r.Trackers.Value);
-                    error2.Value = null;
-                }
-                catch (Exception ex)
-                {
-                    error2.Value = ex.Message;
-                }
-            }).AddTo(disposables);
+            Trackers = CacheManager.Default.Trackers.Value;
         }
     }
 }

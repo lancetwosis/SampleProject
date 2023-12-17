@@ -280,7 +280,7 @@ namespace RedmineTimePuncher.Models
                 ticketRp.Where(a => a != null).Select(_ => ""), // チケットが更新されたりしたら
             }.CombineLatest().Where(_ => Redmine != null).Select(_ =>
             {
-                var proj = Redmine.Projects.Value.First(p => p.Id == ticketRp.Value.Project.Id);
+                var proj = CacheManager.Default.Projects.Value.First(p => p.Id == ticketRp.Value.Project.Id);
                 return AllCategories.Value.Where(a => proj.TimeEntryActivities.Any(b => b.Id == a.Id)).ToList();
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
@@ -294,7 +294,7 @@ namespace RedmineTimePuncher.Models
 
                 // カテゴリがまだ未選択ならば自動選択をする。
                 if (Category == null)
-                    Category = ProjectCategories.Value.OrderBy(a => a.Model.Order).FirstOrDefault(a => a.IsMatch(TicketTree.Items.Select(b => b.Issue).ToList(), Redmine.MyUserId, IsAutoSameName));
+                    Category = ProjectCategories.Value.OrderBy(a => a.Model.Order).FirstOrDefault(a => a.IsMatch(TicketTree.Items.Select(b => b.Issue).ToList(), CacheManager.Default.MyUser.Value.Id, IsAutoSameName));
             }).AddTo(disposables);
             //ticketRp への Subscribe では達成できなかったため以下のようにする。（TODO: いずれ整理すること）
             this.ObserveProperty(a => a.Ticket).Subscribe(t =>

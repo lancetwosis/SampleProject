@@ -65,13 +65,13 @@ namespace Redmine.Net.Api.Types
         /// Gets the created on.
         /// </summary>
         /// <value>The created on.</value>
-        public DateTime? CreatedOn { get; internal set; }
+        public DateTime? CreatedOn { get; set; }
 
         /// <summary>
         /// Gets the updated on.
         /// </summary>
         /// <value>The updated on.</value>
-        public DateTime? UpdatedOn { get; internal set; }
+        public DateTime? UpdatedOn { get; set; }
 
         /// <summary>
         /// Gets the status.
@@ -79,7 +79,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The status.
         /// </value>
-        public ProjectStatus Status { get; internal set; }
+        public ProjectStatus Status { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether this project is public.
@@ -131,13 +131,13 @@ namespace Redmine.Net.Api.Types
         /// The issue categories.
         /// </value>
         /// <remarks>Available in Redmine starting with 2.6.0 version.</remarks>
-        public IList<ProjectIssueCategory> IssueCategories { get; internal set; }
+        public IList<ProjectIssueCategory> IssueCategories { get; set; }
 
         /// <summary>
         /// Gets the time entry activities.
         /// </summary>
         /// <remarks>Available in Redmine starting with 3.4.0 version.</remarks>
-        public IList<ProjectTimeEntryActivity> TimeEntryActivities { get; internal set; }
+        public IList<ProjectTimeEntryActivity> TimeEntryActivities { get; set; }
 
         /// <summary>
         /// 

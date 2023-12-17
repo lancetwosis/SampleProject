@@ -19,10 +19,10 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReadOnlyReactivePropertySlim<AppointmentOutlookSettingsViewModel> Outlook { get; set; }
         public ReadOnlyReactivePropertySlim<AppointmentTeamsSettingsViewModel> Teams { get; set; }
 
-        public AppointmentSettingsViewModel(AppointmentSettingsModel model, ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(model)
+        public AppointmentSettingsViewModel(AppointmentSettingsModel model, ReactivePropertySlim<string> errorMessage) : base(model)
         {
             MyWorks = model.ObserveProperty(a => a.MyWorks).Select(a => new AppointmentMyWorksSettingsViewModel(a)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Redmine = model.ObserveProperty(a => a.Redmine).Select(a => new AppointmentRedmineSettingsViewModel(a, redmine, errorMessage)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Redmine = model.ObserveProperty(a => a.Redmine).Select(a => new AppointmentRedmineSettingsViewModel(a, errorMessage)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
             Outlook = model.ObserveProperty(a => a.Outlook).Select(a => new AppointmentOutlookSettingsViewModel(a)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
             Teams = model.ObserveProperty(a => a.Teams).Select(a => new AppointmentTeamsSettingsViewModel(a)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }

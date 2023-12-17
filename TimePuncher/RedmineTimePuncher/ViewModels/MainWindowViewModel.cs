@@ -51,7 +51,7 @@ namespace RedmineTimePuncher.ViewModels
     public class MainWindowViewModel : LibRedminePower.ViewModels.Bases.ViewModelBase
     {
         public BusyTextNotifier IsBusy { get; set; }
-        public TextNotifier ErrorMessage { get; set; }
+        public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
         public ReadOnlyReactivePropertySlim<string> Title { get; private set; }
 
         public ReactiveCommand RibbonMinimizeCommand { get; set; }
@@ -79,6 +79,8 @@ namespace RedmineTimePuncher.ViewModels
         public WikiPageViewModel WikiPage { get; set; }
         public ObservableCollection<FunctionViewModelBase> Functions { get; set; }
 
+        public TextNotifier MainErrorMessage { get; set; }
+
         public MainWindowViewModel(string[] args)
         {
             SelectedIndex = new ReactivePropertySlim<int>(0).AddTo(disposables);
@@ -96,42 +98,33 @@ namespace RedmineTimePuncher.ViewModels
             Outlook = new OutlookManager(Settings.ObserveProperty(a => a.Appointment.Outlook).ToReadOnlyReactivePropertySlim().AddTo(disposables)).AddTo(disposables);
             Teams = new TeamsManager(Settings).AddTo(disposables);
             Redmine = new ReactivePropertySlim<RedmineManager>().AddTo(disposables);
-            ErrorMessage = new TextNotifier().AddTo(disposables);
-            Settings.ObserveProperty(a => a.Redmine).SubscribeWithErr(async s =>
+            MainErrorMessage = new TextNotifier().AddTo(disposables);
+            Settings.ObserveProperty(a => a.Redmine).SubscribeWithErr(s =>
             {
                 if (s.IsValid.Value)
                 {
                     using (IsBusy.ProcessStart(Properties.Resources.ProgressMsgConnectingRedmine))
                     {
+                        MainErrorMessage.Value = null;
                         try
                         {
-                            var manager = new RedmineManager(s);
-                            ErrorMessage.Value = null;
-                            await manager.CheckConnectAsync();
+                            var redmine = new RedmineManager(s);
+                            CacheManager.Default.Redmine = redmine;
 
-                            // すぐに必要にならない情報なので、裏で取得しておく。
-                            MyIssue.PrioritiesTask = Task.Run(() => manager.Priorities.Value);
-                            MyIssue.StatussTask = Task.Run(() => manager.Statuss.Value);
-                            MyIssue.TrakersTask = Task.Run(() => manager.Trackers.Value);
-
-                            // ユーザ設定に自分自身が設定されていたら削除する
-                            if (Settings.User.Items.Any(u => u.Id == manager.MyUser.Id))
+                            // キャッシュが未設定であった場合や、Redmine設定が更新された場合は、
+                            if(!CacheManager.Default.IsExist() ||
+                                CacheManager.Default.RedmineSetting == null ||
+                               !CacheManager.Default.RedmineSetting.Equals(s))
                             {
-                                var userSettings = Settings.User.Clone();
-                                var self = userSettings.Items.First(u => u.Id == manager.MyUser.Id);
-                                userSettings.Items.Remove(self);
-                                Settings.User = userSettings;
-                                Settings.Save();
+                                // キャッシュを更新する。
+                                AsyncHelper.RunSync(() => CacheManager.Default.UpdateAsync());
                             }
-
-                            Redmine.Value = manager;
-
-                            await Input.ReloadIfNeededAsync();
+                            Redmine.Value = redmine;
                         }
                         catch (Exception ex)
                         {
                             Redmine.Value = null;
-                            ErrorMessage.Value = ex.Message;
+                            MainErrorMessage.Value = ex.Message;
                             Logger.Error(ex, "Failed to create RedmineManager on MainWindowViewModel.");
                         }
                     }
@@ -139,9 +132,10 @@ namespace RedmineTimePuncher.ViewModels
                 else
                 {
                     Redmine.Value = null;
-                    ErrorMessage.Value = Properties.Resources.msgErrUnsetRedminSettings;
+                    MainErrorMessage.Value = Properties.Resources.msgErrUnsetRedminSettings;
                 }
             }).AddTo(disposables);
+
             Redmine.Where(a => a != null).SubscribeWithErr(r =>
             {
                 MyAppointment.Redmine = r;
@@ -159,13 +153,10 @@ namespace RedmineTimePuncher.ViewModels
             // 定義の順番が NavigationView での表示順と処理に影響するので注意すること
             Functions = new ObservableCollection<FunctionViewModelBase>() { Input, Visualize, TableEditor, CreateTicket, WikiPage };
 
-            Redmine.CombineLatest(Functions.Select(f => f.ErrorMessage).Where(e => e != null).CombineLatest(), (r, errs) => (r, errs)).SubscribeWithErr(p =>
-            {
-                if (p.r != null)
-                {
-                    ErrorMessage.Value = p.errs.FirstOrDefault(e => e != null);
-                }
-            });
+            var errors =
+                new[] { (IObservable<string>)MainErrorMessage }.Concat(
+                    Functions.Select(f => (IObservable<string>)(f.ErrorMessage)).Where(a => a != null));
+            ErrorMessage = errors.CombineLatest(errs => errs.FirstOrDefault(e => e != null)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             Title = Functions.Select(f => f.Title).CombineLatest().CombineLatest(Mode, (ts, m) => true)
                 .Select(_ => Functions.First(f => f.IsSelected.Value).Title.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
@@ -292,9 +283,17 @@ namespace RedmineTimePuncher.ViewModels
                 Functions.ToList().ForEach(f => f.OnWindowClosing(e));
             }).AddTo(disposables);
 
-            WindowClosedEventCommand = new ReactiveCommand<EventArgs>().WithSubscribe(_ =>
+            WindowClosedEventCommand = new ReactiveCommand<EventArgs>().WithSubscribe(async _ =>
             {
                 Logger.Info("WindowClosedEventCommand was started.");
+
+                // キャッシュデータの更新、保持
+                if(Redmine.Value != null) 
+                {
+                    // キャッシュを更新する。
+                    AsyncHelper.RunSync(() => CacheManager.Default.UpdateAsync());
+                }
+                CacheManager.Save();
 
                 Functions.ToList().ForEach(f => f.OnWindowClosed());
 

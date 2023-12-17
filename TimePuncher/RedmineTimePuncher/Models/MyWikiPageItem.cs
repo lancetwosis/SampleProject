@@ -22,6 +22,9 @@ namespace RedmineTimePuncher.Models
         public string ParentTitle { get; set; }
         public bool IsTopWiki => Title == "Wiki";
 
+        public MyWikiPageItem()
+        {}
+
         public MyWikiPageItem(MyWikiPageItem my)
         {
             UrlBase = my.UrlBase;

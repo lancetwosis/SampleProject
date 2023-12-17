@@ -19,7 +19,7 @@ namespace RedmineTimePuncher.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -1667,6 +1667,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Continue the saving process? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string QuestionContinueSave {
+            get {
+                return ResourceManager.GetString("QuestionContinueSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         public static System.Drawing.Bitmap redmine16 {
@@ -3031,7 +3040,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Loading Status に類似しているローカライズされた文字列を検索します。
+        ///   Loading call histories に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsAppoTeamsCallHistory {
             get {
@@ -3040,7 +3049,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Loading Call History に類似しているローカライズされた文字列を検索します。
+        ///   Loading Status に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsAppoTeamsStatus {
             get {

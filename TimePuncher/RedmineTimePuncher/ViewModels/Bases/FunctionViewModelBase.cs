@@ -2,6 +2,7 @@
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
+using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using System;
 using System.Collections.Generic;
@@ -36,12 +37,12 @@ namespace RedmineTimePuncher.ViewModels.Bases
             Mode = mode;
             Icon = mode.GetIcon();
             IsSelected = parent.Mode.Select(m => m == mode).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Title = parent.Redmine.Select(r => getTitle(r)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = CacheManager.Default.MyUser.Select(a => getTitle(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
-        protected string getTitle(RedmineManager r)
+        protected string getTitle(MyUser myUser)
         {
-            return $"{r?.MyUser.Name}  -  {ApplicationInfo.Title}";
+            return $"{myUser.Name}  -  {ApplicationInfo.Title}";
         }
 
         /// <summary>

@@ -1901,4 +1901,7 @@ Please select the date to copy to.</value>
   <data name="RibbonGroupColorcodingAppos" xml:space="preserve">
     <value>Color-coding of Appointments</value>
   </data>
+  <data name="QuestionContinueSave" xml:space="preserve">
+    <value>Continue the saving process?</value>
+  </data>
 </root>

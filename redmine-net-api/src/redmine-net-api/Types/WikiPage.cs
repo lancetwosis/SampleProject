@@ -38,7 +38,7 @@ namespace Redmine.Net.Api.Types
         /// <summary>
         /// Gets the title.
         /// </summary>
-        public string Title { get; internal set; }
+        public string Title { get; set; }
 
         /// <summary>
         /// Gets or sets the text.
@@ -58,19 +58,19 @@ namespace Redmine.Net.Api.Types
         /// <summary>
         /// Gets the author.
         /// </summary>
-        public IdentifiableName Author { get; internal set; }
+        public IdentifiableName Author { get; set; }
 
         /// <summary>
         /// Gets the created on.
         /// </summary>
         /// <value>The created on.</value>
-        public DateTime? CreatedOn { get; internal set; }
+        public DateTime? CreatedOn { get; set; }
 
         /// <summary>
         /// Gets or sets the updated on.
         /// </summary>
         /// <value>The updated on.</value>
-        public DateTime? UpdatedOn { get; internal set; }
+        public DateTime? UpdatedOn { get; set; }
 
         /// <summary>
         /// Gets the attachments.

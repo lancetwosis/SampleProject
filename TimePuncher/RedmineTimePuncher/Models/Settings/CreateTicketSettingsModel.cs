@@ -4,6 +4,7 @@ using Reactive.Bindings.Extensions;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
@@ -55,9 +56,9 @@ namespace RedmineTimePuncher.Models.Settings
             {
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
-                var trackers = await Task.Run(() => r.Trackers.Value);
-                var customFields = await Task.Run(() => r.CustomFields.Value);
-                var statuses = await Task.Run(() => r.Statuss.Value);
+                var trackers = CacheManager.Default.Trackers.Value;
+                var customFields = CacheManager.Default.CustomFields.Value;
+                var statuses = CacheManager.Default.Statuss.Value;
 
                 if (!trackers.Any())
                     throw new ApplicationException(Properties.Resources.SettingsReviErrMsgNoTrackers);

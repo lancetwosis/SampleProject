@@ -1776,4 +1776,7 @@ Outlookの状態を確認してください。</value>
   <data name="RibbonGroupColorcodingAppos" xml:space="preserve">
     <value>予定の色分け</value>
   </data>
+  <data name="QuestionContinueSave" xml:space="preserve">
+    <value>保存処理を続行しますか？</value>
+  </data>
 </root>

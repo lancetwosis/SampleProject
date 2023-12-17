@@ -1,5 +1,6 @@
 ﻿using LibRedminePower.Applications;
 using LibRedminePower.Helpers;
+using LibRedminePower.Interfaces;
 using LibRedminePower.ViewModels;
 using Microsoft.Win32;
 using Reactive.Bindings;
@@ -45,7 +46,7 @@ namespace RedmineTableEditor.ViewModels
         public AsyncCommandBase UpdateContentCommand { get; set; }
         public AsyncCommandBase SaveToRedmineCommand { get; set; }
 
-        public TableEditorViewModel(ReadOnlyReactivePropertySlim<(IRedmineManager Manager, IRedmineManager MasterManager)> redmine)
+        public TableEditorViewModel(ReadOnlyReactivePropertySlim<(IRedmineManager Manager, IRedmineManager MasterManager, ICacheManager CashManager)> redmine)
         {
             IsBusy = new BusyNotifier();
             var isCanceling = new ReactivePropertySlim<bool>().AddTo(disposables);
@@ -64,7 +65,7 @@ namespace RedmineTableEditor.ViewModels
             ErrorMessage = new ReactivePropertySlim<string>().AddTo(disposables);
 
             Redmine = new ReactivePropertySlim<RedmineManager>().AddTo(disposables);
-            redmine.Select(r => new RedmineManager(r)).Subscribe(async r =>
+            redmine.Select(r => new RedmineManager(r)).Subscribe(r =>
             {
                 var err = r.IsValid();
                 if (err != null)
@@ -79,7 +80,7 @@ namespace RedmineTableEditor.ViewModels
                 Issues?.Clear();
                 Issues?.Dispose();
 
-                await r.UpdateAsync();
+                r.Update();
 
                 Redmine.Value = r;
 

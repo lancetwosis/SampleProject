@@ -34,17 +34,17 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyProjects), ColorEx.ToBrush("#fff1e6"))
         {
             CompositeDisposable myDisposables = null;
-            redmine.Where(r => r != null).Subscribe(r =>
+            CacheManager.Default.MyUser.Where(u => u != null).Subscribe(u =>
             {
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
-                var allProjects = r.Projects.Value.Select(p => new MyProject(p)).ToList();
+                var allProjects = CacheManager.Default.Projects.Value.Select(p => new MyProject(p)).ToList();
                 var selectedProjects = model.Projects;
 
                 if (model.Projects.Count == 0)
                 {
-                    foreach (var m in r.MyUser.Memberships)
+                    foreach (var m in u.Memberships)
                     {
                         selectedProjects.Add(allProjects.First(p => p.Id == m.Project.Id));
                     }
@@ -56,7 +56,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                     Projects.Expanded = i;
                     if (i && model.Projects.Count == 0)
                     {
-                        foreach (var m in r.MyUser.Memberships)
+                        foreach (var m in u.Memberships)
                         {
                             selectedProjects.Add(allProjects.First(p => p.Id == m.Project.Id));
                         }
