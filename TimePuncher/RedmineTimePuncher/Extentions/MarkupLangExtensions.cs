@@ -33,7 +33,8 @@ namespace RedmineTimePuncher.Extentions
                 case MarkupLangType.Markdown:
                     sb.AppendLine($"#### {header}");
                     sb.AppendLine();
-                    rows.ToList().ForEach(r => sb.AppendLine(r));
+                    // 改行を有効にするために「  」追加
+                    rows.ToList().ForEach(r => sb.AppendLine($"{r}  "));
                     break;
                 default:
                     throw new NotSupportedException();
@@ -95,6 +96,27 @@ namespace RedmineTimePuncher.Extentions
                 case MarkupLangType.Markdown:
                     return HeaderLevelEx.FromMarkdownHeader(str);
                 case MarkupLangType.None:
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        public static string CreateCollapse(this MarkupLangType type, string header, string msg)
+        {
+            var sb = new StringBuilder();
+            switch (type)
+            {
+                // Redmine の「テキスト書式」設定が Markdown でも同様に動作したので書式による分岐は行わない
+                case MarkupLangType.Textile:
+                case MarkupLangType.Markdown:
+                    sb.AppendLine("{{collapse(" + header + ")");
+                    sb.AppendLine(msg);
+                    sb.AppendLine("}} ");
+                    return sb.ToString();
+                case MarkupLangType.None:
+                    sb.AppendLine(header);
+                    sb.AppendLine(msg);
+                    return sb.ToString();
                 default:
                     throw new InvalidOperationException();
             }

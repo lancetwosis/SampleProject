@@ -34,7 +34,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ObservableCollection<MyTracker> TargetTrackers { get; set; }
         public EditableGridViewModel<AssignRuleViewModel, AssignRuleModel> Rules { get; set; }
         public ReadOnlyReactivePropertySlim<string> Details { get; set; }
-        public ReactivePropertySlim<int> Order { get; set; }
         public ReactivePropertySlim<bool> IsWorkingTime { get; set; }
 
         // MultiSelectionGridViewComboBoxColumn の ItemSource にバインドするため Static で持つ必要がある
@@ -58,8 +57,12 @@ namespace RedmineTimePuncher.ViewModels.Settings
         {
         }
 
+        private CategorySettingModel model;
+
         public CategorySettingViewModel(CategorySettingModel model)
         {
+            this.model = model;
+
             Name = model.TimeEntry.Name;
             IsEnabled = model.ToReactivePropertySlimAsSynchronized(a => a.IsEnabled).AddTo(disposables);
             IsBold = model.ToReactivePropertySlimAsSynchronized(a => a.IsBold).AddTo(disposables);
@@ -94,9 +97,12 @@ namespace RedmineTimePuncher.ViewModels.Settings
                         }));
                 }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            Order = model.ToReactivePropertySlimAsSynchronized(a => a.Order).AddTo(disposables);
-
             IsWorkingTime = model.ToReactivePropertySlimAsSynchronized(a => a.IsWorkingTime).AddTo(disposables);
+        }
+
+        public void SetOrder(int order)
+        {
+            model.Order = order;
         }
 
         public override string ToString()

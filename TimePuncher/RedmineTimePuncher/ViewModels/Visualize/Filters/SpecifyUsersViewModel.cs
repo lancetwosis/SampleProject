@@ -30,21 +30,28 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
         public ExpandableTwinListBoxViewModel<MyUser> Users { get; set; }
 
         // https://www.colordic.org/colorsample/fff7f0
-        public SpecifyUsersViewModel(TicketFiltersModel model)
+        public SpecifyUsersViewModel(TicketFiltersModel model, ReactivePropertySlim<RedmineManager> redmine)
             : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyUsers), ColorEx.ToBrush("#fff7f0"))
         {
-            var allUsers = CacheManager.Default.Users.Value;
-            var selectedUsers = model.Users;
-
-            Users = new ExpandableTwinListBoxViewModel<MyUser>(allUsers, selectedUsers).AddTo(disposables);
-            IsEnabled.Skip(1).Subscribe(i =>
+            CompositeDisposable myDisposables = null;
+            redmine.Where(r => r != null).Subscribe(r =>
             {
-                Users.Expanded = i;
-                if (i && model.Users.Count == 0)
+                myDisposables?.Dispose();
+                myDisposables = new CompositeDisposable().AddTo(disposables);
+
+                var allUsers = r.Users.Value;
+                var selectedUsers = model.Users;
+
+                Users = new ExpandableTwinListBoxViewModel<MyUser>(allUsers, selectedUsers).AddTo(myDisposables);
+                IsEnabled.Skip(1).Subscribe(i =>
                 {
-                    selectedUsers.Add(allUsers.First(a => a.Id == CacheManager.Default.MyUser.Value.Id));
-                }
-            }).AddTo(disposables);
+                    Users.Expanded = i;
+                    if (i && model.Users.Count == 0)
+                    {
+                        selectedUsers.Add(allUsers.First(a => a.Id == r.MyUser.Id));
+                    }
+                }).AddTo(myDisposables);
+            });
 
             var usersChanged = model.Users.CollectionChangedAsObservable().StartWithDefault();
             IsValid = usersChanged.Select(_ => model.Users.Any() ? null : Resources.VisualizeUserErrMsg)

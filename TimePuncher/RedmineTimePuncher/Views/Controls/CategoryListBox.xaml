@@ -52,17 +52,56 @@
 
             <telerik:RadListBox.ItemTemplate>
                 <DataTemplate>
-                    <TextBlock Margin="3,0,0,0"
-                               telerik:DragDropManager.AllowCapturedDrag="True"
-                               Background="{Binding CategoryBrush,
-                                                    Mode=OneWay}"
-                               FontStyle="{Binding Model.IsItalic,
-                                                   Converter={StaticResource BoolToFontItalicConverter}}"
-                               FontWeight="{Binding Model.IsBold,
-                                                    Converter={StaticResource BoolToFontBoldConverter}}"
-                               Foreground="{Binding ForeBrush,
-                                                    Mode=OneWay}"
-                               Text="{Binding DisplayName}" />
+                    <Grid Margin="3,1,0,1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO" />
+                            <ColumnDefinition Width="AUTO" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <telerik:RadToggleButton Grid.Column="0"
+                                                 MinHeight="15"
+                                                 Command="{Binding PinCommand}"
+                                                 CommandParameter="{Binding RelativeSource={RelativeSource Mode=Self}}"
+                                                 IsChecked="{Binding IsPined}">
+                            <telerik:RadToggleButton.Template>
+                                <ControlTemplate>
+                                    <Grid>
+                                        <telerik:RadGlyph FontSize="12"
+                                                          Glyph="{StaticResource GlyphStar}"
+                                                          ToolTip="{x:Static props:Resources.CategoryListMsgReleaseFix}"
+                                                          Visibility="{Binding Path=IsChecked,
+                                                                               RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                              AncestorType=telerik:RadToggleButton},
+                                                                               Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                        <telerik:RadGlyph FontSize="12"
+                                                          Glyph="{StaticResource GlyphStarOutline}"
+                                                          ToolTip="{x:Static props:Resources.CategoryListMsgFix}"
+                                                          Visibility="{Binding Path=IsChecked,
+                                                                               RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                                              AncestorType=telerik:RadToggleButton},
+                                                                               Converter={StaticResource InvertBoolToVisConverter}}" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </telerik:RadToggleButton.Template>
+                        </telerik:RadToggleButton>
+                        <Separator Grid.Column="1"
+                                   Width="1"
+                                   Height="10"
+                                   Margin="2,0,4,0" />
+                        <TextBlock Grid.Column="2"
+                                   Padding="3,0,0,0"
+                                   VerticalAlignment="Center"
+                                   telerik:DragDropManager.AllowCapturedDrag="True"
+                                   Background="{Binding CategoryBrush,
+                                                        Mode=OneWay}"
+                                   FontStyle="{Binding Model.IsItalic,
+                                                       Converter={StaticResource BoolToFontItalicConverter}}"
+                                   FontWeight="{Binding Model.IsBold,
+                                                        Converter={StaticResource BoolToFontBoldConverter}}"
+                                   Foreground="{Binding ForeBrush,
+                                                        Mode=OneWay}"
+                                   Text="{Binding DisplayName}" />
+                    </Grid>
                 </DataTemplate>
             </telerik:RadListBox.ItemTemplate>
 

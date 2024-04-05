@@ -29,7 +29,7 @@ namespace RedmineTimePuncher.Models
     {
         public WikiPage RawWikiPage;
 
-        // レビュー
+        [Obsolete("For Serialize", true)]
         public MyWikiPage()
         { }
 

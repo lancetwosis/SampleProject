@@ -66,7 +66,7 @@
                    Text="{Binding CopyRight}" />
 
         <TextBlock Margin="7,4,0,0">
-            <Hyperlink NavigateUri="https://www.redmine-power.com/"
+            <Hyperlink NavigateUri="{Binding RedminePowerURL}"
                        RequestNavigate="Hyperlink_RequestNavigate">
                 <TextBlock Text="{x:Static props:Resources.VersionWebSiteLink}" />
             </Hyperlink>

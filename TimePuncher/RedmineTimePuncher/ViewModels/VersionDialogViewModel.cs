@@ -16,12 +16,14 @@ namespace RedmineTimePuncher.ViewModels
         public string ProductName { get; set; }
         public string Version { get; set; }
         public string CopyRight{ get; set; }
+        public string RedminePowerURL { get; set; }
         public ReactiveCommand<RadWindow> CloseCommand { get; set; }
         public VersionDialogViewModel()
         {
             ProductName = ApplicationInfo.Title;
             Version = ApplicationInfo.Version.ToString();
             CopyRight = ApplicationInfo.CopyRight;
+            RedminePowerURL = ApplicationInfo.BaseUrl;
 
             CloseCommand = new ReactiveCommand<RadWindow>().WithSubscribe(w => w.Close()).AddTo(disposables);
         }

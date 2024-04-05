@@ -8,7 +8,7 @@
                     xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/SearchTypeToolTipText.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineStudio;component/Themes/SearchTypeToolTipText.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
     <ControlTemplate x:Key="MyGridViewSearchPanelTemplate"

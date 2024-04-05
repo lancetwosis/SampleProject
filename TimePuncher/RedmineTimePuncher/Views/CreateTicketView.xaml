@@ -114,6 +114,7 @@
                     <RowDefinition Height="AUTO" />
                     <RowDefinition Height="AUTO" />
                     <RowDefinition Height="AUTO" />
+                    <RowDefinition Height="AUTO" />
                     <RowDefinition Height="2*" />
                     <RowDefinition Height="*" />
                     <RowDefinition Height="2*" />
@@ -217,10 +218,22 @@
 
                 <TextBlock Grid.Row="6"
                            Margin="0,5,0,0"
+                           Text="{x:Static props:Resources.ReviewMergeRequestURL}"
+                           Visibility="{Binding CreateTicket.NeedsGitIntegration,
+                                                Converter={StaticResource BooleanToVisibilityConverter}}" />
+                <TextBox Grid.Row="6"
+                         Grid.Column="1"
+                         Margin="5,5,0,0"
+                         Text="{Binding CreateTicket.MergeRequestUrl}"
+                         Visibility="{Binding CreateTicket.NeedsGitIntegration,
+                                              Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <TextBlock Grid.Row="7"
+                           Margin="0,5,0,0"
                            Text="{x:Static props:Resources.ReviewDuration}"
                            Visibility="{Binding CreateTicket.NeedsSelectTime.Value,
                                                 Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
-                <Grid Grid.Row="6"
+                <Grid Grid.Row="7"
                       Grid.Column="1"
                       Margin="5,5,0,0"
                       Visibility="{Binding CreateTicket.NeedsSelectTime.Value,
@@ -257,12 +270,12 @@
                     </telerik:RadDateTimePicker>
                 </Grid>
 
-                <TextBlock Grid.Row="6"
+                <TextBlock Grid.Row="7"
                            Margin="0,5,0,0"
                            Text="{x:Static props:Resources.ReviewDateTime}"
                            Visibility="{Binding CreateTicket.NeedsSelectTime.Value,
                                                 Converter={StaticResource BooleanToVisibilityConverter}}" />
-                <Grid Grid.Row="6"
+                <Grid Grid.Row="7"
                       Grid.Column="1"
                       Margin="5,5,0,0"
                       Visibility="{Binding CreateTicket.NeedsSelectTime.Value,
@@ -306,10 +319,10 @@
                                                    Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </Grid>
 
-                <TextBlock Grid.Row="7"
+                <TextBlock Grid.Row="8"
                            Margin="0,5,0,0"
                            Text="{x:Static props:Resources.ReviewReviewer}" />
-                <Grid Grid.Row="7"
+                <Grid Grid.Row="8"
                       Grid.Column="1"
                       Margin="5,5,0,0"
                       IsSharedSizeScope="True">
@@ -386,10 +399,10 @@
                                                  DataContext="{Binding CreateTicket.ReviewerTwinList}" />
                 </Grid>
 
-                <TextBlock Grid.Row="8"
+                <TextBlock Grid.Row="9"
                            Margin="0,5,0,0"
                            Text="{x:Static props:Resources.ReviewDelivarables}" />
-                <TextBox Grid.Row="8"
+                <TextBox Grid.Row="9"
                          Grid.Column="1"
                          Margin="5,5,0,0"
                          VerticalContentAlignment="Top"
@@ -397,12 +410,12 @@
                          Text="{Binding CreateTicket.ReviewTarget,
                                         UpdateSourceTrigger=PropertyChanged}"
                          TextWrapping="Wrap"
-                         ToolTip="{x:Static props:Resources.ReviewMsgMarkupLangEnableAndList}"
+                         ToolTip="{x:Static props:Resources.ReviewMsgMarkupLangEnable}"
                          VerticalScrollBarVisibility="Auto" />
-                <TextBlock Grid.Row="9"
+                <TextBlock Grid.Row="10"
                            Margin="0,5,0,0"
                            Text="{x:Static props:Resources.ReviewDesctiptionOfRequestIssue}" />
-                <TextBox Grid.Row="9"
+                <TextBox Grid.Row="10"
                          Grid.Column="1"
                          Margin="5,5,0,0"
                          VerticalContentAlignment="Top"

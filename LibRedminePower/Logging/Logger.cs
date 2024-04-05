@@ -25,7 +25,7 @@ namespace LibRedminePower.Logging
         }
         public static void Error(Exception exception, string message, params object[] args)
         {
-            log(NLog.LogLevel.Error, exception, message, args);
+            log(NLog.LogLevel.Error, exception, $"{message} (v{Applications.ApplicationInfo.Version})", args);
         }
         public static void Warn(string message, params object[] args)
         {
@@ -33,7 +33,7 @@ namespace LibRedminePower.Logging
         }
         public static void Warn(Exception exception, string message, params object[] args)
         {
-            log(NLog.LogLevel.Warn, exception, message, args);
+            log(NLog.LogLevel.Warn, exception, $"{message} (v{Applications.ApplicationInfo.Version})", args);
         }
         public static void Info(string message, params object[] args)
         {
@@ -49,7 +49,6 @@ namespace LibRedminePower.Logging
             if (_logger == null) return;
             var logEvent = new NLog.LogEventInfo(level, _logger.Name, null, message, args, exception);
             _logger.Log(typeof(Logger), logEvent);
-
         }
 
         public static StopWatchLogger CreateProcess(string processName) => new StopWatchLogger(processName);

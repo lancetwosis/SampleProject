@@ -44,7 +44,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReactiveCommand<SettingsDialog> OkCommand { get; set; }
         public ReactiveCommand<SettingsDialog> CancelCommand { get; set; }
 
-        private ReactivePropertySlim<RedmineManager> redmineManager = new ReactivePropertySlim<RedmineManager>();
         private CompositeDisposable myDisposables;
         private const string defaultFileName = "TimePuncherSetting";
 
@@ -99,17 +98,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
             OkCommand = new ReactiveCommand<SettingsDialog>().WithSubscribe(dialog => 
             {
-                Category.Items?.Indexed().ToList().ForEach(a => a.v.Order.Value = a.i);
-
-                if (redmineManager.Value == null)
-                {
-                    var r = MessageBoxHelper.ConfirmQuestion(
-                        LibRedminePower.Properties.Resources.errRedmineConnectionError + Properties.Resources.QuestionContinueSave, MessageBoxHelper.ButtonType.OkCancel);
-                    if (!r.Value)
-                    {
-                        return;
-                    }
-                }
 
                 if (Redmine.Locale.NeedsRestart ||
                     Appointment.Outlook.Value.IsEnabled.NeedsRestart ||
@@ -118,6 +106,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                     var r = MessageBoxHelper.ConfirmQuestion(Properties.Resources.SettingsGenMsgRestartToChange, MessageBoxHelper.ButtonType.OkCancel);
                     if (r.Value)
                     {
+                        Category.ApplyOrders();
                         model.Save();
 
                         Logger.Info($"Exit to change the settings required restart.");
@@ -128,6 +117,8 @@ namespace RedmineTimePuncher.ViewModels.Settings
                         return;
                     }
                 }
+
+                Category.ApplyOrders();
 
                 dialog.DialogResult = true;
                 dialog.Close();
@@ -146,8 +137,9 @@ namespace RedmineTimePuncher.ViewModels.Settings
             myDisposables = new CompositeDisposable().AddTo(disposables);
 
             Redmine = new RedmineSettingsViewModel(model.Redmine).AddTo(myDisposables);
+            var redmineManager = new ReactivePropertySlim<RedmineManager>().AddTo(myDisposables);
             var message = new ReactivePropertySlim<string>().AddTo(myDisposables);
-            model.Redmine.IsValid.SubscribeWithErr(a => 
+            model.Redmine.IsValid.SubscribeWithErr(async a => 
             {
                 if (a)
                 {
@@ -155,7 +147,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                     {
                         message.Value = Properties.Resources.SettingsMsgNowConnecting;
                         var r = new RedmineManager(model.Redmine);
-                        AsyncHelper.RunSync(() => r.CheckConnectAsync());
+                        await r.CheckConnectAsync();
                         redmineManager.Value = r;
                         message.Value = "";
                     }
@@ -174,8 +166,8 @@ namespace RedmineTimePuncher.ViewModels.Settings
             }).AddTo(myDisposables);
             Schedule = new ScheduleSettingsViewModel(model.Schedule).AddTo(myDisposables);
             Calendar = new CalendarSettingsViewModel(model.Calendar).AddTo(myDisposables);
-            Category = new CategorySettingsViewModel(model.Category, message) { }.AddTo(myDisposables);
-            Appointment = new AppointmentSettingsViewModel(model.Appointment, message).AddTo(myDisposables);
+            Category = new CategorySettingsViewModel(model.Category, redmineManager, message) { }.AddTo(myDisposables);
+            Appointment = new AppointmentSettingsViewModel(model.Appointment, redmineManager, message).AddTo(myDisposables);
             Query = new QuerySettingsViewModel(model.Query, redmineManager, message).AddTo(myDisposables);
             User = new UserSettingsViewModel(model.User, redmineManager, message).AddTo(myDisposables);
             OutputData = new OutputDataSettingsViewModel(model.OutputData).AddTo(myDisposables);

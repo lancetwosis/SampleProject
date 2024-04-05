@@ -10,7 +10,7 @@
                     xmlns:vmRes="clr-namespace:RedmineTimePuncher.ViewModels.Resources">
 
     <ResourceDictionary.MergedDictionaries>
-        <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/SearchTypeToolTipText.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/RedmineStudio;component/Themes/SearchTypeToolTipText.xaml" />
         <ResourceDictionary>
             <converters:DateTimeToHeaderBackgroundConverter x:Key="DateTimeToHeaderBackgroundConverter" />
             <converters:DateTimeToHeaderTextStyleConverter x:Key="DateTimeToHeaderTextStyleConverter" />

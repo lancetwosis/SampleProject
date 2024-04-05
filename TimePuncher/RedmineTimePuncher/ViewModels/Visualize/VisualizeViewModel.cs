@@ -8,7 +8,6 @@ using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
-using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Bases;
@@ -197,8 +196,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 Result.AddNewFilter();
             }).AddTo(disposables);
 
-            Title = CacheManager.Default.MyUser.CombineLatest(TitlePrefix, (u, p) => 
-                string.IsNullOrEmpty(p) ? getTitle(u) : $"{p}  {getTitle(u)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = parent.Redmine.CombineLatest(TitlePrefix, (r, p) => 
+                string.IsNullOrEmpty(p) ? getTitle(r) : $"{p}  {getTitle(r)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         public override void OnWindowClosed()

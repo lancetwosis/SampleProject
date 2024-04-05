@@ -138,16 +138,78 @@
                             </DataTemplate>
                         </telerik:RadNavigationViewItem.IconTemplate>
                     </telerik:RadNavigationViewItem>
-                    <telerik:RadNavigationViewItem Command="{Binding ShowVersionDialogCommand}"
-                                                   Content="{x:Static props:Resources.VersionInfo}">
-                        <telerik:RadNavigationViewItem.IconTemplate>
-                            <DataTemplate>
-                                <Image Width="24"
-                                       Source="../Images/icons8-info-48.png"
-                                       ToolTip="{x:Static props:Resources.VersionInfo}" />
-                            </DataTemplate>
-                        </telerik:RadNavigationViewItem.IconTemplate>
-                    </telerik:RadNavigationViewItem>
+
+                    <!--
+                        Popup が開いた状態でヘルプボタンをクリックすると
+                        Popup が閉じずに再度開かれてしまう問題があったため、このようにした。
+                        http://133.242.159.37/issues/1269#note-10
+                    -->
+                    <Grid>
+                        <telerik:RadNavigationViewItem x:Name="dummyButton"
+                                                       Content="{x:Static props:Resources.Help}">
+                            <telerik:RadNavigationViewItem.IconTemplate>
+                                <DataTemplate>
+                                    <Image Width="24"
+                                           Source="../Images/icons8-help-32.png"
+                                           ToolTip="{x:Static props:Resources.Help}" />
+                                </DataTemplate>
+                            </telerik:RadNavigationViewItem.IconTemplate>
+                        </telerik:RadNavigationViewItem>
+                        <telerik:RadNavigationViewItem x:Name="helpButton"
+                                                       Click="helpButton_Click"
+                                                       Content="{x:Static props:Resources.Help}"
+                                                       Visibility="{Binding ElementName=helpItemsPopup,
+                                                                            Path=IsOpen,
+                                                                            Converter={StaticResource InvertBoolToVisConverter}}">
+                            <telerik:RadNavigationViewItem.IconTemplate>
+                                <DataTemplate>
+                                    <Image Width="24"
+                                           Source="../Images/icons8-help-32.png"
+                                           ToolTip="{x:Static props:Resources.Help}" />
+                                </DataTemplate>
+                            </telerik:RadNavigationViewItem.IconTemplate>
+                        </telerik:RadNavigationViewItem>
+                        <Popup x:Name="helpItemsPopup"
+                               AllowsTransparency="True"
+                               HorizontalOffset="5"
+                               Placement="Right"
+                               PlacementTarget="{Binding ElementName=dummyButton}"
+                               StaysOpen="False"
+                               VerticalOffset="-45">
+                            <Border Margin="5"
+                                    Background="#F1F1F1"
+                                    CornerRadius="5">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="7"
+                                                      Opacity="0.8"
+                                                      ShadowDepth="0"
+                                                      Color="Black" />
+                                </Border.Effect>
+                                <StackPanel Margin="3">
+                                    <telerik:RadNavigationViewItem Command="{Binding ShowOnlienHelpCommand}"
+                                                                   Content="{x:Static props:Resources.HelpOnline}">
+                                        <telerik:RadNavigationViewItem.IconTemplate>
+                                            <DataTemplate>
+                                                <Image Width="24"
+                                                       Source="../Images/icons8-user-manual-32.png"
+                                                       ToolTip="{x:Static props:Resources.HelpOnline}" />
+                                            </DataTemplate>
+                                        </telerik:RadNavigationViewItem.IconTemplate>
+                                    </telerik:RadNavigationViewItem>
+                                    <telerik:RadNavigationViewItem Command="{Binding ShowVersionDialogCommand}"
+                                                                   Content="{x:Static props:Resources.VersionInfo}">
+                                        <telerik:RadNavigationViewItem.IconTemplate>
+                                            <DataTemplate>
+                                                <Image Width="24"
+                                                       Source="../Images/icons8-about-32.png"
+                                                       ToolTip="{x:Static props:Resources.VersionInfo}" />
+                                            </DataTemplate>
+                                        </telerik:RadNavigationViewItem.IconTemplate>
+                                    </telerik:RadNavigationViewItem>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
+                    </Grid>
                 </StackPanel>
             </telerik:RadNavigationView.PaneFooter>
         </telerik:RadNavigationView>

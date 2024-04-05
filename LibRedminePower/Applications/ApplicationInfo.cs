@@ -20,6 +20,15 @@ namespace LibRedminePower.Applications
         public static string CompanyName => getCustomAttribute<AssemblyCompanyAttribute>().Company;
         public static string LogFolderName => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), CompanyName, Title);
 
+        public static string BaseUrl => "https://www.redmine-power.com/";
+        public static string AppBaseUrl
+        {
+            get
+            {
+                return $"{BaseUrl}{Title.Replace(" ", "_").ToLower()}/";
+            }
+        }
+
         static private T getCustomAttribute<T>() where T : Attribute => (T)Attribute.GetCustomAttribute(assembly, typeof(T));
 
         private static Version getVersion()

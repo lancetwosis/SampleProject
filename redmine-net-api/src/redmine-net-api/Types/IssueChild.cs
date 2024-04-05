@@ -38,13 +38,13 @@ namespace Redmine.Net.Api.Types
         /// Gets or sets the tracker.
         /// </summary>
         /// <value>The tracker.</value>
-        public IdentifiableName Tracker { get; set; }
+        public IdentifiableName Tracker { get; internal set; }
 
         /// <summary>
         /// Gets or sets the subject.
         /// </summary>
         /// <value>The subject.</value>
-        public string Subject { get; set; }
+        public string Subject { get; internal set; }
 
         // カスタマイズ(S):子チケットを取得できるようにした。
         /// <summary>

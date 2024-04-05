@@ -38,7 +38,6 @@ namespace RedmineTimePuncher.Models.Settings
         public bool IsItalic { get; set; } = false;
         public Enums.AndOrType AndOrType { get; set; }
         public int Order { get; set; }
-        public int DisplayOrder { get; set; }
         public TimeEntryActivity TimeEntry { get; set; }
         public List<MyTracker> TargetTrackers { get; set; }
         public ObservableCollection<AssignRuleModel> Rules { get; set; }
@@ -58,11 +57,9 @@ namespace RedmineTimePuncher.Models.Settings
             Setup(timeEntry);
         }
 
-        public void Setup(TimeEntryActivity timeEntry, int? displayOrder = null)
+        public void Setup(TimeEntryActivity timeEntry)
         {
             TimeEntry = timeEntry;
-            if (displayOrder.HasValue)
-                DisplayOrder = displayOrder.Value;
         }
 
         /// <summary>

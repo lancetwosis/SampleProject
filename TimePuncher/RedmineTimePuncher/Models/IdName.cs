@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models
 {
-    public class IdName : LibRedminePower.Models.Bases.ModelBaseSlim
+    public class IdName : LibRedminePower.Models.Bases.ModelBase
     {
         public int Id { get; set; }
         public string Name{ get; set; }

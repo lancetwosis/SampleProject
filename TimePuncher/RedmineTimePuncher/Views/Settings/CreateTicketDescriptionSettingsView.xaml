@@ -7,9 +7,9 @@
              xmlns:conv="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.Settings"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
-             xmlns:settings="clr-namespace:RedmineTimePuncher.Views.Settings"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
              xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings"
@@ -50,7 +50,8 @@
                             <Setter Property="Grid.Column" Value="1" />
                         </Style>
                     </StackPanel.Resources>
-                    <TextBlock Text="{x:Static props:Resources.SettingsReviMsgTransGeneral}" />
+                    <TextBlock Style="{StaticResource MyTextBlockStyle}"
+                               Text="{x:Static props:Resources.SettingsReviMsgTransGeneral}" />
                     <Grid Margin="10,0,0,0">
                         <Grid.RowDefinitions>
                             <RowDefinition Height="AUTO" />
@@ -116,7 +117,7 @@
                                                     Path=IsChecked}"
                                 Orientation="Vertical">
                         <Grid>
-                            <TextBlock Style="{StaticResource SettingHelpTextBlockStyle}"
+                            <TextBlock Style="{StaticResource MyTextBlockStyle}"
                                        Text="{x:Static props:Resources.SettingsReviMsgTransOpen}" />
                             <Button Width="80"
                                     HorizontalAlignment="Right"
@@ -238,7 +239,7 @@
                                                     Path=IsChecked}"
                                 Orientation="Vertical">
                         <Grid>
-                            <TextBlock Style="{StaticResource SettingHelpTextBlockStyle}"
+                            <TextBlock Style="{StaticResource MyTextBlockStyle}"
                                        Text="{x:Static props:Resources.SettingsReviMsgTransRequest}" />
                             <Button Width="80"
                                     HorizontalAlignment="Right"
@@ -351,23 +352,8 @@
                 </GroupBox>
             </Grid>
 
-            <Grid Grid.Row="1"
-                  HorizontalAlignment="Center"
-                  VerticalAlignment="Bottom">
-                <StackPanel Orientation="Horizontal">
-                    <Button Width="80"
-                            Margin="0,0,10,0"
-                            Command="{Binding ImportCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
-                                                                                      Mode=FindAncestor}}"
-                            Content="{x:Static props:Resources.SettingsCmdImport}" />
-                    <Button Width="80"
-                            Command="{Binding ExportCommand}"
-                            CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
-                                                                                      Mode=FindAncestor}}"
-                            Content="{x:Static props:Resources.SettingsCmdExport}" />
-                </StackPanel>
-            </Grid>
+            <local:SettingsButtonsPanel Grid.Row="1"
+                                        DataContext="{Binding}" />
         </Grid>
     </libCont:OverwrapMessage>
 

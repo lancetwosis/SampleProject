@@ -1,6 +1,4 @@
-﻿using LibRedminePower.Extentions;
-using LibRedminePower.Helpers;
-using Reactive.Bindings;
+﻿using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Extentions;
@@ -25,6 +23,7 @@ namespace RedmineTimePuncher.Models.Settings
 
         public string UrlBase { get; set; }
 
+        [JsonIgnore]
         public string UserName { get; set; }
         [JsonIgnore]
         public string Password 
@@ -32,14 +31,18 @@ namespace RedmineTimePuncher.Models.Settings
             get => Encryption.Decrypt(PasswordEncrypt);
             set => PasswordEncrypt = Encryption.Encrypt(value);
         }
+        [JsonIgnore]
         public string PasswordEncrypt { get; set; }
+        [JsonIgnore]
         public string AdminApiKey { get; set; }
 
         public int ConcurrencyMax { get; set; } = 5;
 
         // Basic 認証用の設定
         public bool UseBasicAuth { get; set; }
+        [JsonIgnore]
         public string ApiKey { get; set; }
+        [JsonIgnore]
         public string UserNameOfBasicAuth { get; set; }
         [JsonIgnore]
         public string PasswordOfBasicAuth
@@ -47,6 +50,7 @@ namespace RedmineTimePuncher.Models.Settings
             get => Encryption.Decrypt(PasswordEncryptOfBasicAuth);
             set => PasswordEncryptOfBasicAuth = Encryption.Encrypt(value);
         }
+        [JsonIgnore]
         public string PasswordEncryptOfBasicAuth { get; set; }
 
         [JsonIgnore]
@@ -118,21 +122,6 @@ namespace RedmineTimePuncher.Models.Settings
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PasswordOfBasicAuth);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PasswordEncryptOfBasicAuth);
             return hashCode;
-        }
-
-        public void ClearPrivacy()
-        {
-            UserName = null;
-            PasswordEncrypt = null;
-            ApiKey = null;
-            PasswordEncryptOfBasicAuth = null;
-        }
-
-        public override void Export(string fileName)
-        {
-            var temp = this.Clone();
-            temp.ClearPrivacy();
-            FileHelper.WriteAllText(fileName, temp.ToJson());
         }
     }
 }

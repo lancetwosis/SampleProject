@@ -27,12 +27,12 @@ namespace RedmineTimePuncher.Models.Settings
             var upList = indexed.Where(a => Items.Any(b => b.Id == a.v.Id)).ToList();
             upList.ForEach(a =>
             {
-                Items.First(b => b.Id == a.v.Id).Setup(a.v, a.i);
+                Items.First(b => b.Id == a.v.Id).Setup(a.v);
             });
 
             // 追加
             var addList = indexed.Where(a => !Items.Any(b => b.Id == a.v.Id)).ToList();
-            addList.ForEach(a => Items.Add(new CategorySettingModel(a.v) { DisplayOrder = a.i }));
+            addList.ForEach(a => Items.Add(new CategorySettingModel(a.v)));
 
             // 削除
             var removeList = Items.Where(a => !timeEntries.Any(b => b.Id == a.Id)).ToList();

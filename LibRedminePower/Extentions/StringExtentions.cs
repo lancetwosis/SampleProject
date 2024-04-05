@@ -29,5 +29,14 @@ namespace LibRedminePower.Extentions
             }
             return string.Join(Environment.NewLine, lines);
         }
+
+        /// <summary>
+        /// キャメルケース、パスカルケースをスネークケースに変換する。例）camelCase -> camel_case, PascalCase -> pascal_case
+        /// </summary>
+        public static string ToSnakeCase(this string str)
+        {
+            var regex = new System.Text.RegularExpressions.Regex("[a-z][A-Z]");
+            return regex.Replace(str, s => $"{s.Groups[0].Value[0]}_{s.Groups[0].Value[1]}").ToLower();
+        }
     }
 }

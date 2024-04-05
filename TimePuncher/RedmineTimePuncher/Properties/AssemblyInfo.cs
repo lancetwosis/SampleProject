@@ -7,13 +7,13 @@ using System.Windows;
 // アセンブリに関する一般情報は以下の属性セットをとおして制御されます。
 // アセンブリに関連付けられている情報を変更するには、
 // これらの属性値を変更してください。
-[assembly: AssemblyTitle("Redmine Time Puncher")]
+[assembly: AssemblyTitle("Redmine Studio")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("RedminePower")]
-[assembly: AssemblyProduct("Redmine Time Puncher")]
-[assembly: AssemblyCopyright("Copyright © RedminePower 2012 - 2023")]
-[assembly: AssemblyTrademark("Redmine Time Puncher")]
+[assembly: AssemblyProduct("Redmine Studio")]
+[assembly: AssemblyCopyright("Copyright © RedminePower 2012 - 2024")]
+[assembly: AssemblyTrademark("Redmine Studio")]
 [assembly: AssemblyCulture("")]
 
 // ComVisible を false に設定すると、このアセンブリ内の型は COM コンポーネントから
@@ -51,6 +51,6 @@ using System.Windows;
 // すべての値を指定するか、次を使用してビルド番号とリビジョン番号を既定に設定できます
 // 既定値にすることができます:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyFileVersion("8.0.0")]
+[assembly: AssemblyFileVersion("8.1.4")]
 
-[assembly: AssemblyVersion("8.0.0")]
+[assembly: AssemblyVersion("8.1.4")]

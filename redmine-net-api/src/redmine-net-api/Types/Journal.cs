@@ -40,7 +40,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The user.
         /// </value>
-        public IdentifiableName User { get; set; }
+        public IdentifiableName User { get; internal set; }
 
         /// <summary>
         /// Gets or sets the notes.
@@ -48,7 +48,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The notes.
         /// </value>
-        public string Notes { get; set; }
+        public string Notes { get; internal set; }
 
         /// <summary>
         /// Gets or sets the created on.
@@ -56,12 +56,12 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The created on.
         /// </value>
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; internal set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool PrivateNotes { get; set; }
+        public bool PrivateNotes { get; internal set; }
 
         /// <summary>
         /// Gets or sets the details.
@@ -69,7 +69,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The details.
         /// </value>
-        public IList<Detail> Details { get; set; }
+        public IList<Detail> Details { get; internal set; }
         #endregion
 
         #region Implementation of IXmlSerialization

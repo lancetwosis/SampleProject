@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using Reactive.Bindings;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Extentions;
 using RedmineTimePuncher.Models.Settings;
@@ -20,6 +21,9 @@ namespace RedmineTimePuncher.Models
         public SolidColorBrush ForeBrush { get; }
         public TimeEntryActivity TimeEntry { get; }
 
+        public bool IsPined { get; set; }
+        public ReactiveCommand<RadToggleButton> PinCommand { get; set; }
+
         public MyCategory(CategorySettingModel model)
         {
             this.Model = model;
@@ -38,6 +42,12 @@ namespace RedmineTimePuncher.Models
         public MyCategory(CategorySettingModel model, ProjectTimeEntryActivity entry) : this(model)
         {
             this.Id = entry.Id;
+        }
+
+        public MyCategory(CategorySettingModel model, bool isPined, ReactiveCommand<RadToggleButton> pinCommand) : this(model)
+        {
+            IsPined = isPined;
+            PinCommand = pinCommand;
         }
 
         /// <summary>

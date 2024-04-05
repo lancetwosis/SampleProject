@@ -4,7 +4,6 @@ using Reactive.Bindings.Extensions;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
-using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
@@ -23,6 +22,7 @@ namespace RedmineTimePuncher.Models.Settings
 
         public ReviewDetectionProcessSettingModel DetectionProcess { get; set; }
         public bool NeedsOutlookIntegration { get; set; }
+        public bool NeedsGitIntegration { get; set; }
 
         public MyTracker OpenTracker { get; set; }
         public IdName OpenStatus { get; set; }
@@ -56,9 +56,9 @@ namespace RedmineTimePuncher.Models.Settings
             {
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
-                var trackers = CacheManager.Default.Trackers.Value;
-                var customFields = CacheManager.Default.CustomFields.Value;
-                var statuses = CacheManager.Default.Statuss.Value;
+                var trackers = await Task.Run(() => r.Trackers.Value);
+                var customFields = await Task.Run(() => r.CustomFields.Value);
+                var statuses = await Task.Run(() => r.Statuss.Value);
 
                 if (!trackers.Any())
                     throw new ApplicationException(Properties.Resources.SettingsReviErrMsgNoTrackers);

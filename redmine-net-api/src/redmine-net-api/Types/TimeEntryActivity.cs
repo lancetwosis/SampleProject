@@ -46,12 +46,12 @@ namespace Redmine.Net.Api.Types
         /// <summary>
         /// 
         /// </summary>
-        public bool IsDefault { get; set; }
+        public bool IsDefault { get; internal set; }
         
         /// <summary>
         /// 
         /// </summary>
-        public bool IsActive { get; set; }
+        public bool IsActive { get; internal set; }
         #endregion
 
         #region Implementation of IXmlSerializable

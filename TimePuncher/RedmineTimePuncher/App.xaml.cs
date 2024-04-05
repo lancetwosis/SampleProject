@@ -30,7 +30,7 @@ namespace RedmineTimePuncher
 
             // スプラッシュ画面
             var dataContext = (SplashScreenDataContext)RadSplashScreenManager.SplashScreenDataContext;
-            dataContext.ImagePath = "pack://application:,,,/RedmineTimePuncher;component/Resources/splashScreen_redminetimepunhcer.png";
+            dataContext.ImagePath = "pack://application:,,,/RedmineStudio;component/Resources/splashScreen_redminetimepunhcer.png";
             dataContext.Footer = string.Format(LibRedminePower.Properties.Resources.SplashScreenFooter, ApplicationInfo.Title);
             RadSplashScreenManager.Show();
 
@@ -70,8 +70,8 @@ namespace RedmineTimePuncher
             if (!parentDir.Exists)
                 return;
 
-            // TimePuncher の設定フォルダのみを対象とし、
-            var tpConfDirs = parentDir.GetDirectories().Where(d => d.Name.StartsWith("RedmineTimePuncher.exe")).ToList();
+            // RedmineStudioまたはTimePuncher(名称変更前) の設定フォルダのみを対象とし、
+            var tpConfDirs = parentDir.GetDirectories().Where(d => d.Name.StartsWith("RedmineStudio.exe") || d.Name.StartsWith("RedmineTimePuncher.exe")).ToList();
 
             // その中から自分のバージョンに最も近い過去バージョンの設定フォルダを取得する
             var preVerDir = tpConfDirs.Where(d => d.Name != myConfDir.Name)

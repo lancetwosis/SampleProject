@@ -74,7 +74,10 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The user.
         /// </value>
+        // カスタマイズ(S):JSON からデシリアライズできるように internal をはずした。
+        //public IdentifiableName User { get; internal set; }
         public IdentifiableName User { get; set; }
+        // カスタマイズ(E):JSON からデシリアライズできるように internal をはずした。
 
         /// <summary>
         /// Gets or sets the short description for the entry (5120 characters max).
@@ -90,13 +93,13 @@ namespace Redmine.Net.Api.Types
         /// Gets the created on.
         /// </summary>
         /// <value>The created on.</value>
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; internal set; }
 
         /// <summary>
         /// Gets the updated on.
         /// </summary>
         /// <value>The updated on.</value>
-        public DateTime? UpdatedOn { get; set; }
+        public DateTime? UpdatedOn { get; internal set; }
 
         /// <summary>
         /// Gets or sets the custom fields.

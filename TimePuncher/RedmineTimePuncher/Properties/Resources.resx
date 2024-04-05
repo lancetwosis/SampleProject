@@ -696,7 +696,7 @@ Do you want to exit the application?</value>
     <value>Open file after exporting</value>
   </data>
   <data name="SettingsExpoMsgDefaultFolder" xml:space="preserve">
-    <value>If not specified, the file will be output under "My Documents\Redmine Time Puncher".</value>
+    <value>If not specified, the file will be output under "My Documents\Redmine Studio".</value>
   </data>
   <data name="SettingsExpoExternalToolPath" xml:space="preserve">
     <value>Path of External Tool</value>
@@ -873,7 +873,7 @@ Please obtain the latest version from our website.</value>
     <value>Request Issue</value>
   </data>
   <data name="SettingsReviPointTicket" xml:space="preserve">
-    <value>Point Issue</value>
+    <value>Pointing Issue</value>
   </data>
   <data name="SettingsReviCustomField" xml:space="preserve">
     <value>Save to a custom field</value>
@@ -952,7 +952,7 @@ Please reinstall.</value>
     <value>Description of request issue</value>
   </data>
   <data name="ReviewMsgMarkupLangEnable" xml:space="preserve">
-    <value>Textile notation is available.</value>
+    <value>Textile (or Markdown) is supported.</value>
   </data>
   <data name="ReviewErrMsgSetUpReview" xml:space="preserve">
     <value>Please set review settings.</value>
@@ -979,10 +979,10 @@ Please reinstall.</value>
     <value>Please review followings.</value>
   </data>
   <data name="ReviewMsgAddPointAtHere" xml:space="preserve">
-    <value>Please add any points of view at "here":{0} .</value>
+    <value>Please add an indicated issue at here.</value>
   </data>
   <data name="ReviewPoints" xml:space="preserve">
-    <value>Points</value>
+    <value>Indicated issue</value>
   </data>
   <data name="ReviewErrMsgSelectTargetTicket" xml:space="preserve">
     <value>Please select an issue.</value>
@@ -994,17 +994,13 @@ Please reinstall.</value>
     <value>Please select reviewers.</value>
   </data>
   <data name="ReviewMsgReferPointsAtHere" xml:space="preserve">
-    <value>You can refer other points at "here":{0} .</value>
+    <value>You can refer other indicated issues at here.</value>
   </data>
   <data name="Review" xml:space="preserve">
     <value>Review</value>
   </data>
   <data name="ReviewPointsList" xml:space="preserve">
-    <value>List of points</value>
-  </data>
-  <data name="ReviewMsgMarkupLangEnableAndList" xml:space="preserve">
-    <value>Textile notation is available.
-If you want to set more than one, please start a new line.</value>
+    <value>List of indicated issues</value>
   </data>
   <data name="RibbonCmdCreateReviewTicket" xml:space="preserve">
     <value>Create Issue</value>
@@ -1053,7 +1049,7 @@ If you want to set more than one, please start a new line.</value>
     <value>Please select an organizer.</value>
   </data>
   <data name="ReviewPointsAdd" xml:space="preserve">
-    <value>Add a point of view</value>
+    <value>Add an indicated issue</value>
   </data>
   <data name="ReviewTargetIssue" xml:space="preserve">
     <value>Issue subject to review</value>
@@ -1129,9 +1125,6 @@ Header</value>
   </data>
   <data name="SettingsReviMarkupLang" xml:space="preserve">
     <value>Text formatting</value>
-  </data>
-  <data name="ReviewMsgHere" xml:space="preserve">
-    <value>here</value>
   </data>
   <data name="SettingsReviErrMsgCannotUseTranscribe" xml:space="preserve">
     <value>This function is not available when "none" is set for the text formatting of Redmine.</value>
@@ -1901,7 +1894,44 @@ Please select the date to copy to.</value>
   <data name="RibbonGroupColorcodingAppos" xml:space="preserve">
     <value>Color-coding of Appointments</value>
   </data>
-  <data name="QuestionContinueSave" xml:space="preserve">
-    <value>Continue the saving process?</value>
+  <data name="SettingsReviGitIntegration" xml:space="preserve">
+    <value>Integration with Git</value>
+  </data>
+  <data name="SettingsReviOutlookIntegrationMsg" xml:space="preserve">
+    <value>You can coordinate appointments using Outlook and register a review as Outlook appointment.</value>
+  </data>
+  <data name="SettingsReviGitIntegrationMsg" xml:space="preserve">
+    <value>By setting the URL of the pull request, a pointing issue is automatically created from the added comments.</value>
+  </data>
+  <data name="ReviewMergeRequestURL" xml:space="preserve">
+    <value>Pull Request URL</value>
+  </data>
+  <data name="CategoryListMsgReleaseFix" xml:space="preserve">
+    <value>Release the fixation of this category</value>
+  </data>
+  <data name="CategoryListMsgFix" xml:space="preserve">
+    <value>Fix this category to the top of the list</value>
+  </data>
+  <data name="SettingsUserMsg" xml:space="preserve">
+    <value>Please select the other users you wish to display on the input screen.
+By selecting them, you can check their time entries and set them as collaborators.</value>
+  </data>
+  <data name="icons8_help_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-help-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icons8_user_manual_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-user-manual-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icons8_about_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-about-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>Help</value>
+  </data>
+  <data name="HelpOnline" xml:space="preserve">
+    <value>Online Help</value>
+  </data>
+  <data name="HelpOnlineMsg" xml:space="preserve">
+    <value>Show online help.</value>
   </data>
 </root>

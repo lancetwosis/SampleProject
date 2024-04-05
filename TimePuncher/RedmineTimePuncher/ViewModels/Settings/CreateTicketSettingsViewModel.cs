@@ -26,6 +26,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public CustomFieldSettingViewModel DetectionProcess { get; set; }
 
         public ReactivePropertySlim<bool> NeedsOutlookIntegration { get; set; }
+        public ReactivePropertySlim<bool> NeedsGitIntegration { get; set; }
 
         public ReactivePropertySlim<MyTracker> OpenTracker { get; set; }
         public ReactivePropertySlim<IdName> OpenStatus { get; set; }
@@ -88,6 +89,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
             DetectionProcess = new CustomFieldSettingViewModel(model.DetectionProcess).AddTo(myDisposables);
             NeedsOutlookIntegration = model.ToReactivePropertySlimAsSynchronized(m => m.NeedsOutlookIntegration).AddTo(myDisposables);
+            NeedsGitIntegration = model.ToReactivePropertySlimAsSynchronized(m => m.NeedsGitIntegration).AddTo(myDisposables);
 
             Trackers = new ObservableCollection<IdName>(model.Trackers);
             Statuses= new ObservableCollection<IdName>(model.Statuses);

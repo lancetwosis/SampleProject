@@ -12,15 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Telerik.Windows.Controls;
 
-namespace RedmineTimePuncher.Views.Controls
+namespace RedmineTimePuncher.Views.Settings
 {
     /// <summary>
-    /// TicketLink.xaml の相互作用ロジック
+    /// SettingsButtonsPanel.xaml の相互作用ロジック
     /// </summary>
-    public partial class TicketTree : ItemsControl
+    public partial class SettingsButtonsPanel : UserControl
     {
-        public TicketTree()
+        public SettingsButtonsPanel()
         {
             InitializeComponent();
         }

@@ -237,10 +237,10 @@ namespace RedmineTimePuncher.Models.Managers
 
         public List<Slot> GetStatus(Resource resource, DateTime start, DateTime end)
         {
-            var result = new List<TeamsStatusSlot>();
+            if (!IsInstalled || !settings.Appointment.Teams.IsEnabledStatus)
+                return new List<Slot>();
 
-            if (!IsInstalled) return result.Cast<Slot>().ToList();
-            if (!settings.Appointment.Teams.IsEnabledStatus) return result.Cast<Slot>().ToList();
+            var result = new List<TeamsStatusSlot>();
 
             var files = new System.IO.DirectoryInfo(teamsFolderName).GetFiles("*logs*").OrderBy(a => a.LastWriteTime);
             var alllines = files.SelectMany(a => readFile(a.FullName));
@@ -249,10 +249,10 @@ namespace RedmineTimePuncher.Models.Managers
             var curStatus = Enums.TeamsStatus.Unknown;
             var teamsStatuss = Enum.GetValues(typeof(TeamsStatus)).Cast<TeamsStatus>().Where(a => a != TeamsStatus.NewActivity).ToList();
             var dateTime = DateTime.MinValue;
-            foreach(var line in alllines)
+            foreach (var line in alllines)
             {
                 if (line.Length < 24) continue;
-                if(DateTime.TryParse(line.Substring(0,24), out dateTime))
+                if (DateTime.TryParse(line.Substring(0,24), out dateTime))
                 {
                     var updateFlag = false;
                     if (line.Contains($"StatusIndicatorStateService: Added") || line.Contains("Setting the taskbar overlay icon - "))
@@ -280,16 +280,18 @@ namespace RedmineTimePuncher.Models.Managers
                         curStatus = orgStatus;
                         updateFlag = true;
                     }
-                    else if(line.Contains("session-end fired"))
+                    else if (line.Contains("session-end fired"))
                     {
                         curStatus = TeamsStatus.Offline;
                         updateFlag = true;
                     }
-                    if(updateFlag)
+
+                    if (updateFlag)
                     {
                         if (!result.Any())
                             result.Add(new TeamsStatusSlot(DateTime.MinValue, dateTime, new[] { resource }, TeamsStatus.Unknown));
-                        if(result.Last().Status != curStatus)
+
+                        if (result.Last().Status != curStatus)
                         {
                             result.Last().End = dateTime;
                             result.Add(new TeamsStatusSlot(result.Last().End, DateTime.MaxValue, new[] { resource }, curStatus));
@@ -298,8 +300,17 @@ namespace RedmineTimePuncher.Models.Managers
                 }
             }
 
-            result.Last().End = dateTime;
-            return result.Where(a => (start <= a.Start && a.Start <= end) || (start <= a.End && a.End <= end) || (a.Start <= start && end <= a.End)).Cast<Slot>().ToList();
+            if (result.Any())
+            {
+                result.Last().End = dateTime;
+                return result.Where(a => (start <= a.Start && a.Start <= end) ||
+                                         (start <= a.End && a.End <= end) ||
+                                         (a.Start <= start && end <= a.End)).Cast<Slot>().ToList();
+            }
+            else
+            {
+                return new List<Slot>();
+            }
         }
 
         private List<string> readFile(string fileName)

@@ -34,7 +34,7 @@ namespace RedmineTimePuncher.Models.Settings
                 System.IO.Directory.CreateDirectory(folderName);
 
             // ファイルが規定数を超過している場合は削除する。
-            var prefix = "RedmineTimePuncher_";
+            var prefix = "RedmineStudio_";
             if (ExportNum > 0)
             {
                 var di = new System.IO.DirectoryInfo(folderName);

@@ -4,5 +4,5 @@
   <rule pattern="true" preset="maximum" inherit="false">
     <protection id="rename" action="remove" />
   </rule>
-  <module path="RedmineTimePuncher.exe" />
+  <module path="RedmineStudio.exe" />
 </project>

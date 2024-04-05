@@ -20,7 +20,7 @@
                 <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/Telerik/Telerik.Windows.Controls.ScheduleView.Office2019.xaml" />
 
                 <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/Generic.xaml" />
-                <ResourceDictionary Source="pack://application:,,,/RedmineTimePuncher;component/Themes/Generic.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/RedmineStudio;component/Themes/Generic.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/RedmineTableEditor;component/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

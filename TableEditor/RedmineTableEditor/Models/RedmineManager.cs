@@ -1,5 +1,4 @@
 ﻿using LibRedminePower.Extentions;
-using LibRedminePower.Interfaces;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using System;
@@ -33,13 +32,11 @@ namespace RedmineTableEditor.Models
 
         private IRedmineManager manager { get; set; }
         private IRedmineManager masterManager { get; set; }
-        private ICacheManager cashManager { get; set; }
 
-        public RedmineManager((IRedmineManager Manager, IRedmineManager MasterManager, ICacheManager CashManager) redmine)
+        public RedmineManager((IRedmineManager Manager, IRedmineManager MasterManager) redmine)
         {
             this.manager = redmine.Manager;
             this.masterManager = redmine.MasterManager;
-            this.cashManager = redmine.CashManager;
         }
 
         public string IsValid()
@@ -48,21 +45,24 @@ namespace RedmineTableEditor.Models
                 return Properties.Resources.ErrMsgSetRemineSetting;
             else if (masterManager == null)
                 return Properties.Resources.ErrMsgSetAdminApiKey;
-            else if (cashManager == null)
-                return Properties.Resources.ErrMsgSetRemineSetting;
             else
                 return null;
         }
 
-        public void Update()
+        public async Task UpdateAsync()
         {
-            allTrackers = cashManager.Trackers.Value;
-            allCustomFields = cashManager.CustomFields.Value
+            await Task.Run(() =>
+            {
+                allTrackers = manager.GetObjectsWithErrConv<Tracker>();
+                allCustomFields = masterManager.GetObjectsWithErrConv<CustomField>()
                     .Where(c => c.Trackers != null && c.Trackers.Any() && c.CustomizedType == "issue").ToList();
-            Statuses = cashManager.Statuss.Value;
-            Projects = cashManager.Projects.Value;
-            Queries = cashManager.Queries.Value;
-            Priorities = cashManager.Priorities.Value;
+
+                Statuses = manager.GetObjectsWithErrConv<IssueStatus>();
+                Priorities = manager.GetObjectsWithErrConv<IssuePriority>();
+                Queries = manager.GetObjectsWithErrConv<Query>();
+                // Trackers が取得できない現象があったため masterManager に変更
+                Projects = masterManager.GetObjectsWithErrConv<Project>(RedmineKeys.TRACKERS);
+            });
         }
 
         public async Task UpdateByQueryAsync(Query query)

@@ -599,7 +599,7 @@ APIアクセスキー</value>
     <value>指定トラッカーの活動を無視する</value>
   </data>
   <data name="SettingsAppoIgnoreSpecifiedStrings" xml:space="preserve">
-    <value>指定文字を含むの活動を無視する</value>
+    <value>詳細に指定文字を含む活動を無視する</value>
   </data>
   <data name="SettingsAppoIgnoreSpecifiedStringsTooltip" xml:space="preserve">
     <value>複数の文字列を指定する場合は、改行で指定してください</value>
@@ -626,7 +626,7 @@ APIアクセスキー</value>
     <value>出力後にファイルを開く</value>
   </data>
   <data name="SettingsExpoMsgDefaultFolder" xml:space="preserve">
-    <value>未指定の場合は、「My Documents\Redmine Time Puncher」の配下に出力します</value>
+    <value>未指定の場合は、「My Documents\Redmine Studio」の配下に出力します</value>
   </data>
   <data name="SettingsExpoExternalToolPath" xml:space="preserve">
     <value>外部ツールのパス</value>
@@ -870,7 +870,7 @@ APIアクセスキー</value>
     <value>依頼チケットの説明</value>
   </data>
   <data name="ReviewMsgMarkupLangEnable" xml:space="preserve">
-    <value>Textile記法が使用できます。</value>
+    <value>Textile（もしくは Markdown）が使用できます。</value>
   </data>
   <data name="ReviewErrMsgSetUpReview" xml:space="preserve">
     <value>レビューの設定を行ってください。</value>
@@ -897,7 +897,7 @@ APIアクセスキー</value>
     <value>以下のレビューをお願いします。</value>
   </data>
   <data name="ReviewMsgAddPointAtHere" xml:space="preserve">
-    <value>ご指摘があれば {0} からお願いします。</value>
+    <value>ご指摘があればここからお願いします。</value>
   </data>
   <data name="ReviewPoints" xml:space="preserve">
     <value>指摘</value>
@@ -912,17 +912,13 @@ APIアクセスキー</value>
     <value>レビューアを選択してください。</value>
   </data>
   <data name="ReviewMsgReferPointsAtHere" xml:space="preserve">
-    <value>{0} から指摘の一覧を表示できます。</value>
+    <value>ここから指摘の一覧を表示できます。</value>
   </data>
   <data name="Review" xml:space="preserve">
     <value>レビュー</value>
   </data>
   <data name="ReviewPointsList" xml:space="preserve">
     <value>指摘一覧</value>
-  </data>
-  <data name="ReviewMsgMarkupLangEnableAndList" xml:space="preserve">
-    <value>Textile記法が使用できます。
-複数設定する場合は改行してください。</value>
   </data>
   <data name="RibbonCmdCreateReviewTicket" xml:space="preserve">
     <value>チケット作成</value>
@@ -1045,9 +1041,6 @@ APIアクセスキー</value>
   </data>
   <data name="SettingsReviMarkupLang" xml:space="preserve">
     <value>テキスト書式</value>
-  </data>
-  <data name="ReviewMsgHere" xml:space="preserve">
-    <value>ここ</value>
   </data>
   <data name="SettingsReviErrMsgCannotUseTranscribe" xml:space="preserve">
     <value>本機能を使用するにはRedmineのテキスト書式設定に「なし」以外を設定してください。</value>
@@ -1776,7 +1769,35 @@ Outlookの状態を確認してください。</value>
   <data name="RibbonGroupColorcodingAppos" xml:space="preserve">
     <value>予定の色分け</value>
   </data>
-  <data name="QuestionContinueSave" xml:space="preserve">
-    <value>保存処理を続行しますか？</value>
+  <data name="SettingsReviGitIntegration" xml:space="preserve">
+    <value>Gitとの連携</value>
+  </data>
+  <data name="SettingsReviOutlookIntegrationMsg" xml:space="preserve">
+    <value>Outlookを使った予定の調整や、レビューをOutlookの予定として登録することができます。</value>
+  </data>
+  <data name="SettingsReviGitIntegrationMsg" xml:space="preserve">
+    <value>プルリクエストのURLを設定することで、追加されたコメントから自動で指摘チケットを作成します。</value>
+  </data>
+  <data name="ReviewMergeRequestURL" xml:space="preserve">
+    <value>プルリクエストのURL</value>
+  </data>
+  <data name="CategoryListMsgReleaseFix" xml:space="preserve">
+    <value>この作業分類の固定を解除します</value>
+  </data>
+  <data name="CategoryListMsgFix" xml:space="preserve">
+    <value>この作業分類を一覧の先頭に固定します</value>
+  </data>
+  <data name="SettingsUserMsg" xml:space="preserve">
+    <value>入力画面に表示したい他のユーザを選択して下さい。
+選択することで、作業時間の入力状況を確認したり、共同作業の相手として設定することができます。</value>
+  </data>
+  <data name="Help" xml:space="preserve">
+    <value>ヘルプ</value>
+  </data>
+  <data name="HelpOnline" xml:space="preserve">
+    <value>オンラインヘルプ</value>
+  </data>
+  <data name="HelpOnlineMsg" xml:space="preserve">
+    <value>オンラインヘルプを表示します。</value>
   </data>
 </root>

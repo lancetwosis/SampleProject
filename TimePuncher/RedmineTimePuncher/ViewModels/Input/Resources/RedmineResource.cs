@@ -23,7 +23,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Resources
         {
             Updater.Indicator.ToolTip = string.Format(Properties.Resources.LastUpdateTime, Properties.Resources.ResourceNameRedmineActivity);
             Updater.Indicator.DateTime = Properties.Settings.Default.LastTimeIndicatorRedmine;
-            Url = urlBase.CombineLatest(CacheManager.Default.MyUser, (url, u) => url + ((u == null) ? url : $"activity?user_id={u.Id}")).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Url = urlBase.CombineLatest(redmine, (u, r) => u + ((r == null) ? u : $"activity?user_id={r.MyUserId}")).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
     }
 }

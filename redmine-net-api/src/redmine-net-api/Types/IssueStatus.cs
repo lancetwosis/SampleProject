@@ -39,13 +39,13 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// 	<c>true</c> if IssueStatus is default; otherwise, <c>false</c>.
         /// </value>
-        public bool IsDefault { get; set; }
+        public bool IsDefault { get; internal set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether IssueStatus is closed.
         /// </summary>
         /// <value><c>true</c> if IssueStatus is closed; otherwise, <c>false</c>.</value>
-        public bool IsClosed { get; set; }
+        public bool IsClosed { get; internal set; }
         #endregion
 
         #region Implementation of IXmlSerialization

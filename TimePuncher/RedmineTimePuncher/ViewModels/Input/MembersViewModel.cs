@@ -4,7 +4,6 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
-using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.ViewModels.Input.Resources;
 using System;
 using System.Collections.Generic;
@@ -27,9 +26,7 @@ namespace RedmineTimePuncher.ViewModels.Input
         public MembersViewModel(InputViewModel parent)
         {
             // ユーザー情報を元にリソースを作成する。
-            Resources = parent.Parent.Settings.ObserveProperty(a => a.User).Select(u => 
-            u.Items.Where(a => a.Id != CacheManager.Default.MyUser.Value.Id)
-            .Select(a => new MemberResource(a, parent.MyWorks.Resource)).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Resources = parent.Parent.Settings.ObserveProperty(a => a.User).Select(u => u.Items.Select(a => new MemberResource(a, parent.MyWorks.Resource)).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             Resources.SubscribeWithErr(users =>
             {
                 var members = parent.MyType.Resources.OfType<MemberResource>().ToList();
@@ -42,8 +39,8 @@ namespace RedmineTimePuncher.ViewModels.Input
                 parent.ResourceTypes.Remove(parent.MyType);
                 parent.ResourceTypes.Add(parent.MyType);
             }).AddTo(disposables);
-            Resources.CombineLatest(CacheManager.Default.MyUser.Where(a => a != null),
-                (users, u) => users.Select(a => a.User).Concat(new[] { u }).ToList())
+            Resources.CombineLatest(parent.Parent.Redmine.Where(a => a != null),
+                (users, r) => users.Select(a => a.User).Concat(new[] { r.MyUser }).ToList())
                 .SubscribeWithErr(a => MyTimeEntry.DicUsers = a.ToDictionary(b => b.Id)).AddTo(disposables);
 
             var isAllMyWork = parent.SelectedAppointments.Select(a => a != null && a.Any() && a.All(b => b.IsMyWork.Value));

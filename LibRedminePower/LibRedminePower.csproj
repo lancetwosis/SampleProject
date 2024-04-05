@@ -95,9 +95,6 @@
     <Compile Include="Extended\RowDefinitionExtended.cs" />
     <Compile Include="Extentions\HsbColorEx.cs" />
     <Compile Include="Extentions\IssueExtentions.cs" />
-    <Compile Include="Helpers\AsyncHelper.cs" />
-    <Compile Include="Interfaces\ICacheManager.cs" />
-    <Compile Include="Models\Bases\ModelBaseSlim.cs" />
     <Compile Include="ViewModels\EditableGridViewModel.cs" />
     <Compile Include="AsyncLazy.cs" />
     <Compile Include="Attributes\LocalizedDisplayNameAttribute.cs" />

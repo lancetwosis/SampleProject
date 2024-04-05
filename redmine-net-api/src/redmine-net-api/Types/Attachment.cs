@@ -44,13 +44,13 @@ namespace Redmine.Net.Api.Types
         /// Gets the size of the file.
         /// </summary>
         /// <value>The size of the file.</value>
-        public int FileSize { get; set; }
+        public int FileSize { get; internal set; }
 
         /// <summary>
         /// Gets the type of the content.
         /// </summary>
         /// <value>The type of the content.</value>
-        public string ContentType { get; set; }
+        public string ContentType { get; internal set; }
 
         /// <summary>
         /// Gets or sets the description.
@@ -62,24 +62,24 @@ namespace Redmine.Net.Api.Types
         /// Gets the content URL.
         /// </summary>
         /// <value>The content URL.</value>
-        public string ContentUrl { get; set; }
+        public string ContentUrl { get; internal set; }
 
         /// <summary>
         /// Gets the author.
         /// </summary>
         /// <value>The author.</value>
-        public IdentifiableName Author { get; set; }
+        public IdentifiableName Author { get; internal set; }
 
         /// <summary>
         /// Gets the created on.
         /// </summary>
         /// <value>The created on.</value>
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; internal set; }
 
         /// <summary>
         /// Gets the thumbnail url.
         /// </summary>
-        public string ThumbnailUrl { get; set; }
+        public string ThumbnailUrl { get; internal set; }
         #endregion
 
         #region Implementation of IXmlSerializable

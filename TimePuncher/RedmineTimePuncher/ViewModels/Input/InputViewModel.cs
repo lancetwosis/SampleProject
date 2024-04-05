@@ -592,8 +592,8 @@ namespace RedmineTimePuncher.ViewModels.Input
                 e.Handled = true;
             }).AddTo(disposables);
 
-            Title = CacheManager.Default.MyUser.CombineLatest(SelectedDate, (u, c) =>
-                $"{c.ToDateString()}  {getTitle(u)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = parent.Redmine.CombineLatest(SelectedDate, (r, c) =>
+                $"{c.ToDateString()}  {getTitle(r)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         private DateTime getMyToday()
@@ -763,6 +763,10 @@ namespace RedmineTimePuncher.ViewModels.Input
             }
             Properties.Settings.Default.LastInputPeriodType = (int)PeriodType.Value;
             Properties.Settings.Default.LastAppointmentColorType = AppointmentColorType.Value.ToString();
+
+            // 固定された作業分類を保存する
+            Properties.Settings.Default.PinedCategoryIds =
+                string.Join(",", Redmine.CategoryListBoxViewModel.Items.Where(i => i.IsPined).Select(i => i.Id.ToString()));
 
             // TicketGridViewの設定を保存
             if (Redmine.TicketList.Value != null)

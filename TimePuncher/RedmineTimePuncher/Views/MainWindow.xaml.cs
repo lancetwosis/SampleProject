@@ -43,5 +43,10 @@ namespace RedmineTimePuncher.Views
 
             SystemEvents.SessionEnding += (s, e) => this.Close();
         }
+
+        private void helpButton_Click(object sender, RoutedEventArgs e)
+        {
+            this.helpItemsPopup.IsOpen = true;
+        }
     }
 }

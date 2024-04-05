@@ -58,12 +58,12 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             // チケット一覧を更新する
             TicketList = new ReactivePropertySlim<List<TicketGridViewModel>>().AddTo(disposables);
-            parent.Parent.Redmine.Where(a => a != null).CombineLatest(parent.Parent.Settings.ObserveProperty(a => a.Query), (r, q) =>
+            parent.Parent.Redmine.Where(a => a != null).CombineLatest(parent.Parent.Settings.ObserveProperty(a => a.Query), async (r, q) =>
             {
                 using (IsBusyTicketList.ProcessStart(Properties.Resources.ProgressMsgGettingIssues))
                 {
                     // クエリ追加
-                    var queries = CacheManager.Default.Queries.Value;
+                    var queries = await Task.Run(() => r.GetQueries());
                     var grids = q.Items.Where(a => queries.Any(b => a.Id == b.Id)).Select(query =>
                     {
                         return new TicketGridViewModel(this, query.Name,
@@ -90,31 +90,30 @@ namespace RedmineTimePuncher.ViewModels.Input
                     grids.Insert(1, FavoriteTickets);
 
                     var _ = grids.Select(g => g.ReloadCommand.Command.ExecuteAsync()).ToArray();
+
                     return grids;
                 }
-            }).Subscribe(
-                a =>
-                {
-                    TicketList.Value = a;
-                    var index = Properties.Settings.Default.SelectedTicketGridIndex;
-                    SelectedTicketGridIndex = index < TicketList.Value.Count ? index : 0;
-                },
-                ex => parent.Parent.MainErrorMessage.Value = ex.Message
-            ).AddTo(disposables);
+            }).SubscribeWithErr(async a =>
+            {
+                TicketList.Value = await a;
+
+                var index = Properties.Settings.Default.SelectedTicketGridIndex;
+                SelectedTicketGridIndex = index < TicketList.Value.Count ? index : 0;
+            }).AddTo(disposables);
 
             // カテゴリ情報を作成する。
             CategoryListBoxViewModel = new CategoryListBoxViewModel(parent).AddTo(disposables);
-            parent.Parent.Redmine.CombineLatest(parent.Parent.Settings.ObserveProperty(a => a.Category), (r, c) => (r, c)).SubscribeWithErr(p =>
+            parent.Parent.Redmine.CombineLatest(parent.Parent.Settings.ObserveProperty(a => a.Category), (r, c) => (r, c)).SubscribeWithErr(async p =>
             {
                 if (p.r != null)
                 {
-                    var timeEntries = CacheManager.Default.TimeEntryActivities.Value;
-                    var trackers = CacheManager.Default.Trackers.Value;
+                    var timeEntries = await Task.Run(() => p.r.TimeEntryActivities.Value);
+                    var trackers = await Task.Run(() => p.r.Trackers.Value);
                     p.c.UpdateItems(timeEntries);
                     parent.Parent.Settings.Save();
                 }
 
-                var settings = p.c.Items.Where(a => a.IsEnabled).OrderBy(a => a.DisplayOrder).ToList();
+                var settings = p.c.Items.Where(a => a.IsEnabled).ToList();
                 CategoryListBoxViewModel.AllSettings.Value = settings;
 
                 var categories = new List<MyCategory>();
@@ -122,7 +121,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 {
                     // すべてのプロジェクトの時間管理に設定されている「作業分類」を対象とする。
                     // これにより「システム作業分類」のチェックが外れているものも対象にできる。
-                    var ps = CacheManager.Default.Projects.Value;
+                    var ps = await Task.Run(() => p.r.Projects.Value);
                     var es = ps.Where(pro => pro.TimeEntryActivities != null).SelectMany(pro => pro.TimeEntryActivities).Distinct((e1, e2) => e1.Id == e2.Id).ToList();
                     foreach (var e in es)
                     {

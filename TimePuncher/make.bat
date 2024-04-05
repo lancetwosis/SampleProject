@@ -56,7 +56,7 @@ title (2/9) Costura.Fodyが有効な状態でビルド
 if exist %bin_Release% (
 	rmdir /s /q %bin_Release%
 )
-call devenv ..\RedminePower.sln /Rebuild "Release" /project %project_name% /projectconfig "Release"
+call devenv ..\SampleProject.sln /Rebuild "Release" /project %project_name% /projectconfig "Release"
 if errorlevel 1 (
 	call :echoErr "Costura.Fody　が有効な状態でリリースビルド の実行に失敗しました。"
 	goto ERROR
@@ -74,7 +74,7 @@ title (4/9) Costura.Fodyが無効な状態でビルド
 @rem **************************************************************************
 ren %project_name%\FodyWeavers.xml FodyWeavers.xml.org 
 echo F | xcopy /Y empty_FodyWeavers.xml %project_name%\FodyWeavers.xml
-call devenv ..\RedminePower.sln /Rebuild "Release" /project %project_name% /projectconfig "Release"
+call devenv ..\SampleProject.sln /Rebuild "Release" /project %project_name% /projectconfig "Release"
 if errorlevel 1 (
 	call :echoErr "Costura.Fody　を無効にしてリリースビルド の実行に失敗しました。"
 	goto ERROR

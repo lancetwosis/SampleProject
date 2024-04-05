@@ -43,12 +43,12 @@ namespace Redmine.Net.Api.Types
         /// <summary>
         /// 
         /// </summary>
-        public int FileSize { get; set; }
+        public int FileSize { get; internal set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string ContentType { get; set; }
+        public string ContentType { get; internal set; }
 
         /// <summary>
         /// 
@@ -58,17 +58,17 @@ namespace Redmine.Net.Api.Types
         /// <summary>
         /// 
         /// </summary>
-        public string ContentUrl { get; set; }
+        public string ContentUrl { get; internal set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public IdentifiableName Author { get; set; }
+        public IdentifiableName Author { get; internal set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; internal set; }
 
         /// <summary>
         /// 
@@ -78,12 +78,12 @@ namespace Redmine.Net.Api.Types
         /// <summary>
         /// 
         /// </summary>
-        public string Digest { get; set; }
+        public string Digest { get; internal set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public int Downloads { get; set; }
+        public int Downloads { get; internal set; }
 
         /// <summary>
         /// 

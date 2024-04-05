@@ -6,7 +6,6 @@ using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models;
-using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.Properties;
@@ -194,14 +193,14 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             if (!r.HasValue)
                 return;
 
-            Model.CustomFields = CacheManager.Default.CustomFields.Value;
-            Model.Users = CacheManager.Default.Users.Value;
+            Model.CustomFields = await Task.Run(() => parent.Parent.Redmine.Value.CustomFields.Value);
+            Model.Users = await Task.Run(() => parent.Parent.Redmine.Value.Users.Value);
             Model.Categories = parent.Parent.Settings.Category.Items.ToList();
 
             Model.TimeEntries = filters.GetTimeEntries();
             Model.Tickets = await filters.GetTicketsAsync(Model.TimeEntries);
 
-            var projects = CacheManager.Default.Projects.Value;
+            var projects = await Task.Run(() => parent.Parent.Redmine.Value.Projects.Value);
             Model.Projects = Model.Tickets.Select(t => t.RawIssue.Project.Id).Distinct()
                 .Select(id => new MyProject(projects.First(p => p.Id == id), parent.Parent.Redmine.Value.GetVersions(id))).ToList();
 

@@ -19,7 +19,7 @@ namespace RedmineTimePuncher.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -180,6 +180,24 @@ namespace RedmineTimePuncher.Properties {
         public static string CategoryListBoxTitle {
             get {
                 return ResourceManager.GetString("CategoryListBoxTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Fix this category to the top of the list に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CategoryListMsgFix {
+            get {
+                return ResourceManager.GetString("CategoryListMsgFix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Release the fixation of this category に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string CategoryListMsgReleaseFix {
+            get {
+                return ResourceManager.GetString("CategoryListMsgReleaseFix", resourceCulture);
             }
         }
         
@@ -941,6 +959,43 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Help に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string Help {
+            get {
+                return ResourceManager.GetString("Help", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Online Help に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string HelpOnline {
+            get {
+                return ResourceManager.GetString("HelpOnline", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Show online help. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string HelpOnlineMsg {
+            get {
+                return ResourceManager.GetString("HelpOnlineMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap icons8_about_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_about_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         public static System.Drawing.Bitmap icons8_add_user_group_man_man_48 {
@@ -1033,6 +1088,16 @@ namespace RedmineTimePuncher.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        public static System.Drawing.Bitmap icons8_help_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_help_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         public static System.Drawing.Bitmap icons8_info_16_mod {
             get {
                 object obj = ResourceManager.GetObject("icons8_info_16_mod", resourceCulture);
@@ -1096,6 +1161,16 @@ namespace RedmineTimePuncher.Properties {
         public static System.Drawing.Bitmap icons8_sort_by_48 {
             get {
                 object obj = ResourceManager.GetObject("icons8_sort_by_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap icons8_user_manual_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_user_manual_32", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1667,15 +1742,6 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Continue the saving process? に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string QuestionContinueSave {
-            get {
-                return ResourceManager.GetString("QuestionContinueSave", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         public static System.Drawing.Bitmap redmine16 {
@@ -2077,6 +2143,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Pull Request URL に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMergeRequestURL {
+            get {
+                return ResourceManager.GetString("ReviewMergeRequestURL", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Desktop review に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewMethodDesktop {
@@ -2095,7 +2170,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Please add any points of view at &quot;here&quot;:{0} . に類似しているローカライズされた文字列を検索します。
+        ///   Please add an indicated issue at here. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewMsgAddPointAtHere {
             get {
@@ -2114,16 +2189,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   here に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ReviewMsgHere {
-            get {
-                return ResourceManager.GetString("ReviewMsgHere", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Textile notation is available. に類似しているローカライズされた文字列を検索します。
+        ///   Textile (or Markdown) is supported. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewMsgMarkupLangEnable {
             get {
@@ -2132,17 +2198,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Textile notation is available.
-        ///If you want to set more than one, please start a new line. に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ReviewMsgMarkupLangEnableAndList {
-            get {
-                return ResourceManager.GetString("ReviewMsgMarkupLangEnableAndList", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   You can refer other points at &quot;here&quot;:{0} . に類似しているローカライズされた文字列を検索します。
+        ///   You can refer other indicated issues at here. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewMsgReferPointsAtHere {
             get {
@@ -2189,7 +2245,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Points に類似しているローカライズされた文字列を検索します。
+        ///   Indicated issue に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewPoints {
             get {
@@ -2198,7 +2254,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Add a point of view に類似しているローカライズされた文字列を検索します。
+        ///   Add an indicated issue に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewPointsAdd {
             get {
@@ -2207,7 +2263,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   List of points に類似しているローカライズされた文字列を検索します。
+        ///   List of indicated issues に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewPointsList {
             get {
@@ -3493,7 +3549,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   If not specified, the file will be output under &quot;My Documents\Redmine Time Puncher&quot;. に類似しているローカライズされた文字列を検索します。
+        ///   If not specified, the file will be output under &quot;My Documents\Redmine Studio&quot;. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsExpoMsgDefaultFolder {
             get {
@@ -4063,6 +4119,24 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Integration with Git に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviGitIntegration {
+            get {
+                return ResourceManager.GetString("SettingsReviGitIntegration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   By setting the URL of the pull request, a pointing issue is automatically created from the added comments. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviGitIntegrationMsg {
+            get {
+                return ResourceManager.GetString("SettingsReviGitIntegrationMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Specify required/optional reviewer に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviIsRequired {
@@ -4162,7 +4236,16 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Point Issue に類似しているローカライズされた文字列を検索します。
+        ///   You can coordinate appointments using Outlook and register a review as Outlook appointment. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviOutlookIntegrationMsg {
+            get {
+                return ResourceManager.GetString("SettingsReviOutlookIntegrationMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Pointing Issue に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviPointTicket {
             get {
@@ -4338,6 +4421,16 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsScheWorkStartTime {
             get {
                 return ResourceManager.GetString("SettingsScheWorkStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select the other users you wish to display on the input screen.
+        ///By selecting them, you can check their time entries and set them as collaborators. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsUserMsg {
+            get {
+                return ResourceManager.GetString("SettingsUserMsg", resourceCulture);
             }
         }
         

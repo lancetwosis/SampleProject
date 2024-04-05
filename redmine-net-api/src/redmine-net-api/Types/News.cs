@@ -38,47 +38,47 @@ namespace Redmine.Net.Api.Types
         /// Gets or sets the project.
         /// </summary>
         /// <value>The project.</value>
-        public IdentifiableName Project { get; set; }
+        public IdentifiableName Project { get; internal set; }
 
         /// <summary>
         /// Gets or sets the author.
         /// </summary>
         /// <value>The author.</value>
-        public IdentifiableName Author { get; set; }
+        public IdentifiableName Author { get; internal set; }
 
         /// <summary>
         /// Gets or sets the title.
         /// </summary>
         /// <value>The title.</value>
-        public string Title { get; set; }
+        public string Title { get; internal set; }
 
         /// <summary>
         /// Gets or sets the summary.
         /// </summary>
         /// <value>The summary.</value>
-        public string Summary { get; set; }
+        public string Summary { get; internal set; }
 
         /// <summary>
         /// Gets or sets the description.
         /// </summary>
         /// <value>The description.</value>
-        public string Description { get; set; }
+        public string Description { get; internal set; }
 
         /// <summary>
         /// Gets or sets the created on.
         /// </summary>
         /// <value>The created on.</value>
-        public DateTime? CreatedOn { get; set; }
+        public DateTime? CreatedOn { get; internal set; }
         
         /// <summary>
         /// 
         /// </summary>
-        public List<Attachment> Attachments { get; set; }
+        public List<Attachment> Attachments { get; internal set; }
         
         /// <summary>
         /// 
         /// </summary>
-        public List<NewsComment> Comments { get; set; }
+        public List<NewsComment> Comments { get; internal set; }
         #endregion
 
         #region Implementation of IXmlSerialization

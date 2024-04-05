@@ -36,13 +36,13 @@ namespace Redmine.Net.Api.Types
         /// Gets or sets the project.
         /// </summary>
         /// <value>The project.</value>
-        public IdentifiableName Project { get; set; }
+        public IdentifiableName Project { get; internal set; }
 
         /// <summary>
         /// Gets or sets the type.
         /// </summary>
         /// <value>The type.</value>
-        public IList<MembershipRole> Roles { get; set; }
+        public IList<MembershipRole> Roles { get; internal set; }
         #endregion
 
         #region Implementation of IXmlSerialization
@@ -102,12 +102,12 @@ namespace Redmine.Net.Api.Types
         }
         #endregion
 
-                #region Implementation of IEquatable<Membership>
-                /// <summary>
-                /// 
-                /// </summary>
-                /// <param name="other"></param>
-                /// <returns></returns>
+        #region Implementation of IEquatable<Membership>
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
         public override bool Equals(Membership other)
         {
             if (other == null) return false;

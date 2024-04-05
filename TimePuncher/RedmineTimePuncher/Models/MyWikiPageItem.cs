@@ -22,6 +22,7 @@ namespace RedmineTimePuncher.Models
         public string ParentTitle { get; set; }
         public bool IsTopWiki => Title == "Wiki";
 
+        [Obsolete("For Serialize", true)]
         public MyWikiPageItem()
         {}
 

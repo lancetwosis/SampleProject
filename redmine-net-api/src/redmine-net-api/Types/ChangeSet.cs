@@ -38,22 +38,22 @@ namespace Redmine.Net.Api.Types
         /// <summary>
         /// 
         /// </summary>
-        public int Revision { get; set; }
+        public int Revision { get; internal set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public IdentifiableName User { get; set; }
+        public IdentifiableName User { get; internal set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public string Comments { get; set; }
+        public string Comments { get; internal set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public DateTime? CommittedOn { get; set; }
+        public DateTime? CommittedOn { get; internal set; }
         #endregion
 
         #region Implementation of IXmlSerializable
