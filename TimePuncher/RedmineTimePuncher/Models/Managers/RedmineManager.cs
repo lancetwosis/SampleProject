@@ -37,6 +37,9 @@ namespace RedmineTimePuncher.Models.Managers
         public Lazy<List<TimeEntryActivity>> TimeEntryActivities { get; set; }
 
         public Lazy<List<CustomField>> CustomFields { get; set; }
+        /// <summary>
+        /// ステータスが「有効」のユーザの一覧
+        /// </summary>
         public Lazy<List<MyUser>> Users { get; set; }
 
         public string Host => Manager.Host;
@@ -96,7 +99,7 @@ namespace RedmineTimePuncher.Models.Managers
 
             // Lazy型を使っているので、アクセスされた場合に、初めて実行され、キャッシュされる。
             // アクセスされなければ、無駄な通信やメモリ確保が発生しない。
-            Projects = new Lazy<List<Project>>(() => Manager.GetObjectsWithErrConv<Project>(RedmineKeys.TIME_ENTRY_ACTIVITIES));
+            Projects = new Lazy<List<Project>>(() => Manager.GetObjectsWithErrConv<Project>(RedmineKeys.TIME_ENTRY_ACTIVITIES, RedmineKeys.TRACKERS, RedmineKeys.ENABLED_MODULES));
             Trackers = new Lazy<List<Tracker>>(() => Manager.GetObjectsWithErrConv<Tracker>(new NameValueCollection()));
             Statuss = new Lazy<List<IssueStatus>>(() => Manager.GetObjectsWithErrConv<IssueStatus>(new NameValueCollection()));
             Priorities = new Lazy<List<IssuePriority>>(() => Manager.GetObjectsWithErrConv<IssuePriority>(new NameValueCollection()));
@@ -186,10 +189,20 @@ namespace RedmineTimePuncher.Models.Managers
 
         public bool CanUseAdminApiKey() => MasterManager != null;
 
+        /// <summary>
+        /// プロジェクトのメンバーのうち、ステータスが「有効」のユーザを取得する
+        /// </summary>
         public List<ProjectMembership> GetMemberships(int projectId)
         {
-            return dicMemberShips.GetOrAdd(projectId.ToString(), _ => getObjectsByMasterManager<ProjectMembership>(
-                new NameValueCollection() { { RedmineKeys.PROJECT_ID, projectId.ToString() } }));
+            if (dicMemberShips.ContainsKey(projectId.ToString()))
+                return dicMemberShips[projectId.ToString()];
+
+            var allMembers = getObjectsByMasterManager<ProjectMembership>(
+                new NameValueCollection() { { RedmineKeys.PROJECT_ID, projectId.ToString() } });
+            var enableMembers = allMembers.Where(m => m.User != null && Users.Value.Any(u => u.Id == m.User.Id)).ToList();
+            dicMemberShips[projectId.ToString()] = enableMembers;
+
+            return enableMembers;
         }
 
         public string GetTicketNo(params string[] contents)
@@ -240,7 +253,22 @@ namespace RedmineTimePuncher.Models.Managers
         public Project GetProject(string id)
         {
             return dicProjects.GetOrAdd(id, _ => Manager.GetObjectWithErrConv<Project>(id,
-                new NameValueCollection() { { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES } }));
+                new NameValueCollection()
+                {
+                    { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES },
+                    { RedmineKeys.INCLUDE, RedmineKeys.ISSUE_CUSTOM_FIELDS }
+                }));
+        }
+
+        public List<Project> GetMyProjects()
+        {
+            var myProjs = Projects.Value.Where(p => MyUser.Memberships.Any(m => p.Name == m.Project.Name)).ToList();
+            var results = new List<Project>();
+            foreach (var p in myProjs)
+            {
+                results.Add(GetProject(p.Id.ToString()));
+            }
+            return results;
         }
 
         public List<Redmine.Net.Api.Types.Version> GetVersions(int projectId)
@@ -793,8 +821,7 @@ namespace RedmineTimePuncher.Models.Managers
 
         public List<MyProject> GetMyProjectsOnlyWikiEnabled()
         {
-            var allProjects = Manager.GetObjectsWithErrConv<Project>(RedmineKeys.ENABLED_MODULES);
-            var myProjects = allProjects.Where(p => MyUser.Memberships.Any(m => p.Name == m.Project.Name)).ToList();
+            var myProjects = Projects.Value.Where(p => MyUser.Memberships.Any(m => p.Name == m.Project.Name)).ToList();
             return myProjects.Where(p => p.EnabledModules.Any(m => m.Name == RedmineKeys.WIKI)).Select(p => new MyProject(p)).ToList();
         }
 
@@ -818,23 +845,15 @@ namespace RedmineTimePuncher.Models.Managers
             Manager.UpdateObjectWithErrConv(issue.Id.ToString(), issue);
         }
 
-
-        public string CreateShowAllPointIssues(Issue parent, int trackerId)
+        public string GetIssuesUrl(int projectId)
         {
-            var proj = GetProject(parent.Project.Id.ToString());
-            var url = $"{redmineSettings.UrlBase}/projects/{proj.Identifier}/issues?";
-            url += $"utf8=%E2%9C%93&set_filter=1&sort=id:desc";
-            url += $"&f[]=parent_id&op[parent_id]=~&v[parent_id][]={parent.Id}";
-            url += $"&f[]=tracker_id&op[tracker_id]==&v[tracker_id][]={trackerId}";
-            // 「説明」と「最新コメント」を一覧に出すようにする
-            url += $"&c%5B%5D=description&c%5B%5D=last_notes&t%5B%5D=";
-            return url;
+            var proj = GetProject(projectId.ToString());
+            return $"{redmineSettings.UrlBase}/projects/{proj.Identifier}/issues";
         }
 
         public string CreatePointIssueURL(Issue parent, int trackerId, string detectionProcess, string saveReviewer)
         {
-            var proj = GetProject(parent.Project.Id.ToString());
-            var url = $"{redmineSettings.UrlBase}/projects/{proj.Identifier}/issues/new?";
+            var url = $"{GetIssuesUrl(parent.Project.Id)}/new?";
             url += $"issue[tracker_id]={trackerId}";
             url += $"&issue[parent_issue_id]={parent.Id}";
             url += $"&issue[category_id]={parent.Category?.Id}";

@@ -2179,6 +2179,17 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Tracker &quot;{1}&quot; is invalid for project &quot;{0}&quot;. Therefore, the tracker of &quot;{2}&quot; will be set to &quot;{3}&quot; (same as the target issue).
+        ///
+        ///Do you want to continue creating tickets? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgConfirmDisableTrackers {
+            get {
+                return ResourceManager.GetString("ReviewMsgConfirmDisableTrackers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   *This appintment is for adjusting the schedule.
         /// The schedule is reflected in {0} by closing the window. You do not need to save this appointment. に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -2194,6 +2205,24 @@ namespace RedmineTimePuncher.Properties {
         public static string ReviewMsgMarkupLangEnable {
             get {
                 return ResourceManager.GetString("ReviewMsgMarkupLangEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    ({1} will be set for {0}) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgPointer {
+            get {
+                return ResourceManager.GetString("ReviewMsgPointer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    (Please set {0}) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgPointerSet {
+            get {
+                return ResourceManager.GetString("ReviewMsgPointerSet", resourceCulture);
             }
         }
         
@@ -3432,6 +3461,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Edit Point List に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsCategoryReviewIssueList {
+            get {
+                return ResourceManager.GetString("SettingsCategoryReviewIssueList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Schedule に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsCategorySchedule {
@@ -4074,6 +4112,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Display columns に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviDisplayColumns {
+            get {
+                return ResourceManager.GetString("SettingsReviDisplayColumns", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   This function is not available when &quot;none&quot; is set for the text formatting of Redmine. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviErrMsgCannotUseTranscribe {
@@ -4151,6 +4198,15 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsReviLines {
             get {
                 return ResourceManager.GetString("SettingsReviLines", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Set the contents to be displayed in the list of indicated issues. The issue number and subject are always displayed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviListMsg {
+            get {
+                return ResourceManager.GetString("SettingsReviListMsg", resourceCulture);
             }
         }
         
@@ -4277,6 +4333,24 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsReviSaveReviewer {
             get {
                 return ResourceManager.GetString("SettingsReviSaveReviewer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Show description に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviShowDescription {
+            get {
+                return ResourceManager.GetString("SettingsReviShowDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Show last notes に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviShowLastNotes {
+            get {
+                return ResourceManager.GetString("SettingsReviShowLastNotes", resourceCulture);
             }
         }
         

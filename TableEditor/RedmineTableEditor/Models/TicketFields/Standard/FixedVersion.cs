@@ -1,4 +1,5 @@
-﻿using Redmine.Net.Api.Types;
+﻿using LibRedminePower.Properties;
+using Redmine.Net.Api.Types;
 using RedmineTableEditor.Models.TicketFields.Bases;
 using RedmineTableEditor.Models.TicketFields.Standard.Bases;
 using System;
@@ -13,7 +14,7 @@ namespace RedmineTableEditor.Models.TicketFields.Standard
     {
         public FixedVersion(Issue issue, RedmineManager redmine) :
             base(
-                Properties.Resources.enumIssuePropertyTypeFixedVersion,
+                Resources.enumIssuePropertyTypeFixedVersion,
                 issue,
                 () => issue?.FixedVersion?.Id,
                 (v) => issue.FixedVersion = new IdentifiableName() { Id = v.Value },

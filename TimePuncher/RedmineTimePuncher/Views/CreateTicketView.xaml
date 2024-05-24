@@ -82,7 +82,7 @@
                         <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding CreateTicket.OrgnizeReviewCommand}" />
                     </telerik:RadRibbonGroup>
                     <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonTabCalendar}"
-                                            Visibility="{Binding CreateTicket.NeedsOutlookIntegration,
+                                            Visibility="{Binding CreateTicket.NeedsOutlookIntegration.Value,
                                                                  Converter={StaticResource BooleanToVisibilityConverter}}">
                         <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding CreateTicket.AdjustScheduleCommand}" />
                     </telerik:RadRibbonGroup>
@@ -155,7 +155,7 @@
                 <TextBox Grid.Row="1"
                          Grid.Column="1"
                          Margin="5,5,0,0"
-                         Text="{Binding CreateTicket.Title}" />
+                         Text="{Binding CreateTicket.RawTitle}" />
 
                 <TextBlock Grid.Row="2"
                            Margin="0,5,0,0"
@@ -315,7 +315,7 @@
                               Margin="5,0,0,0"
                               Content="{x:Static props:Resources.ReviewCreateOutlookAppo}"
                               IsChecked="{Binding CreateTicket.NeedsCreateOutlookAppointment}"
-                              Visibility="{Binding CreateTicket.NeedsOutlookIntegration,
+                              Visibility="{Binding CreateTicket.NeedsOutlookIntegration.Value,
                                                    Converter={StaticResource BooleanToVisibilityConverter}}" />
                 </Grid>
 

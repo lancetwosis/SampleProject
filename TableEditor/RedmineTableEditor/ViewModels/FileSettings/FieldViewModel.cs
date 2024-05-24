@@ -1,4 +1,5 @@
-﻿using LibRedminePower.Extentions;
+﻿using LibRedminePower.Enums;
+using LibRedminePower.Extentions;
 using Redmine.Net.Api.Types;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
 {
     public class FieldViewModel : LibRedminePower.ViewModels.Bases.ViewModelBase
     {
-        public Enums.IssuePropertyType? Field { get; set; }
+        public IssuePropertyType? Field { get; set; }
         public CustomField CustomField { get; set; }
         public Models.FileSettings.FieldModel Model { get; set; }
 

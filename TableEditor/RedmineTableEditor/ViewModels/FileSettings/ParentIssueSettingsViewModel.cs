@@ -20,6 +20,7 @@ using RedmineTableEditor.Models.TicketFields.Standard;
 using System.Reactive.Disposables;
 using System.Text.RegularExpressions;
 using RedmineTableEditor.Properties;
+using LibRedminePower.Enums;
 
 namespace RedmineTableEditor.ViewModels.FileSettings
 {

@@ -135,7 +135,6 @@ namespace RedmineTimePuncher.ViewModels.Input
                     categories = settings.Select(c => new MyCategory(c)).ToList();
                 }
                 MyAppointment.AllCategories.Value = categories;
-                MyTimeEntry.DicCategory = categories.ToDictionary(b => b.Id);
             }).AddTo(disposables);
 
             // Updaterを作成

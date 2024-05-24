@@ -35,6 +35,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public UserSettingsViewModel User { get; set; }
         public OutputDataSettingsViewModel OutputData { get; set; }
         public CreateTicketSettingsViewModel CreateTicket { get; set; }
+        public ReviewIssueListSettingViewModel ReviewIssueList { get; set; }
         public RequestWorkSettingsViewModel RequestWork { get; set; }
         public PersonHourReportSettingsViewModel PersonHourReport { get; set; }
 
@@ -172,6 +173,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
             User = new UserSettingsViewModel(model.User, redmineManager, message).AddTo(myDisposables);
             OutputData = new OutputDataSettingsViewModel(model.OutputData).AddTo(myDisposables);
             CreateTicket = new CreateTicketSettingsViewModel(model.CreateTicket, model.TranscribeSettings, redmineManager, message).AddTo(myDisposables);
+            ReviewIssueList = new ReviewIssueListSettingViewModel(model.ReviewIssueList, redmineManager, message).AddTo(myDisposables);
             RequestWork = new RequestWorkSettingsViewModel(model.RequestWork, redmineManager, message).AddTo(myDisposables);
             PersonHourReport = new PersonHourReportSettingsViewModel(model.PersonHourReport).AddTo(myDisposables);
         }

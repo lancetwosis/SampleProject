@@ -285,4 +285,58 @@
   <data name="SettingsNotSpecified" xml:space="preserve">
     <value>(指定なし)</value>
   </data>
+  <data name="enumIssuePropertyTypeAssignedTo" xml:space="preserve">
+    <value>担当</value>
+  </data>
+  <data name="enumIssuePropertyTypeCategory" xml:space="preserve">
+    <value>カテゴリ</value>
+  </data>
+  <data name="enumIssuePropertyTypeDiffEstimatedSpent" xml:space="preserve">
+    <value>残り工数</value>
+  </data>
+  <data name="enumIssuePropertyTypeDoneRatio" xml:space="preserve">
+    <value>進捗率</value>
+  </data>
+  <data name="enumIssuePropertyTypeDueDate" xml:space="preserve">
+    <value>期日</value>
+  </data>
+  <data name="enumIssuePropertyTypeEstimatedHours" xml:space="preserve">
+    <value>予定</value>
+  </data>
+  <data name="enumIssuePropertyTypeFixedVersion" xml:space="preserve">
+    <value>対象バージョン</value>
+  </data>
+  <data name="enumIssuePropertyTypeId" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="enumIssuePropertyTypeMySpentHours" xml:space="preserve">
+    <value>担当実績</value>
+  </data>
+  <data name="enumIssuePropertyTypePriority" xml:space="preserve">
+    <value>優先度</value>
+  </data>
+  <data name="enumIssuePropertyTypeSpentHours" xml:space="preserve">
+    <value>実績</value>
+  </data>
+  <data name="enumIssuePropertyTypeStartDate" xml:space="preserve">
+    <value>開始日</value>
+  </data>
+  <data name="enumIssuePropertyTypeStatus" xml:space="preserve">
+    <value>ステータス</value>
+  </data>
+  <data name="enumIssuePropertyTypeSubject" xml:space="preserve">
+    <value>題名</value>
+  </data>
+  <data name="enumIssuePropertyTypeTotalEstimatedHours" xml:space="preserve">
+    <value>合計予想工数</value>
+  </data>
+  <data name="enumIssuePropertyTypeTotalSpentHours" xml:space="preserve">
+    <value>合計作業時間</value>
+  </data>
+  <data name="enumIssuePropertyTypeTracker" xml:space="preserve">
+    <value>トラッカー</value>
+  </data>
+  <data name="enumIssuePropertyTypeAuthor" xml:space="preserve">
+    <value>作成者</value>
+  </data>
 </root>

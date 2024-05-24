@@ -1,4 +1,5 @@
-﻿using Redmine.Net.Api.Types;
+﻿using LibRedminePower.Properties;
+using Redmine.Net.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace RedmineTableEditor.Models.TicketFields.Standard
     public class Category : Bases.FieldList<IssueCategory>
     {
         public Category(Issue issue, RedmineManager redmine) : base(
-            Properties.Resources.enumIssuePropertyTypeCategory,
+            Resources.enumIssuePropertyTypeCategory,
             issue,
             () => issue?.Category?.Id,
             (v) => issue.Category = new IdentifiableName() { Id = v.Value },

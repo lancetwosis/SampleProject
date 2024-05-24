@@ -93,6 +93,12 @@
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
+                                Header="{x:Static props:Resources.SettingsCategoryReviewIssueList}">
+                <local:CreateTicketIssueListSettingsView Margin="5"
+                                                         DataContext="{Binding ReviewIssueList}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
                                 Header="{x:Static props:Resources.SettingsCategoryReviewDescription}">
                 <local:CreateTicketDescriptionSettingsView Margin="5"
                                                            DataContext="{Binding CreateTicket.TranscribeDescription}" />

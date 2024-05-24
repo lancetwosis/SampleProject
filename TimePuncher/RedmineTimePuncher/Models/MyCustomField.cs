@@ -57,19 +57,24 @@ namespace RedmineTimePuncher.Models
 
     public static class CustomFieldEx
     {
+        public static bool IsIssueType(this CustomField c)
+        {
+            return c.CustomizedType == "issue";
+        }
+
         public static bool IsBoolFormat(this CustomField c)
         {
-            return c.CustomizedType == "issue" && c.FieldFormat == "bool";
+            return c.FieldFormat == "bool";
         }
 
         public static bool IsListFormat(this CustomField c)
         {
-            return c.CustomizedType == "issue" && c.FieldFormat == "list";
+            return c.FieldFormat == "list";
         }
 
         public static bool IsUserFormat(this CustomField c)
         {
-            return c.CustomizedType == "issue" && c.FieldFormat == "user";
+            return c.FieldFormat == "user";
         }
 
         public static bool IsVersionFormat(this CustomField c)
@@ -79,7 +84,7 @@ namespace RedmineTimePuncher.Models
 
         public static bool CanUseVisualizeFactor(this CustomField c)
         {
-            return c.IsListFormat() || c.IsUserFormat() || c.IsVersionFormat();
+            return c.IsIssueType() && (c.IsListFormat() || c.IsUserFormat() || c.IsVersionFormat());
         }
 
         /// <summary>

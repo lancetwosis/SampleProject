@@ -1,4 +1,5 @@
-﻿using Reactive.Bindings;
+﻿using LibRedminePower.Extentions;
+using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Extentions;
@@ -28,8 +29,8 @@ namespace RedmineTimePuncher.Models.Settings
         [JsonIgnore]
         public string Password 
         { 
-            get => Encryption.Decrypt(PasswordEncrypt);
-            set => PasswordEncrypt = Encryption.Encrypt(value);
+            get => PasswordEncrypt.Decrypt();
+            set => PasswordEncrypt = value.Encrypt();
         }
         [JsonIgnore]
         public string PasswordEncrypt { get; set; }
@@ -47,8 +48,8 @@ namespace RedmineTimePuncher.Models.Settings
         [JsonIgnore]
         public string PasswordOfBasicAuth
         {
-            get => Encryption.Decrypt(PasswordEncryptOfBasicAuth);
-            set => PasswordEncryptOfBasicAuth = Encryption.Encrypt(value);
+            get => PasswordEncryptOfBasicAuth.Decrypt();
+            set => PasswordEncryptOfBasicAuth = value.Encrypt();
         }
         [JsonIgnore]
         public string PasswordEncryptOfBasicAuth { get; set; }

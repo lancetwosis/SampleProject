@@ -15,6 +15,9 @@ namespace RedmineTimePuncher.Models.Settings
             PossibleValues.Add(new MyCustomFieldPossibleValue(Properties.Resources.ReviewMethodDesktop, false, true));
             PossibleValues.Add(new MyCustomFieldPossibleValue(Properties.Resources.ReviewMethodFaceToFace, true));
             Value = GetDefaultValue();
+
+            // レビュー方法の指定はデフォルトで有効に
+            IsEnabled = true;
         }
 
         public override void Update(List<MyCustomField> possibleCustomFields)

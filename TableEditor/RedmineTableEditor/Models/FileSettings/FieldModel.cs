@@ -1,9 +1,11 @@
 ﻿using LibRedminePower.Converters;
+using LibRedminePower.Enums;
 using LibRedminePower.Extentions;
 using LibRedminePower.Views.Controls;
 using Redmine.Net.Api.Types;
 using RedmineTableEditor.Converters;
 using RedmineTableEditor.Enums;
+using RedmineTableEditor.Extentions;
 using RedmineTableEditor.Models.Bases;
 using RedmineTableEditor.Models.TicketFields.Bases;
 using RedmineTableEditor.Models.TicketFields.Standard;

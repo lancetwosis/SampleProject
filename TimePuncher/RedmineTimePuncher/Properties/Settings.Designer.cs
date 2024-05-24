@@ -392,12 +392,24 @@ namespace RedmineTimePuncher.Properties {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string PinedCategoryIds {
+        public string PinedCategoryNames {
             get {
-                return ((string)(this["PinedCategoryIds"]));
+                return ((string)(this["PinedCategoryNames"]));
             }
             set {
-                this["PinedCategoryIds"] = value;
+                this["PinedCategoryNames"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("0")]
+        public int LastSelectedIndex {
+            get {
+                return ((int)(this["LastSelectedIndex"]));
+            }
+            set {
+                this["LastSelectedIndex"] = value;
             }
         }
     }

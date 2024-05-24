@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Applications;
+using LibRedminePower.Logging;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.ViewModels;
 using RedmineTimePuncher.Views;
@@ -19,6 +20,12 @@ namespace RedmineTimePuncher
     {
         protected override void OnStartup(StartupEventArgs e)
         {
+            if (e.Args.Any(a => a == Logger.DECRYPT_KEY))
+            {
+                Logger.DecryptLogs();
+                Environment.Exit(0);
+            }
+
             // 初期化
             LibRedminePower.Initializer.Init(this);
 

@@ -1,4 +1,5 @@
-﻿using Redmine.Net.Api.Types;
+﻿using LibRedminePower.Properties;
+using Redmine.Net.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,7 +12,7 @@ namespace RedmineTableEditor.Models.TicketFields.Standard
     {
         public AssignedTo(Issue issue, RedmineManager redmine)
             :base(
-                 Properties.Resources.enumIssuePropertyTypeAssignedTo,
+                 Resources.enumIssuePropertyTypeAssignedTo,
                  issue,
                  () => issue?.AssignedTo?.Id,
                  (v) => issue.AssignedTo = v.HasValue ? new IdentifiableName() { Id = v.Value } : null,

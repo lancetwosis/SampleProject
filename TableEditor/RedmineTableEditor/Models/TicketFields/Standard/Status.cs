@@ -1,4 +1,5 @@
-﻿using Redmine.Net.Api.Types;
+﻿using LibRedminePower.Properties;
+using Redmine.Net.Api.Types;
 using RedmineTableEditor.Models.TicketFields.Bases;
 using RedmineTableEditor.Models.TicketFields.Standard.Bases;
 using System;
@@ -12,7 +13,7 @@ namespace RedmineTableEditor.Models.TicketFields.Standard
     public class Status : FieldList<IssueStatus>
     {
         public Status(Issue issue, RedmineManager redmine) : base(
-            Properties.Resources.enumIssuePropertyTypeStatus,
+            Resources.enumIssuePropertyTypeStatus,
             issue,
             () => issue?.Status?.Id,
             (v) => issue.Status = new IdentifiableName() { Id = v.Value },

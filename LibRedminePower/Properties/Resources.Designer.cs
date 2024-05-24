@@ -259,6 +259,168 @@ namespace LibRedminePower.Properties {
         }
         
         /// <summary>
+        ///   Assigned To に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeAssignedTo {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeAssignedTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Author に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeAuthor {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeAuthor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Category に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeCategory {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Remain Hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeDiffEstimatedSpent {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeDiffEstimatedSpent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Done Ratio に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeDoneRatio {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeDoneRatio", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Due Date に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeDueDate {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeDueDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Estimated Hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeEstimatedHours {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeEstimatedHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Version に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeFixedVersion {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeFixedVersion", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   # に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeId {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Assigned Spent Hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeMySpentHours {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeMySpentHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Priority に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypePriority {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypePriority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Spent Hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeSpentHours {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeSpentHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Start Date に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeStartDate {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeStartDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Status に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeStatus {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Subject に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeSubject {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeSubject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Total Estimated Hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeTotalEstimatedHours {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeTotalEstimatedHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Total Spent Hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeTotalSpentHours {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeTotalSpentHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Tracker に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeTracker {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeTracker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Contains に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumStringCompareContains {

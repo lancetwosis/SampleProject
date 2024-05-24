@@ -25,6 +25,7 @@ namespace RedmineTimePuncher.Models.Settings
         public OutputDataSettingsModel OutputData { get; set; } = new OutputDataSettingsModel();
         public CreateTicketSettingsModel CreateTicket { get; set; } = new CreateTicketSettingsModel();
         public TranscribeSettingsModel TranscribeSettings { get; set; } = new TranscribeSettingsModel();
+        public ReviewIssueListSettingModel ReviewIssueList { get; set; } = new ReviewIssueListSettingModel();
         public RequestWorkSettingsModel RequestWork { get; set; } = new RequestWorkSettingsModel();
         public CalendarSettingsModel Calendar { get; set; } = new CalendarSettingsModel();
         public PersonHourReportSettingsModel PersonHourReport { get; set; } = new PersonHourReportSettingsModel();

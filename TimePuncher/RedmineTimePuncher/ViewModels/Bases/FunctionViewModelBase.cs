@@ -39,9 +39,10 @@ namespace RedmineTimePuncher.ViewModels.Bases
             Title = parent.Redmine.Select(r => getTitle(r)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
-        protected string getTitle(RedmineManager r)
+        protected string getTitle(RedmineManager r, string prefix = null)
         {
-            return $"{r?.MyUser.Name}  -  {ApplicationInfo.Title}";
+            var title = $"{r?.MyUser.Name}  -  {ApplicationInfo.Title}";
+            return string.IsNullOrEmpty(prefix) ? title : $"{prefix}  {title}";
         }
 
         /// <summary>

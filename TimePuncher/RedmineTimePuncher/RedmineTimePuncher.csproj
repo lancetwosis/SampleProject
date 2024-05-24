@@ -154,6 +154,7 @@
     <Compile Include="Enums\ExportItems.cs" />
     <Compile Include="Enums\AppointmentColorType.cs" />
     <Compile Include="Enums\InputPeriodType.cs" />
+    <Compile Include="Models\Settings\ReviewIssueListSettingModel.cs" />
     <Compile Include="Models\Visualize\Filters\PeriodType.cs" />
     <Compile Include="Enums\FilterType.cs" />
     <Compile Include="Enums\LocaleType.cs" />
@@ -225,9 +226,11 @@
     <Compile Include="Models\Settings\TranscribeSettingsModel.cs" />
     <Compile Include="Models\Settings\UserSettingsModel.cs" />
     <Compile Include="Models\TicketTreeItemModel.cs" />
+    <Compile Include="Models\IssueProperty.cs" />
     <Compile Include="Models\WikiLine.cs" />
     <Compile Include="Models\WikiUserSummary.cs" />
     <Compile Include="ViewModels\Bases\FunctionViewModelBase.cs" />
+    <Compile Include="ViewModels\Settings\ReviewIssueListSettingViewModel.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\DateItem.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\SeriesViewModelBase.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\UserSeriesViewModel.cs" />
@@ -365,6 +368,9 @@
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\Settings\CreateTicketIssueListSettingsView.xaml.cs">
+      <DependentUpon>CreateTicketIssueListSettingsView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\Settings\PersonHourReportSettingsView.xaml.cs">
       <DependentUpon>PersonHourReportSettingsView.xaml</DependentUpon>
     </Compile>
@@ -450,7 +456,6 @@
     <Compile Include="Models\Settings\AssignRuleModel.cs" />
     <Compile Include="Models\Settings\CategorySettingModel.cs" />
     <Compile Include="Models\Settings\CategorySettingsModel.cs" />
-    <Compile Include="Models\Settings\Encryption.cs" />
     <Compile Include="Models\Settings\RedmineSettingsModel.cs" />
     <Compile Include="Models\Settings\ScheduleSettingsModel.cs" />
     <Compile Include="Models\Settings\SettingsModel.cs" />
@@ -599,6 +604,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\CreateTicketIssueListSettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

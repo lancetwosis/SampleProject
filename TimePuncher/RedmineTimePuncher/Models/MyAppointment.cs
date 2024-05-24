@@ -392,15 +392,10 @@ namespace RedmineTimePuncher.Models
             }).AddTo(disposables);
         }
 
-        public MyAppointment(IResource resource, AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo, MyIssue issue, int categoryId) :
+        public MyAppointment(IResource resource, AppointmentType type, string subject, string body, DateTime start, DateTime end, string ticketNo, MyIssue issue, string categoryName) :
             this(resource, type, subject, body, start, end, ticketNo, issue)
         {
-            Category = ProjectCategories.Value.FirstOrDefault(a => a.Id == categoryId);
-            // プロジェクトで有効になっている作業分類が更新されたら Category を設定しなおす
-            ProjectCategories.Where(a => a != null).Subscribe(_ =>
-            {
-                Category = ProjectCategories.Value.FirstOrDefault(a => a.Id == categoryId);
-            }).AddTo(disposables);
+            setupCategory(categoryName);
         }
 
         public MyAppointment(IResource resource, MyTimeEntry entry) : this()
@@ -418,15 +413,25 @@ namespace RedmineTimePuncher.Models
             Resources.Add(resource);
             ApoType = AppointmentType.RedmineTimeEntry;
             TicketNo = issueId.ToString();
-            Category = ProjectCategories.Value.SingleOrDefault(a => a.Id == entry.ActivityId.Value);
-            // プロジェクトで有効になっている作業分類が更新されたら Category を設定しなおす
-            ProjectCategories.Where(a => a != null).Subscribe(_ =>
-            {
-                Category = ProjectCategories.Value.FirstOrDefault(a => a.Id == entry.ActivityId.Value);
-            }).AddTo(disposables);
+
+            setupCategory(entry.Activity.Name);
+
             TimeEntryId = entry.Entry.Id;
             FromEntryId = entry.FromId;
             TimeEntryType = entry.Type == Enums.TimeEntryType.OverTime ? $"({Enums.TimeEntryType.OverTime.GetDescription()})" : null ;
+        }
+
+        private void setupCategory(string categoryName)
+        {
+            // 作業分類の設定を変更すると同じ名称の作業分類でも内部的に割り当てられる Id が変更される場合がある
+            // 設定変更によって Id が変わってしまっても同じ作業分類をして扱いたいため、名称で判定を行う
+            Category = ProjectCategories.Value.FirstOrDefault(a => a.DisplayName == categoryName);
+
+            // プロジェクトで有効になっている作業分類が更新されたら Category を設定しなおす
+            ProjectCategories.Where(a => a != null).Subscribe(_ =>
+            {
+                Category = ProjectCategories.Value.FirstOrDefault(a => a.DisplayName == categoryName);
+            }).AddTo(disposables);
         }
 
         public MyAppointment(IResource resource, MyTimeEntry entry, MyAppointment parent) : this(resource, entry)

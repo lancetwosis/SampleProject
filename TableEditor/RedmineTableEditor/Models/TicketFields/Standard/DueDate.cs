@@ -1,4 +1,5 @@
-﻿using Redmine.Net.Api.Types;
+﻿using LibRedminePower.Properties;
+using Redmine.Net.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace RedmineTableEditor.Models.TicketFields.Standard
     public class DueDate : Bases.FieldDate
     {
         public DueDate(Issue issue) : base(
-            Properties.Resources.enumIssuePropertyTypeDueDate,
+            Resources.enumIssuePropertyTypeDueDate,
             () => issue?.DueDate,
             (v) => issue.DueDate = v)
         {

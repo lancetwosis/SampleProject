@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Redmine Studio"
-#define MyAppVersion "8.1.4"
+#define MyAppVersion "8.1.6"
 #define MyAppPublisher "Redmine Power"
 #define MyAppURL "https://www.redmine-power.com/"
 #define MyAppExeName "RedmineStudio.exe"
@@ -169,22 +169,14 @@ var
 begin
   if CurStep = ssPostInstall then 
   begin
-    Exec('powershell.exe', 'New-EventLog -LogName Application -Source "{#EventLogSource}"', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
+    // v8.1.5 よりログを暗号化してファイルに出力し、イベントログへの出力は廃止した。
+    // よってイベントログへのソースの登録を削除する。
+    Exec('powershell.exe', 'Remove-EventLog -Source "{#EventLogSource}"', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
 
     // アプリ名変更前のショートカットと exe を削除する
     DesktopPath := GetShellFolderByCSIDL(CSIDL_COMMON_DESKTOPDIRECTORY, False);
     DeleteFile(DesktopPath + '\Redmine Time Puncher.lnk');
     DeleteFile(ExpandConstant('{app}') + '\RedmineTimePuncher.exe');
     DeleteFile(ExpandConstant('{app}') + '\RedmineTimePuncher.exe.config');
-  end;
-end;
-
-procedure CurUninstallStepChanged( CurUninstallStep: TUninstallStep);
-var
-  ResultCode: Integer;
-begin
-  if CurUninstallStep = usPostUninstall then 
-  begin
-    Exec('powershell.exe', 'Remove-EventLog -Source "{#EventLogSource}"', '', SW_HIDE, ewWaitUntilTerminated, ResultCode);
   end;
 end;

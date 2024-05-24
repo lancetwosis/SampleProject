@@ -1,6 +1,6 @@
 ﻿using LibRedminePower.Attributes;
 using Reactive.Bindings.Extensions;
-using RedmineTableEditor.Properties;
+using LibRedminePower.Properties;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

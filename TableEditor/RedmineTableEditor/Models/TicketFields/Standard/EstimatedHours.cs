@@ -1,4 +1,5 @@
-﻿using Redmine.Net.Api.Types;
+﻿using LibRedminePower.Properties;
+using Redmine.Net.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +11,7 @@ namespace RedmineTableEditor.Models.TicketFields.Standard
     public class EstimatedHours : Bases.FieldDouble
     {
         public EstimatedHours(Issue issue) :base(
-            Properties.Resources.enumIssuePropertyTypeEstimatedHours,
+            Resources.enumIssuePropertyTypeEstimatedHours,
             () =>
             {
                 if (issue == null) return null;

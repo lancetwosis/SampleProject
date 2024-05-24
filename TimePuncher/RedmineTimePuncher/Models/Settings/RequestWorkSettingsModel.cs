@@ -44,7 +44,7 @@ namespace RedmineTimePuncher.Models.Settings
                 RequestTracker = Trackers.FirstOrDefault(RequestTracker);
 
                 var customFields = await Task.Run(() => r.CustomFields.Value);
-                var boolCustomFields = customFields.Where(c => c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
+                var boolCustomFields = customFields.Where(c => c.IsIssueType() && c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
                 IsRequired.Update(boolCustomFields);
 
                 await RequestTranscribe.SetupAsync(r, IsBusy);

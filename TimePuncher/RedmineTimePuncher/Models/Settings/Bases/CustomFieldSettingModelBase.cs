@@ -85,7 +85,7 @@ namespace RedmineTimePuncher.Models.Settings.Bases
 
         public bool IsTrue()
         {
-            return Value.Value == MyCustomFieldPossibleValue.YES;
+            return Value != null && Value.Value == MyCustomFieldPossibleValue.YES;
         }
 
         public MyCustomFieldPossibleValue GetDefaultValue()

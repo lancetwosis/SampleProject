@@ -14,7 +14,6 @@ using Telerik.Windows.Controls;
 public class MyTimeEntry : LibRedminePower.Models.Bases.ModelBase, IPeriod
 {
     public static Dictionary<int, MyUser> DicUsers { get; set; }
-    public static Dictionary<int, MyCategory> DicCategory { get; set; }
 
     private class TimeEntryOption
     {
@@ -49,13 +48,12 @@ public class MyTimeEntry : LibRedminePower.Models.Bases.ModelBase, IPeriod
         get { return Entry.Issue?.Id; }
         set { Entry.Issue = IdentifiableName.Create<IdentifiableName>(value.Value); }
     }
-    public int? ActivityId
+    public IdentifiableName Activity
     {
-        get { return Entry.Activity?.Id; }
-        set { Entry.Activity = IdentifiableName.Create<IdentifiableName>(value.Value); }
+        get { return Entry.Activity; }
+        set { Entry.Activity = value; }
     }
-    public string ActivityName => DicCategory[ActivityId.Value].DisplayName;
-    public MyCategory Activity => DicCategory[ActivityId.Value];
+
     public int? UserId => Entry.User?.Id;
     public string UserName => DicUsers[UserId.Value].Name;
 
@@ -146,8 +144,12 @@ public class MyTimeEntry : LibRedminePower.Models.Bases.ModelBase, IPeriod
         ProjectId = issue.Project.Id;
         IssueId = issue.Id;
         SpentOn = apo.Start;
-        if(apo.Category != null && apo.Category is MyCategory myCategory)
-            ActivityId = myCategory.Id;
+        if (apo.Category != null && apo.Category is MyCategory myCategory)
+        {
+            var a = IdentifiableName.Create<IdentifiableName>(myCategory.Id);
+            a.Name = myCategory.DisplayName;
+            Activity = a;
+        }
         Start = apo.Start;
         End = apo.End;
         ToMembers = apo.MemberAppointments.Select(a => int.Parse(a.Resources.First().ResourceName)).ToList();

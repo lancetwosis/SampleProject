@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Logging;
 using LibRedminePower.ViewModels;
 using NetOffice.OutlookApi.Enums;
 using Reactive.Bindings;
@@ -40,27 +41,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
                 var allProjects = r.Projects.Value.Select(p => new MyProject(p)).ToList();
-                var selectedProjects = model.Projects;
 
-                if (model.Projects.Count == 0)
-                {
-                    foreach (var m in r.MyUser.Memberships)
-                    {
-                        selectedProjects.Add(allProjects.First(p => p.Id == m.Project.Id));
-                    }
-                }
+                setProjectsIfNeeded(model, r.MyUser, allProjects);
 
-                Projects = new ExpandableTwinListBoxViewModel<MyProject>(allProjects, selectedProjects).AddTo(myDisposables);
+                Projects = new ExpandableTwinListBoxViewModel<MyProject>(allProjects, model.Projects).AddTo(myDisposables);
                 IsEnabled.Skip(1).Subscribe(i =>
                 {
                     Projects.Expanded = i;
-                    if (i && model.Projects.Count == 0)
-                    {
-                        foreach (var m in r.MyUser.Memberships)
-                        {
-                            selectedProjects.Add(allProjects.First(p => p.Id == m.Project.Id));
-                        }
-                    }
+                    if (i)
+                        setProjectsIfNeeded(model, r.MyUser, allProjects);
                 }).AddTo(myDisposables);
             });
 
@@ -90,6 +79,30 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 else
                     return $"{string.Join(Environment.NewLine, model.Projects)}";
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+        }
+
+        private void setProjectsIfNeeded(TicketFiltersModel model, MyUser self, List<MyProject> allProjects)
+        {
+            if (allProjects.Count == 0)
+            {
+                Logger.Info("There is no project.");
+                return;
+            }
+
+            // プロジェクトが未選択なら自分にアサインされているプロジェクトを初期選択とする
+            if (model.Projects.Count == 0)
+            {
+                foreach (var m in self.Memberships)
+                {
+                    // 客先で First で要素が見つからず例外になる現象があったため、以下の処理とする
+                    // model.Projects.Add(allProjects.First(p => p.Id == m.Project.Id));
+                    var assigned = allProjects.FirstOrDefault(p => p.Id == m.Project.Id);
+                    if (assigned != null)
+                        model.Projects.Add(assigned);
+                    else
+                        Logger.Warn($"The project (Id={m.Project.Id}, Name={m.Project.Name}) does not exist. allProjects=[{string.Join(", ", allProjects.Select(a => a.Name))}]");
+                }
+            }
         }
     }
 }

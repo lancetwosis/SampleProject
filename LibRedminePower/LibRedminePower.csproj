@@ -88,6 +88,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\IssuePropertyType.cs" />
     <Compile Include="Extended\ColumnDefinitionExtended.cs" />
     <Compile Include="Converters\ZeroToCollapsedConverter.cs" />
     <Compile Include="Converters\VisibilityAnyConverter.cs" />
@@ -207,9 +208,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Content Include="NLog.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <None Include="app.config" />
     <None Include="NLog.xsd">
       <SubType>Designer</SubType>

@@ -34,6 +34,9 @@ namespace RedmineTimePuncher.Models.Visualize.Factors
         public MyCustomField CustomField { get; set; }
         public FactorType(CustomField cf, ResultModel model) : base()
         {
+            if (!cf.IsIssueType())
+                throw new NotSupportedException($"CustomizeType={cf.CustomizedType} は対応していません。");
+
             ValueType = FactorValueType.IssueCustomField;
             Name = cf.Name;
 

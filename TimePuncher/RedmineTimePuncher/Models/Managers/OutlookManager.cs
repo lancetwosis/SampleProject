@@ -148,7 +148,7 @@ namespace RedmineTimePuncher.Models.Managers
             }
             catch (System.Exception e)
             {
-                Logger.Warn($"Failed to get Property.", e);
+                Logger.Warn(e, $"Failed to get Property.");
                 return default(T);
             }
         }
@@ -234,7 +234,7 @@ namespace RedmineTimePuncher.Models.Managers
                 {
                     var ticketNo = entry.Issue.Id.ToString();
                     var issue = Redmine.GetTicketIncludeJournal(ticketNo, out var _);
-                    return new MyAppointment(resource, Enums.AppointmentType.Schedule, subject, body, start, end, ticketNo, issue, entry.Activity.Id)
+                    return new MyAppointment(resource, Enums.AppointmentType.Schedule, subject, body, start, end, ticketNo, issue, entry.Activity.Name)
                     {
                         Attenders = recipients,
                     };

@@ -100,8 +100,13 @@ namespace RedmineTimePuncher.Models.Settings
 
                 await Task.Run(() =>
                 {
-                    WikiPages = TranscribeSettingModel.REDMINE.GetAllWikiPages(p.Identifier); ;
-                    WikiPage = selector.Invoke();
+                    // 選択されたプロジェクトで Wiki がモジュールとして有効になっていても
+                    // 一切 Wiki の編集を行っていない場合、WikiPages が空になるため、以下の処理とする
+                    WikiPages = TranscribeSettingModel.REDMINE.GetAllWikiPages(p.Identifier);
+                    if (WikiPages.Count > 0)
+                        WikiPage = selector.Invoke();
+                    else
+                        WikiPage = null;
                 });
             }
             finally

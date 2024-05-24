@@ -108,6 +108,7 @@
     <Compile Include="Enums\FieldFormat.cs" />
     <Compile Include="Enums\StatusCompareType.cs" />
     <Compile Include="Extentions\CustomFieldExtentions.cs" />
+    <Compile Include="Extentions\IssuePropertyTypeExtensions.cs" />
     <Compile Include="Models\Bases\MyIssueBase.cs" />
     <Compile Include="Models\FileSettings\FieldModel.cs" />
     <Compile Include="Models\FileSettings\FileSettingsModel.cs" />
@@ -187,7 +188,6 @@
     <Compile Include="Behaviors\GirdViewColumnGroupsBehavior.cs" />
     <Compile Include="Converters\AutoCellBackColorConverter.cs" />
     <Compile Include="Converters\IsEditedToRedColorConverter.cs" />
-    <Compile Include="Enums\IssuePropertyType.cs" />
     <Compile Include="Models\MySubIssue.cs" />
     <Compile Include="Models\MyIssue.cs" />
     <Compile Include="Models\FileSettings\SubIssueSettingsModel.cs" />

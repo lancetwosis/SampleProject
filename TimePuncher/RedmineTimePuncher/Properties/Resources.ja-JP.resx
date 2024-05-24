@@ -955,8 +955,8 @@ APIアクセスキー</value>
     <value>日程調整用</value>
   </data>
   <data name="ReviewMsgForAdjustSchedule" xml:space="preserve">
-    <value>※この予定は日程の調整用です。
-　ウィンドウを閉じることで {0} に日程が反映されます。予定を保存する必要はありません。</value>
+    <value>※この予定は開催日時の調整用です。
+　ウィンドウを閉じることで {0} の開催日時に反映されます。予定を保存する必要はありません。</value>
   </data>
   <data name="ReviewErrMsgTargetClosed" xml:space="preserve">
     <value>終了したチケットは選択できません。</value>
@@ -1799,5 +1799,31 @@ Outlookの状態を確認してください。</value>
   </data>
   <data name="HelpOnlineMsg" xml:space="preserve">
     <value>オンラインヘルプを表示します。</value>
+  </data>
+  <data name="ReviewMsgConfirmDisableTrackers" xml:space="preserve">
+    <value>プロジェクト「{0}」ではトラッカー「{1}」は無効です。そのため、{2}のトラッカーは、「{3}」（対象チケットと同じ）が設定されます。
+
+チケット作成を続けますか？</value>
+  </data>
+  <data name="ReviewMsgPointer" xml:space="preserve">
+    <value> ({0}は {1} に設定されます)</value>
+  </data>
+  <data name="ReviewMsgPointerSet" xml:space="preserve">
+    <value> ({0}を設定してください)</value>
+  </data>
+  <data name="SettingsReviListMsg" xml:space="preserve">
+    <value>指摘チケットの一覧に表示する内容を設定してください。チケット番号と題名は必ず表示されます。</value>
+  </data>
+  <data name="SettingsReviShowDescription" xml:space="preserve">
+    <value>説明の表示</value>
+  </data>
+  <data name="SettingsReviShowLastNotes" xml:space="preserve">
+    <value>最新のコメントの表示</value>
+  </data>
+  <data name="SettingsReviDisplayColumns" xml:space="preserve">
+    <value>表示するカラム</value>
+  </data>
+  <data name="SettingsCategoryReviewIssueList" xml:space="preserve">
+    <value>指摘一覧の編集</value>
   </data>
 </root>

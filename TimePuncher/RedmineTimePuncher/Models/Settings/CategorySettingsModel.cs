@@ -41,7 +41,7 @@ namespace RedmineTimePuncher.Models.Settings
 
         public bool IsWorkingTime(MyTimeEntry entry)
         {
-            var item = Items.FirstOrDefault(i => i.Id == entry.ActivityId.Value);
+            var item = Items.FirstOrDefault(i => i.Id == entry.Activity.Id);
             return item != null ? item.IsWorkingTime : true;
         }
     }

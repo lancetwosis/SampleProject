@@ -31,9 +31,32 @@ namespace RedmineTimePuncher.Models
         {
         }
 
-        public IdentifiableName GetIdentifiableNameOrDefault(IdentifiableName defaultTracker)
+
+        /// <summary>
+        /// this が「対象チケットと同じ」の場合、defaultTracker を idName に設定する。それ以外の場合 this を変換したものを設定する。
+        /// this が引数のプロジェクトで無効になっていた場合、false を返す。それ以外の場合、true を返す。
+        /// </summary>
+        /// <param name="project">TACKERS を include していること</param>
+        public bool TryGetIdNameOrDefault(Project project, IdentifiableName defaultTracker, out IdentifiableName idName)
         {
-            return !this.Equals(USE_PARENT_TRACKER) ? this.ToIdentifiableName() : defaultTracker;
+            if (this.Equals(USE_PARENT_TRACKER))
+            {
+                idName = defaultTracker;
+                return true;
+            }
+            else
+            {
+                if (project.Trackers.Any(t => t.Id == Id))
+                {
+                    idName = this.ToIdentifiableName();
+                    return true;
+                }
+                else
+                {
+                    idName = defaultTracker;
+                    return false;
+                }
+            }
         }
 
         public override bool Equals(object obj)

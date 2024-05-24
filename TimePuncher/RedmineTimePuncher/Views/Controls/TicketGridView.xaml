@@ -128,6 +128,7 @@
                 <telerik:GridViewHyperlinkColumn ContentBinding="{Binding Id}"
                                                  DataMemberBinding="{Binding Url}"
                                                  Header="#"
+                                                 SortMemberPath="Id"
                                                  ToolTipTemplate="{StaticResource DescriptionTooltip}" />
                 <telerik:GridViewDataColumn DataMemberBinding="{Binding Project.Name}"
                                             Header="{x:Static props:Resources.IssueGridColProject}"

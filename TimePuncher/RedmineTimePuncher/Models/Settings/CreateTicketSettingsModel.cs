@@ -21,7 +21,7 @@ namespace RedmineTimePuncher.Models.Settings
         public ReactivePropertySlim<string> IsBusy { get; set; }
 
         public ReviewDetectionProcessSettingModel DetectionProcess { get; set; }
-        public bool NeedsOutlookIntegration { get; set; }
+        public bool NeedsOutlookIntegration { get; set; } = true;
         public bool NeedsGitIntegration { get; set; }
 
         public MyTracker OpenTracker { get; set; }
@@ -74,9 +74,9 @@ namespace RedmineTimePuncher.Models.Settings
                 OpenStatus = Statuses.FirstOrDefault(OpenStatus);
                 DefaultStatus = Statuses.FirstOrDefault(DefaultStatus);
 
-                var boolCustomFields = customFields.Where(c => c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
-                var listCustomFields = customFields.Where(c => c.IsListFormat()).Select(c => new MyCustomField(c)).ToList();
-                var userCustomFields = customFields.Where(c => c.IsUserFormat()).Select(c => new MyCustomField(c)).ToList();
+                var boolCustomFields = customFields.Where(c => c.IsIssueType() && c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
+                var listCustomFields = customFields.Where(c => c.IsIssueType() && c.IsListFormat()).Select(c => new MyCustomField(c)).ToList();
+                var userCustomFields = customFields.Where(c => c.IsIssueType() && c.IsUserFormat()).Select(c => new MyCustomField(c)).ToList();
 
                 NeedsFaceToFace.Update(boolCustomFields);
                 IsRequired.Update(boolCustomFields);

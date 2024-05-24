@@ -152,7 +152,7 @@ namespace LibRedminePower.Views
                 }
                 catch (Exception e)
                 {
-                    Logger.Warn("Failed to save WindowSettings", e);
+                    Logger.Warn(e, "Failed to save WindowSettings");
                 }
             }
         }

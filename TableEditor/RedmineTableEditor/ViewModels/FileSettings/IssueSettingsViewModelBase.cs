@@ -18,6 +18,8 @@ using RedmineTableEditor.Models;
 using ObservableCollectionSync;
 using RedmineTableEditor.Models.TicketFields.Standard;
 using System.Reactive.Disposables;
+using LibRedminePower.Enums;
+using RedmineTableEditor.Extentions;
 
 namespace RedmineTableEditor.ViewModels.FileSettings
 {

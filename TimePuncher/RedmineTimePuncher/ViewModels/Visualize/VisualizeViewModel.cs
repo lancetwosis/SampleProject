@@ -36,7 +36,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
         public TicketFiltersViewModel Filters { get; set; }
         public ResultViewModel Result { get; set; }
-        public ReadOnlyReactivePropertySlim<string> TitlePrefix { get; set; }
 
         public AsyncCommandBase GetTimeEntriesCommand { get; set; }
 
@@ -64,146 +63,173 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         {
             this.Parent = parent;
 
-            IsBusy = new BusyNotifier();
-
-            Filters = new TicketFiltersViewModel(this).AddTo(disposables);
-
-            Result = new ResultViewModel(this).AddTo(disposables);
-            TitlePrefix = Result.ObserveProperty(a => a.Model.FileName).CombineLatest(Result.IsEdited, (n, i) => (name:n, isEdited:i)).Select(p =>
+            ErrorMessage = IsSelected.CombineLatest(parent.Redmine, (i, r) => (isSelected: i, r)).Select(t =>
             {
-                if (!Result.Model.HasValue)
+                // RedmineManager のチェックは MainWindowViewModel で行っているのでスルーする
+                if (!t.isSelected || t.r == null)
                     return null;
 
-                if (string.IsNullOrEmpty(p.name))
-                    return $"{Resources.VisualizeNew}";
+                if (!t.r.CanUseAdminApiKey())
+                    return Resources.ReviewErrMsgNeedAdminAPIKey;
 
-                if (p.isEdited)
-                    return $"{p.name} {Resources.VisualizeUpdated}";
-                else
-                    return p.name;
+                return null;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            IsSelected.Where(a => a).Take(1).Subscribe(_ =>
+            IsBusy = new BusyNotifier();
+
+            var titlePrefix = new ReactivePropertySlim<string>().AddTo(disposables);
+            Title = parent.Redmine.CombineLatest(titlePrefix, (r, p) => getTitle(r, p)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+
+            // 管理者のAPIキーが設定されていなかった場合、レイアウトが崩れるので先にダミーを作成する
+            GetTimeEntriesCommand = new AsyncCommandBase(Resources.VisualizeCmdGetData, Resources.icons8_database_down_48);
+            UpdateTimeEntriesCommand = new AsyncCommandBase(Resources.VisualizeCmdUpdateData, Resources.reload);
+            OpenResultCommand = new AsyncCommandBase(Resources.VisualizeCmdOpen, Resources.open_icon);
+            SaveResultCommand = new CommandBase(Resources.VisualizeCmdSave, Resources.save);
+            SaveAsResultCommand = new CommandBase(Resources.VisualizeCmdSaveAs, Resources.saveas_icon);
+
+            CompositeDisposable myDisposables = null;
+            parent.Redmine.Subscribe(r =>
             {
-                using (IsBusy.ProcessStart())
-                using (parent.IsBusy.ProcessStart(""))
+                if (r == null || !r.CanUseAdminApiKey())
+                    return;
+
+                myDisposables?.Dispose();
+                myDisposables = new CompositeDisposable().AddTo(disposables);
+
+                Filters = new TicketFiltersViewModel(this).AddTo(myDisposables);
+
+                Result = new ResultViewModel(this).AddTo(myDisposables);
+                Result.ObserveProperty(a => a.Model.FileName).CombineLatest(Result.IsEdited, (n, i) => (name: n, isEdited: i)).Subscribe(p =>
                 {
-                    Result.Initialize();
-                }
-            }).AddTo(disposables);
+                    if (!Result.Model.HasValue)
+                        titlePrefix.Value = null;
+                    else if (string.IsNullOrEmpty(p.name))
+                        titlePrefix.Value = $"{Resources.VisualizeNew}";
+                    else if (p.isEdited)
+                        titlePrefix.Value = $"{p.name} {Resources.VisualizeUpdated}";
+                    else
+                        titlePrefix.Value = p.name;
+                }).AddTo(myDisposables);
 
-            GetTimeEntriesCommand = new AsyncCommandBase(
-               Resources.VisualizeCmdGetData, Resources.icons8_database_down_48,
-               new[] { IsBusy.Select(i => i ? "" : null), Filters.IsValid }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
-               async () =>
-               {
-                   using (IsBusy.ProcessStart())
-                   using (parent.IsBusy.ProcessStart(""))
-                   {
-                       await Result.GetTimeEntriesAsync(Filters);
-                       Filters.IsExpanded.Value = false;
-                   }
-               }).AddTo(disposables);
-
-            UpdateTimeEntriesCommand = new AsyncCommandBase(
-               Resources.VisualizeCmdUpdateData, Resources.reload,
-               new[] { IsBusy.Select(i => i ? "" : null), Result.ObserveProperty(a => a.Model.HasValue).Select(h => h ? null : "") }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
-               async () =>
-               {
-                   using (IsBusy.ProcessStart())
-                   using (parent.IsBusy.ProcessStart(""))
-                   {
-                       await Result.UpdateTimeEntriesAsync();
-                       Filters.IsExpanded.Value = false;
-                   }
-               }).AddTo(disposables);
-
-            OpenResultCommand = new AsyncCommandBase(
-                Resources.VisualizeCmdOpen, Resources.open_icon,
-                new[] {
-                    IsBusy.Select(a => !a),
-                }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
-                async () =>
+                IsSelected.Where(a => a).Take(1).Subscribe(_ =>
                 {
                     using (IsBusy.ProcessStart())
                     using (parent.IsBusy.ProcessStart(""))
                     {
-                        Result.Open();
+                        Result.Initialize();
                     }
-                }).AddTo(disposables);
+                }).AddTo(myDisposables);
 
-            var hasResult = new[] {
+                GetTimeEntriesCommand = new AsyncCommandBase(
+                   Resources.VisualizeCmdGetData, Resources.icons8_database_down_48,
+                   new[] { IsBusy.Select(i => i ? "" : null), Filters.IsValid }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
+                   async () =>
+                   {
+                       using (IsBusy.ProcessStart())
+                       using (parent.IsBusy.ProcessStart(""))
+                       {
+                           await Result.GetTimeEntriesAsync(Filters);
+                           Filters.IsExpanded.Value = false;
+                       }
+                   }).AddTo(myDisposables);
+
+                UpdateTimeEntriesCommand = new AsyncCommandBase(
+                   Resources.VisualizeCmdUpdateData, Resources.reload,
+                   new[] { IsBusy.Select(i => i ? "" : null), Result.ObserveProperty(a => a.Model.HasValue).Select(h => h ? null : "") }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
+                   async () =>
+                   {
+                       using (IsBusy.ProcessStart())
+                       using (parent.IsBusy.ProcessStart(""))
+                       {
+                           await Result.UpdateTimeEntriesAsync();
+                           Filters.IsExpanded.Value = false;
+                       }
+                   }).AddTo(myDisposables);
+
+                OpenResultCommand = new AsyncCommandBase(
+                    Resources.VisualizeCmdOpen, Resources.open_icon,
+                    new[] {
+                    IsBusy.Select(a => !a),
+                    }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
+                    async () =>
+                    {
+                        using (IsBusy.ProcessStart())
+                        using (parent.IsBusy.ProcessStart(""))
+                        {
+                            Result.Open();
+                        }
+                    }).AddTo(myDisposables);
+
+                var hasResult = new[] {
                     parent.IsBusy.Select(a => !a),
                     this.ObserveProperty(a => a.Result.Model.HasValue),
                 }.CombineLatestValuesAreAllTrue();
 
-            SaveResultCommand = new CommandBase(
-                Resources.VisualizeCmdSave, Resources.save,
-                new[] { hasResult, Result.IsEdited, }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
-                () => Result.SaveToFile()).AddTo(disposables);
+                SaveResultCommand = new CommandBase(
+                    Resources.VisualizeCmdSave, Resources.save,
+                    new[] { hasResult, Result.IsEdited, }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
+                    () => Result.SaveToFile()).AddTo(myDisposables);
 
-            SaveAsResultCommand = new CommandBase(
-                Resources.VisualizeCmdSaveAs, Resources.saveas_icon,
-                hasResult.Select(a => a ? null : ""),
-                () => Result.SaveAsToFile()).AddTo(disposables);
+                SaveAsResultCommand = new CommandBase(
+                    Resources.VisualizeCmdSaveAs, Resources.saveas_icon,
+                    hasResult.Select(a => a ? null : ""),
+                    () => Result.SaveAsToFile()).AddTo(myDisposables);
 
-            ExpandCommand = Result.SelectedTickets.AnyAsObservable(t => !t.IsExpanded && t.Children.Any()).ToReactiveCommand().WithSubscribe(() =>
-            {
-                Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(true));
-            }).AddTo(disposables);
-            ExpandRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
-            {
-                Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(true, true));
-            }).AddTo(disposables);
-            ExpandAllCommand = new ReactiveCommand().WithSubscribe(() => Result.ExpandAll()).AddTo(disposables);
+                ExpandCommand = Result.SelectedTickets.AnyAsObservable(t => !t.IsExpanded && t.Children.Any()).ToReactiveCommand().WithSubscribe(() =>
+                {
+                    Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(true));
+                }).AddTo(myDisposables);
+                ExpandRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
+                {
+                    Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(true, true));
+                }).AddTo(myDisposables);
+                ExpandAllCommand = new ReactiveCommand().WithSubscribe(() => Result.ExpandAll()).AddTo(myDisposables);
 
-            CollapseCommand = Result.SelectedTickets.AnyAsObservable(t => t.IsExpanded && t.Children.Any()).ToReactiveCommand().WithSubscribe(() =>
-            {
-                Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(false));
-            }).AddTo(disposables);
-            CollapseRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
-            {
-                Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(false, true));
-            }).AddTo(disposables);
-            CollapseAllCommand = new ReactiveCommand().WithSubscribe(() => Result.CollapseAll()).AddTo(disposables);
+                CollapseCommand = Result.SelectedTickets.AnyAsObservable(t => t.IsExpanded && t.Children.Any()).ToReactiveCommand().WithSubscribe(() =>
+                {
+                    Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(false));
+                }).AddTo(myDisposables);
+                CollapseRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
+                {
+                    Result.SelectedTickets.ToList().ForEach(t => t.SetIsExpanded(false, true));
+                }).AddTo(myDisposables);
+                CollapseAllCommand = new ReactiveCommand().WithSubscribe(() => Result.CollapseAll()).AddTo(myDisposables);
 
-            EnableCommand = Result.SelectedTickets.AnyAsObservable(t => !t.IsEnabled.Value).ToReactiveCommand().WithSubscribe(() =>
-            {
-                Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(true));
-            }).AddTo(disposables);
-            EnableRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
-            {
-                Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(true, true));
-            }).AddTo(disposables);
+                EnableCommand = Result.SelectedTickets.AnyAsObservable(t => !t.IsEnabled.Value).ToReactiveCommand().WithSubscribe(() =>
+                {
+                    Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(true));
+                }).AddTo(myDisposables);
+                EnableRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
+                {
+                    Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(true, true));
+                }).AddTo(myDisposables);
 
-            DisableCommand = Result.SelectedTickets.AnyAsObservable(t => t.IsEnabled.Value).ToReactiveCommand().WithSubscribe(() =>
-            {
-                Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(false));
-            }).AddTo(disposables);
-            DisableRecursiveCommand= Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
-            {
-                Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(false,true));
-            }).AddTo(disposables);
+                DisableCommand = Result.SelectedTickets.AnyAsObservable(t => t.IsEnabled.Value).ToReactiveCommand().WithSubscribe(() =>
+                {
+                    Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(false));
+                }).AddTo(myDisposables);
+                DisableRecursiveCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand().WithSubscribe(() =>
+                {
+                    Result.SelectedTickets.ToList().ForEach(t => t.SetIsEnabled(false, true));
+                }).AddTo(myDisposables);
 
-            ScrollToSelectedRowCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand<RadTreeListView>().WithSubscribe(tree =>
-            {
-                var index = tree.Items.OfType<TicketViewModel>().ToList().IndexOf(Result.SelectedTickets[0]);
-                tree.ScrollIntoViewAsync(tree.Items[index], tree.Columns[0], f => (f as GridViewRow).IsSelected = true);
-            }).AddTo(disposables);
+                ScrollToSelectedRowCommand = Result.SelectedTickets.AnyAsObservable().ToReactiveCommand<RadTreeListView>().WithSubscribe(tree =>
+                {
+                    var index = tree.Items.OfType<TicketViewModel>().ToList().IndexOf(Result.SelectedTickets[0]);
+                    tree.ScrollIntoViewAsync(tree.Items[index], tree.Columns[0], f => (f as GridViewRow).IsSelected = true);
+                }).AddTo(myDisposables);
 
-            AddFilterCommand = hasResult.ToReactiveCommand().WithSubscribe(() =>
-            {
-                Result.AddNewFilter();
+                AddFilterCommand = hasResult.ToReactiveCommand().WithSubscribe(() =>
+                {
+                    Result.AddNewFilter();
+                }).AddTo(myDisposables);
             }).AddTo(disposables);
-
-            Title = parent.Redmine.CombineLatest(TitlePrefix, (r, p) => 
-                string.IsNullOrEmpty(p) ? getTitle(r) : $"{p}  {getTitle(r)}").ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         public override void OnWindowClosed()
         {
-            Filters.Save();
-            Result.Save();
+            Filters?.Save();
+            Result?.Save();
         }
     }
 }

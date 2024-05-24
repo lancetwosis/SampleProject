@@ -25,21 +25,21 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
         public ReactivePropertySlim<string> SearchText { get; set; }
         public ReactiveCommand ClearSearchText { get; set; }
 
-        private List<int> pinedCategoryIds;
+        private List<string> pinedCategoryNames;
 
         public CategoryListBoxViewModel(InputViewModel parent)
         {
             Items = new List<MyCategory>();
             try
             {
-                if (!string.IsNullOrEmpty(Properties.Settings.Default.PinedCategoryIds))
-                    pinedCategoryIds = Properties.Settings.Default.PinedCategoryIds.Split(',').Select(i => int.Parse(i)).ToList();
+                if (!string.IsNullOrEmpty(Properties.Settings.Default.PinedCategoryNames))
+                    pinedCategoryNames = Properties.Settings.Default.PinedCategoryNames.Split(',').ToList();
                 else
-                    pinedCategoryIds = new List<int>();
+                    pinedCategoryNames = new List<string>();
             }
             catch
             {
-                pinedCategoryIds = new List<int>();
+                pinedCategoryNames = new List<string>();
             }
 
             AllSettings = new ReactivePropertySlim<List<CategorySettingModel>>().AddTo(disposables);
@@ -97,7 +97,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
             if (redmine == null || allSettings == null || selectedAppos == null)
                 return;
 
-            allSettings = allSettings.OrderByDescending(c => this.pinedCategoryIds.Contains(c.Id)).ThenBy(c => c.Order).ToList();
+            allSettings = allSettings.OrderByDescending(c => this.pinedCategoryNames.Contains(c.Name)).ThenBy(c => c.Order).ToList();
 
             onUpdateDisposable?.Dispose();
             onUpdateDisposable = new CompositeDisposable().AddTo(disposables);
@@ -106,17 +106,17 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
                 var self = tb.DataContext as MyCategory;
                 self.IsPined = tb.IsChecked.Value;
                 if (tb.IsChecked.Value)
-                    this.pinedCategoryIds.Add(self.Id);
+                    this.pinedCategoryNames.Add(self.DisplayName);
                 else
-                    this.pinedCategoryIds.Remove(self.Id);
+                    this.pinedCategoryNames.Remove(self.DisplayName);
 
-                Items = Items.OrderByDescending(c => this.pinedCategoryIds.Contains(c.Id)).ThenBy(c => c.Model.Order).ToList();
+                Items = Items.OrderByDescending(c => this.pinedCategoryNames.Contains(c.DisplayName)).ThenBy(c => c.Model.Order).ToList();
             }).AddTo(onUpdateDisposable);
 
             var appointments = selectedAppos.Where(a => a.IsMyWork.Value && a.Ticket != null).ToList();
             if (redmine == null || !appointments.Any())
             {
-                Items = allSettings.Select(c => new MyCategory(c, this.pinedCategoryIds.Contains(c.Id), pinCommand)).ToList();
+                Items = allSettings.Select(c => new MyCategory(c, this.pinedCategoryNames.Contains(c.Name), pinCommand)).ToList();
                 return;
             }
 
@@ -147,8 +147,13 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
                     // その結果、異なる Id を持つものとなるため名称（Name）で判定する
                     return projects.First(pro => pro.Id == ticket.Project.Id).TimeEntryActivities.Any(t => t.Name == c.Name);
                 }))
-                .Select(c => new MyCategory(c, this.pinedCategoryIds.Contains(c.Id), pinCommand))
+                .Select(c => new MyCategory(c, this.pinedCategoryNames.Contains(c.Name), pinCommand))
                 .ToList();
+        }
+
+        public void SavePinedCategories()
+        {
+            Properties.Settings.Default.PinedCategoryNames = string.Join(",", this.pinedCategoryNames);
         }
     }
 }

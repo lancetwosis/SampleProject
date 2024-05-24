@@ -258,6 +258,8 @@ namespace RedmineTimePuncher.ViewModels
                             Settings.OutputData = clone.OutputData;
                         if (Settings.CreateTicket.ToJson() != clone.CreateTicket.ToJson())
                             Settings.CreateTicket = clone.CreateTicket;
+                        if (Settings.ReviewIssueList.ToJson() != clone.ReviewIssueList.ToJson())
+                            Settings.ReviewIssueList = clone.ReviewIssueList;
                         if (Settings.TranscribeSettings.ToJson() != clone.TranscribeSettings.ToJson())
                             Settings.TranscribeSettings = clone.TranscribeSettings;
                         if (Settings.RequestWork.ToJson() != clone.RequestWork.ToJson())
@@ -281,13 +283,14 @@ namespace RedmineTimePuncher.ViewModels
 
                 Functions.ToList().ForEach(f => f.OnWindowLoaded(e));
 
-                if (args.Length == 2)
+                if (args.Length == 2 && args[0] == TableEditorViewModel.OPTION_KEY)
                 {
-                    if (args[0] == TableEditorViewModel.OPTION_KEY)
-                    {
-                        TableEditor.SetFirstSettings(args[1]);
-                        SelectedIndex.Value = (int)ApplicationMode.TableEditor;
-                    }
+                    TableEditor.SetFirstSettings(args[1]);
+                    SelectedIndex.Value = (int)ApplicationMode.TableEditor;
+                }
+                else
+                {
+                    SelectedIndex.Value = Properties.Settings.Default.LastSelectedIndex;
                 }
 
             }).AddTo(disposables);
@@ -302,6 +305,9 @@ namespace RedmineTimePuncher.ViewModels
                 Logger.Info("WindowClosedEventCommand was started.");
 
                 Functions.ToList().ForEach(f => f.OnWindowClosed());
+
+                Properties.Settings.Default.LastSelectedIndex = SelectedIndex.Value;
+                Properties.Settings.Default.Save();
 
                 Logger.Info("WindowClosedEventCommand was finished.");
             }).AddTo(disposables);

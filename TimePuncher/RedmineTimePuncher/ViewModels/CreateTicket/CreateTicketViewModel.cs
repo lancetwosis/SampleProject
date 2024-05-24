@@ -64,7 +64,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         public DateTime StartDateTime { get; set; }
         public DateTime DueDateTime { get; set; }
         public bool NeedsCreateOutlookAppointment { get; set; }
-        public bool NeedsOutlookIntegration { get; set; }
+        [JsonIgnore]
+        public ReadOnlyReactivePropertySlim<bool> NeedsOutlookIntegration { get; set; }
         public bool NeedsGitIntegration { get; set; }
         public string MergeRequestUrl { get; set; }
 
@@ -74,7 +75,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         public List<MemberViewModel> AllReviewers { get; set; }
 
         public string ReviewTarget { get; set; }
-        public string Title { get; set; }
+        public string RawTitle { get; set; }
         public string Description { get; set; }
 
         [JsonIgnore]
@@ -155,20 +156,17 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             Operators = new ObservableCollection<MemberViewModel>();
 
             var isFirst = true;
-            var allUsers = new List<MyUser>();
             CompositeDisposable myDisposables = null;
             parent.Redmine.CombineLatest(onTicketUpdated, (r, t) => (r, t)).SubscribeWithErr(p =>
             {
-                if (p.r == null || p.t == null || !parent.Settings.CreateTicket.IsValid())
+                if (p.r == null || p.t == null || !parent.Settings.CreateTicket.IsValid() || !p.r.CanUseAdminApiKey())
                     return;
 
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
-                AllReviewers = p.r.GetMemberships(p.t.Project.Id).Where(m => m.User != null)
-                    .Select(m => new MemberViewModel(m.User, parent.Settings.CreateTicket.IsRequired)).ToList();
-                AllOperators = p.r.GetMemberships(p.t.Project.Id).Where(m => m.User != null)
-                    .Select(m => new MemberViewModel(m.User, parent.Settings.RequestWork.IsRequired)).ToList();
+                AllReviewers = p.r.GetMemberships(p.t.Project.Id).Select(m => new MemberViewModel(m.User, parent.Settings.CreateTicket.IsRequired)).ToList();
+                AllOperators = p.r.GetMemberships(p.t.Project.Id).Select(m => new MemberViewModel(m.User, parent.Settings.RequestWork.IsRequired)).ToList();
                 if (!AllReviewers.Any() || !AllOperators.Any())
                     throw new ApplicationException(Resources.ReviewErrMsgNoMemberAssgined);
 
@@ -259,7 +257,6 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 parent.ObserveProperty(a => a.Settings.TranscribeSettings),
                 parent.ObserveProperty(a => a.Settings.RequestWork), (c, _, __) => c).SubscribeWithErr(c =>
             {
-                NeedsOutlookIntegration = c.NeedsOutlookIntegration;
                 NeedsGitIntegration = c.NeedsGitIntegration;
 
                 // 検出工程
@@ -291,6 +288,9 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                         DueDateTime = DueDateTime.GetDateOnly();
                     }
                 });
+                NeedsOutlookIntegration = NeedsFaceToFace.ObserveProperty(n => n.Value)
+                    .Select(_=> c.NeedsOutlookIntegration && NeedsFaceToFace.IsTrue())
+                    .ToReadOnlyReactivePropertySlim();
 
                 if (!isFirst)
                     onTicketUpdated.ForceNotify();
@@ -312,7 +312,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 .Where(a => a.t != null).SubscribeWithErr(p =>
             {
                 var processName = (p.d.IsEnabled && p.v != null) ? p.v.Label : "";
-                Title = getValue(Title == null, prev, vm => vm.Title, $"{processName}{Resources.Review} : {p.t.Subject}");
+                RawTitle = getValue(RawTitle == null, prev, vm => vm.RawTitle, $"{processName}{Resources.Review} : {p.t.Subject}");
             }).AddTo(disposables);
 
             GoToTicketCommand = new[] { IsBusy.Inverse(), onTicketUpdated.Select(t => t != null) }.CombineLatestValuesAreAllTrue()
@@ -358,7 +358,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     if (CreateMode == CreateTicketMode.Review)
                         await createReviewTicketAsync(parent.Redmine.Value, parent.Settings);
                     else if (CreateMode == CreateTicketMode.Work)
-                        createRequestsTicket(parent.Redmine.Value, parent.Settings);
+                        await createRequestsTicketAsync(parent.Redmine.Value, parent.Settings);
                 }).AddTo(disposables);
 
             AdjustScheduleCommand = new AsyncCommandBase(
@@ -367,7 +367,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 async () =>
                 {
                     var exception = createOutlookAppointment(
-                        $"({Resources.ReviewForShcheduleAdjust}) {Title}",
+                        $"({Resources.ReviewForShcheduleAdjust}) {RawTitle}",
                         string.Format(Resources.ReviewMsgForAdjustSchedule, ApplicationInfo.Title),
                         await Task.Run(() => parent.Redmine.Value.Users.Value),
                         i =>
@@ -424,6 +424,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
         private async Task createReviewTicketAsync(RedmineManager redmine,SettingsModel settings)
         {
+            // 説明の転記機能のチェック
             var openTransPrg = "";
             var requestTransPrg = "";
             try
@@ -438,12 +439,27 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     return;
             }
 
+            // 設定のトラッカーが選択中のチケットのプロジェクトで有効かどうかのチェック
+            var projs = await Task.Run(() => redmine.Projects.Value);
+            var curProj = projs.First(proj => proj.Id == Ticket.Project.Id);
+
+            var disableTrackers = new List<(string TrackerName, string TicketType)>();
+            if (!settings.CreateTicket.OpenTracker.TryGetIdNameOrDefault(curProj, Ticket.RawIssue.Tracker, out var openTracker))
+                disableTrackers.Add((settings.CreateTicket.OpenTracker.Name, Resources.SettingsReviOpenTicket));
+            if (!settings.CreateTicket.RequestTracker.TryGetIdNameOrDefault(curProj, Ticket.RawIssue.Tracker, out var requestTracker))
+                disableTrackers.Add((settings.CreateTicket.RequestTracker.Name, Resources.SettingsReviRequestTicket));
+            if (!settings.CreateTicket.PointTracker.TryGetIdNameOrDefault(curProj, Ticket.RawIssue.Tracker, out var pointTracker))
+                disableTrackers.Add((settings.CreateTicket.PointTracker.Name, Resources.SettingsReviPointTicket));
+
+            if (!confirmDisableTrackers(disableTrackers))
+                return;
+
             // 開催チケットの作成
             var p = Ticket.CreateChildTicket();
             p.Author = redmine.MyUser.ToIdentifiableName();
             p.AssignedTo = Organizer.ToIdentifiableName();
-            p.Subject = Title;
-            p.Tracker = settings.CreateTicket.OpenTracker.GetIdentifiableNameOrDefault(Ticket.RawIssue.Tracker);
+            p.Subject = RawTitle;
+            p.Tracker = openTracker;
             p.StartDate = StartDateTime.GetDateOnly();
             p.DueDate = DueDateTime.GetDateOnly();
             p.Description = "";
@@ -458,6 +474,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             var openTicket = new MyIssue(redmine.CreateTicket(p));
 
+            // 開催チケットの説明を更新
             var detectProcPrg = DetectionProcess.IsEnabled ? redmine.MarkupLang.CreateParagraph(Resources.ReviewTargetProcess, DetectionProcess.Value.Label) : "";
             var reviewMethodPrg = "";
             if (NeedsFaceToFace.IsEnabled)
@@ -469,9 +486,10 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 reviewMethodPrg = redmine.MarkupLang.CreateParagraph(Resources.ReviewReviewMethod, label);
             }
             var targetPrg = redmine.MarkupLang.CreateParagraph(Resources.ReviewDelivarables, ReviewTarget.SplitLines());
-            var showAllUrl = redmine.CreateShowAllPointIssues(openTicket.RawIssue, settings.CreateTicket.PointTracker.GetIdentifiableNameOrDefault(Ticket.RawIssue.Tracker).Id);
+            var createPointPrg = createPointParagraph(redmine, settings, openTicket, pointTracker, null);
+            var showAllUrl = settings.ReviewIssueList.CreateShowAllPointIssuesUrl(redmine, openTicket.RawIssue, pointTracker.Id);
             var showAllPointsPrg = redmine.MarkupLang.CreateParagraph(Resources.ReviewPointsList, redmine.MarkupLang.CreateLink(Resources.ReviewMsgReferPointsAtHere, showAllUrl));
-            var description = createDescription(detectProcPrg, reviewMethodPrg, targetPrg, showAllPointsPrg, openTransPrg);
+            var description = createDescription(detectProcPrg, reviewMethodPrg, targetPrg, createPointPrg, showAllPointsPrg, openTransPrg);
             if (NeedsGitIntegration && !string.IsNullOrEmpty(MergeRequestUrl))
             {
                 description += $"{Environment.NewLine}{Environment.NewLine}";
@@ -483,25 +501,20 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             // 依頼チケットの作成
             var c = openTicket.CreateChildTicket();
             c.Author = redmine.MyUser.ToIdentifiableName();
-            c.Tracker = settings.CreateTicket.RequestTracker.GetIdentifiableNameOrDefault(Ticket.RawIssue.Tracker);
+            c.Tracker = requestTracker;
             c.Status = settings.CreateTicket.DefaultStatus.ToIdentifiableName();
 
             foreach (var r in Reviewers)
             {
                 c.AssignedTo = r.ToIdentifiableName();
-                c.Subject = $"{Title} {r.GetPostFix()}";
+                c.Subject = $"{RawTitle} {r.GetPostFix()}";
                 c.CustomFields = r.GetCustomFieldIfNeeded();
-                var createPointUrl = redmine.CreatePointIssueURL(
-                                        openTicket.RawIssue,
-                                        settings.CreateTicket.PointTracker.GetIdentifiableNameOrDefault(Ticket.RawIssue.Tracker).Id,
-                                        DetectionProcess.GetQueryString(),
-                                        settings.CreateTicket.SaveReviewer.GetQueryString(r.Id.ToString()));
                 c.Description = createDescription(
                     string.IsNullOrEmpty(Description) ? Resources.ReviewPleaseFollwings : Description,
                     detectProcPrg,
                     reviewMethodPrg,
                     targetPrg,
-                    redmine.MarkupLang.CreateParagraph(Resources.ReviewPoints, redmine.MarkupLang.CreateLink(Resources.ReviewMsgAddPointAtHere, createPointUrl)),
+                    createPointParagraph(redmine, settings, openTicket, pointTracker, r),
                     showAllPointsPrg,
                     requestTransPrg);
                 redmine.CreateTicket(c);
@@ -509,16 +522,16 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             // Outlook への予定の追加
             System.Exception failedToCreateAppointment = null;
-            if (NeedsOutlookIntegration && NeedsCreateOutlookAppointment && NeedsFaceToFace.IsTrue())
+            if (NeedsOutlookIntegration.Value && NeedsCreateOutlookAppointment)
             {
                 var createPointUrl = redmine.CreatePointIssueURL(
                                         openTicket.RawIssue,
-                                        settings.CreateTicket.PointTracker.GetIdentifiableNameOrDefault(Ticket.RawIssue.Tracker).Id,
+                                        pointTracker.Id,
                                         DetectionProcess.GetQueryString(),
                                         null);
                 var refKey = settings.Appointment.Outlook.RefsKeywords.Split(",".ToCharArray()).FirstOrDefault();
                 failedToCreateAppointment = createOutlookAppointment(
-                    Title,
+                    RawTitle,
                     createDescription(
                         string.IsNullOrEmpty(Description) ? Resources.ReviewPleaseFollwings : Description,
                         DetectionProcess.IsEnabled ? MarkupLangType.None.CreateParagraph(Resources.ReviewTargetProcess, DetectionProcess.Value.Label) : "",
@@ -542,6 +555,37 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             if (failedToCreateAppointment != null)
                 throw failedToCreateAppointment;
+        }
+
+        private bool confirmDisableTrackers(List<(string TrackerName, string TicketType)> disableTrackers)
+        {
+            if (disableTrackers.Count == 0)
+                return true;
+
+            var tns = string.Join(", ", disableTrackers.Select(pair => pair.TrackerName));
+            var tts = string.Join(", ", disableTrackers.Select(pair => pair.TicketType));
+            var msg = string.Format(Resources.ReviewMsgConfirmDisableTrackers, Ticket.Project.Name, tns, tts, Ticket.RawIssue.Tracker.Name);
+            var r = MessageBoxHelper.ConfirmWarning(msg, MessageBoxHelper.ButtonType.OkCancel);
+            return r.HasValue && r.Value;
+        }
+
+        private string createPointParagraph(RedmineManager redmine, SettingsModel settings, MyIssue parent, IdentifiableName pointTracker, MemberViewModel reviewer)
+        {
+            var detectionProcess = DetectionProcess.GetQueryString();
+            var saveReviewer = reviewer != null ? settings.CreateTicket.SaveReviewer.GetQueryString(reviewer.Id.ToString()) : null;
+            var createPointUrl = redmine.CreatePointIssueURL(parent.RawIssue, pointTracker.Id, detectionProcess, saveReviewer);
+            var createLink = redmine.MarkupLang.CreateLink(Resources.ReviewMsgAddPointAtHere, createPointUrl);
+            if (settings.CreateTicket.SaveReviewer.IsEnabled)
+            {
+                var setReviewerMsg = reviewer != null ?
+                    string.Format(Resources.ReviewMsgPointer, settings.CreateTicket.SaveReviewer.CustomField.Name, reviewer.Name) :
+                    string.Format(Resources.ReviewMsgPointerSet, settings.CreateTicket.SaveReviewer.CustomField.Name);
+                return redmine.MarkupLang.CreateParagraph(Resources.ReviewPoints, createLink, setReviewerMsg);
+            }
+            else
+            {
+                return redmine.MarkupLang.CreateParagraph(Resources.ReviewPoints, createLink);
+            }
         }
 
         private string createDescription(params string[] paragraphes)
@@ -623,8 +667,9 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             return wiki.GetSectionLines(redmine.MarkupLang, transSetting.Header, transSetting.IncludesHeader).Select(l => l.Text).ToArray();
         }
 
-        private void createRequestsTicket(RedmineManager redmine, SettingsModel settings)
+        private async Task createRequestsTicketAsync(RedmineManager redmine, SettingsModel settings)
         {
+            // 説明の転記機能のチェック
             var requestTransPrg = "";
             try
             {
@@ -637,10 +682,19 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     return;
             }
 
+            // 設定のトラッカーが選択中のチケットのプロジェクトで有効かどうかのチェック
+            var projs = await Task.Run(() => redmine.Projects.Value);
+            var curProj = projs.First(proj => proj.Id == Ticket.Project.Id);
+            var disableTrackers = new List<(string TrackerName, string TicketType)>();
+            if (!settings.CreateTicket.RequestTracker.TryGetIdNameOrDefault(curProj, Ticket.RawIssue.Tracker, out var requestTracker))
+                disableTrackers.Add((settings.CreateTicket.RequestTracker.Name, Resources.SettingsReviRequestTicket));
+            if (!confirmDisableTrackers(disableTrackers))
+                return;
+
             // 依頼チケットの作成
             var c = Ticket.CreateChildTicket();
             c.Author = redmine.MyUser.ToIdentifiableName();
-            c.Tracker = settings.RequestWork.RequestTracker.GetIdentifiableNameOrDefault(Ticket.RawIssue.Tracker);
+            c.Tracker = requestTracker;
 
             foreach (var o in Operators)
             {

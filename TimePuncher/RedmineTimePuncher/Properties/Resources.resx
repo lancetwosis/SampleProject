@@ -1934,4 +1934,30 @@ By selecting them, you can check their time entries and set them as collaborator
   <data name="HelpOnlineMsg" xml:space="preserve">
     <value>Show online help.</value>
   </data>
+  <data name="ReviewMsgConfirmDisableTrackers" xml:space="preserve">
+    <value>Tracker "{1}" is invalid for project "{0}". Therefore, the tracker of "{2}" will be set to "{3}" (same as the target issue).
+
+Do you want to continue creating tickets?</value>
+  </data>
+  <data name="ReviewMsgPointer" xml:space="preserve">
+    <value> ({1} will be set for {0})</value>
+  </data>
+  <data name="ReviewMsgPointerSet" xml:space="preserve">
+    <value> (Please set {0})</value>
+  </data>
+  <data name="SettingsReviListMsg" xml:space="preserve">
+    <value>Set the contents to be displayed in the list of indicated issues. The issue number and subject are always displayed.</value>
+  </data>
+  <data name="SettingsReviShowDescription" xml:space="preserve">
+    <value>Show description</value>
+  </data>
+  <data name="SettingsReviShowLastNotes" xml:space="preserve">
+    <value>Show last notes</value>
+  </data>
+  <data name="SettingsReviDisplayColumns" xml:space="preserve">
+    <value>Display columns</value>
+  </data>
+  <data name="SettingsCategoryReviewIssueList" xml:space="preserve">
+    <value>Edit Point List</value>
+  </data>
 </root>

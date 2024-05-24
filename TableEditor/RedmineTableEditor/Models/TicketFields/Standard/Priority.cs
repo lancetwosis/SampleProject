@@ -1,4 +1,5 @@
-﻿using Reactive.Bindings.Extensions;
+﻿using LibRedminePower.Properties;
+using Reactive.Bindings.Extensions;
 using Redmine.Net.Api.Types;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace RedmineTableEditor.Models.TicketFields.Standard
     {
         public Priority(Issue issue, RedmineManager redmine) :
             base(
-                Properties.Resources.enumIssuePropertyTypePriority,
+                Resources.enumIssuePropertyTypePriority,
                 issue,
                 () => issue?.Priority?.Id,
                 (v) => issue.Priority = new IdentifiableName() { Id = v.Value},

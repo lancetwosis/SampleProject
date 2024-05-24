@@ -285,4 +285,58 @@ Please check the network status and Redmine connection settings.</value>
   <data name="SettingsNotSpecified" xml:space="preserve">
     <value>(Not specified)</value>
   </data>
+  <data name="enumIssuePropertyTypeAssignedTo" xml:space="preserve">
+    <value>Assigned To</value>
+  </data>
+  <data name="enumIssuePropertyTypeCategory" xml:space="preserve">
+    <value>Category</value>
+  </data>
+  <data name="enumIssuePropertyTypeDiffEstimatedSpent" xml:space="preserve">
+    <value>Remain Hours</value>
+  </data>
+  <data name="enumIssuePropertyTypeDoneRatio" xml:space="preserve">
+    <value>Done Ratio</value>
+  </data>
+  <data name="enumIssuePropertyTypeDueDate" xml:space="preserve">
+    <value>Due Date</value>
+  </data>
+  <data name="enumIssuePropertyTypeEstimatedHours" xml:space="preserve">
+    <value>Estimated Hours</value>
+  </data>
+  <data name="enumIssuePropertyTypeFixedVersion" xml:space="preserve">
+    <value>Version</value>
+  </data>
+  <data name="enumIssuePropertyTypeId" xml:space="preserve">
+    <value>#</value>
+  </data>
+  <data name="enumIssuePropertyTypeMySpentHours" xml:space="preserve">
+    <value>Assigned Spent Hours</value>
+  </data>
+  <data name="enumIssuePropertyTypePriority" xml:space="preserve">
+    <value>Priority</value>
+  </data>
+  <data name="enumIssuePropertyTypeSpentHours" xml:space="preserve">
+    <value>Spent Hours</value>
+  </data>
+  <data name="enumIssuePropertyTypeStartDate" xml:space="preserve">
+    <value>Start Date</value>
+  </data>
+  <data name="enumIssuePropertyTypeStatus" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="enumIssuePropertyTypeSubject" xml:space="preserve">
+    <value>Subject</value>
+  </data>
+  <data name="enumIssuePropertyTypeTotalEstimatedHours" xml:space="preserve">
+    <value>Total Estimated Hours</value>
+  </data>
+  <data name="enumIssuePropertyTypeTotalSpentHours" xml:space="preserve">
+    <value>Total Spent Hours</value>
+  </data>
+  <data name="enumIssuePropertyTypeTracker" xml:space="preserve">
+    <value>Tracker</value>
+  </data>
+  <data name="enumIssuePropertyTypeAuthor" xml:space="preserve">
+    <value>Author</value>
+  </data>
 </root>
