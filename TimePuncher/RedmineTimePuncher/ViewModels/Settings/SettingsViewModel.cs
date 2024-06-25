@@ -36,6 +36,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public OutputDataSettingsViewModel OutputData { get; set; }
         public CreateTicketSettingsViewModel CreateTicket { get; set; }
         public ReviewIssueListSettingViewModel ReviewIssueList { get; set; }
+        public ReviewCopyCustomFieldsSettingViewModel ReviewCopyCustomFields { get; set; }
         public RequestWorkSettingsViewModel RequestWork { get; set; }
         public PersonHourReportSettingsViewModel PersonHourReport { get; set; }
 
@@ -149,6 +150,11 @@ namespace RedmineTimePuncher.ViewModels.Settings
                         message.Value = Properties.Resources.SettingsMsgNowConnecting;
                         var r = new RedmineManager(model.Redmine);
                         await r.CheckConnectAsync();
+
+                        // 設定画面では Redmine の現在の情報を使って選択肢などを表示する必要がある
+                        // よって Projects などのデータを再取得し、それらを使って処理を行う
+                        await CacheManager.Default.UpdateTemporaryCacheAsync(r);
+
                         redmineManager.Value = r;
                         message.Value = "";
                     }
@@ -174,6 +180,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
             OutputData = new OutputDataSettingsViewModel(model.OutputData).AddTo(myDisposables);
             CreateTicket = new CreateTicketSettingsViewModel(model.CreateTicket, model.TranscribeSettings, redmineManager, message).AddTo(myDisposables);
             ReviewIssueList = new ReviewIssueListSettingViewModel(model.ReviewIssueList, redmineManager, message).AddTo(myDisposables);
+            ReviewCopyCustomFields = new ReviewCopyCustomFieldsSettingViewModel(model.ReviewCopyCustomFields, redmineManager, message).AddTo(myDisposables);
             RequestWork = new RequestWorkSettingsViewModel(model.RequestWork, redmineManager, message).AddTo(myDisposables);
             PersonHourReport = new PersonHourReportSettingsViewModel(model.PersonHourReport).AddTo(myDisposables);
         }

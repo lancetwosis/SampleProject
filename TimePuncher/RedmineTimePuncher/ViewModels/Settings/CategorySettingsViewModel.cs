@@ -42,18 +42,14 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 try
                 {
                     error2.Value = Resources.SettingsMsgNowGettingData;
-                    var projectsT = Task.Run(() => r.Projects.Value);
-                    var trackersT = Task.Run(() => r.Trackers.Value);
-                    var statussT = Task.Run(() => r.Statuss.Value);
-                    var timeEntriesT = Task.Run(() => r.TimeEntryActivities.Value);
 
-                    var trackers = await trackersT;
+                    var trackers = CacheManager.Default.GetTemporaryTrackers();
                     CategorySettingViewModel.Trackers = trackers.Select(t => new MyTracker(t)).ToList();
-                    AssignRuleViewModel.Projects = await projectsT;
+                    AssignRuleViewModel.Projects = CacheManager.Default.GetTemporaryProjects();
                     AssignRuleViewModel.Trackers = trackers;
-                    AssignRuleViewModel.Statuss = await statussT;
+                    AssignRuleViewModel.Statuss = CacheManager.Default.GetTemporaryStatuss();
 
-                    setUpItemsSource(model, await timeEntriesT);
+                    setUpItemsSource(model);
 
                     error2.Value = null;
                 }
@@ -66,14 +62,13 @@ namespace RedmineTimePuncher.ViewModels.Settings
             IsAutoSameName = model.ToReactivePropertySlimAsSynchronized(a => a.IsAutoSameName).AddTo(disposables);
 
             // インポートしたら、Viewを読み込み直す
-            ImportCommand = ImportCommand.WithSubscribe(() =>
-                setUpItemsSource(model, redmine.Value.TimeEntryActivities.Value)).AddTo(disposables);
+            ImportCommand = ImportCommand.WithSubscribe(() => setUpItemsSource(model)).AddTo(disposables);
         }
 
-        private void setUpItemsSource(CategorySettingsModel model, List<TimeEntryActivity> timeEntries)
+        private void setUpItemsSource(CategorySettingsModel model)
         {
             // Redmineの情報とModelを同期する。
-            model.UpdateItems(timeEntries);
+            model.UpdateItems(CacheManager.Default.GetTemporaryTimeEntryActivities());
             Items = new EditableGridViewModel<CategorySettingViewModel>(model.Items.OrderBy(a => a.Order).Select(a => new CategorySettingViewModel(a)).ToList());
         }
 

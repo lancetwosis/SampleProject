@@ -16,8 +16,6 @@ namespace RedmineTimePuncher.Models.Settings
     {
         public ReviewDetectionProcessSettingModel() : base(CustomFieldFormat.List)
         {
-            NeedsSaveToCustomField = true;
-
             this.ObserveProperty(a => a.CustomField).SubscribeWithErr(cf =>
             {
                 if (cf == null)
@@ -35,6 +33,9 @@ namespace RedmineTimePuncher.Models.Settings
                     Value = PossibleValues.First();
                 }
             }).AddTo(disposables);
+
+            // 「レビュー対象の工程の指定」は必ずカスタムフィールドに保存する必要があるため、有効・無効と連動させる
+            this.ObserveProperty(a => a.IsEnabled).Subscribe(i => NeedsSaveToCustomField = i).AddTo(disposables);
         }
 
         public override void Update(List<MyCustomField> possibleCustomFields)
@@ -48,14 +49,6 @@ namespace RedmineTimePuncher.Models.Settings
                 IsEnabled = false;
                 return;
             }
-        }
-
-        public string GetQueryString()
-        {
-            if (!IsEnabled || CustomField == null)
-                return null;
-            else
-                return CustomField.CreateQueryString(Value.Value);
         }
     }
 }

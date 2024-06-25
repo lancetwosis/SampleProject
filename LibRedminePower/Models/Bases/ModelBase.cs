@@ -12,17 +12,10 @@ using System.Threading.Tasks;
 namespace LibRedminePower.Models.Bases
 {
     [Serializable]
-    public abstract class ModelBase : INotifyPropertyChanged, IDisposable
+    public abstract class ModelBase : ModelBaseSlim, IDisposable
     {
-#pragma warning disable 0067
-        [field: NonSerialized]
-        public event PropertyChangedEventHandler PropertyChanged;
-#pragma warning restore 0067
-
         [NonSerialized]
         protected CompositeDisposable disposables = new CompositeDisposable();
-
-        public void RaisePropertyChanged(string name) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 
         public virtual void Dispose()
         {

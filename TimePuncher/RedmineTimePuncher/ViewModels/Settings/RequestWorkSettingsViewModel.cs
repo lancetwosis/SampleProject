@@ -30,7 +30,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public RequestWorkSettingsViewModel(RequestWorkSettingsModel model,
             ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(model)
         {
-            RequestTranscribe = new TranscribeSettingViewModel(model.RequestTranscribe, redmine, model.IsBusy).AddTo(disposables);
+            RequestTranscribe = new TranscribeSettingViewModel(redmine, model.IsBusy).AddTo(disposables);
 
             redmine.Where(a => a != null).SubscribeWithErr(async r =>
             {

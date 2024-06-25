@@ -30,16 +30,17 @@ namespace Redmine.Net.Api.Types
     [DebuggerDisplay("{" + nameof(DebuggerDisplay) + ",nq}")]
     [XmlRoot(RedmineKeys.TRACKER)]
     public class Tracker : IdentifiableName, IEquatable<Tracker>
-    {        
+    {
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// Gets the default (issue) status for this tracker.
         /// </summary>
-        public IdentifiableName DefaultStatus { get; internal set; }
+        public IdentifiableName DefaultStatus { get; set; }
 
         /// <summary>
         /// Gets the description of this tracker.
         /// </summary>
-        public string Description { get; internal set; }
+        public string Description { get; set; }
 
         #region Implementation of IXmlSerialization
         /// <summary>

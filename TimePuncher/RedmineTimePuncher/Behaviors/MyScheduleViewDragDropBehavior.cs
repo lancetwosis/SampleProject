@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.ViewModels.Input.Resources;
@@ -85,6 +86,10 @@ namespace RedmineTimePuncher.Behaviors
                             if (!state.DestinationSlots.First().Resources.Cast<MyResourceBase>().Any(a => a.IsMyWorks()))
                                 return false;
 
+                            // 有効でないプロジェクトのチケットはドロップできない
+                            if (apo.Ticket != null && apo.ProjectStatus == ProjectStatusType.NotActive)
+                                return false;
+
                             return base.CanDrop(state);
                         }
                     // 作業分類一覧からのドラッグ
@@ -99,6 +104,10 @@ namespace RedmineTimePuncher.Behaviors
                             if (targetedAppointment == null || targetedAppointment.Category == apo.Category)
                                 return false;
 
+                            // 有効でないプロジェクトの作業実績へはドロップできない
+                            if (targetedAppointment.Ticket != null && targetedAppointment.ProjectStatus == ProjectStatusType.NotActive)
+                                return false;
+
                             if (targetedAppointment.ProjectCategories.Value == null ||
                                 !targetedAppointment.ProjectCategories.Value.Any(c => c.DisplayName == apo.Category.DisplayName))
                             {
@@ -106,7 +115,7 @@ namespace RedmineTimePuncher.Behaviors
                             }
                             else
                             {
-                                if (targetedAppointment.IsMyWork.Value || targetedAppointment.ApoType == Enums.AppointmentType.RedmineTimeEntryMember)
+                                if (targetedAppointment.IsMyWork.Value || targetedAppointment.ApoType == AppointmentType.RedmineTimeEntryMember)
                                 {
                                     return true;
                                 }
@@ -127,6 +136,15 @@ namespace RedmineTimePuncher.Behaviors
 
                 // MyWorks 以外には、ドロップすることができない
                 if (!destSlot.Resources.Cast<MyResourceBase>().Any(a => a.IsMyWorks()))
+                    return false;
+
+                // 有効でないプロジェクトのチケットに紐づいた予定はドロップできない
+                if (myAppo.Ticket != null && myAppo.ProjectStatus == ProjectStatusType.NotActive)
+                    return false;
+
+                // 有効でないプロジェクトの作業実績へはドロップできない
+                var target = state.TargetedAppointment as MyAppointment;
+                if (target != null && target.Ticket != null && target.ProjectStatus == ProjectStatusType.NotActive)
                     return false;
 
                 // MyWorks 以外からドラッグ or 日を跨いでのドラッグの場合は、強制コピーモードとする。

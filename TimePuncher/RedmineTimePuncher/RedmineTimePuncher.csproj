@@ -148,12 +148,15 @@
     <Compile Include="Converters\DeleteConfirmMessageConverter.cs" />
     <Compile Include="Converters\IntToMargineConverter.cs" />
     <Compile Include="Converters\PeriodTypeSelectionConverter.cs" />
+    <Compile Include="Enums\ProjectStatusType.cs" />
     <Compile Include="Enums\ApplicationMode.cs" />
     <Compile Include="Enums\CreateTicketMode.cs" />
     <Compile Include="Enums\CustomFieldFormat.cs" />
     <Compile Include="Enums\ExportItems.cs" />
     <Compile Include="Enums\AppointmentColorType.cs" />
     <Compile Include="Enums\InputPeriodType.cs" />
+    <Compile Include="Models\Settings\ReviewCopyCustomFieldsSettingModel.cs" />
+    <Compile Include="Models\Managers\CacheManager.cs" />
     <Compile Include="Models\Settings\ReviewIssueListSettingModel.cs" />
     <Compile Include="Models\Visualize\Filters\PeriodType.cs" />
     <Compile Include="Enums\FilterType.cs" />
@@ -218,7 +221,7 @@
     <Compile Include="Models\Settings\RequestWorkSettingsModel.cs" />
     <Compile Include="Models\Settings\ReviewDetectionProcessSettingModel.cs" />
     <Compile Include="Models\Settings\ReviewIsRequiredSettingModel.cs" />
-    <Compile Include="Models\Settings\ReviewNeedsFaceToFaceSettingModel.cs" />
+    <Compile Include="Models\Settings\ReviewMethodSettingModel.cs" />
     <Compile Include="Models\Settings\ReviewSaveReviewerSettingModel.cs" />
     <Compile Include="Models\Settings\PersonHourReportSettingsModel.cs" />
     <Compile Include="Models\Settings\TranscribeSettingModel.cs" />
@@ -230,6 +233,11 @@
     <Compile Include="Models\WikiLine.cs" />
     <Compile Include="Models\WikiUserSummary.cs" />
     <Compile Include="ViewModels\Bases\FunctionViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\DetectionProcessViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFieldViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\ReviewMethodViewModel.cs" />
+    <Compile Include="ViewModels\Settings\ReviewCopyCustomFieldsSettingViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\ReviewersTwinListViewModel.cs" />
     <Compile Include="ViewModels\Settings\ReviewIssueListSettingViewModel.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\DateItem.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\SeriesViewModelBase.cs" />
@@ -367,6 +375,9 @@
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\CreateTicketCopyCustomFieldsSettingsView.xaml.cs">
+      <DependentUpon>CreateTicketCopyCustomFieldsSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\CreateTicketIssueListSettingsView.xaml.cs">
       <DependentUpon>CreateTicketIssueListSettingsView.xaml</DependentUpon>
@@ -604,6 +615,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Settings\CreateTicketCopyCustomFieldsSettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

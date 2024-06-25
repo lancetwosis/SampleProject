@@ -18,7 +18,7 @@ using RedmineTimePuncher.Properties;
 
 namespace RedmineTimePuncher.Models.Visualize.Factors
 {
-    public class FactorModel : LibRedminePower.Models.Bases.ModelBase
+    public class FactorModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public FactorType Type { get; set; }
         public string Name { get; set; }

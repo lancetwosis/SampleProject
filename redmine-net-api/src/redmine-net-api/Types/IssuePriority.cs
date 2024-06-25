@@ -33,10 +33,11 @@ namespace Redmine.Net.Api.Types
     public sealed class IssuePriority : IdentifiableName, IEquatable<IssuePriority>
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// 
         /// </summary>
-        public bool IsDefault { get; internal set; }
+        public bool IsDefault { get; set; }
         #endregion
 
         #region Implementation of IXmlSerializable

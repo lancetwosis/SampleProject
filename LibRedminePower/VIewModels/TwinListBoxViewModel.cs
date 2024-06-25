@@ -42,14 +42,12 @@ namespace LibRedminePower.ViewModels
 
         public ReactiveProperty<bool> IsEdited { get; set; }
 
-        private List<(T v, int i, bool isFirst, bool isLast)> allItems;
-
         [Obsolete("Design Only", true)]
         public TwinListBoxViewModel(){}
 
         public TwinListBoxViewModel(IEnumerable<T> allItems, ObservableCollection<T> selectedItems)
         {
-            this.allItems = allItems.Indexed().ToList();
+            var indexed = allItems.Indexed().ToList();
 
             ClearFromFilterCommand = new ReactiveCommand().WithSubscribe(() => FromFilter = "").AddTo(disposables);
 
@@ -67,8 +65,8 @@ namespace LibRedminePower.ViewModels
                 using (isBusy.ProcessStart())
                 {
                     // 初期の並び順と同じところに戻す
-                    var added =this.allItems.First(i => i.v.Equals(a));
-                    var fromItems =this.allItems.Where(i => FromItems.Contains(i.v)).ToList();
+                    var added =indexed.First(i => i.v.Equals(a));
+                    var fromItems = indexed.Where(i => FromItems.Contains(i.v)).ToList();
                     fromItems.Add(added);
 
                     FromItems.Clear();

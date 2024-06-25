@@ -361,7 +361,7 @@
     <value>作業実績のスロットを選択してください。</value>
   </data>
   <data name="msgErrSelectAppointmentsOfSpentTime" xml:space="preserve">
-    <value>作業実績の予定を選択してください。</value>
+    <value>有効なプロジェクトに紐づいた作業実績の予定を選択してください。</value>
   </data>
   <data name="LastUpdateTime" xml:space="preserve">
     <value>{0}の最終更新時間</value>
@@ -1825,5 +1825,22 @@ Outlookの状態を確認してください。</value>
   </data>
   <data name="SettingsCategoryReviewIssueList" xml:space="preserve">
     <value>指摘一覧の編集</value>
+  </data>
+  <data name="enumProjectStatusTypeNotActive" xml:space="preserve">
+    <value>終了</value>
+  </data>
+  <data name="msgContainsNotActiveProject" xml:space="preserve">
+    <value>有効でないプロジェクトに紐づけられた作業実績が存在するため実行できません。
+
+{0}</value>
+  </data>
+  <data name="SettingsCategoryCopyCustomFields" xml:space="preserve">
+    <value>カスタムフィールドのコピー</value>
+  </data>
+  <data name="SettingsReviCopyCustomFieldMsg" xml:space="preserve">
+    <value>対象のチケットから値をコピーしたいカスタムフィールドを選択してください。</value>
+  </data>
+  <data name="SettingsReviMethodMsg" xml:space="preserve">
+    <value>それぞれのレビュー方法で実施する項目にチェックをつけてください。</value>
   </data>
 </root>

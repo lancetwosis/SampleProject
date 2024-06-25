@@ -55,7 +55,17 @@
                         <TextBlock Margin="2,0,0,0"
                                    FontWeight="SemiBold"
                                    Foreground="#505050"
-                                   Text="{Binding Appointment.TicketTree.ProjectName}" />
+                                   Text="{Binding Appointment.Ticket.Project.Name}" />
+                        <TextBlock Margin="2,0,0,0"
+                                   FontWeight="SemiBold"
+                                   Foreground="#505050"
+                                   Visibility="{Binding Appointment.ProjectStatus,
+                                                        Converter={StaticResource EnumToVisibilityConverter},
+                                                        ConverterParameter=NotActive}">
+                            <Run Text=" (" />
+                            <Run Text="{Binding Appointment.ProjectStatus}" />
+                            <Run Text=")" />
+                        </TextBlock>
                     </StackPanel>
                     <ItemsControl Margin="8,0,0,0"
                                   ItemsSource="{Binding Appointment.TicketTree.Items}">

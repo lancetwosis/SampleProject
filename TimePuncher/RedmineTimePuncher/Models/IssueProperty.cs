@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models
 {
-    public class IssueProperty : LibRedminePower.Models.Bases.ModelBase
+    public class IssueProperty : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public string Name { get; set; }
         public string Key { get; set; }

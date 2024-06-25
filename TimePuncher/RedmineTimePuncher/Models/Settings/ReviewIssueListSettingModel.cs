@@ -39,7 +39,7 @@ namespace RedmineTimePuncher.Models.Settings
             {
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
-                var customFields = await Task.Run(() => r.CustomFields.Value);
+                var customFields = CacheManager.Default.GetTemporaryCustomFields();
 
                 AllProperties.Clear();
                 AllProperties.Add(new IssueProperty(IssuePropertyType.Status));

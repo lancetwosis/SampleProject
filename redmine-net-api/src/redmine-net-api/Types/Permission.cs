@@ -33,10 +33,11 @@ namespace Redmine.Net.Api.Types
     public sealed class Permission : IXmlSerializable, IJsonSerializable, IEquatable<Permission>
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// 
         /// </summary>
-        public string Info { get; internal set; }
+        public string Info { get; set; }
         #endregion
 
         #region Implementation of IXmlSerializable

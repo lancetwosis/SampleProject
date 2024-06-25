@@ -37,11 +37,12 @@ namespace Redmine.Net.Api.Types
         /// <remarks>Serialization</remarks>
         public MyAccountCustomField() { }
 
-        
+
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// 
         /// </summary>
-        public string Value { get; internal set; }
+        public string Value { get; set; }
         
         internal MyAccountCustomField(int id, string name)
         {

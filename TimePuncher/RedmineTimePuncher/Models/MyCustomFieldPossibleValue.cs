@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models
 {
-    public class MyCustomFieldPossibleValue : LibRedminePower.Models.Bases.ModelBase
+    public class MyCustomFieldPossibleValue : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public static string YES = "1";
         public static string NO  = "0";

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTableEditor.Models.FileSettings
 {
-    public class SubIssueSettingModel : LibRedminePower.Models.Bases.ModelBase
+    public class SubIssueSettingModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public bool IsEnabled { get; set; } = true;
         public int Order { get; set; }

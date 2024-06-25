@@ -33,13 +33,14 @@ namespace Redmine.Net.Api.Types
     public sealed class Role : IdentifiableName, IEquatable<Role>
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// Gets the permissions.
         /// </summary>
         /// <value>
         /// The issue relations.
         /// </value>
-        public IList<Permission> Permissions { get; internal set; }
+        public IList<Permission> Permissions { get; set; }
 
         /// <summary>
         /// 

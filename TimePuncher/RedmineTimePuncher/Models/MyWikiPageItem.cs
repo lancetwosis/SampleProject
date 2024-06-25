@@ -8,7 +8,7 @@ using Telerik.Windows.Controls;
 
 namespace RedmineTimePuncher.Models
 {
-    public class MyWikiPageItem : LibRedminePower.Models.Bases.ModelBase
+    public class MyWikiPageItem : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public string DisplayTitle => IsTopWiki ? $"{Title} ({Properties.Resources.WikiPageTopPage})" : Title;
         public string UrlBase { get; set; }

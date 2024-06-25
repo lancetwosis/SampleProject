@@ -14,11 +14,32 @@ using System.Web;
 
 namespace RedmineTimePuncher.Models
 {
-    public class MyCustomField : IdName
+    public class MyCustomField<TValue> : IdName where TValue : MyCustomFieldPossibleValue
     {
         public CustomFieldFormat Format { get; set; }
-        public List<MyCustomFieldPossibleValue> PossibleValues { get; set; }
+        public List<TValue> PossibleValues { get; set; }
 
+        public MyCustomField()
+        {
+        }
+
+        public MyCustomField(IdentifiableName identifiable) : base(identifiable)
+        {
+        }
+
+        public string CreateQueryString(string value)
+        {
+            return $"issue[custom_field_values][{Id}]={HttpUtility.UrlEncode(value)}";
+        }
+
+        public override string ToString()
+        {
+            return Name;
+        }
+    }
+
+    public class MyCustomField : MyCustomField<MyCustomFieldPossibleValue>
+    {
         public MyCustomField()
         {
         }
@@ -47,11 +68,6 @@ namespace RedmineTimePuncher.Models
         public MyCustomField(CustomField cf, List<MyProject> projects) : this(cf)
         {
             PossibleValues = projects.SelectMany(p => p.Versions.Select(v => new MyCustomFieldPossibleValue(p, v, projects.Count > 1))).ToList();
-        }
-
-        public string CreateQueryString(string value)
-        {
-            return $"issue[custom_field_values][{Id}]={HttpUtility.UrlEncode(value)}";
         }
     }
 

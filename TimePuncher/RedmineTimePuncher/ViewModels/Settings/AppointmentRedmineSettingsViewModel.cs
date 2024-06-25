@@ -43,7 +43,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 try
                 {
                     error2.Value = Resources.SettingsMsgNowGettingData;
-                    Trackers = await Task.Run(() => r.Trackers.Value);
+                    Trackers = CacheManager.Default.GetTemporaryTrackers();
                     error2.Value = null;
                 }
                 catch (Exception ex)

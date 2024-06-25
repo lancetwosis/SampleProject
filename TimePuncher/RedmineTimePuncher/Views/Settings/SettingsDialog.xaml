@@ -99,6 +99,12 @@
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
+                                Header="{x:Static props:Resources.SettingsCategoryCopyCustomFields}">
+                <local:CreateTicketCopyCustomFieldsSettingsView Margin="5"
+                                                                DataContext="{Binding ReviewCopyCustomFields}" />
+            </telerik:RadTabItem>
+            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
+                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
                                 Header="{x:Static props:Resources.SettingsCategoryReviewDescription}">
                 <local:CreateTicketDescriptionSettingsView Margin="5"
                                                            DataContext="{Binding CreateTicket.TranscribeDescription}" />

@@ -34,13 +34,14 @@ namespace Redmine.Net.Api.Types
     public sealed class Journal : Identifiable<Journal>
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// Gets or sets the user.
         /// </summary>
         /// <value>
         /// The user.
         /// </value>
-        public IdentifiableName User { get; internal set; }
+        public IdentifiableName User { get; set; }
 
         /// <summary>
         /// Gets or sets the notes.
@@ -48,7 +49,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The notes.
         /// </value>
-        public string Notes { get; internal set; }
+        public string Notes { get; set; }
 
         /// <summary>
         /// Gets or sets the created on.
@@ -56,12 +57,12 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The created on.
         /// </value>
-        public DateTime? CreatedOn { get; internal set; }
+        public DateTime? CreatedOn { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        public bool PrivateNotes { get; internal set; }
+        public bool PrivateNotes { get; set; }
 
         /// <summary>
         /// Gets or sets the details.
@@ -69,7 +70,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The details.
         /// </value>
-        public IList<Detail> Details { get; internal set; }
+        public IList<Detail> Details { get; set; }
         #endregion
 
         #region Implementation of IXmlSerialization

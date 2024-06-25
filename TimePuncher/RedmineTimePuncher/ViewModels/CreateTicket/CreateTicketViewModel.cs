@@ -43,8 +43,6 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
         [JsonIgnore]
         public ReadOnlyReactivePropertySlim<List<IssueStatus>> Statuss { get; set; }
-        [JsonIgnore]
-        public ReadOnlyReactivePropertySlim<List<MyUser>> Users { get; set; }
 
         [JsonIgnore]
         public ReactivePropertySlim<string> TicketNo { get; set; }
@@ -54,23 +52,15 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         public MyIssue Ticket { get; set; }
         public MemberViewModel Organizer { get; set; }
         public IssueStatus StatusUnderReview { get; set; }
-        public ReviewDetectionProcessSettingModel DetectionProcess { get; set; }
+        public DetectionProcessViewModel DetectionProcess { get; set; }
+        public ReviewMethodViewModel ReviewMethod { get; set; }
 
-        public ReviewNeedsFaceToFaceSettingModel NeedsFaceToFace { get; set; }
-
-        [JsonIgnore]
-        public ReadOnlyReactivePropertySlim<bool> NeedsSelectTime { get; set; }
-
-        public DateTime StartDateTime { get; set; }
-        public DateTime DueDateTime { get; set; }
         public bool NeedsCreateOutlookAppointment { get; set; }
-        [JsonIgnore]
-        public ReadOnlyReactivePropertySlim<bool> NeedsOutlookIntegration { get; set; }
         public bool NeedsGitIntegration { get; set; }
         public string MergeRequestUrl { get; set; }
 
         [JsonIgnore]
-        public TwinListBoxViewModel<MemberViewModel> ReviewerTwinList { get; set; }
+        public ReviewersTwinListViewModel ReviewerTwinList { get; set; }
         public ObservableCollection<MemberViewModel> Reviewers { get; set; }
         public List<MemberViewModel> AllReviewers { get; set; }
 
@@ -79,10 +69,9 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         public string Description { get; set; }
 
         [JsonIgnore]
-        public TwinListBoxViewModel<MemberViewModel> OperatorTwinList { get; set; }
+        public ReviewersTwinListViewModel OperatorTwinList { get; set; }
         public ObservableCollection<MemberViewModel> Operators { get; set; }
         public List<MemberViewModel> AllOperators { get; set; }
-
 
         [JsonIgnore]
         public ReactiveCommand GoToTicketCommand { get; set; }
@@ -155,76 +144,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             Reviewers = new ObservableCollection<MemberViewModel>();
             Operators = new ObservableCollection<MemberViewModel>();
 
-            var isFirst = true;
-            CompositeDisposable myDisposables = null;
-            parent.Redmine.CombineLatest(onTicketUpdated, (r, t) => (r, t)).SubscribeWithErr(p =>
-            {
-                if (p.r == null || p.t == null || !parent.Settings.CreateTicket.IsValid() || !p.r.CanUseAdminApiKey())
-                    return;
-
-                myDisposables?.Dispose();
-                myDisposables = new CompositeDisposable().AddTo(disposables);
-
-                AllReviewers = p.r.GetMemberships(p.t.Project.Id).Select(m => new MemberViewModel(m.User, parent.Settings.CreateTicket.IsRequired)).ToList();
-                AllOperators = p.r.GetMemberships(p.t.Project.Id).Select(m => new MemberViewModel(m.User, parent.Settings.RequestWork.IsRequired)).ToList();
-                if (!AllReviewers.Any() || !AllOperators.Any())
-                    throw new ApplicationException(Resources.ReviewErrMsgNoMemberAssgined);
-
-                // 開催者
-                Organizer = getValue(isFirst, prev,
-                    vm => AllReviewers.FirstOrDefault(m => m.User.Id == vm.Organizer?.User.Id),
-                    AllReviewers.FirstOrDefault(m => m.User.Id == p.t.AssignedTo.Id, null));
-
-                // レビューア
-                Reviewers.Clear();
-                ReviewerTwinList = new TwinListBoxViewModel<MemberViewModel>(AllReviewers, Reviewers).AddTo(myDisposables);
-                if (isFirst && prev != null && prev.Reviewers != null)
-                {
-                    foreach (var pre in prev.Reviewers)
-                    {
-                        var reviewer = AllReviewers.FirstOrDefault(r => r.User.Id == pre.User?.Id);
-                        if (reviewer != null)
-                        {
-                            reviewer.IsRequiredReviewer.Value = pre.IsRequired == null ?
-                                                                true :
-                                                                pre.IsRequired.IsTrue();
-                            ReviewerTwinList.ToItems.Add(reviewer);
-                        }
-                    }
-                }
-
-                // 作業者
-                Operators.Clear();
-                OperatorTwinList = new TwinListBoxViewModel<MemberViewModel>(AllOperators, Operators).AddTo(myDisposables);
-                if (isFirst && prev != null && prev.Operators != null)
-                {
-                    foreach (var pre in prev.Operators)
-                    {
-                        var operate = AllOperators.FirstOrDefault(r => r.User.Id == pre.User?.Id);
-                        if (operate != null)
-                        {
-                            operate.IsRequiredReviewer.Value = pre.IsRequired == null ?
-                                                                true :
-                                                                pre.IsRequired.IsTrue();
-                            OperatorTwinList.ToItems.Add(operate);
-                        }
-                    }
-                }
-
-                // 期日、開始日
-                StartDateTime = getValue(isFirst, prev, vm => vm.StartDateTime, DateTime.Today);
-                DueDateTime = getValue(isFirst, prev, vm => vm.DueDateTime, DateTime.Today.AddDays(3));
-                NeedsCreateOutlookAppointment = getValue(isFirst, prev, vm => vm.NeedsCreateOutlookAppointment, false);
-
-                // レビュー対象
-                MergeRequestUrl = getValue(isFirst, prev, vm => vm.MergeRequestUrl, "");
-                ReviewTarget = getValue(isFirst, prev, vm => vm.ReviewTarget, p.r.MarkupLang.CreateTicketLink(p.t));
-
-                // 説明
-                Description = getValue(isFirst, prev, vm => vm.Description, "");
-
-                isFirst = false;
-            }).AddTo(disposables);
+            // 開催中ステータス
+            Statuss = parent.Redmine.Select(r => CacheManager.Default.Statuss.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             this.ObserveProperty(a => MergeRequestUrl).Pairwise().Subscribe(p =>
             {
@@ -238,81 +159,41 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 else
                 {
                     var label = p.NewItem.Contains("gitlab") ? "Merge Request URL" : "Pull Request URL";
-                    var link = parent.Redmine.Value.MarkupLang.CreateLink(label, p.NewItem);
+                    var link = CacheManager.Default.MarkupLang.Value.CreateLink(label, p.NewItem);
                     ReviewTarget = ReviewTarget + $"{Environment.NewLine}{Environment.NewLine}{link}";
                 }
             });
 
-            // 開催中ステータス
-            Statuss = parent.Redmine.Select(r => r?.Statuss.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Statuss.Where(ss => ss != null).SubscribeWithErr(ss =>
+            ReviewMethod = new ReviewMethodViewModel(parent.Settings).AddTo(disposables);
+
+            // チケット更新時の処理
+            updateTicket(parent.Settings, prev, Ticket, true);
+            parent.Redmine.CombineLatest(onTicketUpdated, (r, t) => (r, t)).Skip(1).SubscribeWithErr(p =>
             {
-                if (!ss.Any())
-                    throw new ApplicationException(Resources.ReviewErrMsgNoStatusAvailable);
+                if (p.r == null || p.t == null || !parent.Settings.CreateTicket.IsValid() || !p.r.CanUseAdminApiKey())
+                    return;
 
-                StatusUnderReview = getValue(true, prev, vm => ss.FirstOrDefault(s => s.Id == vm.StatusUnderReview?.Id, ss[0]), ss.First());
-            });
+                updateTicket(parent.Settings, this, p.t, false);
+            }).AddTo(disposables);
 
+            // 設定更新時の処理
+            updateSettings(parent.Settings, prev);
             parent.ObserveProperty(a => a.Settings.CreateTicket).CombineLatest(
                 parent.ObserveProperty(a => a.Settings.TranscribeSettings),
-                parent.ObserveProperty(a => a.Settings.RequestWork), (c, _, __) => c).SubscribeWithErr(c =>
-            {
-                NeedsGitIntegration = c.NeedsGitIntegration;
-
-                // 検出工程
-                DetectionProcess = c.DetectionProcess;
-                if (!DetectionProcess.PossibleValues.Any())
+                parent.ObserveProperty(a => a.Settings.RequestWork), (_1, _2, _3) => (_1, _2, _3)).Skip(1).SubscribeWithErr(c =>
                 {
-                    DetectionProcess.IsEnabled = false;
-                }
-                else if (isFirst && prev != null && prev.DetectionProcess?.Value != null)
-                {
-                    var first = DetectionProcess.PossibleValues.FirstOrDefault(v => v != null && v.Value == prev.DetectionProcess?.Value.Value);
-                    if (first != null)
-                        DetectionProcess.Value = first;
-                }
-
-                // レビュースタイル
-                NeedsFaceToFace = c.NeedsFaceToFace;
-                if (isFirst && prev != null && prev.NeedsFaceToFace?.Value != null)
-                {
-                    var first = NeedsFaceToFace.PossibleValues.FirstOrDefault(v => v != null && v.Value == prev.NeedsFaceToFace?.Value.Value);
-                    if (first != null)
-                        NeedsFaceToFace.Value = first;
-                }
-                NeedsFaceToFace.ObserveProperty(n => n.Value).SubscribeWithErr(v =>
-                {
-                    if (v != null && v.Value == MyCustomFieldPossibleValue.NO)
-                    {
-                        StartDateTime = StartDateTime.GetDateOnly();
-                        DueDateTime = DueDateTime.GetDateOnly();
-                    }
-                });
-                NeedsOutlookIntegration = NeedsFaceToFace.ObserveProperty(n => n.Value)
-                    .Select(_=> c.NeedsOutlookIntegration && NeedsFaceToFace.IsTrue())
-                    .ToReadOnlyReactivePropertySlim();
-
-                if (!isFirst)
-                    onTicketUpdated.ForceNotify();
-            });
-
-            NeedsSelectTime = this.ObserveProperty(a => a.NeedsFaceToFace)
-                .CombineLatest(this.ObserveProperty(a => a.NeedsFaceToFace.Value), (setting, value) => (setting, value))
-                .Select(p =>
-            {
-                if (!p.setting.IsEnabled)
-                    return false;
-                else
-                    return (p.value == null || p.value.Value == MyCustomFieldPossibleValue.YES) ? true : false;
-            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+                    updateSettings(parent.Settings, this);
+                }).AddTo(disposables);
 
             // タイトル
             onTicketUpdated.CombineLatest(this.ObserveProperty(a => a.DetectionProcess),
-                                          this.ObserveProperty(a => a.DetectionProcess.Value), (t, d, v) => (t, d, v))
+                                          this.ObserveProperty(a => a.DetectionProcess.Model.Value), (t, d, v) => (t, d, v))
                 .Where(a => a.t != null).SubscribeWithErr(p =>
             {
-                var processName = (p.d.IsEnabled && p.v != null) ? p.v.Label : "";
-                RawTitle = getValue(RawTitle == null, prev, vm => vm.RawTitle, $"{processName}{Resources.Review} : {p.t.Subject}");
+                var processName = (p.d.Model.IsEnabled && p.v != null) ? p.v.Label : "";
+                RawTitle = RawTitle == null && prev != null && !string.IsNullOrEmpty(prev.RawTitle) ?
+                           prev.RawTitle :
+                           $"{processName}{Resources.Review} : {p.t.Subject}";
             }).AddTo(disposables);
 
             GoToTicketCommand = new[] { IsBusy.Inverse(), onTicketUpdated.Select(t => t != null) }.CombineLatestValuesAreAllTrue()
@@ -330,7 +211,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                          else
                             return null;
                     }),
-                    this.ObserveProperty(a => a.StartDateTime).CombineLatest(this.ObserveProperty(a => a.DueDateTime), (s, d) => s <= d ? null : Resources.ReviewErrMsgInvalidTimePeriod),
+                    ReviewMethod.IsValidDuration,
                     this.ObserveProperty(a => a.CreateMode).StartWithDefault().CombineLatest(
                         this.ObserveProperty(a => a.Organizer).StartWithDefault(),
                         Reviewers.CollectionChangedAsObservable().StartWithDefault(),
@@ -348,7 +229,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                                return Operators.Any() ? null : Resources.ReviewErrMsgSelectOperator;
                            }
                        }),
-                }.CombineLatestFirstOrDefault(a => a != null);
+                }.CombineLatestFirstOrDefault(a => a != null).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             OrgnizeReviewCommand = new AsyncCommandBase(
                 Resources.RibbonCmdCreateReviewTicket, Resources.icons8_review,
@@ -369,15 +250,15 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     var exception = createOutlookAppointment(
                         $"({Resources.ReviewForShcheduleAdjust}) {RawTitle}",
                         string.Format(Resources.ReviewMsgForAdjustSchedule, ApplicationInfo.Title),
-                        await Task.Run(() => parent.Redmine.Value.Users.Value),
+                        CacheManager.Default.Users.Value,
                         i =>
                         {
                             i.CloseEvent += (ref bool cancel) =>
                             {
                                 App.Current.Dispatcher.Invoke(() =>
                                 {
-                                    StartDateTime = i.Start;
-                                    DueDateTime = i.End;
+                                    ReviewMethod.StartDateTime = i.Start;
+                                    ReviewMethod.DueDateTime = i.End;
                                 });
                             };
                         });
@@ -386,40 +267,96 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 }).AddTo(disposables);
         }
 
-        private DateTime getValue(bool needsRestore, CreateTicketViewModel prev, Func<CreateTicketViewModel, DateTime> getter, DateTime defaultValue)
+        private CompositeDisposable myDisposables { get; set; }
+        private void updateTicket(SettingsModel settings, CreateTicketViewModel prev, MyIssue target, bool isFirst)
         {
-            if (needsRestore && prev != null)
+            if (target == null)
             {
-                var v = getter.Invoke(prev);
-                if (v != default(DateTime))
-                    return v;
+                if (prev != null && prev.Ticket != null)
+                    target = prev.Ticket;
+                else
+                    return;
             }
 
-            return defaultValue;
+            myDisposables?.Dispose();
+            myDisposables = new CompositeDisposable().AddTo(disposables);
+
+            AllReviewers = CacheManager.Default.ProjectMemberships.Value[target.Project.Id].Select(m => new MemberViewModel(m.User, settings.CreateTicket.IsRequired)).ToList();
+            AllOperators = CacheManager.Default.ProjectMemberships.Value[target.Project.Id].Select(m => new MemberViewModel(m.User, settings.CreateTicket.IsRequired)).ToList();
+            if (!AllReviewers.Any() || !AllOperators.Any())
+                throw new ApplicationException(Resources.ReviewErrMsgNoMemberAssgined);
+
+            if (prev != null)
+            {
+                // 開催者
+                if (isFirst && AllReviewers.Any(m => m.User.Id == prev.Organizer?.User.Id))
+                    Organizer = AllReviewers.First(m => m.User.Id == prev.Organizer?.User.Id);
+                else
+                    Organizer = AllReviewers.FirstOrDefault(m => m.User.Id == target.AssignedTo.Id, null);
+
+                // レビューア
+                var prevReviewers = prev.Reviewers.ToList();
+                Reviewers.Clear();
+                ReviewerTwinList = new ReviewersTwinListViewModel(AllReviewers, Reviewers, prevReviewers).AddTo(myDisposables);
+
+                // 作業者
+                var prevOperators = prev.Reviewers.ToList();
+                Operators.Clear();
+                OperatorTwinList = new ReviewersTwinListViewModel(AllOperators, Operators, prevOperators).AddTo(myDisposables);
+
+                // 期日、開始日
+                ReviewMethod.SetPreviousDuration(prev.ReviewMethod);
+                NeedsCreateOutlookAppointment = prev.NeedsCreateOutlookAppointment;
+
+                // レビュー対象
+                MergeRequestUrl = isFirst ? prev.MergeRequestUrl : "";
+                ReviewTarget = isFirst ? prev.ReviewTarget : CacheManager.Default.MarkupLang.Value.CreateTicketLink(target);
+
+                // 説明
+                Description = isFirst ? prev.Description : "";
+
+                // 開催中ステータス
+                StatusUnderReview = prev.StatusUnderReview ?? CacheManager.Default.Statuss.Value.FirstOrDefault();
+            }
+            else
+            {
+                Organizer = AllReviewers.FirstOrDefault(m => m.User.Id == target.AssignedTo.Id, null);
+
+                Reviewers.Clear();
+                ReviewerTwinList = new ReviewersTwinListViewModel(AllReviewers, Reviewers).AddTo(myDisposables);
+
+                Operators.Clear();
+                OperatorTwinList = new ReviewersTwinListViewModel(AllOperators, Operators).AddTo(myDisposables);
+
+                ReviewMethod.ResetDuration(settings);
+                NeedsCreateOutlookAppointment = false;
+
+                MergeRequestUrl = "";
+                ReviewTarget = CacheManager.Default.MarkupLang.Value.CreateTicketLink(target);
+
+                Description = "";
+
+                StatusUnderReview = CacheManager.Default.Statuss.Value.FirstOrDefault();
+            }
         }
 
-        private bool getValue(bool needsRestore, CreateTicketViewModel prev, Func<CreateTicketViewModel, bool> getter, bool defaultValue)
+        private CompositeDisposable myDisposables2 { get; set; }
+        private void updateSettings(SettingsModel settings, CreateTicketViewModel prev)
         {
-            if (needsRestore && prev != null)
-            {
-                var v = getter.Invoke(prev);
-                if (v != default(bool))
-                    return v;
-            }
+            myDisposables2?.Dispose();
+            myDisposables2 = new CompositeDisposable().AddTo(disposables);
 
-            return defaultValue;
-        }
+            NeedsGitIntegration = settings.CreateTicket.NeedsGitIntegration;
 
-        private T getValue<T>(bool needsRestore, CreateTicketViewModel prev, Func<CreateTicketViewModel, T> getter, T defaultValue) where T : class
-        {
-            if (needsRestore && prev != null)
-            {
-                var v = getter.Invoke(prev);
-                if (v != null)
-                    return v;
-            }
+            // 検出工程
+            DetectionProcess = new DetectionProcessViewModel(settings.CreateTicket.DetectionProcess).AddTo(myDisposables2);
+            if (prev != null)
+                DetectionProcess.SetPreviousModel(prev.DetectionProcess?.Model);
 
-            return defaultValue;
+            // レビュースタイル
+            ReviewMethod.Setup(settings);
+            if (prev != null)
+                ReviewMethod.SetPreviousModel(prev.ReviewMethod?.Model);
         }
 
         private async Task createReviewTicketAsync(RedmineManager redmine,SettingsModel settings)
@@ -440,7 +377,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             }
 
             // 設定のトラッカーが選択中のチケットのプロジェクトで有効かどうかのチェック
-            var projs = await Task.Run(() => redmine.Projects.Value);
+            var projs = CacheManager.Default.Projects.Value;
             var curProj = projs.First(proj => proj.Id == Ticket.Project.Id);
 
             var disableTrackers = new List<(string TrackerName, string TicketType)>();
@@ -456,51 +393,38 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             // 開催チケットの作成
             var p = Ticket.CreateChildTicket();
-            p.Author = redmine.MyUser.ToIdentifiableName();
+            p.Author = CacheManager.Default.MyUser.Value.ToIdentifiableName();
             p.AssignedTo = Organizer.ToIdentifiableName();
             p.Subject = RawTitle;
             p.Tracker = openTracker;
-            p.StartDate = StartDateTime.GetDateOnly();
-            p.DueDate = DueDateTime.GetDateOnly();
+            p.StartDate = ReviewMethod.GetStart().GetDateOnly();
+            p.DueDate = ReviewMethod.GetDue().GetDateOnly();
             p.Description = "";
             p.Status = settings.CreateTicket.OpenStatus.ToIdentifiableName();
-            if (NeedsFaceToFace.IsEnabled && NeedsFaceToFace.NeedsSaveToCustomField)
-            {
-                if (NeedsFaceToFace.GetIssueCustomField(out var cf))
-                {
-                    p.CustomFields = new List<IssueCustomField>() { cf };
-                }
-            }
+            var copiedCfs = settings.ReviewCopyCustomFields.GetCopiedCustomFields(Ticket);
+            p.CustomFields = createCustomFields(copiedCfs);
 
             var openTicket = new MyIssue(redmine.CreateTicket(p));
 
             // 開催チケットの説明を更新
-            var detectProcPrg = DetectionProcess.IsEnabled ? redmine.MarkupLang.CreateParagraph(Resources.ReviewTargetProcess, DetectionProcess.Value.Label) : "";
-            var reviewMethodPrg = "";
-            if (NeedsFaceToFace.IsEnabled)
-            {
-                var label = $"{NeedsFaceToFace.Value.Label}";
-                if (NeedsFaceToFace.IsTrue())
-                    label += $" ({StartDateTime.ToString("yyyy/MM/dd HH:mm")} - {DueDateTime.ToString("yyyy/MM/dd HH:mm")})";
-
-                reviewMethodPrg = redmine.MarkupLang.CreateParagraph(Resources.ReviewReviewMethod, label);
-            }
-            var targetPrg = redmine.MarkupLang.CreateParagraph(Resources.ReviewDelivarables, ReviewTarget.SplitLines());
+            var detectProcPrg = DetectionProcess.CreatePrgForTicket();
+            var reviewMethodPrg = ReviewMethod.CreatePrgForTicket();
+            var targetPrg = CacheManager.Default.MarkupLang.Value.CreateParagraph(Resources.ReviewDelivarables, ReviewTarget.SplitLines());
             var createPointPrg = createPointParagraph(redmine, settings, openTicket, pointTracker, null);
             var showAllUrl = settings.ReviewIssueList.CreateShowAllPointIssuesUrl(redmine, openTicket.RawIssue, pointTracker.Id);
-            var showAllPointsPrg = redmine.MarkupLang.CreateParagraph(Resources.ReviewPointsList, redmine.MarkupLang.CreateLink(Resources.ReviewMsgReferPointsAtHere, showAllUrl));
+            var showAllPointsPrg = CacheManager.Default.MarkupLang.Value.CreateParagraph(Resources.ReviewPointsList, CacheManager.Default.MarkupLang.Value.CreateLink(Resources.ReviewMsgReferPointsAtHere, showAllUrl));
             var description = createDescription(detectProcPrg, reviewMethodPrg, targetPrg, createPointPrg, showAllPointsPrg, openTransPrg);
             if (NeedsGitIntegration && !string.IsNullOrEmpty(MergeRequestUrl))
             {
                 description += $"{Environment.NewLine}{Environment.NewLine}";
-                description += redmine.MarkupLang.CreateCollapse("Do not edit the followings.", $"_merge_request_url={MergeRequestUrl}");
+                description += CacheManager.Default.MarkupLang.Value.CreateCollapse("Do not edit the followings.", $"_merge_request_url={MergeRequestUrl}");
             }
             openTicket.RawIssue.Description = description;
             redmine.UpdateTicket(openTicket.RawIssue);
 
             // 依頼チケットの作成
             var c = openTicket.CreateChildTicket();
-            c.Author = redmine.MyUser.ToIdentifiableName();
+            c.Author = CacheManager.Default.MyUser.Value.ToIdentifiableName();
             c.Tracker = requestTracker;
             c.Status = settings.CreateTicket.DefaultStatus.ToIdentifiableName();
 
@@ -508,7 +432,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             {
                 c.AssignedTo = r.ToIdentifiableName();
                 c.Subject = $"{RawTitle} {r.GetPostFix()}";
-                c.CustomFields = r.GetCustomFieldIfNeeded();
+                c.CustomFields = createCustomFields(copiedCfs, r);
                 c.Description = createDescription(
                     string.IsNullOrEmpty(Description) ? Resources.ReviewPleaseFollwings : Description,
                     detectProcPrg,
@@ -522,27 +446,29 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             // Outlook への予定の追加
             System.Exception failedToCreateAppointment = null;
-            if (NeedsOutlookIntegration.Value && NeedsCreateOutlookAppointment)
+            if (ReviewMethod.NeedsOutlookIntegration.Value && NeedsCreateOutlookAppointment)
             {
                 var createPointUrl = redmine.CreatePointIssueURL(
                                         openTicket.RawIssue,
                                         pointTracker.Id,
-                                        DetectionProcess.GetQueryString(),
-                                        null);
+                                        DetectionProcess.Model.GetQueryString(),
+                                        null,
+                                        ReviewMethod.Model.GetQueryString(),
+                                        settings.ReviewCopyCustomFields.GetCopiedCustomFieldQuries(Ticket));
                 var refKey = settings.Appointment.Outlook.RefsKeywords.Split(",".ToCharArray()).FirstOrDefault();
                 failedToCreateAppointment = createOutlookAppointment(
                     RawTitle,
                     createDescription(
                         string.IsNullOrEmpty(Description) ? Resources.ReviewPleaseFollwings : Description,
-                        DetectionProcess.IsEnabled ? MarkupLangType.None.CreateParagraph(Resources.ReviewTargetProcess, DetectionProcess.Value.Label) : "",
-                        NeedsFaceToFace.IsEnabled ? MarkupLangType.None.CreateParagraph(Resources.ReviewReviewMethod, NeedsFaceToFace.Value.Label) : "",
+                        DetectionProcess.CreatePrgForOutlook(),
+                        ReviewMethod.CreatePrgForOutlook(),
                         MarkupLangType.None.CreateParagraph(Resources.SettingsReviOpenTicket, openTicket.Url),
                         MarkupLangType.None.CreateParagraph(Resources.ReviewTargetIssue, Ticket.Url),
                         MarkupLangType.None.CreateParagraph(Resources.ReviewPointsAdd, createPointUrl),
                         MarkupLangType.None.CreateParagraph(Resources.ReviewPointsList, showAllUrl),
                         Organizer.Name,
                         refKey != null ? $"{refKey} #{Ticket.Id}" : ""),
-                    await Task.Run(() => redmine.Users.Value),
+                    CacheManager.Default.Users.Value,
                     i => i.Save());
             }
 
@@ -571,20 +497,22 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
         private string createPointParagraph(RedmineManager redmine, SettingsModel settings, MyIssue parent, IdentifiableName pointTracker, MemberViewModel reviewer)
         {
-            var detectionProcess = DetectionProcess.GetQueryString();
+            var detectionProcess = DetectionProcess.Model.GetQueryString();
             var saveReviewer = reviewer != null ? settings.CreateTicket.SaveReviewer.GetQueryString(reviewer.Id.ToString()) : null;
-            var createPointUrl = redmine.CreatePointIssueURL(parent.RawIssue, pointTracker.Id, detectionProcess, saveReviewer);
-            var createLink = redmine.MarkupLang.CreateLink(Resources.ReviewMsgAddPointAtHere, createPointUrl);
+            var reviewMethod = ReviewMethod.Model.GetQueryString();
+            var cfQueries = settings.ReviewCopyCustomFields.GetCopiedCustomFieldQuries(Ticket);
+            var createPointUrl = redmine.CreatePointIssueURL(parent.RawIssue, pointTracker.Id, detectionProcess, saveReviewer, reviewMethod, cfQueries);
+            var createLink = CacheManager.Default.MarkupLang.Value.CreateLink(Resources.ReviewMsgAddPointAtHere, createPointUrl);
             if (settings.CreateTicket.SaveReviewer.IsEnabled)
             {
                 var setReviewerMsg = reviewer != null ?
                     string.Format(Resources.ReviewMsgPointer, settings.CreateTicket.SaveReviewer.CustomField.Name, reviewer.Name) :
                     string.Format(Resources.ReviewMsgPointerSet, settings.CreateTicket.SaveReviewer.CustomField.Name);
-                return redmine.MarkupLang.CreateParagraph(Resources.ReviewPoints, createLink, setReviewerMsg);
+                return CacheManager.Default.MarkupLang.Value.CreateParagraph(Resources.ReviewPoints, createLink, setReviewerMsg);
             }
             else
             {
-                return redmine.MarkupLang.CreateParagraph(Resources.ReviewPoints, createLink);
+                return CacheManager.Default.MarkupLang.Value.CreateParagraph(Resources.ReviewPoints, createLink);
             }
         }
 
@@ -606,8 +534,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             }
 
             var item = outlook.CreateItem(OlItemType.olAppointmentItem) as AppointmentItem;
-            item.Start = StartDateTime;
-            item.End = DueDateTime;
+            item.Start = ReviewMethod.StartDateTime;
+            item.End = ReviewMethod.DueDateTime;
             item.AllDayEvent = false;
             item.Subject = subject;
             item.Body = body;
@@ -643,11 +571,11 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
         private string[] transcribeDescription(TranscribeSettingModel settings, RedmineManager redmine)
         {
-            if (!settings.IsEnabled || redmine.MarkupLang == MarkupLangType.None)
+            if (!settings.IsEnabled || !CacheManager.Default.MarkupLang.Value.CanTranscribe())
                 return new string[] { };
 
             var transSetting = CreateMode == CreateTicketMode.Review ?
-                settings.Items.FirstOrDefault(i => i.NeedsTranscribe(Ticket, DetectionProcess.IsEnabled ? DetectionProcess.Value : TranscribeSettingModel.NOT_SPECIFIED_PROCESS)) :
+                settings.Items.FirstOrDefault(i => i.NeedsTranscribe(Ticket, DetectionProcess.Model.IsEnabled ? DetectionProcess.Model.Value : TranscribeSettingModel.NOT_SPECIFIED_PROCESS)) :
                 settings.Items.FirstOrDefault(i => i.NeedsTranscribe(Ticket));
             if (transSetting == null)
                 return new string[] { };
@@ -664,7 +592,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 throw new ApplicationException(string.Format(Resources.ReviewErrMsgFailedFindWikiPage, transSetting.WikiPage.Title));
             }
 
-            return wiki.GetSectionLines(redmine.MarkupLang, transSetting.Header, transSetting.IncludesHeader).Select(l => l.Text).ToArray();
+            return wiki.GetSectionLines(CacheManager.Default.MarkupLang.Value, transSetting.Header, transSetting.IncludesHeader).Select(l => l.Text).ToArray();
         }
 
         private async Task createRequestsTicketAsync(RedmineManager redmine, SettingsModel settings)
@@ -683,7 +611,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             }
 
             // 設定のトラッカーが選択中のチケットのプロジェクトで有効かどうかのチェック
-            var projs = await Task.Run(() => redmine.Projects.Value);
+            var projs = CacheManager.Default.Projects.Value;
             var curProj = projs.First(proj => proj.Id == Ticket.Project.Id);
             var disableTrackers = new List<(string TrackerName, string TicketType)>();
             if (!settings.CreateTicket.RequestTracker.TryGetIdNameOrDefault(curProj, Ticket.RawIssue.Tracker, out var requestTracker))
@@ -693,16 +621,19 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             // 依頼チケットの作成
             var c = Ticket.CreateChildTicket();
-            c.Author = redmine.MyUser.ToIdentifiableName();
+            c.Author = CacheManager.Default.MyUser.Value.ToIdentifiableName();
             c.Tracker = requestTracker;
+            c.StartDate = ReviewMethod.StartDate;
+            c.DueDate = ReviewMethod.DueDate;
 
+            var copiedCfs = settings.ReviewCopyCustomFields.GetCopiedCustomFields(Ticket);
             foreach (var o in Operators)
             {
                 c.AssignedTo = o.ToIdentifiableName();
                 c.Subject = $"{Resources.AppModeTicketCreaterRequestWork} : {Ticket.Subject} {o.GetPostFix()}";
-                c.CustomFields = o.GetCustomFieldIfNeeded();
+                c.CustomFields = createCustomFields(copiedCfs, o);
                 c.Description = createDescription(
-                    string.IsNullOrEmpty(Description) ? string.Format(Resources.ReviewMsgRequestFollowings, redmine.MarkupLang.CreateTicketLink(Ticket)) : Description,
+                    string.IsNullOrEmpty(Description) ? string.Format(Resources.ReviewMsgRequestFollowings, CacheManager.Default.MarkupLang.Value.CreateTicketLink(Ticket)) : Description,
                     requestTransPrg);
                 redmine.CreateTicket(c);
             }
@@ -712,6 +643,27 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             redmine.UpdateTicket(Ticket.RawIssue);
 
             Process.Start(Ticket.Url);
+        }
+
+        private List<IssueCustomField> createCustomFields(List<IssueCustomField> copied, MemberViewModel reviewer = null)
+        {
+            var results = new List<IssueCustomField>();
+
+            if (copied != null)
+                results.AddRange(copied);
+
+            if (DetectionProcess.Model.GetIssueCustomFieldIfNeeded(out var proc))
+                results.Add(proc);
+
+            if (ReviewMethod.Model.GetIssueCustomFieldIfNeeded(out var face))
+                results.Add(face);
+
+            if (reviewer != null && reviewer.IsRequired.GetIssueCustomFieldIfNeeded(out var requierd))
+                results.Add(requierd);
+
+            // 空のリストを CustomFields に設定すると以下の箇所で例外が発生するため、空の場合は null を返す
+            // Redmine.Net.Api.Extensions.CollectionExtensions の Dump メソッド
+            return results.Count > 0 ? results : null;
         }
 
         public override void OnWindowClosed()

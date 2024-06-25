@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTableEditor.Models.FileSettings
 {
-    public abstract class IssueSettingsModelBase : LibRedminePower.Models.Bases.ModelBase
+    public abstract class IssueSettingsModelBase : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public ObservableCollection<FieldModel> Properties { get; set; }
 

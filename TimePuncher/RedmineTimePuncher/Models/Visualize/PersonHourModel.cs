@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models.Visualize
 {
-    public class PersonHourModel<T> : LibRedminePower.Models.Bases.ModelBase where T : IPeriod
+    public class PersonHourModel<T> : LibRedminePower.Models.Bases.ModelBaseSlim where T : IPeriod
     {
         public bool IsEnabled { get; set; }
         public List<T> Times { get; set; } = new List<T>();

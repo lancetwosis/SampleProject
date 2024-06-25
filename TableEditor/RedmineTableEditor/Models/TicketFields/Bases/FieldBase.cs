@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTableEditor.Models.TicketFields.Bases
 {
-    public abstract class FieldBase : LibRedminePower.Models.Bases.ModelBase
+    public abstract class FieldBase : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public string Name { get; }
         public bool IsEdited { get; set; }

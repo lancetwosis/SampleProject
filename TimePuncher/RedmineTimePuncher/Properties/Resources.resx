@@ -393,7 +393,7 @@ Please set them correctly in the settings screen.</value>
     <value>Please select a slot of spent time.</value>
   </data>
   <data name="msgErrSelectAppointmentsOfSpentTime" xml:space="preserve">
-    <value>Please select an appointment of spent time.</value>
+    <value>Please select an appointment of spent time tied to an active project.</value>
   </data>
   <data name="LastUpdateTime" xml:space="preserve">
     <value>Last Update Time of {0}</value>
@@ -1959,5 +1959,22 @@ Do you want to continue creating tickets?</value>
   </data>
   <data name="SettingsCategoryReviewIssueList" xml:space="preserve">
     <value>Edit Point List</value>
+  </data>
+  <data name="enumProjectStatusTypeNotActive" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="msgContainsNotActiveProject" xml:space="preserve">
+    <value>Failed to execute because there are time entries associated with the inactive project.
+
+{0}</value>
+  </data>
+  <data name="SettingsCategoryCopyCustomFields" xml:space="preserve">
+    <value>Copy Custom Fields</value>
+  </data>
+  <data name="SettingsReviCopyCustomFieldMsg" xml:space="preserve">
+    <value>Please select the custom field you wish to copy from the target issue.</value>
+  </data>
+  <data name="SettingsReviMethodMsg" xml:space="preserve">
+    <value>Please check the items to be performed for each review method.</value>
   </data>
 </root>

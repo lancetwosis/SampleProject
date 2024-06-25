@@ -2,7 +2,7 @@
 
 namespace RedmineTableEditor.Models.FileSettings
 {
-    public class AssignedToColorModel : LibRedminePower.Models.Bases.ModelBase
+    public class AssignedToColorModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public int Order { get; set; }
         public string Name { get; set; }

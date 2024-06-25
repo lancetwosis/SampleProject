@@ -4,6 +4,7 @@ using Reactive.Bindings.Extensions;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
@@ -27,7 +28,7 @@ namespace RedmineTimePuncher.Models.Settings
         public MyTracker OpenTracker { get; set; }
         public IdName OpenStatus { get; set; }
         public IdName DefaultStatus { get; set; }
-        public ReviewNeedsFaceToFaceSettingModel NeedsFaceToFace { get; set; }
+        public ReviewMethodSettingModel ReviewMethod { get; set; }
 
         public MyTracker RequestTracker { get; set; }
         public ReviewIsRequiredSettingModel IsRequired { get; set; }
@@ -45,7 +46,7 @@ namespace RedmineTimePuncher.Models.Settings
             IsBusy = new ReactivePropertySlim<string>().AddTo(disposables);
 
             DetectionProcess = new ReviewDetectionProcessSettingModel().AddTo(disposables);
-            NeedsFaceToFace = new ReviewNeedsFaceToFaceSettingModel().AddTo(disposables);
+            ReviewMethod = new ReviewMethodSettingModel().AddTo(disposables);
             IsRequired = new ReviewIsRequiredSettingModel().AddTo(disposables);
             SaveReviewer = new ReviewSaveReviewerSettingModel().AddTo(disposables);
         }
@@ -56,12 +57,13 @@ namespace RedmineTimePuncher.Models.Settings
             {
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
-                var trackers = await Task.Run(() => r.Trackers.Value);
-                var customFields = await Task.Run(() => r.CustomFields.Value);
-                var statuses = await Task.Run(() => r.Statuss.Value);
+                
+                var trackers = CacheManager.Default.GetTemporaryTrackers();
+                var customFields = CacheManager.Default.GetTemporaryCustomFields();
+                var statuses = CacheManager.Default.GetTemporaryStatuss();
 
                 if (!trackers.Any())
-                    throw new ApplicationException(Properties.Resources.SettingsReviErrMsgNoTrackers);
+                    throw new ApplicationException(Resources.SettingsReviErrMsgNoTrackers);
 
                 Trackers = trackers.Select(t => new MyTracker(t)).ToList();
                 Trackers.Insert(0, MyTracker.USE_PARENT_TRACKER);
@@ -78,7 +80,7 @@ namespace RedmineTimePuncher.Models.Settings
                 var listCustomFields = customFields.Where(c => c.IsIssueType() && c.IsListFormat()).Select(c => new MyCustomField(c)).ToList();
                 var userCustomFields = customFields.Where(c => c.IsIssueType() && c.IsUserFormat()).Select(c => new MyCustomField(c)).ToList();
 
-                NeedsFaceToFace.Update(boolCustomFields);
+                ReviewMethod.Update(listCustomFields);
                 IsRequired.Update(boolCustomFields);
                 DetectionProcess.Update(listCustomFields);
                 SaveReviewer.Update(userCustomFields);

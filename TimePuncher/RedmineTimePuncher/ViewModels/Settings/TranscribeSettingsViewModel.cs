@@ -3,6 +3,7 @@ using LibRedminePower.Extentions;
 using LibRedminePower.Helpers;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using RedmineTimePuncher.Extentions;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Properties;
@@ -28,8 +29,8 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public TranscribeSettingsViewModel(CreateTicketSettingsModel createTicket, TranscribeSettingsModel transcribe,
             ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(transcribe)
         {
-            OpenTranscribe = new TranscribeSettingViewModel(transcribe.OpenTranscribe, redmine, transcribe.IsBusy).AddTo(disposables);
-            RequestTranscribe = new TranscribeSettingViewModel(transcribe.RequestTranscribe, redmine, transcribe.IsBusy).AddTo(disposables);
+            OpenTranscribe = new TranscribeSettingViewModel(redmine, transcribe.IsBusy).AddTo(disposables);
+            RequestTranscribe = new TranscribeSettingViewModel(redmine, transcribe.IsBusy).AddTo(disposables);
 
             redmine.Where(a => a != null).SubscribeWithErr(async r =>
             {
@@ -43,7 +44,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 }
             }).AddTo(disposables);
 
-            var canUseTranscribe = redmine.Select(r => (r != null && r.MarkupLang == MarkupLangType.None) ? Resources.SettingsReviErrMsgCannotUseTranscribe : null);
+            var canUseTranscribe = redmine.Select(r => (r != null && !CacheManager.Default.GetTemporaryMarkupLang().CanTranscribe()) ? Resources.SettingsReviErrMsgCannotUseTranscribe : null);
             ErrorMessage = new IObservable<string>[] { errorMessage, transcribe.IsBusy, canUseTranscribe }
                 .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 

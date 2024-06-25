@@ -96,7 +96,7 @@ namespace RedmineTimePuncher.ViewModels
 
             // 各種マネージャーを作成する。
             Outlook = new OutlookManager(Settings.ObserveProperty(a => a.Appointment.Outlook).ToReadOnlyReactivePropertySlim().AddTo(disposables)).AddTo(disposables);
-            Teams = new TeamsManager(Settings).AddTo(disposables);
+            Teams = new TeamsManager(Settings);
             Redmine = new ReactivePropertySlim<RedmineManager>().AddTo(disposables);
             ErrorMessage = new TextNotifier().AddTo(disposables);
             Settings.ObserveProperty(a => a.Redmine).SubscribeWithErr(async s =>
@@ -109,26 +109,15 @@ namespace RedmineTimePuncher.ViewModels
                         {
                             var manager = new RedmineManager(s);
                             ErrorMessage.Value = null;
-                            await manager.CheckConnectAsync();
 
-                            // すぐに必要にならない情報なので、裏で取得しておく。
-                            MyIssue.PrioritiesTask = Task.Run(() => manager.Priorities.Value);
-                            MyIssue.StatussTask = Task.Run(() => manager.Statuss.Value);
-                            MyIssue.TrakersTask = Task.Run(() => manager.Trackers.Value);
+                            CacheManager.Default.UpdateCacheIfNeeded(manager, s);
 
-                            // ユーザ設定に自分自身が設定されていたら削除する
-                            if (Settings.User.Items.Any(u => u.Id == manager.MyUser.Id))
-                            {
-                                var userSettings = Settings.User.Clone();
-                                var self = userSettings.Items.First(u => u.Id == manager.MyUser.Id);
-                                userSettings.Items.Remove(self);
-                                Settings.User = userSettings;
-                                Settings.Save();
-                            }
+                            // TODO: すぐに必要にならない情報なので、裏で取得しておく。RP を Subscribe する対応の時に修正すること
+                            MyIssue.TrakersTask = Task.Run(() => CacheManager.Default.Trackers.Value);
+                            MyIssue.StatussTask = Task.Run(() => CacheManager.Default.Statuss.Value);
+                            MyIssue.PrioritiesTask = Task.Run(() => CacheManager.Default.Priorities.Value);
 
                             Redmine.Value = manager;
-
-                            await Input.ReloadIfNeededAsync();
                         }
                         catch (Exception ex)
                         {
@@ -260,6 +249,8 @@ namespace RedmineTimePuncher.ViewModels
                             Settings.CreateTicket = clone.CreateTicket;
                         if (Settings.ReviewIssueList.ToJson() != clone.ReviewIssueList.ToJson())
                             Settings.ReviewIssueList = clone.ReviewIssueList;
+                        if (Settings.ReviewCopyCustomFields.ToJson() != clone.ReviewCopyCustomFields.ToJson())
+                            Settings.ReviewCopyCustomFields = clone.ReviewCopyCustomFields;
                         if (Settings.TranscribeSettings.ToJson() != clone.TranscribeSettings.ToJson())
                             Settings.TranscribeSettings = clone.TranscribeSettings;
                         if (Settings.RequestWork.ToJson() != clone.RequestWork.ToJson())
@@ -292,7 +283,6 @@ namespace RedmineTimePuncher.ViewModels
                 {
                     SelectedIndex.Value = Properties.Settings.Default.LastSelectedIndex;
                 }
-
             }).AddTo(disposables);
 
             WindowClosingEventCommand = new ReactiveCommand<CancelEventArgs>().WithSubscribe(e =>
@@ -303,6 +293,8 @@ namespace RedmineTimePuncher.ViewModels
             WindowClosedEventCommand = new ReactiveCommand<EventArgs>().WithSubscribe(_ =>
             {
                 Logger.Info("WindowClosedEventCommand was started.");
+
+                CacheManager.Default.SaveCache(Redmine.Value, Settings.Redmine);
 
                 Functions.ToList().ForEach(f => f.OnWindowClosed());
 

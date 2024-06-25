@@ -14,7 +14,7 @@ namespace RedmineTimePuncher.Models.Settings
         {
             PossibleValues.Add(new MyCustomFieldPossibleValue(Properties.Resources.ReviewReviewerRequired, true, true));
             PossibleValues.Add(new MyCustomFieldPossibleValue(Properties.Resources.ReviewReviewerOptional, false));
-            Value = GetDefaultValue();
+            Value = getDefaultValue();
         }
 
         public override void Update(List<MyCustomField> possibleCustomFields)

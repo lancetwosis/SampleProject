@@ -15,7 +15,7 @@ using System.Windows.Media;
 
 namespace RedmineTimePuncher.Models.Settings
 {
-    public class CategorySettingModel : LibRedminePower.Models.Bases.ModelBase
+    public class CategorySettingModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public int Id { get; set; }
         public string Name => TimeEntry.Name;

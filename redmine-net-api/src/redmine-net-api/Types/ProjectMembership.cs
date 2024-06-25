@@ -39,11 +39,12 @@ namespace Redmine.Net.Api.Types
     public sealed class ProjectMembership : Identifiable<ProjectMembership>
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// Gets or sets the project.
         /// </summary>
         /// <value>The project.</value>
-        public IdentifiableName Project { get; internal set; }
+        public IdentifiableName Project { get; set; }
 
         /// <summary>
         /// Gets or sets the user.
@@ -59,7 +60,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The group.
         /// </value>
-        public IdentifiableName Group { get; internal set; }
+        public IdentifiableName Group { get; set; }
 
         /// <summary>
         /// Gets or sets the type.

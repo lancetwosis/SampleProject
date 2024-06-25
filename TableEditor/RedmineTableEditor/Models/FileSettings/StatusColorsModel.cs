@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTableEditor.Models.FileSettings
 {
-    public class StatusColorsModel : LibRedminePower.Models.Bases.ModelBase
+    public class StatusColorsModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public bool IsEnabled { get; set; }
         public ObservableCollection<StatusColorModel> Items { get; set; }

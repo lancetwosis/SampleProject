@@ -200,13 +200,13 @@ namespace RedmineTimePuncher.Models
 
         public ReadOnlyReactivePropertySlim<bool> IsMyWork { get; set; }
         public ReadOnlyReactivePropertySlim<bool> CanResize { get; set; }
-        public ReadOnlyReactivePropertySlim<bool> CanDelete { get; set; }
+        public ReadOnlyReactivePropertySlim<bool> IsActiveProject { get; set; }
         public ReadOnlyReactivePropertySlim<bool> CanDrag { get; set; }
         public ReadOnlyReactivePropertySlim<Brush> ProjectColor { get; set; }
         public ReadOnlyReactivePropertySlim<Brush> Background { get; set; }
 
         public string OutlookCategories { get; set; }
-        public string ProjectPostfix { get; set; }
+        public ProjectStatusType ProjectStatus { get; set; }
 
         public string ToolTipBody
         {
@@ -224,7 +224,7 @@ namespace RedmineTimePuncher.Models
         private ReactivePropertySlim<string> ticketNoRp = new ReactivePropertySlim<string>();
         private ReactivePropertySlim<MyIssue> ticketRp = new ReactivePropertySlim<MyIssue>();
         private ReactivePropertySlim<ICategory> categoryRp = new ReactivePropertySlim<ICategory>();
-        private ReactivePropertySlim<Enums.AppointmentType> apoRp = new ReactivePropertySlim<AppointmentType>();
+        private ReactivePropertySlim<AppointmentType> apoTypeRp = new ReactivePropertySlim<AppointmentType>();
 
         private BusyNotifier disableGetTicket = new BusyNotifier();
         private BusyNotifier disableGetTicketList = new BusyNotifier();
@@ -245,7 +245,7 @@ namespace RedmineTimePuncher.Models
             else if (propertyName == nameof(Category))
                 categoryRp.Value = Category;
             else if (propertyName == nameof(ApoType))
-                apoRp.Value = ApoType;
+                apoTypeRp.Value = ApoType;
             else if (propertyName == nameof(End))
                 ticketRp.ForceNotify(); // 終了時間を変更した場合は、作業カテゴリの自動振り分けを行う。
         }
@@ -280,8 +280,11 @@ namespace RedmineTimePuncher.Models
                 ticketRp.Where(a => a != null).Select(_ => ""), // チケットが更新されたりしたら
             }.CombineLatest().Where(_ => Redmine != null).Select(_ =>
             {
-                var proj = Redmine.Projects.Value.First(p => p.Id == ticketRp.Value.Project.Id);
-                return AllCategories.Value.Where(a => proj.TimeEntryActivities.Any(b => b.Id == a.Id)).ToList();
+                var proj = CacheManager.Default.Projects.Value.FirstOrDefault(p => p.Id == ticketRp.Value.Project.Id);
+                if (proj != null)
+                    return AllCategories.Value.Where(a => proj.TimeEntryActivities.Any(b => b.Id == a.Id)).ToList();
+                else
+                    return new List<MyCategory>();
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             // チケットが変更されたら
@@ -294,12 +297,7 @@ namespace RedmineTimePuncher.Models
 
                 // カテゴリがまだ未選択ならば自動選択をする。
                 if (Category == null)
-                    Category = ProjectCategories.Value.OrderBy(a => a.Model.Order).FirstOrDefault(a => a.IsMatch(TicketTree.Items.Select(b => b.Issue).ToList(), Redmine.MyUserId, IsAutoSameName));
-            }).AddTo(disposables);
-            //ticketRp への Subscribe では達成できなかったため以下のようにする。（TODO: いずれ整理すること）
-            this.ObserveProperty(a => a.Ticket).Subscribe(t =>
-            {
-                ProjectPostfix = t != null ? $" - {t.Project.Name}" : null;
+                    Category = ProjectCategories.Value.OrderBy(a => a.Model.Order).FirstOrDefault(a => a.IsMatch(TicketTree.Items.Select(b => b.Issue).ToList(), CacheManager.Default.MyUser.Value.Id, IsAutoSameName));
             }).AddTo(disposables);
 
             ProjectColor = this.ObserveProperty(a => a.Ticket).ObserveOnUIDispatcher().Select(_ =>
@@ -320,14 +318,22 @@ namespace RedmineTimePuncher.Models
 
             GotoTicketCommand = ticketRp.Select(a => a != null).ToReactiveCommand().WithSubscribe(() => ticketRp.Value.GoToTicket()).AddTo(disposables);
 
-            apoRp.SubscribeWithErr(a => this.TimeMarker = a == AppointmentType.Manual ? MyAppointment.EditMarker : null).AddTo(disposables);
+            apoTypeRp.SubscribeWithErr(a => this.TimeMarker = a == AppointmentType.Manual ? MyAppointment.EditMarker : null).AddTo(disposables);
 
             IsMyWork = this.Resources.CollectionChangedAsObservable().StartWithDefault().Select(_ =>
                 this.Resources.OfType<MyResourceBase>().Any(a => a.IsMyWorks())).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            CanResize = IsMyWork.CombineLatest(apoRp, (im, apo) => im && (apo != AppointmentType.RedmineTimeEntryMember)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            CanDelete = IsMyWork.ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            CanDrag = apoRp.Select(a => a != AppointmentType.RedmineTimeEntryMember).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            ticketRp.Where(t => t != null).Subscribe(t =>
+            {
+                ProjectStatus = Redmine == null || CacheManager.Default.IsActiveProject(t.Project.Id) ?
+                    ProjectStatusType.Active :
+                    ProjectStatusType.NotActive;
+            }).AddTo(disposables);
+
+            var isActiveProj = this.ObserveProperty(a => a.ProjectStatus).Select(s => s != ProjectStatusType.NotActive).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            CanResize = IsMyWork.CombineLatest(apoTypeRp, isActiveProj, (im, apo, ia) => im && (apo != AppointmentType.RedmineTimeEntryMember) && ia).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            IsActiveProject = IsMyWork.CombineLatest(isActiveProj,(im, ia) => im && ia).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            CanDrag = apoTypeRp.CombineLatest(isActiveProj, (apo, ia) => apo != AppointmentType.RedmineTimeEntryMember && ia).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             ErrorMessage = ticketRp.CombineLatest(categoryRp, IsMyWork, (ticket, cateogry, isMy) =>
             {
@@ -371,7 +377,7 @@ namespace RedmineTimePuncher.Models
         public MyAppointment(IResource resource, MyAppointmentSave saved) : this()
         {
             this.Subject = saved.Subject;
-            this.ProjectPostfix = saved.ProjectPostfix;
+            this.ProjectStatus = saved.ProjectStatus;
             this.Body = saved.Body;
             this.Start = saved.Start;
             this.End = saved.End;

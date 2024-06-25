@@ -12,7 +12,7 @@ using Telerik.Windows.Controls.ScheduleView;
 
 namespace RedmineTimePuncher.Models.Settings
 {
-    public class TermModel : LibRedminePower.Models.Bases.ModelBase
+    public class TermModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public TimeSpan Start { get; set; }
         public TimeSpan End { get; set; }

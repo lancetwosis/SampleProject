@@ -30,7 +30,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
         public ReactivePropertySlim<MyTracker> OpenTracker { get; set; }
         public ReactivePropertySlim<IdName> OpenStatus { get; set; }
-        public CustomFieldSettingViewModel NeedsFaceToFace { get; set; }
+        public CustomFieldSettingViewModel<ReviewMethodCustomField, ReviewMethodValue> ReviewMethod { get; set; }
 
         public ReactivePropertySlim<MyTracker> RequestTracker { get; set; }
         public CustomFieldSettingViewModel IsRequired { get; set; }
@@ -96,7 +96,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
             OpenTracker = model.ToReactivePropertySlimAsSynchronized(m => m.OpenTracker).AddTo(myDisposables);
             OpenStatus = model.ToReactivePropertySlimAsSynchronized(m => m.OpenStatus).AddTo(myDisposables);
-            NeedsFaceToFace = new CustomFieldSettingViewModel(model.NeedsFaceToFace).AddTo(myDisposables);
+            ReviewMethod = new CustomFieldSettingViewModel<ReviewMethodCustomField, ReviewMethodValue>(model.ReviewMethod).AddTo(myDisposables);
 
             RequestTracker = model.ToReactivePropertySlimAsSynchronized(m => m.RequestTracker).AddTo(myDisposables);
             IsRequired = new CustomFieldSettingViewModel(model.IsRequired).AddTo(myDisposables);

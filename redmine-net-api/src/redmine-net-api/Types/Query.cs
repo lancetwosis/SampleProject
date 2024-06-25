@@ -33,20 +33,18 @@ namespace Redmine.Net.Api.Types
     public sealed class Query : IdentifiableName, IEquatable<Query>
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// Gets a value indicating whether this instance is public.
         /// </summary>
         /// <value><c>true</c> if this instance is public; otherwise, <c>false</c>.</value>
-        public bool IsPublic { get; internal set; }
+        public bool IsPublic { get; set; }
 
         /// <summary>
         /// Gets  the project id.
         /// </summary>
         /// <value>The project id.</value>
-        // カスタマイズ(S):外部からデシリアライズできるようにinternalをはずした。
         public int? ProjectId { get; set; }
-        //public int? ProjectId { get; internal set; }
-        // カスタマイズ(E):外部からデシリアライズできるようにinternalをはずした。
         #endregion
 
         #region Implementation of IXmlSerialization

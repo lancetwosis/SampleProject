@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTableEditor.Models.FileSettings
 {
-    public class AssignedToColorsModel : LibRedminePower.Models.Bases.ModelBase
+    public class AssignedToColorsModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public bool IsEnabled { get; set; }
         public bool IsEnabledClosed { get; set; }

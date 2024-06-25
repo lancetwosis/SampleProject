@@ -430,7 +430,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                         RibbonIndex = 1;
                     }
                 }).AddTo(disposables);
-            var tooltip = PeriodType.CombineLatest(SelectedDate, (t, s) => (Period: t, Date: s));
+            var tooltip = PeriodType.CombineLatest(SelectedDate, (t, s) => (Period: t, Date: s)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             DecreaseDateCommand = new CommandBase(
                 Properties.Resources.RibbonCmdMoveBack, Properties.Resources.back32,
                 tooltip.Select(p => p.Period.GetMoveCommandToolTip(p.Date, true, Parent.Settings.Calendar)),
@@ -573,7 +573,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 var s = e.Source as RadScheduleView;
                 var appo = SelectedAppointments.Value.FirstOrDefault();
-                if (appo != null && appo.IsMyWork.Value)
+                if (appo != null && appo.IsActiveProject.Value)
                 {
                     MyWorks.RenameCommand.Command.Execute(s);
                     return;
@@ -709,6 +709,14 @@ namespace RedmineTimePuncher.ViewModels.Input
                 SelectedDate.Value = getMyToday();
                 CurrentDate.Value = getMyToday();
             }
+
+            // 非同期で Redmine などにアクセスし表示を更新する
+            App.Current.Dispatcher.InvokeAsync(async () =>
+            {
+                await Task.WhenAll(ResourceSettingList.Where(r => r.IsEnabled)
+                                                      .Select(r => r.Resource.Updater.UpdateCommand.ExecuteAsync())
+                                                      .ToList());
+            });
         }
 
         public override void OnWindowClosing(CancelEventArgs e)

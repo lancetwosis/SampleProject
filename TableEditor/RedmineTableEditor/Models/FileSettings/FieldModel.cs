@@ -27,7 +27,7 @@ using Telerik.Windows.Controls.GridView;
 
 namespace RedmineTableEditor.Models.FileSettings
 {
-    public class FieldModel : LibRedminePower.Models.Bases.ModelBase
+    public class FieldModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public IssuePropertyType? Field { get; set; }
         public int CustomFieldId { get; set; }

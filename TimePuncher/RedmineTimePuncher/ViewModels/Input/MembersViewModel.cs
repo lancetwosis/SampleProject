@@ -4,6 +4,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.ViewModels.Input.Resources;
 using System;
 using System.Collections.Generic;
@@ -40,10 +41,10 @@ namespace RedmineTimePuncher.ViewModels.Input
                 parent.ResourceTypes.Add(parent.MyType);
             }).AddTo(disposables);
             Resources.CombineLatest(parent.Parent.Redmine.Where(a => a != null),
-                (users, r) => users.Select(a => a.User).Concat(new[] { r.MyUser }).ToList())
+                (users, r) => users.Select(a => a.User).Concat(new[] { CacheManager.Default.MyUser.Value }).ToList())
                 .SubscribeWithErr(a => MyTimeEntry.DicUsers = a.ToDictionary(b => b.Id)).AddTo(disposables);
 
-            var isAllMyWork = parent.SelectedAppointments.Select(a => a != null && a.Any() && a.All(b => b.IsMyWork.Value));
+            var isAllMyWork = parent.SelectedAppointments.Select(a => a != null && a.Any() && a.All(b => b.IsActiveProject.Value));
             var isAllMyWork_AllMember = new[]
             {
                 isAllMyWork,

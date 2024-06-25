@@ -40,7 +40,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 try
                 {
                     error2.Value = Resources.SettingsMsgNowGettingData;
-                    var q = await Task.Run(() => r.GetQueries());
+                    var q = CacheManager.Default.GetTemporaryQueries();
                     queries.Value = q.Select(a => new MyQuery(a)).ToList();
                     error2.Value = "";
                 }

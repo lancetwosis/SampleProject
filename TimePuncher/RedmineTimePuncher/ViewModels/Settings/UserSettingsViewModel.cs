@@ -5,6 +5,7 @@ using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
+using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -38,8 +39,13 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 {
                     try
                     {
-                        error2.Value = "ユーザー情報取得中";
-                        users.Value = await Task.Run(() => r.Users.Value.Where(u => u.Id != r.MyUser.Id).ToList());
+                        error2.Value = Resources.SettingsMsgNowGettingData;
+
+                        // ユーザの選択肢から自分自身は除外する
+                        var myUsers = CacheManager.Default.GetTemporaryUsers();
+                        var myUser = CacheManager.Default.GetTemporaryMyUser();
+                        users.Value = myUsers.Where(u => u.Id != myUser.Id).ToList();
+
                         error2.Value = null;
                     }
                     catch (Exception ex)
@@ -47,9 +53,9 @@ namespace RedmineTimePuncher.ViewModels.Settings
                         error2.Value = ex.Message;
                     }
                 }
-                else 
+                else
                 {
-                    error2.Value = "システム管理者APIキーが未設定です。";
+                    error2.Value = Resources.RedmineMngMsgAdminAPIKeyNotSet;
                 }
             }).AddTo(disposables);
 
@@ -59,11 +65,12 @@ namespace RedmineTimePuncher.ViewModels.Settings
         private void setUpItemsSource(UserSettingsModel model, List<MyUser> users)
         {
             myDisposables?.Dispose();
-            myDisposables = new CompositeDisposable();
+            myDisposables = new CompositeDisposable().AddTo(disposables);
 
-            model.Items = new ObservableCollection<MyUser>(model.Items.Select(a => users.FirstOrDefault(b => a.Id == b.Id)).Where(a => a != null));
+            // 元の設定に新たな「ユーザの選択肢」に含まれないユーザがあった場合、除外する
+            model.Items = new ObservableCollection<MyUser>(model.Items.Select(a => users.FirstOrDefault(b => a.Id == b.Id)));
             var selectedItems = new ObservableCollection<MyUser>(model.Items);
-            TwinListBoxViewModel = new TwinListBoxViewModel<MyUser>(users, selectedItems);
+            TwinListBoxViewModel = new TwinListBoxViewModel<MyUser>(users, selectedItems).AddTo(myDisposables);
             selectedItems.ObserveAddChanged().SubscribeWithErr(a => model.Items.Add(a)).AddTo(myDisposables);
             selectedItems.ObserveRemoveChanged().SubscribeWithErr(a => model.Items.Remove(a)).AddTo(myDisposables);
             selectedItems.CollectionChangedAsObservable().Where(a => a.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move).SubscribeWithErr(a =>

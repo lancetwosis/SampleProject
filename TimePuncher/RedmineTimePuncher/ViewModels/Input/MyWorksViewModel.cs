@@ -233,36 +233,33 @@ namespace RedmineTimePuncher.ViewModels.Input
                     var errorIds = new List<int>();
                     var result = await Task.Run(() => parent.Parent.Redmine.Value.GetEntryApos(Resource, parent.Members.Resources.Value, parent.StartTime.Value, parent.EndTime.Value, out errorIds), ct);
 
-                    // 画面に表示している予定で
+                    // 画面に表示している予定のうち、不要なものを削除
                     parent.Appointments.RemoveAll(a =>
                     {
-                        // 編集していないものは削除
+                        // Redmineから取得した予定で置き換えるため、未編集のものはすべて削除
                         if (a.ApoType == AppointmentType.RedmineTimeEntry)
                             return true;
                         // 共同作業として登録されている予定で
                         else if (a.ApoType == AppointmentType.RedmineTimeEntryMember)
                         {
                             var parentAppo = parent.Appointments.FirstOrDefault(b => b.MemberAppointments.Contains(a));
-                            // 親予定がなくなっていたら削除
-                            if (parentAppo == null) return true;
-
-                            // 親予定が編集中じゃなければ削除
-                            if (parentAppo.ApoType != AppointmentType.Manual) return true;
+                            // 「親予定がすでに存在しない」 or 「親予定が編集中じゃない」なら削除
+                            if (parentAppo == null || parentAppo.ApoType != AppointmentType.Manual)
+                                return true;
                         }
                         return false;
                     });
 
-                    // 取得してきた予定が
+                    // 取得してきた予定のうち、ユーザの操作が行われていないもののみ追加
                     result = result.Where(a =>
                     {
                         // 通常の予定で
                         if (a.ApoType == AppointmentType.RedmineTimeEntry)
                         {
-                            // 編集されていたら画面に追加しない
-                            if (parent.Appointments.Any(b => b.ApoType == AppointmentType.Manual && b.TimeEntryId == a.TimeEntryId))
-                                return false;
-                            // 削除予定として登録されていたら画面に追加しない
-                            else if (parent.DeletedAppointments.Any(b => b.TimeEntryId == a.TimeEntryId))
+                            // 「画面ですでに編集済み」 or 「画面ですでに削除済み」なら
+                            // ユーザの操作を上書きしてしまうため、新規追加はしない
+                            if (parent.Appointments.Any(b => b.ApoType == AppointmentType.Manual && b.TimeEntryId == a.TimeEntryId) ||
+                                parent.DeletedAppointments.Any(b => b.TimeEntryId == a.TimeEntryId))
                                 return false;
                         }
                         else if (a.ApoType == AppointmentType.RedmineTimeEntryMember)
@@ -394,13 +391,24 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }).AddTo(disposables);
 
             // 選択された予定を編集する。
+            var selectAny = parent.SelectedAppointments.Select(a => a == null || !a.Any() ? Properties.Resources.msgErrSelectAppointments : null).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var canEdit = parent.SelectedAppointments.Select(a =>
+            {
+                if (a != null && a.Any(b => !b.IsActiveProject.Value))
+                    return Properties.Resources.msgErrSelectAppointmentsOfSpentTime;
+                else
+                    return null;
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var notContainsCollab = parent.SelectedAppointments.Select(a =>
+            {
+                if (a != null && a.Any(b => b.ApoType == AppointmentType.RedmineTimeEntryMember))
+                    return Properties.Resources.RibbonCmdMsgSelectNonCollaboAppointment;
+                else
+                    return null;
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             RenameCommand = new CommandBase<RadScheduleView>(
                 Properties.Resources.RibbonCmdRename, 'M', Properties.Resources.icons8_rename_48,
-                new[] {
-                    parent.SelectedAppointments.Select(a => a == null || !a.Any()).Select(a => a ? Properties.Resources.msgErrSelectAppointments : null),
-                    parent.SelectedAppointments.Select(a => a != null && a.Any(b => !b.IsMyWork.Value)).Select(a => a ? Properties.Resources.msgErrSelectAppointmentsOfSpentTime : null),
-                    parent.SelectedAppointments.Select(a => a != null && a.Any(b => b.ApoType == AppointmentType.RedmineTimeEntryMember)).Select(a  => a ? Properties.Resources.RibbonCmdMsgSelectNonCollaboAppointment : null)
-                }.CombineLatestFirstOrDefault(a => a != null),
+                new[] { selectAny, canEdit, notContainsCollab }.CombineLatestFirstOrDefault(a => a != null),
                 scheduleView =>
                 {
                     RadScheduleViewCommands.BeginInlineEditing.Execute(null, scheduleView);
@@ -409,12 +417,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             // 選択された予定を分割する。
             SplitCommand = new CommandBase(
                 Properties.Resources.RibbonCmdSplit, Properties.Resources.icons8_cut_paper_48,
-                new[]
-                {
-                    parent.SelectedAppointments.Select(a => a == null || !a.Any()).Select(a => a ? Properties.Resources.msgErrSelectAppointments : null),
-                    parent.SelectedAppointments.Select(a => a != null && a.Any(b => !b.IsMyWork.Value)).Select(a => a ? Properties.Resources.msgErrSelectAppointmentsOfSpentTime : null),
-                    parent.SelectedAppointments.Select(a => a != null && a.Any(b => b.ApoType == AppointmentType.RedmineTimeEntryMember)).Select(a  => a ? Properties.Resources.RibbonCmdMsgSelectNonCollaboAppointment : null)
-                }.CombineLatestFirstOrDefault(a => a != null),
+                new[] { selectAny, canEdit, notContainsCollab }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
                     var splitCount = MessageBoxHelper.Input(Properties.Resources.msgInputSplitNumber, 2, 2, 10);
@@ -456,11 +459,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             // 選択された予定を整頓する
             AlignCommand = new CommandBase(
                 Properties.Resources.RibbonCmdAlignment, Properties.Resources.icons8_view_headline_48,
-                new[] {
-                    parent.SelectedAppointments.Select(a => a == null || !a.Any()).Select(a => a ? Properties.Resources.msgErrSelectAppointments : null),
-                    parent.SelectedAppointments.Select(a => a != null && a.Any(b => !b.IsMyWork.Value)).Select(a => a ? Properties.Resources.msgErrSelectAppointmentsOfSpentTime : null),
-                    parent.SelectedAppointments.Select(a => a != null && a.Any(b => b.ApoType == AppointmentType.RedmineTimeEntryMember)).Select(a  => a ? Properties.Resources.RibbonCmdMsgSelectNonCollaboAppointment : null)
-                }.CombineLatestFirstOrDefault(a => a != null),
+                new[] { selectAny, canEdit, notContainsCollab }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
                     TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(AlignCommand) + ".Executed");
@@ -471,9 +470,15 @@ namespace RedmineTimePuncher.ViewModels.Input
             CopyToMyWorksCommand = new CommandBase(
                 Properties.Resources.RibbonCmdCopyToSpentTime, 'C', Properties.Resources.icons8_assignment_return_48,
                 new[] {
-                    parent.SelectedAppointments.Select(a => a == null || !a.Any()).Select(a => a ? Properties.Resources.msgErrSelectAppointments : null),
-                    parent.SelectedAppointments.Select(a => a != null && a.Any(b => b.IsMyWork.Value)).Select(a => a ? Properties.Resources.msgErrSelectAppoOtherThanSpentTime: null),
-                    parent.SelectedAppointments.Select(a => a != null && a.Any(b => b.ApoType == AppointmentType.RedmineTimeEntryMember)).Select(a => a ? Properties.Resources.RibbonCmdMsgSelectNonCollaboAppointment : null)
+                    selectAny,
+                    parent.SelectedAppointments.Select(a =>
+                    {
+                        if (a != null && a.Any(b => b.IsMyWork.Value || b.ProjectStatus == ProjectStatusType.NotActive))
+                            return Properties.Resources.msgErrSelectAppoOtherThanSpentTime;
+                        else
+                            return null;
+                    }),
+                    notContainsCollab
                 }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
@@ -496,10 +501,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             DeleteCommand = new CommandBase(
                 Properties.Resources.RibbonCmdDelete, 'D', Properties.Resources.remove_task,
                 Observable.Return(Properties.Resources.RibbonCmdDeleteTooltip),
-                new[] {
-                    parent.SelectedAppointments.Select(a => a == null || !a.Any()).Select(a => a ? Properties.Resources.msgErrSelectAppointments : null),
-                    parent.SelectedAppointments.Select(a => a != null && a.Any(b => !b.IsMyWork.Value)).Select(a => a ? Properties.Resources.msgErrSelectAppoOtherThanSpentTime : null),
-                }.CombineLatestFirstOrDefault(a => a != null),
+                new[] { selectAny, canEdit }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
                     TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(DeleteCommand) + ".Executed");
@@ -535,6 +537,10 @@ namespace RedmineTimePuncher.ViewModels.Input
                     var slotCount = ((int)(slot.End - slot.Start).TotalMinutes - (prohibitedTerms.Sum(a => (a.End - a.Start).TotalMinutes))) / (int)tickLength.Value;
                     var apos = myWorksApos.Where(a => a.IntersectsWith(slot)).ToList();
                     if (!apos.Any()) return;
+
+                    var notActive = apos.FirstOrDefault(a => a.ProjectStatus == ProjectStatusType.NotActive);
+                    if (notActive != null)
+                        throw new ApplicationException(string.Format(Properties.Resources.msgContainsNotActiveProject, notActive.ToString()));
 
                     // 予定から一旦、削除する。
                     parent.Appointments.RemoveAll(a => apos.Contains(a));
@@ -584,7 +590,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 if (apos == null || !apos.Any(a => a.IsMyWork.Value))
                     return Properties.Resources.RibbonCmdCopyToErrMsgSelectMyWork;
-                if (apos.Any(a => !a.IsMyWork.Value))
+                if (apos.Any(a => !a.IsActiveProject.Value))
                     return Properties.Resources.RibbonCmdCopyToErrMsgSelectMyWorkOnly;
 
                 var targets = apos.Where(a => a.IsMyWork.Value).ToList();
@@ -593,7 +599,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     return Properties.Resources.RibbonCmdCopyToErrMsgSelectSameDay;
 
                 return null;
-            });
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             CopyToPreviousDayCommand = new CommandBase(
                 Properties.Resources.RibbonCmdCopyToPrevious, 'P', Properties.Resources.copy2back_48,
                 canExecCopy,

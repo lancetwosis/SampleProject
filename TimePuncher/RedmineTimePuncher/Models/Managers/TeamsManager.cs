@@ -23,7 +23,7 @@ namespace RedmineTimePuncher.Models.Managers
     /// <summary>
     /// https://www.alexbilz.com/post/2021-09-09-forensic-artifacts-microsoft-teams/
     /// </summary>
-    public class TeamsManager : LibRedminePower.Models.Bases.ModelBase
+    public class TeamsManager : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public static int TickLength;
         public bool IsInstalled { get; }

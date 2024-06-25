@@ -41,6 +41,7 @@ namespace Redmine.Net.Api.Types
     public sealed class Issue : Identifiable<Issue>, ICloneable
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// Gets or sets the project.
         /// </summary>
@@ -143,13 +144,13 @@ namespace Redmine.Net.Api.Types
         /// Gets or sets the updated on.
         /// </summary>
         /// <value>The updated on.</value>
-        public DateTime? UpdatedOn { get; internal set; }
+        public DateTime? UpdatedOn { get; set; }
 
         /// <summary>
         /// Gets or sets the closed on.
         /// </summary>
         /// <value>The closed on.</value>
-        public DateTime? ClosedOn { get; internal set; }
+        public DateTime? ClosedOn { get; set; }
 
         /// <summary>
         /// Gets or sets the notes.

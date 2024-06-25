@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models.Visualize
 {
-    public class ResultModel : LibRedminePower.Models.Bases.ModelBase
+    public class ResultModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public bool HasValue { get; set; }
         public bool IsEdited { get; set; }

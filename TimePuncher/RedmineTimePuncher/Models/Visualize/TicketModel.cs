@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models.Visualize
 {
-    public class TicketModel : LibRedminePower.Models.Bases.ModelBase
+    public class TicketModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public bool IsEnabled { get; set; } = true;
         public bool IsExpanded { get; set; } = true;

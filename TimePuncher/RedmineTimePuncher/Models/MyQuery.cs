@@ -7,20 +7,16 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models
 {
-    public class MyQuery
+    public class MyQuery : IdName
     {
-        public int Id { get; set; }
         public int? ProjectId { get; set; }
-        public string Name { get; set; }
 
         [Obsolete("For Serialize", true)]
         public MyQuery() {}
 
-        public MyQuery(Query query)
+        public MyQuery(Query query) : base(query)
         {
-            Id = query.Id;
             ProjectId = query.ProjectId;
-            Name = query.Name;
         }
 
         public override string ToString() => Name;

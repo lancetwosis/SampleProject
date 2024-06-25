@@ -37,18 +37,20 @@ namespace LibRedminePower.ViewModels
         /// </summary>
         public AsyncCommandBase(string text, Func<string, Bitmap> iconCreater, string normalTooltip, IObservable<string> warnTooltip, IObservable<string> errTooltip, Func<Task> asyncFunc)
         {
-            TooltipMessage = errTooltip.CombineLatest(warnTooltip, (e, w) => (e != null ? e : (w != null) ? w : normalTooltip)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var errRp = errTooltip.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var warnRp = warnTooltip.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            TooltipMessage = errRp.CombineLatest(warnRp, (e, w) => (e != null ? e : (w != null) ? w : normalTooltip)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             IsVisibleTooltip = TooltipMessage.Select(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Command = errTooltip.Select(a => a == null).ToAsyncReactiveCommand().WithSubscribe(asyncFunc).AddTo(disposables);
+            Command = errRp.Select(a => a == null).ToAsyncReactiveCommand().WithSubscribe(asyncFunc).AddTo(disposables);
             Text = text;
-            warnTooltip.SubscribeWithErr(w => LargeImage = iconCreater.Invoke(w).ToBitmapSource());
+            warnRp.SubscribeWithErr(w => LargeImage = iconCreater.Invoke(w).ToBitmapSource());
         }
 
         private AsyncCommandBase(string text, IObservable<string> canExecute, Func<Task> asyncFunc)
         {
             TooltipMessage = canExecute.ToReadOnlyReactivePropertySlim().AddTo(disposables);
             IsVisibleTooltip = TooltipMessage.Select(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Command = canExecute.Select(a => a == null).ToAsyncReactiveCommand().WithSubscribe(asyncFunc).AddTo(disposables);
+            Command = TooltipMessage.Select(a => a == null).ToAsyncReactiveCommand().WithSubscribe(asyncFunc).AddTo(disposables);
             Text = text;
         }
 

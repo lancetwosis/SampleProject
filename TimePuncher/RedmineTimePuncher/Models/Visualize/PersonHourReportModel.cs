@@ -36,21 +36,21 @@ namespace RedmineTimePuncher.Models.Visualize
         {
             Period = period;
 
-            OnTimes = new PersonHourModel<MyAppointment>().AddTo(disposables);
-            OnTimesScheduled = new PersonHourModel<MyAppointment>().AddTo(disposables);
-            OnTimesNotScheduled = new PersonHourModel<MyAppointment>().AddTo(disposables);
+            OnTimes = new PersonHourModel<MyAppointment>();
+            OnTimesScheduled = new PersonHourModel<MyAppointment>();
+            OnTimesNotScheduled = new PersonHourModel<MyAppointment>();
 
-            OnTimesRemaining = new PersonHourModel<MyAppointment>(period.IsCurrent()).AddTo(disposables);
-            OnTimesScheduledRemaining = new PersonHourModel<MyAppointment>(period.IsCurrent()).AddTo(disposables);
-            OnTimesNotScheduledRemaining = new PersonHourModel<MyAppointment>(period.IsCurrent()).AddTo(disposables);
+            OnTimesRemaining = new PersonHourModel<MyAppointment>(period.IsCurrent());
+            OnTimesScheduledRemaining = new PersonHourModel<MyAppointment>(period.IsCurrent());
+            OnTimesNotScheduledRemaining = new PersonHourModel<MyAppointment>(period.IsCurrent());
 
-            OverTimesScheduled = new PersonHourModel<MyAppointment>().AddTo(disposables);
-            OverTimesScheduledRemaining = new PersonHourModel<MyAppointment>(period.IsCurrent()).AddTo(disposables);
+            OverTimesScheduled = new PersonHourModel<MyAppointment>();
+            OverTimesScheduledRemaining = new PersonHourModel<MyAppointment>(period.IsCurrent());
 
-            ActualTimes = new PersonHourModel<MyTimeEntry>(period.HasActualTimes()).AddTo(disposables);
-            ActualTimesOnTime = new PersonHourModel<MyTimeEntry>(period.HasActualTimes()).AddTo(disposables);
-            ActualTimesOverTime = new PersonHourModel<MyTimeEntry>(period.HasActualTimes()).AddTo(disposables);
-            NotWorkedFlexibleTimes = new PersonHourModel<MyTimeEntry>(period.HasActualTimes()).AddTo(disposables);
+            ActualTimes = new PersonHourModel<MyTimeEntry>(period.HasActualTimes());
+            ActualTimesOnTime = new PersonHourModel<MyTimeEntry>(period.HasActualTimes());
+            ActualTimesOverTime = new PersonHourModel<MyTimeEntry>(period.HasActualTimes());
+            NotWorkedFlexibleTimes = new PersonHourModel<MyTimeEntry>(period.HasActualTimes());
         }
 
         public void UpdateScheduledTimes(SettingsModel settings, OutlookManager outlook)

@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models.Visualize
 {
-    public class ChartSettingsModel : LibRedminePower.Models.Bases.ModelBase
+    public class ChartSettingsModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public ViewType ViewType { get; set; } = ViewType.BarChart;
 

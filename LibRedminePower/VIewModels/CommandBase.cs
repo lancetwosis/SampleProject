@@ -98,9 +98,11 @@ namespace LibRedminePower.ViewModels
 
         public CommandBase(IObservable<string> normalMessage, IObservable<string> errorMessage, Action<T> action)
         {
-            TooltipMessage = normalMessage.CombineLatest(errorMessage, (n, e) => e != null ? e : n).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var normalRp = normalMessage.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var errRp = errorMessage.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            TooltipMessage = normalRp.CombineLatest(errRp, (n, e) => e != null ? e : n).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             IsVisibleTooltip = TooltipMessage.Select(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Command = errorMessage.Select(a => a == null).ToReactiveCommand<T>().WithSubscribe(action).AddTo(disposables);
+            Command = errRp.Select(a => a == null).ToReactiveCommand<T>().WithSubscribe(action).AddTo(disposables);
         }
 
         public CommandBase(IObservable<string> normalMessage, IObservable<string> errorMessage, Action<T> action, Bitmap largeImage)
@@ -189,13 +191,13 @@ namespace LibRedminePower.ViewModels
     public class ChildCommand : Bases.ViewModelBase
     {
         private string text;
-        private IObservable<string> canExecute;
+        private ReadOnlyReactivePropertySlim<string> canExecute;
         private Action action;
 
         public ChildCommand(string text, IObservable<string> canExecute, Action action)
         {
             this.text = text;
-            this.canExecute = canExecute;
+            this.canExecute = canExecute.ToReadOnlyReactivePropertySlim().AddTo(disposables);
             this.action = action;
         }
 

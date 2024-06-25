@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models
 {
-    public class WikiLine : LibRedminePower.Models.Bases.ModelBase
+    public class WikiLine : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public int LineNo { get; set; }
         /// <summary>

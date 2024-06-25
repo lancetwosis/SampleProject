@@ -11,6 +11,20 @@ namespace RedmineTimePuncher.Extentions
 {
     public static class MarkupLangTypeEx
     {
+        public static bool CanTranscribe(this MarkupLangType type)
+        {
+            switch (type)
+            {
+                case MarkupLangType.Textile:
+                case MarkupLangType.Markdown:
+                    return true;
+                case MarkupLangType.Undefined:
+                case MarkupLangType.None:
+                default:
+                    return false;
+            }
+        }
+
         public static string CreateParagraph(this MarkupLangType type, string header, params string[] rows)
         {
             if (string.IsNullOrWhiteSpace(header))

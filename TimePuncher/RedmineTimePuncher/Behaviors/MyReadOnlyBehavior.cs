@@ -11,7 +11,7 @@ namespace RedmineTimePuncher.Behaviors
         public override bool CanDeleteAppointment(IReadOnlySettings readOnlySettings, IOccurrence occurrence)
         {
             var apo = getMyApointmentFromOccurence(occurrence);
-            if (apo != null) return apo.CanDelete.Value;
+            if (apo != null) return apo.IsActiveProject.Value;
             return base.CanDeleteAppointment(readOnlySettings, occurrence);
         }
 

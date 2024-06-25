@@ -36,6 +36,5 @@ namespace RedmineTimePuncher.Models.Settings
             else
                 return CustomField.CreateQueryString(userId);
         }
-
     }
 }

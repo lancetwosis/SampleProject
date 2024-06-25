@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.Settings.CreateTicketCopyCustomFieldsSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:controls="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:conv="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.Settings"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+             xmlns:views="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings"
+             d:DataContext="{d:DesignInstance {x:Type vm:ReviewCopyCustomFieldsSettingViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+
+    <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Orientation="Vertical">
+                <TextBlock Text="{x:Static props:Resources.SettingsReviCopyCustomFieldMsg}" />
+                <views:TwinListBox Grid.Row="1"
+                                   Height="200"
+                                   Margin="5,10,5,5"
+                                   VerticalAlignment="top"
+                                   DataContext="{Binding CustomFields}" />
+            </StackPanel>
+
+            <local:SettingsButtonsPanel Grid.Row="1"
+                                        DataContext="{Binding}" />
+        </Grid>
+    </libCont:OverwrapMessage>
+
+</UserControl>

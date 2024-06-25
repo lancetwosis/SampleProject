@@ -29,9 +29,47 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <StackPanel Grid.IsSharedSizeScope="True">
-                <Grid ToolTip="{Binding DetectionProcess.NoCustomFieldErrMsg}">
-                    <Grid IsEnabled="{Binding DetectionProcess.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}, Mode=OneWay}">
+            <ScrollViewer BorderThickness="0"
+                          VerticalScrollBarVisibility="Auto">
+                <StackPanel Grid.IsSharedSizeScope="True">
+                    <Grid ToolTip="{Binding DetectionProcess.NoCustomFieldErrMsg}">
+                        <Grid IsEnabled="{Binding DetectionProcess.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}, Mode=OneWay}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"
+                                                  SharedSizeGroup="FirstColumn" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="AUTO" />
+                                <RowDefinition Height="AUTO" />
+                            </Grid.RowDefinitions>
+                            <CheckBox x:Name="useTargetProcessCheckBox"
+                                      Grid.Column="0"
+                                      Content="{x:Static props:Resources.SettingsReviSpecipyProcess}"
+                                      IsChecked="{Binding DetectionProcess.IsEnabled.Value}" />
+                            <TextBlock Grid.Column="1"
+                                       Text=" : " />
+                            <telerik:RadComboBox Grid.Column="2"
+                                                 Margin="5,0,0,0"
+                                                 DisplayMemberPath="Name"
+                                                 IsEnabled="{Binding ElementName=useTargetProcessCheckBox,
+                                                                     Path=IsChecked}"
+                                                 ItemsSource="{Binding DetectionProcess.PossibleCustomFields}"
+                                                 SelectedItem="{Binding DetectionProcess.CustomField.Value}">
+                                <b:Interaction.Behaviors>
+                                    <behaviors1:RadComboBoxNotNullableBehavior />
+                                </b:Interaction.Behaviors>
+                            </telerik:RadComboBox>
+                            <TextBlock Grid.Row="1"
+                                       Grid.Column="2"
+                                       IsEnabled="{Binding ElementName=useTargetProcessCheckBox,
+                                                           Path=IsChecked}"
+                                       Style="{StaticResource SettingHelpTextBlockStyle}"
+                                       Text="{Binding DetectionProcess.HelpMsg}" />
+                        </Grid>
+                    </Grid>
+                    <Grid Margin="0,5,0,0">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="Auto"
                                               SharedSizeGroup="FirstColumn" />
@@ -42,294 +80,309 @@
                             <RowDefinition Height="AUTO" />
                             <RowDefinition Height="AUTO" />
                         </Grid.RowDefinitions>
-                        <CheckBox x:Name="useTargetProcessCheckBox"
-                                  Grid.Column="0"
-                                  Content="{x:Static props:Resources.SettingsReviSpecipyProcess}"
-                                  IsChecked="{Binding DetectionProcess.IsEnabled.Value}" />
+                        <CheckBox Grid.Row="0"
+                                  Content="{x:Static props:Resources.SettingsReviOutlookIntegration}"
+                                  IsChecked="{Binding NeedsOutlookIntegration.Value}" />
                         <TextBlock Grid.Column="1"
                                    Text=" : " />
-                        <telerik:RadComboBox Grid.Column="2"
-                                             Margin="5,0,0,0"
-                                             DisplayMemberPath="Name"
-                                             IsEnabled="{Binding ElementName=useTargetProcessCheckBox,
-                                                                 Path=IsChecked}"
-                                             ItemsSource="{Binding DetectionProcess.PossibleCustomFields}"
-                                             SelectedItem="{Binding DetectionProcess.CustomField.Value}">
-                            <b:Interaction.Behaviors>
-                                <behaviors1:RadComboBoxNotNullableBehavior />
-                            </b:Interaction.Behaviors>
-                        </telerik:RadComboBox>
+                        <TextBlock Grid.Column="2"
+                                   Style="{StaticResource SettingHelpTextBlockStyle}"
+                                   Text="{x:Static props:Resources.SettingsReviOutlookIntegrationMsg}" />
+                        <CheckBox Grid.Row="1"
+                                  Margin="0,5,0,0"
+                                  Content="{x:Static props:Resources.SettingsReviGitIntegration}"
+                                  IsChecked="{Binding NeedsGitIntegration.Value}" />
+                        <TextBlock Grid.Row="1"
+                                   Grid.Column="1"
+                                   Text=" : " />
                         <TextBlock Grid.Row="1"
                                    Grid.Column="2"
-                                   IsEnabled="{Binding ElementName=useTargetProcessCheckBox,
-                                                       Path=IsChecked}"
                                    Style="{StaticResource SettingHelpTextBlockStyle}"
-                                   Text="{Binding DetectionProcess.HelpMsg}" />
+                                   Text="{x:Static props:Resources.SettingsReviGitIntegrationMsg}" />
                     </Grid>
-                </Grid>
-                <Grid Margin="0,5,0,0">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="Auto"
-                                          SharedSizeGroup="FirstColumn" />
-                        <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="AUTO" />
-                        <RowDefinition Height="AUTO" />
-                    </Grid.RowDefinitions>
-                    <CheckBox Grid.Row="0"
-                              Content="{x:Static props:Resources.SettingsReviOutlookIntegration}"
-                              IsChecked="{Binding NeedsOutlookIntegration.Value}" />
-                    <TextBlock Grid.Column="1"
-                               Text=" : " />
-                    <TextBlock Grid.Column="2"
-                               Style="{StaticResource SettingHelpTextBlockStyle}"
-                               Text="{x:Static props:Resources.SettingsReviOutlookIntegrationMsg}" />
-                    <CheckBox Grid.Row="1"
-                              Margin="0,5,0,0"
-                              Content="{x:Static props:Resources.SettingsReviGitIntegration}"
-                              IsChecked="{Binding NeedsGitIntegration.Value}" />
-                    <TextBlock Grid.Row="1"
-                               Grid.Column="1"
-                               Text=" : " />
-                    <TextBlock Grid.Row="1"
-                               Grid.Column="2"
-                               Style="{StaticResource SettingHelpTextBlockStyle}"
-                               Text="{x:Static props:Resources.SettingsReviGitIntegrationMsg}" />
-                </Grid>
 
-                <GroupBox Margin="5,10,0,0"
-                          Header="{x:Static props:Resources.SettingsReviOpenTicket}">
-                    <StackPanel Orientation="Vertical">
-                        <Grid Margin="5,0,0,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="Auto" />
-                                <RowDefinition Height="Auto" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"
-                                                  SharedSizeGroup="FirstColumn" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0"
-                                       VerticalAlignment="Center"
-                                       Text="{x:Static props:Resources.SettingsReviTracker}" />
-                            <TextBlock Grid.Column="1"
-                                       Text=" : " />
-                            <telerik:RadComboBox Grid.Column="2"
-                                                 Margin="5,0,0,0"
-                                                 DisplayMemberPath="Name"
-                                                 ItemsSource="{Binding Trackers}"
-                                                 SelectedItem="{Binding OpenTracker.Value}">
-                                <b:Interaction.Behaviors>
-                                    <behaviors1:RadComboBoxNotNullableBehavior />
-                                </b:Interaction.Behaviors>
-                            </telerik:RadComboBox>
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="0"
-                                       Margin="0,5,0,0"
-                                       VerticalAlignment="Center"
-                                       Text="{x:Static props:Resources.SettingsReviDefaultStatus}" />
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="1"
-                                       Margin="0,5,0,0"
-                                       Text=" : " />
-                            <telerik:RadComboBox Grid.Row="1"
-                                                 Grid.Column="2"
-                                                 Margin="5,5,0,0"
-                                                 DisplayMemberPath="Name"
-                                                 ItemsSource="{Binding Statuses}"
-                                                 SelectedItem="{Binding OpenStatus.Value}">
-                                <b:Interaction.Behaviors>
-                                    <behaviors1:RadComboBoxNotNullableBehavior />
-                                </b:Interaction.Behaviors>
-                            </telerik:RadComboBox>
-                        </Grid>
-                        <GroupBox Grid.Row="1"
-                                  Margin="0,5,0,0">
-                            <GroupBox.Header>
-                                <CheckBox x:Name="useReviewMethodCheckBox"
-                                          Content="{x:Static props:Resources.SettingsReviNeedsFaceToFace}"
-                                          IsChecked="{Binding NeedsFaceToFace.IsEnabled.Value}" />
-                            </GroupBox.Header>
-                            <StackPanel IsEnabled="{Binding ElementName=useReviewMethodCheckBox,
-                                                            Path=IsChecked}"
-                                        Orientation="Vertical"
-                                        ToolTip="{Binding NeedsFaceToFace.NoCustomFieldErrMsg}">
-                                <Grid IsEnabled="{Binding NeedsFaceToFace.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"
-                                                          SharedSizeGroup="FirstColumn" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="AUTO" />
-                                        <RowDefinition Height="AUTO" />
-                                    </Grid.RowDefinitions>
-                                    <CheckBox x:Name="needsSaveNeedsF2FCheckBox"
-                                              Grid.Column="0"
-                                              Content="{x:Static props:Resources.SettingsReviCustomField}"
-                                              IsChecked="{Binding NeedsFaceToFace.NeedsSaveToCustomField.Value}" />
+                    <GroupBox Margin="5,10,0,0"
+                              Header="{x:Static props:Resources.SettingsReviOpenTicket}">
+                        <StackPanel Orientation="Vertical">
+                            <Grid Margin="5,0,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"
+                                                      SharedSizeGroup="FirstColumn" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Static props:Resources.SettingsReviTracker}" />
+                                <TextBlock Grid.Column="1"
+                                           Text=" : " />
+                                <telerik:RadComboBox Grid.Column="2"
+                                                     Margin="5,0,0,0"
+                                                     DisplayMemberPath="Name"
+                                                     ItemsSource="{Binding Trackers}"
+                                                     SelectedItem="{Binding OpenTracker.Value}">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:RadComboBoxNotNullableBehavior />
+                                    </b:Interaction.Behaviors>
+                                </telerik:RadComboBox>
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="0"
+                                           Margin="0,5,0,0"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Static props:Resources.SettingsReviDefaultStatus}" />
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="1"
+                                           Margin="0,5,0,0"
+                                           Text=" : " />
+                                <telerik:RadComboBox Grid.Row="1"
+                                                     Grid.Column="2"
+                                                     Margin="5,5,0,0"
+                                                     DisplayMemberPath="Name"
+                                                     ItemsSource="{Binding Statuses}"
+                                                     SelectedItem="{Binding OpenStatus.Value}">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:RadComboBoxNotNullableBehavior />
+                                    </b:Interaction.Behaviors>
+                                </telerik:RadComboBox>
+                            </Grid>
+                            <GroupBox Grid.Row="1"
+                                      Margin="0,5,0,0">
+                                <GroupBox.Header>
+                                    <CheckBox x:Name="useReviewMethodCheckBox"
+                                              Content="{x:Static props:Resources.SettingsReviNeedsFaceToFace}"
+                                              IsChecked="{Binding ReviewMethod.IsEnabled.Value}" />
+                                </GroupBox.Header>
+                                <StackPanel IsEnabled="{Binding ElementName=useReviewMethodCheckBox,
+                                                                Path=IsChecked}"
+                                            Orientation="Vertical"
+                                            ToolTip="{Binding ReviewMethod.NoCustomFieldErrMsg}">
+                                    <Grid IsEnabled="{Binding ReviewMethod.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"
+                                                              SharedSizeGroup="FirstColumn" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="AUTO" />
+                                            <RowDefinition Height="AUTO" />
+                                        </Grid.RowDefinitions>
+                                        <CheckBox x:Name="needsSaveNeedsF2FCheckBox"
+                                                  Grid.Column="0"
+                                                  Content="{x:Static props:Resources.SettingsReviCustomField}"
+                                                  IsChecked="{Binding ReviewMethod.NeedsSaveToCustomField.Value}" />
 
-                                    <TextBlock Grid.Column="1"
-                                               Text=" : " />
-                                    <telerik:RadComboBox Grid.Column="2"
-                                                         Margin="5,0,0,0"
-                                                         DisplayMemberPath="Name"
-                                                         IsEnabled="{Binding ElementName=needsSaveNeedsF2FCheckBox,
-                                                                             Path=IsChecked}"
-                                                         ItemsSource="{Binding NeedsFaceToFace.PossibleCustomFields}"
-                                                         SelectedItem="{Binding NeedsFaceToFace.CustomField.Value}">
-                                        <b:Interaction.Behaviors>
-                                            <behaviors1:RadComboBoxNotNullableBehavior />
-                                        </b:Interaction.Behaviors>
-                                    </telerik:RadComboBox>
-                                    <TextBlock Grid.Row="1"
-                                               Grid.Column="2"
-                                               Style="{StaticResource SettingHelpTextBlockStyle}"
-                                               Text="{Binding NeedsFaceToFace.HelpMsg}" />
-                                </Grid>
-                            </StackPanel>
-                        </GroupBox>
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Margin="5,5,0,0"
-                          Header="{x:Static props:Resources.SettingsReviRequestTicket}">
-                    <StackPanel Orientation="Vertical">
-                        <Grid Margin="5,0,0,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"
-                                                  SharedSizeGroup="FirstColumn" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0"
-                                       VerticalAlignment="Center"
-                                       Text="{x:Static props:Resources.SettingsReviTracker}" />
-                            <TextBlock Grid.Column="1"
-                                       Text=" : " />
-                            <telerik:RadComboBox Grid.Column="2"
-                                                 Margin="5,0,0,0"
-                                                 DisplayMemberPath="Name"
-                                                 ItemsSource="{Binding Trackers}"
-                                                 SelectedItem="{Binding RequestTracker.Value}">
-                                <b:Interaction.Behaviors>
-                                    <behaviors1:RadComboBoxNotNullableBehavior />
-                                </b:Interaction.Behaviors>
-                            </telerik:RadComboBox>
-                        </Grid>
-                        <GroupBox Grid.Row="1"
-                                  Margin="0,5,0,0">
-                            <GroupBox.Header>
-                                <CheckBox x:Name="useIsRequiredCheckBox"
-                                          Content="{x:Static props:Resources.SettingsReviIsRequired}"
-                                          IsChecked="{Binding IsRequired.IsEnabled.Value}" />
-                            </GroupBox.Header>
-                            <StackPanel IsEnabled="{Binding ElementName=useIsRequiredCheckBox,
-                                                            Path=IsChecked}"
-                                        Orientation="Vertical"
-                                        ToolTip="{Binding IsRequired.NoCustomFieldErrMsg}">
-                                <Grid IsEnabled="{Binding IsRequired.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="Auto"
-                                                          SharedSizeGroup="FirstColumn" />
-                                        <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition />
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="AUTO" />
-                                        <RowDefinition Height="AUTO" />
-                                    </Grid.RowDefinitions>
-                                    <CheckBox x:Name="needsSaveIsRequiredCheckBox"
-                                              Grid.Column="0"
-                                              Content="{x:Static props:Resources.SettingsReviCustomField}"
-                                              IsChecked="{Binding IsRequired.NeedsSaveToCustomField.Value}" />
+                                        <TextBlock Grid.Column="1"
+                                                   Text=" : " />
+                                        <telerik:RadComboBox Grid.Column="2"
+                                                             Margin="5,0,0,0"
+                                                             DisplayMemberPath="Name"
+                                                             IsEnabled="{Binding ElementName=needsSaveNeedsF2FCheckBox,
+                                                                                 Path=IsChecked}"
+                                                             ItemsSource="{Binding ReviewMethod.PossibleCustomFields}"
+                                                             SelectedItem="{Binding ReviewMethod.CustomField.Value}">
+                                            <b:Interaction.Behaviors>
+                                                <behaviors1:RadComboBoxNotNullableBehavior />
+                                            </b:Interaction.Behaviors>
+                                        </telerik:RadComboBox>
+                                        <TextBlock Grid.Row="1"
+                                                   Grid.Column="2"
+                                                   Style="{StaticResource SettingHelpTextBlockStyle}"
+                                                   Text="{Binding ReviewMethod.HelpMsg}" />
+                                    </Grid>
+                                    <TextBlock Margin="0,5,0,0"
+                                               Text="{x:Static props:Resources.SettingsReviMethodMsg}"
+                                               Visibility="{Binding ElementName=needsSaveNeedsF2FCheckBox,
+                                                                    Path=IsChecked,
+                                                                    Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    <telerik:RadGridView Margin="0,5,0,0"
+                                                         AutoGenerateColumns="False"
+                                                         CanUserDeleteRows="True"
+                                                         CanUserFreezeColumns="False"
+                                                         CanUserInsertRows="True"
+                                                         GroupRenderMode="Flat"
+                                                         IsFilteringAllowed="False"
+                                                         IsReadOnly="False"
+                                                         ItemsSource="{Binding ReviewMethod.CustomField.Value.PossibleValues}"
+                                                         RowIndicatorVisibility="Collapsed"
+                                                         ShowGroupPanel="False"
+                                                         Visibility="{Binding ElementName=needsSaveNeedsF2FCheckBox,
+                                                                              Path=IsChecked,
+                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                                        <telerik:RadGridView.Columns>
+                                            <telerik:GridViewDataColumn DataMemberBinding="{Binding Label}"
+                                                                        Header=""
+                                                                        IsReadOnly="True" />
+                                            <telerik:GridViewDataColumn DataMemberBinding="{Binding NeedsOnDesktop}"
+                                                                        EditTriggers="CellClick"
+                                                                        Header="{x:Static props:Resources.ReviewMethodDesktop}"
+                                                                        IsReadOnly="True"
+                                                                        IsSortable="false">
+                                                <telerik:GridViewDataColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding NeedsOnDesktop, Mode=TwoWay}" />
+                                                    </DataTemplate>
+                                                </telerik:GridViewDataColumn.CellTemplate>
+                                            </telerik:GridViewDataColumn>
+                                            <telerik:GridViewDataColumn DataMemberBinding="{Binding NeedsFaceToFace}"
+                                                                        EditTriggers="CellClick"
+                                                                        Header="{x:Static props:Resources.ReviewMethodFaceToFace}"
+                                                                        IsReadOnly="True"
+                                                                        IsSortable="false">
+                                                <telerik:GridViewDataColumn.CellTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox IsChecked="{Binding NeedsFaceToFace, Mode=TwoWay}" />
+                                                    </DataTemplate>
+                                                </telerik:GridViewDataColumn.CellTemplate>
+                                            </telerik:GridViewDataColumn>
 
-                                    <TextBlock Grid.Column="1"
-                                               Text=" : " />
-                                    <telerik:RadComboBox Grid.Column="2"
-                                                         Margin="5,0,0,0"
-                                                         DisplayMemberPath="Name"
-                                                         IsEnabled="{Binding ElementName=needsSaveIsRequiredCheckBox,
-                                                                             Path=IsChecked}"
-                                                         ItemsSource="{Binding IsRequired.PossibleCustomFields}"
-                                                         SelectedItem="{Binding IsRequired.CustomField.Value}">
-                                        <b:Interaction.Behaviors>
-                                            <behaviors1:RadComboBoxNotNullableBehavior />
-                                        </b:Interaction.Behaviors>
-                                    </telerik:RadComboBox>
-                                    <TextBlock Grid.Row="1"
-                                               Grid.Column="2"
-                                               Style="{StaticResource SettingHelpTextBlockStyle}"
-                                               Text="{Binding IsRequired.HelpMsg}" />
-                                </Grid>
-                            </StackPanel>
-                        </GroupBox>
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Margin="5,5,0,0"
-                          Header="{x:Static props:Resources.SettingsReviPointTicket}">
-                    <StackPanel Orientation="Vertical">
-                        <Grid Margin="5,0,0,0">
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="AUTO" />
-                                <RowDefinition Height="AUTO" />
-                                <RowDefinition Height="AUTO" />
-                            </Grid.RowDefinitions>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"
-                                                  SharedSizeGroup="FirstColumn" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition />
-                            </Grid.ColumnDefinitions>
-                            <TextBlock Grid.Column="0"
-                                       VerticalAlignment="Center"
-                                       Text="{x:Static props:Resources.SettingsReviTracker}" />
-                            <TextBlock Grid.Column="1"
-                                       Text=" : " />
-                            <telerik:RadComboBox Grid.Column="2"
-                                                 Margin="5,0,0,0"
-                                                 DisplayMemberPath="Name"
-                                                 ItemsSource="{Binding Trackers}"
-                                                 SelectedItem="{Binding PointTracker.Value}">
-                                <b:Interaction.Behaviors>
-                                    <behaviors1:RadComboBoxNotNullableBehavior />
-                                </b:Interaction.Behaviors>
-                            </telerik:RadComboBox>
-                            <CheckBox x:Name="useSaveReviewerCheckBox"
-                                      Grid.Row="1"
-                                      Grid.Column="0"
-                                      Content="{x:Static props:Resources.SettingsReviSaveReviewer}"
-                                      IsChecked="{Binding SaveReviewer.IsEnabled.Value}" />
-                            <TextBlock Grid.Row="1"
-                                       Grid.Column="1"
-                                       Text=" : " />
-                            <telerik:RadComboBox Grid.Row="1"
-                                                 Grid.Column="2"
-                                                 Margin="5,5,0,0"
-                                                 DisplayMemberPath="Name"
-                                                 IsEnabled="{Binding ElementName=useSaveReviewerCheckBox,
-                                                                     Path=IsChecked}"
-                                                 ItemsSource="{Binding SaveReviewer.PossibleCustomFields}"
-                                                 SelectedItem="{Binding SaveReviewer.CustomField.Value}">
-                                <b:Interaction.Behaviors>
-                                    <behaviors1:RadComboBoxNotNullableBehavior />
-                                </b:Interaction.Behaviors>
-                            </telerik:RadComboBox>
-                            <TextBlock Grid.Row="2"
-                                       Grid.Column="2"
-                                       IsEnabled="{Binding ElementName=useSaveReviewerCheckBox,
-                                                           Path=IsChecked}"
-                                       Style="{StaticResource SettingHelpTextBlockStyle}"
-                                       Text="{Binding SaveReviewer.HelpMsg}" />
 
-                        </Grid>
-                    </StackPanel>
-                </GroupBox>
-            </StackPanel>
+                                        </telerik:RadGridView.Columns>
+
+                                    </telerik:RadGridView>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Margin="5,5,0,0"
+                              Header="{x:Static props:Resources.SettingsReviRequestTicket}">
+                        <StackPanel Orientation="Vertical">
+                            <Grid Margin="5,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"
+                                                      SharedSizeGroup="FirstColumn" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Static props:Resources.SettingsReviTracker}" />
+                                <TextBlock Grid.Column="1"
+                                           Text=" : " />
+                                <telerik:RadComboBox Grid.Column="2"
+                                                     Margin="5,0,0,0"
+                                                     DisplayMemberPath="Name"
+                                                     ItemsSource="{Binding Trackers}"
+                                                     SelectedItem="{Binding RequestTracker.Value}">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:RadComboBoxNotNullableBehavior />
+                                    </b:Interaction.Behaviors>
+                                </telerik:RadComboBox>
+                            </Grid>
+                            <GroupBox Grid.Row="1"
+                                      Margin="0,5,0,0">
+                                <GroupBox.Header>
+                                    <CheckBox x:Name="useIsRequiredCheckBox"
+                                              Content="{x:Static props:Resources.SettingsReviIsRequired}"
+                                              IsChecked="{Binding IsRequired.IsEnabled.Value}" />
+                                </GroupBox.Header>
+                                <StackPanel IsEnabled="{Binding ElementName=useIsRequiredCheckBox,
+                                                                Path=IsChecked}"
+                                            Orientation="Vertical"
+                                            ToolTip="{Binding IsRequired.NoCustomFieldErrMsg}">
+                                    <Grid IsEnabled="{Binding IsRequired.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"
+                                                              SharedSizeGroup="FirstColumn" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="AUTO" />
+                                            <RowDefinition Height="AUTO" />
+                                        </Grid.RowDefinitions>
+                                        <CheckBox x:Name="needsSaveIsRequiredCheckBox"
+                                                  Grid.Column="0"
+                                                  Content="{x:Static props:Resources.SettingsReviCustomField}"
+                                                  IsChecked="{Binding IsRequired.NeedsSaveToCustomField.Value}" />
+
+                                        <TextBlock Grid.Column="1"
+                                                   Text=" : " />
+                                        <telerik:RadComboBox Grid.Column="2"
+                                                             Margin="5,0,0,0"
+                                                             DisplayMemberPath="Name"
+                                                             IsEnabled="{Binding ElementName=needsSaveIsRequiredCheckBox,
+                                                                                 Path=IsChecked}"
+                                                             ItemsSource="{Binding IsRequired.PossibleCustomFields}"
+                                                             SelectedItem="{Binding IsRequired.CustomField.Value}">
+                                            <b:Interaction.Behaviors>
+                                                <behaviors1:RadComboBoxNotNullableBehavior />
+                                            </b:Interaction.Behaviors>
+                                        </telerik:RadComboBox>
+                                        <TextBlock Grid.Row="1"
+                                                   Grid.Column="2"
+                                                   Style="{StaticResource SettingHelpTextBlockStyle}"
+                                                   Text="{Binding IsRequired.HelpMsg}" />
+                                    </Grid>
+                                </StackPanel>
+                            </GroupBox>
+                        </StackPanel>
+                    </GroupBox>
+                    <GroupBox Margin="5,5,0,0"
+                              Header="{x:Static props:Resources.SettingsReviPointTicket}">
+                        <StackPanel Orientation="Vertical">
+                            <Grid Margin="5,0,0,0">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="AUTO" />
+                                    <RowDefinition Height="AUTO" />
+                                    <RowDefinition Height="AUTO" />
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"
+                                                      SharedSizeGroup="FirstColumn" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Static props:Resources.SettingsReviTracker}" />
+                                <TextBlock Grid.Column="1"
+                                           Text=" : " />
+                                <telerik:RadComboBox Grid.Column="2"
+                                                     Margin="5,0,0,0"
+                                                     DisplayMemberPath="Name"
+                                                     ItemsSource="{Binding Trackers}"
+                                                     SelectedItem="{Binding PointTracker.Value}">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:RadComboBoxNotNullableBehavior />
+                                    </b:Interaction.Behaviors>
+                                </telerik:RadComboBox>
+                                <CheckBox x:Name="useSaveReviewerCheckBox"
+                                          Grid.Row="1"
+                                          Grid.Column="0"
+                                          Content="{x:Static props:Resources.SettingsReviSaveReviewer}"
+                                          IsChecked="{Binding SaveReviewer.IsEnabled.Value}" />
+                                <TextBlock Grid.Row="1"
+                                           Grid.Column="1"
+                                           Text=" : " />
+                                <telerik:RadComboBox Grid.Row="1"
+                                                     Grid.Column="2"
+                                                     Margin="5,5,0,0"
+                                                     DisplayMemberPath="Name"
+                                                     IsEnabled="{Binding ElementName=useSaveReviewerCheckBox,
+                                                                         Path=IsChecked}"
+                                                     ItemsSource="{Binding SaveReviewer.PossibleCustomFields}"
+                                                     SelectedItem="{Binding SaveReviewer.CustomField.Value}">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:RadComboBoxNotNullableBehavior />
+                                    </b:Interaction.Behaviors>
+                                </telerik:RadComboBox>
+                                <TextBlock Grid.Row="2"
+                                           Grid.Column="2"
+                                           IsEnabled="{Binding ElementName=useSaveReviewerCheckBox,
+                                                               Path=IsChecked}"
+                                           Style="{StaticResource SettingHelpTextBlockStyle}"
+                                           Text="{Binding SaveReviewer.HelpMsg}" />
+
+                            </Grid>
+                        </StackPanel>
+                    </GroupBox>
+                </StackPanel>
+            </ScrollViewer>
 
             <local:SettingsButtonsPanel Grid.Row="1"
                                         DataContext="{Binding}" />

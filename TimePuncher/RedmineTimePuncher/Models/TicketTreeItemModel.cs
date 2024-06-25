@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models
 {
-    public class TicketTreeItemModel : LibRedminePower.Models.Bases.ModelBase
+    public class TicketTreeItemModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public int No { get; set; }
         public MyIssue Issue { get; set; }

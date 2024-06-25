@@ -6,13 +6,14 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models
 {
-    public class MyIssue : IdName, IComparable<MyIssue>
+    public class MyIssue : IdName, IComparable<MyIssue>, IDisposable
     {
         public static string UrlBase;
         public static Task<List<IssuePriority>> PrioritiesTask;
@@ -42,6 +43,10 @@ namespace RedmineTimePuncher.Models
         public string LimitedDescription => string.IsNullOrEmpty(RawIssue.Description) ? null : RawIssue.Description.LimitRows(20);
 
         public Issue RawIssue { get; set; }
+
+        [NonSerialized]
+        protected CompositeDisposable disposables = new CompositeDisposable();
+        public virtual void Dispose() => disposables.Dispose();
 
         [Obsolete("For Serialize", true)]
         public MyIssue()
@@ -80,6 +85,9 @@ namespace RedmineTimePuncher.Models
             initRx(1);
         }
 
+        /// <summary>
+        /// 普通に new した場合とデシリアライズした場合で Subscribe のスキップする必要回数が異なるため引数で指定する
+        /// </summary>
         private void initRx(int skipCount)
         {
             this.ObserveProperty(a => a.Project.Id).Skip(skipCount).SubscribeWithErr(id => throw new InvalidProgramException("Not supported Project.Id")).AddTo(disposables);

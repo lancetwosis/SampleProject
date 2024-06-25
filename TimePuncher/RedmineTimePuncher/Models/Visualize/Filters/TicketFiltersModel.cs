@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models.Visualize.Filters
 {
-    public class TicketFiltersModel : LibRedminePower.Models.Bases.ModelBase
+    public class TicketFiltersModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public bool IsExpanded { get; set; } = true;
 
@@ -67,7 +67,7 @@ namespace RedmineTimePuncher.Models.Visualize.Filters
             else
             {
                 // 自分にアサインされているプロジェクトを対象とする
-                results = getTimeEntries(redmine, prms, redmine.MyUser.Memberships.Select(m => m.Project.Id).ToList());
+                results = getTimeEntries(redmine, prms, CacheManager.Default.MyUser.Value.Memberships.Select(m => m.Project.Id).ToList());
             }
 
             if (results == null || results.Count == 0)

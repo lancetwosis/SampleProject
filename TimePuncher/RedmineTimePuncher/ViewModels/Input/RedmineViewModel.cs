@@ -63,7 +63,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 using (IsBusyTicketList.ProcessStart(Properties.Resources.ProgressMsgGettingIssues))
                 {
                     // クエリ追加
-                    var queries = await Task.Run(() => r.GetQueries());
+                    var queries = CacheManager.Default.Queries.Value;
                     var grids = q.Items.Where(a => queries.Any(b => a.Id == b.Id)).Select(query =>
                     {
                         return new TicketGridViewModel(this, query.Name,
@@ -107,8 +107,8 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 if (p.r != null)
                 {
-                    var timeEntries = await Task.Run(() => p.r.TimeEntryActivities.Value);
-                    var trackers = await Task.Run(() => p.r.Trackers.Value);
+                    var timeEntries = CacheManager.Default.TimeEntryActivities.Value;
+                    var trackers = CacheManager.Default.Trackers.Value;
                     p.c.UpdateItems(timeEntries);
                     parent.Parent.Settings.Save();
                 }
@@ -121,7 +121,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 {
                     // すべてのプロジェクトの時間管理に設定されている「作業分類」を対象とする。
                     // これにより「システム作業分類」のチェックが外れているものも対象にできる。
-                    var ps = await Task.Run(() => p.r.Projects.Value);
+                    var ps = CacheManager.Default.Projects.Value;
                     var es = ps.Where(pro => pro.TimeEntryActivities != null).SelectMany(pro => pro.TimeEntryActivities).Distinct((e1, e2) => e1.Id == e2.Id).ToList();
                     foreach (var e in es)
                     {

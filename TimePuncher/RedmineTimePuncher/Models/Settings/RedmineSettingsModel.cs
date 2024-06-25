@@ -124,5 +124,32 @@ namespace RedmineTimePuncher.Models.Settings
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PasswordEncryptOfBasicAuth);
             return hashCode;
         }
+
+        /// <summary>
+        /// ユーザ名などはエクスポートの対象外とするため [JsonIgnore] に設定している。よって個別に Save する。
+        /// </summary>
+        public void SaveProperties()
+        {
+            Properties.Settings.Default.UserName                   = UserName;
+            Properties.Settings.Default.Password                   = PasswordEncrypt;
+            Properties.Settings.Default.AdminApiKey                = AdminApiKey;
+            Properties.Settings.Default.ApiKey                     = ApiKey;
+            Properties.Settings.Default.UserNameOfBasicAuth        = UserNameOfBasicAuth;
+            Properties.Settings.Default.PasswordEncryptOfBasicAuth = PasswordEncryptOfBasicAuth;
+            Properties.Settings.Default.CurrentLocale              = Locale.ToString();
+        }
+
+        /// <summary>
+        /// ユーザ名などはエクスポートの対象外とするため [JsonIgnore] に設定している。よって個別に Load する。
+        /// </summary>
+        public void LoadProperties()
+        {
+            UserName                   = Properties.Settings.Default.UserName;
+            PasswordEncrypt            = Properties.Settings.Default.Password;
+            AdminApiKey                = Properties.Settings.Default.AdminApiKey;
+            ApiKey                     = Properties.Settings.Default.ApiKey;
+            UserNameOfBasicAuth        = Properties.Settings.Default.UserNameOfBasicAuth;
+            PasswordEncryptOfBasicAuth = Properties.Settings.Default.PasswordEncryptOfBasicAuth;
+        }
     }
 }

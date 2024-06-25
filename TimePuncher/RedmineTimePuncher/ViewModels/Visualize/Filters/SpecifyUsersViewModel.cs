@@ -39,7 +39,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
-                var allUsers = r.Users.Value;
+                var allUsers = CacheManager.Default.Users.Value;
                 var selectedUsers = model.Users;
 
                 Users = new ExpandableTwinListBoxViewModel<MyUser>(allUsers, selectedUsers).AddTo(myDisposables);
@@ -48,7 +48,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                     Users.Expanded = i;
                     if (i && model.Users.Count == 0)
                     {
-                        selectedUsers.Add(allUsers.First(a => a.Id == r.MyUser.Id));
+                        selectedUsers.Add(allUsers.First(a => a.Id == CacheManager.Default.MyUser.Value.Id));
                     }
                 }).AddTo(myDisposables);
             });

@@ -26,6 +26,7 @@ namespace RedmineTimePuncher.Models.Settings
         public CreateTicketSettingsModel CreateTicket { get; set; } = new CreateTicketSettingsModel();
         public TranscribeSettingsModel TranscribeSettings { get; set; } = new TranscribeSettingsModel();
         public ReviewIssueListSettingModel ReviewIssueList { get; set; } = new ReviewIssueListSettingModel();
+        public ReviewCopyCustomFieldsSettingModel ReviewCopyCustomFields { get; set; } = new ReviewCopyCustomFieldsSettingModel();
         public RequestWorkSettingsModel RequestWork { get; set; } = new RequestWorkSettingsModel();
         public CalendarSettingsModel Calendar { get; set; } = new CalendarSettingsModel();
         public PersonHourReportSettingsModel PersonHourReport { get; set; } = new PersonHourReportSettingsModel();
@@ -74,12 +75,7 @@ namespace RedmineTimePuncher.Models.Settings
             if (!string.IsNullOrEmpty(Properties.Settings.Default.Setting))
             {
                 result = CloneExtentions.ToObject<SettingsModel>(Properties.Settings.Default.Setting);
-                result.Redmine.UserName = Properties.Settings.Default.UserName;
-                result.Redmine.PasswordEncrypt = Properties.Settings.Default.Password;
-                result.Redmine.AdminApiKey = Properties.Settings.Default.AdminApiKey;
-                result.Redmine.ApiKey = Properties.Settings.Default.ApiKey;
-                result.Redmine.UserNameOfBasicAuth = Properties.Settings.Default.UserNameOfBasicAuth;
-                result.Redmine.PasswordEncryptOfBasicAuth = Properties.Settings.Default.PasswordEncryptOfBasicAuth;
+                result.Redmine.LoadProperties();
             }
             else
             {
@@ -107,13 +103,7 @@ namespace RedmineTimePuncher.Models.Settings
         public void Save()
         {
             Properties.Settings.Default.Setting = this.ToJson();
-            Properties.Settings.Default.UserName = this.Redmine.UserName;
-            Properties.Settings.Default.Password = this.Redmine.PasswordEncrypt;
-            Properties.Settings.Default.AdminApiKey = this.Redmine.AdminApiKey;
-            Properties.Settings.Default.ApiKey = this.Redmine.ApiKey;
-            Properties.Settings.Default.UserNameOfBasicAuth = this.Redmine.UserNameOfBasicAuth;
-            Properties.Settings.Default.PasswordEncryptOfBasicAuth = this.Redmine.PasswordEncryptOfBasicAuth;
-            Properties.Settings.Default.CurrentLocale = this.Redmine.Locale.ToString();
+            Redmine.SaveProperties();
             Properties.Settings.Default.Save();
         }
     }

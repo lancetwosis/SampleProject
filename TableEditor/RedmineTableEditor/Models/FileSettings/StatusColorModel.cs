@@ -7,7 +7,7 @@ using System.Windows.Media;
 
 namespace RedmineTableEditor.Models.FileSettings
 {
-    public class StatusColorModel : LibRedminePower.Models.Bases.ModelBase
+    public class StatusColorModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public int Id { get; set; }
         public System.Drawing.Color Color { get; set; }

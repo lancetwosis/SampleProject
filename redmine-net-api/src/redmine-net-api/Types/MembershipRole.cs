@@ -33,13 +33,14 @@ namespace Redmine.Net.Api.Types
     public sealed class MembershipRole : IdentifiableName, IEquatable<MembershipRole>, IValue
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// Gets or sets a value indicating whether this <see cref="MembershipRole"/> is inherited.
         /// </summary>
         /// <value>
         ///   <c>true</c> if inherited; otherwise, <c>false</c>.
         /// </value>
-        public bool Inherited { get; internal set; }
+        public bool Inherited { get; set; }
         #endregion
 
         #region Implementation of IXmlSerialization

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTableEditor.Models.FileSettings
 {
-    public class FileSettingsModel : LibRedminePower.Models.Bases.ModelBase
+    public class FileSettingsModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public ParentIssueSettingsModel ParentIssues { get; set; }
         public SubIssueSettingsModel SubIssues { get; set; }

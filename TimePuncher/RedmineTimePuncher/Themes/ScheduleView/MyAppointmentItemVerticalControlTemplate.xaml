@@ -111,17 +111,36 @@
                                       TextBlock.FontWeight="{Binding Path=Category.Model.IsBold,
                                                                      Converter={StaticResource BoolToFontBoldConverter}}"
                                       TextBlock.Foreground="{Binding Path=Category.ForeBrush}" />
-                    <TextBlock Grid.Row="2"
-                               Grid.Column="1"
-                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                               VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
-                               FontStyle="{Binding Path=Category.Model.IsItalic,
-                                                   Converter={StaticResource BoolToFontItalicConverter}}"
-                               FontWeight="{Binding Path=Category.Model.IsBold,
-                                                    Converter={StaticResource BoolToFontBoldConverter}}"
-                               Foreground="{Binding Path=Category.ForeBrush}"
-                               Text="{Binding Appointment.ProjectPostfix}"
-                               TextWrapping="Wrap" />
+                    <StackPanel Grid.Row="2"
+                                Grid.Column="1"
+                                Orientation="Horizontal">
+                        <TextBlock HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                   FontStyle="{Binding Path=Category.Model.IsItalic,
+                                                       Converter={StaticResource BoolToFontItalicConverter}}"
+                                   FontWeight="{Binding Path=Category.Model.IsBold,
+                                                        Converter={StaticResource BoolToFontBoldConverter}}"
+                                   Foreground="{Binding Path=Category.ForeBrush}"
+                                   TextWrapping="Wrap">
+                            <Run Text=" - " />
+                            <Run Text="{Binding Appointment.Ticket.Project.Name}" />
+                        </TextBlock>
+                        <TextBlock HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                   VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                   FontStyle="{Binding Path=Category.Model.IsItalic,
+                                                       Converter={StaticResource BoolToFontItalicConverter}}"
+                                   FontWeight="{Binding Path=Category.Model.IsBold,
+                                                        Converter={StaticResource BoolToFontBoldConverter}}"
+                                   Foreground="{Binding Path=Category.ForeBrush}"
+                                   TextWrapping="Wrap"
+                                   Visibility="{Binding Appointment.ProjectStatus,
+                                                        Converter={StaticResource EnumToVisibilityConverter},
+                                                        ConverterParameter=NotActive}">
+                            <Run Text=" (" />
+                            <Run Text="{Binding Appointment.ProjectStatus}" />
+                            <Run Text=")" />
+                        </TextBlock>
+                    </StackPanel>
                     <telerik:RadGlyph x:Name="ExtendedArrowEnd"
                                       Grid.Row="3"
                                       Grid.ColumnSpan="2"
@@ -165,7 +184,7 @@
                                                                 Path=Foreground}"
                                            IsTabStop="False"
                                            Style="{StaticResource MyDeleteButtonStyle}"
-                                           Visibility="{Binding Appointment.CanDelete.Value,
+                                           Visibility="{Binding Appointment.IsActiveProject.Value,
                                                                 Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </StackPanel>
                 </Grid>

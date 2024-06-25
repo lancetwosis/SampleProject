@@ -67,6 +67,16 @@ namespace RedmineTimePuncher.Models.Settings
             }
         }
 
+        public DateTime GetNextWorkingDay(DateTime date, int days)
+        {
+            var workingDay = date;
+            for (var i = 0; i < days; i++)
+            {
+                workingDay = GetMostRecentWorkingDay(workingDay.AddDays(1), true);
+            }
+            return workingDay;
+        }
+
         public bool IsOnTimeAppointment(MyAppointment appo)
         {
             return !OffTimeFromSubject.IsMatch(appo.Subject) && !OffTimeFromCatetories.IsMatch(appo.OutlookCategories);

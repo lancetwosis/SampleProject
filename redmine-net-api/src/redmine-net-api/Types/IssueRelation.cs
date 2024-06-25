@@ -35,11 +35,12 @@ namespace Redmine.Net.Api.Types
     public sealed class IssueRelation : Identifiable<IssueRelation>
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// Gets or sets the issue id.
         /// </summary>
         /// <value>The issue id.</value>
-        public int IssueId { get; internal set; }
+        public int IssueId { get; set; }
 
         /// <summary>
         /// Gets or sets the related issue id.

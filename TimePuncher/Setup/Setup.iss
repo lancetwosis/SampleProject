@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Redmine Studio"
-#define MyAppVersion "8.1.6"
+#define MyAppVersion "8.1.8"
 #define MyAppPublisher "Redmine Power"
 #define MyAppURL "https://www.redmine-power.com/"
 #define MyAppExeName "RedmineStudio.exe"

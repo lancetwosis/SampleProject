@@ -35,6 +35,7 @@ namespace Redmine.Net.Api.Types
     public sealed class User : Identifiable<User>
     {
         #region Properties
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// Gets or sets the user login.
         /// </summary>
@@ -87,18 +88,18 @@ namespace Redmine.Net.Api.Types
         /// Gets the created on.
         /// </summary>
         /// <value>The created on.</value>
-        public DateTime? CreatedOn { get; internal set; }
+        public DateTime? CreatedOn { get; set; }
 
         /// <summary>
         /// Gets the last login on.
         /// </summary>
         /// <value>The last login on.</value>
-        public DateTime? LastLoginOn { get; internal set; }
+        public DateTime? LastLoginOn { get; set; }
 
         /// <summary>
         /// Gets the API key of the user, visible for admins and for yourself (added in 2.3.0)
         /// </summary>
-        public string ApiKey { get; internal set; }
+        public string ApiKey { get; set; }
 
         /// <summary>
         /// Gets the status of the user, visible for admins only (added in 2.4.0)
@@ -133,7 +134,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The memberships.
         /// </value>
-        public List<Membership> Memberships { get; internal set; }
+        public List<Membership> Memberships { get; set; }
 
         /// <summary>
         /// Gets or sets the user's groups.
@@ -141,7 +142,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The groups.
         /// </value>
-        public List<UserGroup> Groups { get; internal set; }
+        public List<UserGroup> Groups { get; set; }
 
         /// <summary>
         /// Gets or sets the user's mail_notification.

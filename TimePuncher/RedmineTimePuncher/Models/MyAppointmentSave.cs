@@ -1,4 +1,5 @@
 ﻿using Redmine.Net.Api.Types;
+using RedmineTimePuncher.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,7 +14,7 @@ namespace RedmineTimePuncher.Models
     {
         public string UniqueId { get; set; }
         public string Subject { get; set; }
-        public string ProjectPostfix { get; set; }
+        public ProjectStatusType ProjectStatus { get; set; }
         public string Body { get; set; }
 
         public DateTime Start { get; set; }
@@ -41,7 +42,7 @@ namespace RedmineTimePuncher.Models
         {
             this.UniqueId = from.UniqueId;
             this.Subject = from.Subject;
-            this.ProjectPostfix = from.ProjectPostfix;
+            this.ProjectStatus = from.ProjectStatus;
             this.Body = from.Body;
             this.Start = from.Start;
             this.End = from.End;

@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Interfaces;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using System;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTableEditor.Models
 {
-    public class RedmineManager : LibRedminePower.Models.Bases.ModelBase
+    public class RedmineManager : LibRedminePower.Models.Bases.ModelBaseSlim
     {
 
         public string UrlBase => manager.Host;
@@ -32,11 +33,13 @@ namespace RedmineTableEditor.Models
 
         private IRedmineManager manager { get; set; }
         private IRedmineManager masterManager { get; set; }
+        private ICacheManager cacheManager { get; set; }
 
-        public RedmineManager((IRedmineManager Manager, IRedmineManager MasterManager) redmine)
+        public RedmineManager((IRedmineManager Manager, IRedmineManager MasterManager, ICacheManager CacheManager) redmine)
         {
             this.manager = redmine.Manager;
             this.masterManager = redmine.MasterManager;
+            this.cacheManager = redmine.CacheManager;
         }
 
         public string IsValid()
@@ -51,18 +54,14 @@ namespace RedmineTableEditor.Models
 
         public async Task UpdateAsync()
         {
-            await Task.Run(() =>
-            {
-                allTrackers = manager.GetObjectsWithErrConv<Tracker>();
-                allCustomFields = masterManager.GetObjectsWithErrConv<CustomField>()
-                    .Where(c => c.Trackers != null && c.Trackers.Any() && c.CustomizedType == "issue").ToList();
+            allTrackers = cacheManager.Trackers.Value;
+            allCustomFields = cacheManager.CustomFields.Value
+                .Where(c => c.Trackers != null && c.Trackers.Any() && c.CustomizedType == "issue").ToList();
 
-                Statuses = manager.GetObjectsWithErrConv<IssueStatus>();
-                Priorities = manager.GetObjectsWithErrConv<IssuePriority>();
-                Queries = manager.GetObjectsWithErrConv<Query>();
-                // Trackers が取得できない現象があったため masterManager に変更
-                Projects = masterManager.GetObjectsWithErrConv<Project>(RedmineKeys.TRACKERS);
-            });
+            Statuses = cacheManager.Statuss.Value;
+            Priorities = cacheManager.Priorities.Value;
+            Queries = cacheManager.Queries.Value;
+            Projects = cacheManager.Projects.Value;
         }
 
         public async Task UpdateByQueryAsync(Query query)

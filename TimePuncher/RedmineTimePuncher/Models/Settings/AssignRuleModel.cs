@@ -6,7 +6,7 @@ using System.Collections.ObjectModel;
 
 namespace RedmineTimePuncher.Models.Settings
 {
-    public class AssignRuleModel : LibRedminePower.Models.Bases.ModelBase
+    public class AssignRuleModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public List<int> ProjectIds { get; set; }
         public List<int> TrackerIds { get; set; }

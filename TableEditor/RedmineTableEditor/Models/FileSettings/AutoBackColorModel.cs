@@ -9,7 +9,7 @@ using System.Windows.Media;
 
 namespace RedmineTableEditor.Models.FileSettings
 {
-    public class AutoBackColorModel : LibRedminePower.Models.Bases.ModelBase
+    public class AutoBackColorModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public StatusColorsModel StatusColors { get; set; } = new StatusColorsModel();
         public AssignedToColorsModel AssignedToColors { get; set; } = new AssignedToColorsModel();

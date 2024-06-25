@@ -1,5 +1,7 @@
 ﻿using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Redmine.Net.Api.Types;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
@@ -29,13 +31,13 @@ namespace RedmineTimePuncher.Models.Settings
             RequestTranscribe = new TranscribeSettingModel().AddTo(disposables);
         }
 
-        public async Task SetupAsync(Managers.RedmineManager r)
+        public async Task SetupAsync(RedmineManager r)
         {
             try
             {
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
-                var trackers = await Task.Run(() => r.Trackers.Value);
+                var trackers = CacheManager.Default.GetTemporaryTrackers();
                 if (!trackers.Any())
                     throw new ApplicationException(Resources.SettingsReviErrMsgNoTrackers);
 
@@ -43,7 +45,7 @@ namespace RedmineTimePuncher.Models.Settings
                 Trackers.Insert(0, MyTracker.USE_PARENT_TRACKER);
                 RequestTracker = Trackers.FirstOrDefault(RequestTracker);
 
-                var customFields = await Task.Run(() => r.CustomFields.Value);
+                var customFields = CacheManager.Default.GetTemporaryCustomFields();
                 var boolCustomFields = customFields.Where(c => c.IsIssueType() && c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
                 IsRequired.Update(boolCustomFields);
 

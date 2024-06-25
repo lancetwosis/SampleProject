@@ -22,7 +22,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.Models.Visualize.Filters
 {
-    public class ResultFilterModel : LibRedminePower.Models.Bases.ModelBase
+    public class ResultFilterModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public bool IsEnabled { get; set; } = true;
         public FactorType Type { get; set; } = FactorTypes.Project;

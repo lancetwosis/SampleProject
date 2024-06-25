@@ -33,19 +33,16 @@ namespace Redmine.Net.Api.Types
     public sealed class CustomFieldPossibleValue : IXmlSerializable, IJsonSerializable, IEquatable<CustomFieldPossibleValue>
     {
         #region Properties
-        // カスタマイズ(S):デシリアライズできるように internal を外す
+        // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
         /// <summary>
         /// 
         /// </summary>
-        //public string Value { get; internal set; }
         public string Value { get; set; }
 
         /// <summary>
         /// 
         /// </summary>
-        //public string Label { get; internal set; }
         public string Label { get; set; }
-        // カスタマイズ(E):デシリアライズできるように internal を外す
         #endregion
 
         #region Implementation of IXmlSerializable

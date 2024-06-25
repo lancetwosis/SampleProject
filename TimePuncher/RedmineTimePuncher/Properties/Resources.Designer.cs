@@ -591,6 +591,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Closed に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumProjectStatusTypeNotActive {
+            get {
+                return ResourceManager.GetString("enumProjectStatusTypeNotActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Actual times に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumReportColumnActualTimes {
@@ -1417,6 +1426,17 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Failed to execute because there are time entries associated with the inactive project.
+        ///
+        ///{0} に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string msgContainsNotActiveProject {
+            get {
+                return ResourceManager.GetString("msgContainsNotActiveProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   The appointments are overlapped. Align them so that they do not overlap. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string msgErrDuplicateAppointment {
@@ -1475,7 +1495,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Please select an appointment of spent time. に類似しているローカライズされた文字列を検索します。
+        ///   Please select an appointment of spent time tied to an active project. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string msgErrSelectAppointmentsOfSpentTime {
             get {
@@ -3398,6 +3418,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Copy Custom Fields に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsCategoryCopyCustomFields {
+            get {
+                return ResourceManager.GetString("SettingsCategoryCopyCustomFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Export に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsCategoryExport {
@@ -4094,6 +4123,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Please select the custom field you wish to copy from the target issue. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviCopyCustomFieldMsg {
+            get {
+                return ResourceManager.GetString("SettingsReviCopyCustomFieldMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Save to a custom field に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviCustomField {
@@ -4216,6 +4254,15 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsReviMarkupLang {
             get {
                 return ResourceManager.GetString("SettingsReviMarkupLang", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please check the items to be performed for each review method. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviMethodMsg {
+            get {
+                return ResourceManager.GetString("SettingsReviMethodMsg", resourceCulture);
             }
         }
         

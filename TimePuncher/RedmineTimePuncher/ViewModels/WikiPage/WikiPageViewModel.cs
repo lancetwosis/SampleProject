@@ -236,7 +236,7 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
 
             ReloadCommand = new AsyncCommandBase(
                 Properties.Resources.RibbonCmdReload, Properties.Resources.reload,
-                Observable.Return((string)null),
+                SelectedProject.Select(p => p != null ? null : ""),
                 async () =>
                 {
                     using (IsBusy.ProcessStart())

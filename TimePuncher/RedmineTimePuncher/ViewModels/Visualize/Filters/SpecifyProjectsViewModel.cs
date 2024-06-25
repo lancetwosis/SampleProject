@@ -40,16 +40,16 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
-                var allProjects = r.Projects.Value.Select(p => new MyProject(p)).ToList();
+                var allProjects = CacheManager.Default.Projects.Value.Select(p => new MyProject(p)).ToList();
 
-                setProjectsIfNeeded(model, r.MyUser, allProjects);
+                setProjectsIfNeeded(model, CacheManager.Default.MyUser.Value, allProjects);
 
                 Projects = new ExpandableTwinListBoxViewModel<MyProject>(allProjects, model.Projects).AddTo(myDisposables);
                 IsEnabled.Skip(1).Subscribe(i =>
                 {
                     Projects.Expanded = i;
                     if (i)
-                        setProjectsIfNeeded(model, r.MyUser, allProjects);
+                        setProjectsIfNeeded(model, CacheManager.Default.MyUser.Value, allProjects);
                 }).AddTo(myDisposables);
             });
 
