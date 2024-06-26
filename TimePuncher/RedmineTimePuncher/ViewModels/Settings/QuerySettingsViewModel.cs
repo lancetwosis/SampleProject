@@ -61,15 +61,9 @@ namespace RedmineTimePuncher.ViewModels.Settings
             myDisposables?.Dispose();
             myDisposables = new CompositeDisposable().AddTo(disposables);
 
+            // Redmine 上で削除されたクエリは除外する
             model.Items = new ObservableCollection<MyQuery>(model.Items.Select(a => queries.FirstOrDefault(b => a.Id == b.Id)).Where(a => a != null));
-            var selectedItems = new ObservableCollection<MyQuery>(model.Items);
-            TwinListBoxViewModel = new TwinListBoxViewModel<MyQuery>(queries, selectedItems);
-            selectedItems.ObserveAddChanged().SubscribeWithErr(a => model.Items.Add(a)).AddTo(myDisposables);
-            selectedItems.ObserveRemoveChanged().SubscribeWithErr(a => model.Items.Remove(a)).AddTo(myDisposables);
-            selectedItems.CollectionChangedAsObservable().Where(a => a.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move).SubscribeWithErr(a =>
-            {
-                model.Items.Move(a.OldStartingIndex, a.NewStartingIndex);
-            }).AddTo(myDisposables);
+            TwinListBoxViewModel = new TwinListBoxViewModel<MyQuery>(queries, model.Items).AddTo(myDisposables);
         }
     }
 }

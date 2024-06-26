@@ -25,14 +25,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
         public OutputCsvExportSettingsViewModel(OutputCsvExportSettingsModel model)
         {
-            var selectedItems = new ObservableCollection<Enums.ExportItems>(model.ExportItems);
-            TwinListBoxViewModel = new TwinListBoxViewModel<Enums.ExportItems>(FastEnumUtility.FastEnum.GetValues<Enums.ExportItems>(), selectedItems);
-            selectedItems.ObserveAddChanged().SubscribeWithErr(a => model.ExportItems.Add(a)).AddTo(disposables);
-            selectedItems.ObserveRemoveChanged().SubscribeWithErr(a => model.ExportItems.Remove(a)).AddTo(disposables);
-            selectedItems.CollectionChangedAsObservable().Where(a => a.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move).SubscribeWithErr(a =>
-            {
-                model.ExportItems.Move(a.OldStartingIndex, a.NewStartingIndex);
-            }).AddTo(disposables);
+            TwinListBoxViewModel = new TwinListBoxViewModel<Enums.ExportItems>(FastEnumUtility.FastEnum.GetValues<Enums.ExportItems>(), model.ExportItems);
 
             ExportDir = model.ToReactivePropertySlimAsSynchronized(a => a.ExportDir).AddTo(disposables);
             IsOepn = model.ToReactivePropertySlimAsSynchronized(a => a.IsOepn).AddTo(disposables);

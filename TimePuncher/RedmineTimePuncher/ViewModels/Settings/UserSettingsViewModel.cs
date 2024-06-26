@@ -68,15 +68,8 @@ namespace RedmineTimePuncher.ViewModels.Settings
             myDisposables = new CompositeDisposable().AddTo(disposables);
 
             // 元の設定に新たな「ユーザの選択肢」に含まれないユーザがあった場合、除外する
-            model.Items = new ObservableCollection<MyUser>(model.Items.Select(a => users.FirstOrDefault(b => a.Id == b.Id)));
-            var selectedItems = new ObservableCollection<MyUser>(model.Items);
-            TwinListBoxViewModel = new TwinListBoxViewModel<MyUser>(users, selectedItems).AddTo(myDisposables);
-            selectedItems.ObserveAddChanged().SubscribeWithErr(a => model.Items.Add(a)).AddTo(myDisposables);
-            selectedItems.ObserveRemoveChanged().SubscribeWithErr(a => model.Items.Remove(a)).AddTo(myDisposables);
-            selectedItems.CollectionChangedAsObservable().Where(a => a.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move).SubscribeWithErr(a =>
-            {
-                model.Items.Move(a.OldStartingIndex, a.NewStartingIndex);
-            }).AddTo(myDisposables);
+            model.Items = new ObservableCollection<MyUser>(model.Items.Select(a => users.FirstOrDefault(b => a.Id == b.Id)).Where(a => a != null));
+            TwinListBoxViewModel = new TwinListBoxViewModel<MyUser>(users, model.Items).AddTo(myDisposables);
         }
     }
 }

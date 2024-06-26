@@ -84,7 +84,7 @@ namespace RedmineTimePuncher.Models.Managers
             if (!Default.IsExist() ||
                 Default.RedmineSetting == null || !Default.RedmineSetting.Equals(settings))
             {
-                update(redmine, settings);
+                Update(redmine, settings);
             }
         }
 
@@ -93,7 +93,7 @@ namespace RedmineTimePuncher.Models.Managers
             if (redmine == null)
                 return;
 
-            update(redmine, settings);
+            Update(redmine, settings);
 
             Properties.Settings.Default.Cache = Default.ToJson();
             Properties.Settings.Default.Save();
@@ -108,7 +108,7 @@ namespace RedmineTimePuncher.Models.Managers
         /// <summary>
         /// キャッシュと設定を更新する
         /// </summary>
-        private void update(RedmineManager redmine, RedmineSettingsModel settings)
+        public void Update(RedmineManager redmine, RedmineSettingsModel settings)
         {
             // TODO: キャッシュの更新処理に失敗した場合の例外処理を検討すること
 

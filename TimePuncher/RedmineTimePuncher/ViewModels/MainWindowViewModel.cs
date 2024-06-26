@@ -110,7 +110,7 @@ namespace RedmineTimePuncher.ViewModels
                             var manager = new RedmineManager(s);
                             ErrorMessage.Value = null;
 
-                            CacheManager.Default.UpdateCacheIfNeeded(manager, s);
+                            await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(manager, s));
 
                             // TODO: すぐに必要にならない情報なので、裏で取得しておく。RP を Subscribe する対応の時に修正すること
                             MyIssue.TrakersTask = Task.Run(() => CacheManager.Default.Trackers.Value);
@@ -180,7 +180,7 @@ namespace RedmineTimePuncher.ViewModels
             ShowOnlienHelpCommand = new ReactiveCommand().WithSubscribe(() => Process.Start(ApplicationInfo.AppBaseUrl)).AddTo(disposables);
 
             // 設定ダイアログを開く
-            ShowSettingDialogCommand = IsBusy.Inverse().ToReactiveCommand().WithSubscribe(() =>
+            ShowSettingDialogCommand = IsBusy.Inverse().ToReactiveCommand().WithSubscribe(async () =>
             {
                 TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(ShowSettingDialogCommand) + ".Executed");
 
@@ -201,13 +201,19 @@ namespace RedmineTimePuncher.ViewModels
                     var dialog = new Views.Settings.SettingsDialog();
                     dialog.DataContext = vm;
                     dialog.Owner = App.Current.MainWindow;
-                    dialog.WindowStartupLocation = System.Windows.WindowStartupLocation.CenterOwner;
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
                     dialog.ShowDialog();
                     if (dialog.DialogResult == true)
                     {
                         // [IgnoreDataMember] のプロパティがあるため Equals で同値判定を行う
                         if (!Settings.Redmine.Equals(clone.Redmine))
                             Settings.Redmine = clone.Redmine;
+                        else
+                            using (IsBusy.ProcessStart(Properties.Resources.ProgressMsgConnectingRedmine))
+                            {
+                                await Task.Run(() => CacheManager.Default.Update(Redmine.Value, Settings.Redmine));
+                            }
+
                         if (Settings.Schedule.ToJson() != clone.Schedule.ToJson())
                         {
                             Settings.Schedule = clone.Schedule;
