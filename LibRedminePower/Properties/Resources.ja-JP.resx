@@ -286,7 +286,7 @@
     <value>(指定なし)</value>
   </data>
   <data name="enumIssuePropertyTypeAssignedTo" xml:space="preserve">
-    <value>担当</value>
+    <value>担当者</value>
   </data>
   <data name="enumIssuePropertyTypeCategory" xml:space="preserve">
     <value>カテゴリ</value>
@@ -338,5 +338,8 @@
   </data>
   <data name="enumIssuePropertyTypeAuthor" xml:space="preserve">
     <value>作成者</value>
+  </data>
+  <data name="enumIssuePropertyTypeUpdated" xml:space="preserve">
+    <value>更新日</value>
   </data>
 </root>

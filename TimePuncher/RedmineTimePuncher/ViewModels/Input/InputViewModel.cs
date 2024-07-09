@@ -710,12 +710,10 @@ namespace RedmineTimePuncher.ViewModels.Input
                 CurrentDate.Value = getMyToday();
             }
 
-            // 非同期で Redmine などにアクセスし表示を更新する
-            App.Current.Dispatcher.InvokeAsync(async () =>
+            // それぞれのコマンドが実行可能になった時、非同期で実行しデータを更新する
+            ResourceSettingList.Where(r => r.IsEnabled && r.Resource.Updater != null).ToList().AsParallel().ForAll(r =>
             {
-                await Task.WhenAll(ResourceSettingList.Where(r => r.IsEnabled)
-                                                      .Select(r => r.Resource.Updater.UpdateCommand.ExecuteAsync())
-                                                      .ToList());
+                r.Resource.Updater.ExecuteOnceAsync();
             });
         }
 

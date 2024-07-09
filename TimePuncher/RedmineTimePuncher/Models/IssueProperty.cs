@@ -17,10 +17,11 @@ namespace RedmineTimePuncher.Models
 {
     public class IssueProperty : LibRedminePower.Models.Bases.ModelBaseSlim
     {
+        public static IssueProperty NOT_SPECIFIED = new IssueProperty() { Name = "", Key = "" };
+
         public string Name { get; set; }
         public string Key { get; set; }
 
-        [Obsolete("For Serialize", false)]
         public IssueProperty() { }
 
         public IssueProperty(CustomField cf)
@@ -34,6 +35,9 @@ namespace RedmineTimePuncher.Models
             Name = type.GetDescription();
             switch (type)
             {
+                case IssuePropertyType.Subject:
+                    Key = RedmineKeys.SUBJECT;
+                    break;
                 case IssuePropertyType.Status:
                     Key = RedmineKeys.STATUS;
                     break;
@@ -57,6 +61,12 @@ namespace RedmineTimePuncher.Models
                     break;
                 case IssuePropertyType.DoneRatio:
                     Key = RedmineKeys.DONE_RATIO;
+                    break;
+                case IssuePropertyType.FixedVersion:
+                    Key = RedmineKeys.FIXED_VERSION;
+                    break;
+                case IssuePropertyType.Updated:
+                    Key = RedmineKeys.UPDATED_ON;
                     break;
                 default:
                     throw new NotSupportedException($"'{type}' is not supported for additional columns in issue list");

@@ -259,7 +259,7 @@ namespace LibRedminePower.Properties {
         }
         
         /// <summary>
-        ///   Assigned To に類似しているローカライズされた文字列を検索します。
+        ///   Assignee に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumIssuePropertyTypeAssignedTo {
             get {
@@ -322,7 +322,7 @@ namespace LibRedminePower.Properties {
         }
         
         /// <summary>
-        ///   Version に類似しているローカライズされた文字列を検索します。
+        ///   Target version に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumIssuePropertyTypeFixedVersion {
             get {
@@ -417,6 +417,15 @@ namespace LibRedminePower.Properties {
         public static string enumIssuePropertyTypeTracker {
             get {
                 return ResourceManager.GetString("enumIssuePropertyTypeTracker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Updated に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeUpdated {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeUpdated", resourceCulture);
             }
         }
         

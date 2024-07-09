@@ -4240,11 +4240,56 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Set the contents to be displayed in the list of indicated issues. The issue number and subject are always displayed. に類似しているローカライズされた文字列を検索します。
+        ///   Group results by に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviListGroup {
+            get {
+                return ResourceManager.GetString("SettingsReviListGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Set the contents to be displayed in the list of indicated issues. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviListMsg {
             get {
                 return ResourceManager.GetString("SettingsReviListMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Show に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviListShow {
+            get {
+                return ResourceManager.GetString("SettingsReviListShow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Sort by に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviListSort {
+            get {
+                return ResourceManager.GetString("SettingsReviListSort", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   ASC に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviListSortASC {
+            get {
+                return ResourceManager.GetString("SettingsReviListSortASC", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   DESC に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviListSortDESC {
+            get {
+                return ResourceManager.GetString("SettingsReviListSortDESC", resourceCulture);
             }
         }
         

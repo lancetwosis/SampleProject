@@ -19,6 +19,13 @@
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource FilterableComboBoxStyleKey}"
+               TargetType="telerik:RadComboBox">
+            <Setter Property="MinWidth" Value="180" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+        </Style>
+    </UserControl.Resources>
 
     <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
         <Grid>
@@ -27,25 +34,88 @@
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <StackPanel Orientation="Vertical">
+            <StackPanel Grid.IsSharedSizeScope="True"
+                        Orientation="Vertical">
                 <TextBlock Text="{x:Static props:Resources.SettingsReviListMsg}" />
-                <CheckBox Grid.Row="0"
-                          Margin="0,5,0,0"
-                          Content="{x:Static props:Resources.SettingsReviShowDescription}"
-                          IsChecked="{Binding ShowDescription.Value}" />
-                <CheckBox Grid.Row="1"
-                          Margin="0,5,0,0"
-                          Content="{x:Static props:Resources.SettingsReviShowLastNotes}"
-                          IsChecked="{Binding ShowLastNote.Value}" />
-                <GroupBox Grid.Row="2"
-                          Margin="0,5,0,0"
+                <GroupBox Margin="0,5,0,0"
                           Header="{x:Static props:Resources.SettingsReviDisplayColumns}">
-                    <views:TwinListBox Grid.Row="1"
-                                       Height="200"
+                    <views:TwinListBox Height="200"
                                        Margin="5,10,5,5"
                                        VerticalAlignment="top"
                                        DataContext="{Binding Properties}" />
                 </GroupBox>
+                <Grid Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          SharedSizeGroup="FirstColumn" />
+                        <ColumnDefinition Width="10"
+                                          SharedSizeGroup="SecondColumn" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Text="{x:Static props:Resources.SettingsReviListSort}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Text=" :" />
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal">
+                        <telerik:RadComboBox ItemsSource="{Binding CanSortByProperties}"
+                                             SelectedItem="{Binding SortBy.Value}" />
+                        <StackPanel Margin="15,0,0,0"
+                                    IsEnabled="{Binding IsEnabledSorting.Value}"
+                                    Orientation="Horizontal">
+                            <RadioButton Content="{x:Static props:Resources.SettingsReviListSortASC}"
+                                         IsChecked="{Binding IsDESC.Value,
+                                                             Converter={StaticResource InvertedBooleanConverter}}" />
+                            <RadioButton Margin="5,0,0,0"
+                                         Content="{x:Static props:Resources.SettingsReviListSortDESC}"
+                                         IsChecked="{Binding IsDESC.Value}" />
+                        </StackPanel>
+                    </StackPanel>
+                </Grid>
+                <Grid Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          SharedSizeGroup="FirstColumn" />
+                        <ColumnDefinition Width="10"
+                                          SharedSizeGroup="SecondColumn" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Text="{x:Static props:Resources.SettingsReviListGroup}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Text=" :" />
+                    <telerik:RadComboBox Grid.Column="2"
+                                         ItemsSource="{Binding CanGroupByProperties}"
+                                         SelectedItem="{Binding GroupBy.Value}" />
+                </Grid>
+                <Grid Margin="0,5,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"
+                                          SharedSizeGroup="FirstColumn" />
+                        <ColumnDefinition Width="10"
+                                          SharedSizeGroup="SecondColumn" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Grid.Column="0"
+                               VerticalAlignment="Center"
+                               Text="{x:Static props:Resources.SettingsReviListShow}" />
+                    <TextBlock Grid.Column="1"
+                               VerticalAlignment="Center"
+                               Text=" :" />
+                    <StackPanel Grid.Column="2"
+                                Orientation="Horizontal">
+                        <CheckBox Margin="0,5,0,0"
+                                  Content="{x:Static props:Resources.SettingsReviShowDescription}"
+                                  IsChecked="{Binding ShowDescription.Value}" />
+                        <CheckBox Margin="0,5,0,0"
+                                  Content="{x:Static props:Resources.SettingsReviShowLastNotes}"
+                                  IsChecked="{Binding ShowLastNote.Value}" />
+                    </StackPanel>
+                </Grid>
             </StackPanel>
 
             <local:SettingsButtonsPanel Grid.Row="1"

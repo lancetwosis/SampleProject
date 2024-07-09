@@ -49,5 +49,7 @@ namespace LibRedminePower.Enums
         TotalEstimatedHours,
         [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeAuthor), typeof(Resources))]
         Author,
+        [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeUpdated), typeof(Resources))]
+        Updated,
     }
 }

@@ -167,13 +167,17 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             ReviewMethod = new ReviewMethodViewModel(parent.Settings).AddTo(disposables);
 
             // チケット更新時の処理
-            updateTicket(parent.Settings, prev, Ticket, true);
+            // キャッシュの新規取得が実行された場合、コンストラクタでは前回値を反映できないためフラグで処理する
+            var needsRestorePrev = updateTicket(parent.Settings, prev, Ticket, true);
             parent.Redmine.CombineLatest(onTicketUpdated, (r, t) => (r, t)).Skip(1).SubscribeWithErr(p =>
             {
                 if (p.r == null || p.t == null || !parent.Settings.CreateTicket.IsValid() || !p.r.CanUseAdminApiKey())
                     return;
 
-                updateTicket(parent.Settings, this, p.t, false);
+                if (needsRestorePrev)
+                    needsRestorePrev = updateTicket(parent.Settings, prev, p.t, needsRestorePrev);
+                else
+                    updateTicket(parent.Settings, this, p.t, needsRestorePrev);
             }).AddTo(disposables);
 
             // 設定更新時の処理
@@ -268,15 +272,18 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         }
 
         private CompositeDisposable myDisposables { get; set; }
-        private void updateTicket(SettingsModel settings, CreateTicketViewModel prev, MyIssue target, bool isFirst)
+        private bool updateTicket(SettingsModel settings, CreateTicketViewModel prev, MyIssue target, bool needsRestorePrev)
         {
             if (target == null)
             {
                 if (prev != null && prev.Ticket != null)
                     target = prev.Ticket;
                 else
-                    return;
+                    return needsRestorePrev;
             }
+
+            if (!CacheManager.Default.IsExist())
+                return needsRestorePrev;
 
             myDisposables?.Dispose();
             myDisposables = new CompositeDisposable().AddTo(disposables);
@@ -289,7 +296,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             if (prev != null)
             {
                 // 開催者
-                if (isFirst && AllReviewers.Any(m => m.User.Id == prev.Organizer?.User.Id))
+                if (needsRestorePrev && AllReviewers.Any(m => m.User.Id == prev.Organizer?.User.Id))
                     Organizer = AllReviewers.First(m => m.User.Id == prev.Organizer?.User.Id);
                 else
                     Organizer = AllReviewers.FirstOrDefault(m => m.User.Id == target.AssignedTo.Id, null);
@@ -309,11 +316,11 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 NeedsCreateOutlookAppointment = prev.NeedsCreateOutlookAppointment;
 
                 // レビュー対象
-                MergeRequestUrl = isFirst ? prev.MergeRequestUrl : "";
-                ReviewTarget = isFirst ? prev.ReviewTarget : CacheManager.Default.MarkupLang.Value.CreateTicketLink(target);
+                MergeRequestUrl = needsRestorePrev ? prev.MergeRequestUrl : "";
+                ReviewTarget = needsRestorePrev ? prev.ReviewTarget : CacheManager.Default.MarkupLang.Value.CreateTicketLink(target);
 
                 // 説明
-                Description = isFirst ? prev.Description : "";
+                Description = needsRestorePrev ? prev.Description : "";
 
                 // 開催中ステータス
                 StatusUnderReview = prev.StatusUnderReview ?? CacheManager.Default.Statuss.Value.FirstOrDefault();
@@ -338,6 +345,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
                 StatusUnderReview = CacheManager.Default.Statuss.Value.FirstOrDefault();
             }
+
+            return false;
         }
 
         private CompositeDisposable myDisposables2 { get; set; }

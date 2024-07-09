@@ -10,6 +10,7 @@ using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reactive.Disposables;
 using System.Reactive.Linq;
@@ -27,6 +28,13 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReactivePropertySlim<bool> ShowLastNote { get; set; }
 
         public TwinListBoxViewModel<IssueProperty> Properties { get; set; }
+
+        public ReactivePropertySlim<IssueProperty> SortBy { get; set; }
+        public ObservableCollection<IssueProperty> CanSortByProperties { get; set; }
+        public ReadOnlyReactivePropertySlim<bool> IsEnabledSorting { get; set; }
+        public ReactivePropertySlim<bool> IsDESC { get; set; }
+        public ReactivePropertySlim<IssueProperty> GroupBy { get; set; }
+        public List<IssueProperty> CanGroupByProperties { get; set; }
 
         public ReviewIssueListSettingViewModel(ReviewIssueListSettingModel issueList,
             ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(issueList)
@@ -60,6 +68,14 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 ShowDescription = issueList.ToReactivePropertySlimAsSynchronized(m => m.ShowDescription).AddTo(myDisposables);
                 ShowLastNote = issueList.ToReactivePropertySlimAsSynchronized(m => m.ShowLastNote).AddTo(myDisposables);
                 Properties = new TwinListBoxViewModel<IssueProperty>(issueList.AllProperties, issueList.SelectedProperties).AddTo(myDisposables);
+
+                SortBy = issueList.ToReactivePropertySlimAsSynchronized(m => m.SortBy).AddTo(myDisposables);
+                CanSortByProperties = issueList.CanSortByProperties;
+                IsEnabledSorting = SortBy.Select(a => a != null && !a.Equals(IssueProperty.NOT_SPECIFIED)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
+                IsDESC = issueList.ToReactivePropertySlimAsSynchronized(m => m.IsDESC).AddTo(myDisposables);
+
+                GroupBy = issueList.ToReactivePropertySlimAsSynchronized(m => m.GroupBy).AddTo(myDisposables);
+                CanGroupByProperties = issueList.CanGroupByProperties;
             }
             catch (Exception ex)
             {

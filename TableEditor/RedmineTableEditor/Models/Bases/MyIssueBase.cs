@@ -186,7 +186,7 @@ namespace RedmineTableEditor.Models.Bases
 
             if (issue != null && issue.CustomFields != null && issue.CustomFields.Any())
             {
-                var fields =issue.CustomFields.Select(a => a.ToFieldBase(redmine.CustomFields.Single(b => b.Id == a.Id))).ToList();
+                var fields =issue.CustomFields.Select(a => a.ToFieldBase(redmine.CustomFields.Single(b => b.Id == a.Id))).Where(a => a != null).ToList();
                 foreach (var cf in fields)
                 {
                     editableProps.Add(cf);

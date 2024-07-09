@@ -286,7 +286,7 @@ Please check the network status and Redmine connection settings.</value>
     <value>(Not specified)</value>
   </data>
   <data name="enumIssuePropertyTypeAssignedTo" xml:space="preserve">
-    <value>Assigned To</value>
+    <value>Assignee</value>
   </data>
   <data name="enumIssuePropertyTypeCategory" xml:space="preserve">
     <value>Category</value>
@@ -304,7 +304,7 @@ Please check the network status and Redmine connection settings.</value>
     <value>Estimated Hours</value>
   </data>
   <data name="enumIssuePropertyTypeFixedVersion" xml:space="preserve">
-    <value>Version</value>
+    <value>Target version</value>
   </data>
   <data name="enumIssuePropertyTypeId" xml:space="preserve">
     <value>#</value>
@@ -338,5 +338,8 @@ Please check the network status and Redmine connection settings.</value>
   </data>
   <data name="enumIssuePropertyTypeAuthor" xml:space="preserve">
     <value>Author</value>
+  </data>
+  <data name="enumIssuePropertyTypeUpdated" xml:space="preserve">
+    <value>Updated</value>
   </data>
 </root>

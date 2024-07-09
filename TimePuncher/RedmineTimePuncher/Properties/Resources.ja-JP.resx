@@ -1812,7 +1812,7 @@ Outlookの状態を確認してください。</value>
     <value> ({0}を設定してください)</value>
   </data>
   <data name="SettingsReviListMsg" xml:space="preserve">
-    <value>指摘チケットの一覧に表示する内容を設定してください。チケット番号と題名は必ず表示されます。</value>
+    <value>指摘チケットの一覧に表示する内容を設定してください。</value>
   </data>
   <data name="SettingsReviShowDescription" xml:space="preserve">
     <value>説明の表示</value>
@@ -1842,5 +1842,20 @@ Outlookの状態を確認してください。</value>
   </data>
   <data name="SettingsReviMethodMsg" xml:space="preserve">
     <value>それぞれのレビュー方法で実施する項目にチェックをつけてください。</value>
+  </data>
+  <data name="SettingsReviListSort" xml:space="preserve">
+    <value>並び替え</value>
+  </data>
+  <data name="SettingsReviListGroup" xml:space="preserve">
+    <value>グループ条件</value>
+  </data>
+  <data name="SettingsReviListShow" xml:space="preserve">
+    <value>表示</value>
+  </data>
+  <data name="SettingsReviListSortASC" xml:space="preserve">
+    <value>昇順</value>
+  </data>
+  <data name="SettingsReviListSortDESC" xml:space="preserve">
+    <value>降順</value>
   </data>
 </root>

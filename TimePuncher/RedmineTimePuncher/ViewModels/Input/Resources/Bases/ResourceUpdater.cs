@@ -97,5 +97,20 @@ namespace RedmineTimePuncher.ViewModels.Input.Resources.Bases
             else
                 return null;
         }
+
+        public void ExecuteOnceAsync()
+        {
+            if (UpdateCommand.CanExecute())
+            {
+                UpdateCommand.ExecuteAsync().WithErrHandleAsync();
+            }
+            else
+            {
+                UpdateCommand.CanExecuteChangedAsObservable()
+                    .Where(_ => UpdateCommand.CanExecute())
+                    .Take(1)
+                    .Subscribe(_ => UpdateCommand.ExecuteAsync().WithErrHandleAsync());
+            }
+        }
     }
 }

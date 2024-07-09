@@ -110,5 +110,28 @@ namespace RedmineTimePuncher.Models
         {
             return ic.Values != null && ic.Values.Any(v => !string.IsNullOrEmpty(v.Info));
         }
+
+        /// <summary>
+        /// チケット一覧のグループ条件に設定できるかどうかを返す
+        /// </summary>
+        public static bool CanGroupBy(this CustomField c)
+        {
+            if (!c.IsIssueType())
+                return false;
+
+            switch (c.FieldFormat)
+            {
+                case "version":     // バージョン
+                case "user":        // ユーザー
+                case "list":        // リスト
+                case "int":         // 整数
+                case "bool":        // 真偽値
+                case "date":        // 日付
+                case "enumeration": // キーバリューリスト
+                    return true;
+                default:
+                    return false;
+            }
+        }
     }
 }
