@@ -1,6 +1,7 @@
 ﻿using LibRedminePower.Extentions;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings.Bases;
 using System;
 using System.Collections.Generic;
@@ -23,19 +24,14 @@ namespace RedmineTimePuncher.Models.Settings
 
                 PossibleValues.Clear();
                 PossibleValues.AddRange(cf.PossibleValues);
-                if (Value != null && Value.Value != null)
-                {
-                    var first = PossibleValues.FirstOrDefault(v => v.Value == Value.Value);
-                    Value = first != null ? first : PossibleValues.First();
-                }
-                else
-                {
-                    Value = PossibleValues.First();
-                }
+
+                updateValue();
             }).AddTo(disposables);
 
             // 「レビュー対象の工程の指定」は必ずカスタムフィールドに保存する必要があるため、有効・無効と連動させる
             this.ObserveProperty(a => a.IsEnabled).Subscribe(i => NeedsSaveToCustomField = i).AddTo(disposables);
+
+            this.fieldCreater = (cf) => new MyCustomField(cf);
         }
 
         public override void Update(List<MyCustomField> possibleCustomFields)

@@ -58,21 +58,21 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             // チケット一覧を更新する
             TicketList = new ReactivePropertySlim<List<TicketGridViewModel>>().AddTo(disposables);
-            parent.Parent.Redmine.Where(a => a != null).CombineLatest(parent.Parent.Settings.ObserveProperty(a => a.Query), async (r, q) =>
+            parent.Parent.Redmine.Where(a => a != null).CombineLatest(
+                parent.Parent.Settings.ObserveProperty(a => a.Query), CacheManager.Default.Updated, (r, q, _) =>
             {
                 using (IsBusyTicketList.ProcessStart(Properties.Resources.ProgressMsgGettingIssues))
                 {
                     // クエリ追加
-                    var queries = CacheManager.Default.Queries.Value;
+                    var queries = CacheManager.Default.Queries;
                     var grids = q.Items.Where(a => queries.Any(b => a.Id == b.Id)).Select(query =>
                     {
                         return new TicketGridViewModel(this, query.Name,
-                            () => parent.Parent.Redmine.Value?.GetTicketsByQuery(query).ToList(), 
-                            columnPropsList.SingleOrDefault(g => g.UniqueName == query.Name))
-                        { Query = query };
+                            () => r.GetTicketsByQuery(query).ToList(), 
+                            columnPropsList.SingleOrDefault(g => g.UniqueName == query.Name));
                     }).ToList();
 
-                    // マイチケットを先頭に追加 
+                    // マイチケットを先頭に追加
                     grids.Insert(0, new TicketGridViewModel(this, Properties.Resources.IssueGridMyIssues, 
                         () => r.GetMyTickets().OrderBy(b => b).ToList(),
                         columnPropsList.SingleOrDefault(g => g.UniqueName == Properties.Resources.IssueGridMyIssues)));
@@ -89,13 +89,14 @@ namespace RedmineTimePuncher.ViewModels.Input
                         columnPropsList.SingleOrDefault(g => g.UniqueName == Properties.Resources.IssueGridFavorites), true);
                     grids.Insert(1, FavoriteTickets);
 
-                    var _ = grids.Select(g => g.ReloadCommand.Command.ExecuteAsync()).ToArray();
+                    // 非同期でチケットを取得する
+                    var __ = grids.Select(g => g.ReloadCommand.Command.ExecuteAsync()).ToArray();
 
                     return grids;
                 }
-            }).SubscribeWithErr(async a =>
+            }).SubscribeWithErr(a =>
             {
-                TicketList.Value = await a;
+                TicketList.Value = a;
 
                 var index = Properties.Settings.Default.SelectedTicketGridIndex;
                 SelectedTicketGridIndex = index < TicketList.Value.Count ? index : 0;
@@ -103,13 +104,12 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             // カテゴリ情報を作成する。
             CategoryListBoxViewModel = new CategoryListBoxViewModel(parent).AddTo(disposables);
-            parent.Parent.Redmine.CombineLatest(parent.Parent.Settings.ObserveProperty(a => a.Category), (r, c) => (r, c)).SubscribeWithErr(async p =>
+            parent.Parent.Redmine.CombineLatest(parent.Parent.Settings.ObserveProperty(a => a.Category), CacheManager.Default.Updated,
+                (r, c, _) => (r, c)).SubscribeWithErr(p =>
             {
                 if (p.r != null)
                 {
-                    var timeEntries = CacheManager.Default.TimeEntryActivities.Value;
-                    var trackers = CacheManager.Default.Trackers.Value;
-                    p.c.UpdateItems(timeEntries);
+                    p.c.UpdateItems(CacheManager.Default.TimeEntryActivities);
                     parent.Parent.Settings.Save();
                 }
 
@@ -121,13 +121,14 @@ namespace RedmineTimePuncher.ViewModels.Input
                 {
                     // すべてのプロジェクトの時間管理に設定されている「作業分類」を対象とする。
                     // これにより「システム作業分類」のチェックが外れているものも対象にできる。
-                    var ps = CacheManager.Default.Projects.Value;
-                    var es = ps.Where(pro => pro.TimeEntryActivities != null).SelectMany(pro => pro.TimeEntryActivities).Distinct((e1, e2) => e1.Id == e2.Id).ToList();
-                    foreach (var e in es)
+                    var entryActivities = CacheManager.Default.Projects.Where(pro => pro.TimeEntryActivities != null)
+                                                                       .SelectMany(pro => pro.TimeEntryActivities)
+                                                                       .Distinct((e1, e2) => e1.Id == e2.Id).ToList();
+                    foreach (var entryActivity in entryActivities)
                     {
-                        var s = settings.FirstOrDefault(a => a.Name == e.Name);
-                        if (s != null)
-                            categories.Add(new MyCategory(s, e));
+                        var categorySetting = settings.FirstOrDefault(a => a.Name == entryActivity.Name);
+                        if (categorySetting != null)
+                            categories.Add(new MyCategory(categorySetting, entryActivity));
                     }
                 }
                 else

@@ -278,9 +278,10 @@ namespace RedmineTimePuncher.Models
             {
                 AllCategories.Select(_ => ""),                  // 「作業分類」の一覧が更新されたり
                 ticketRp.Where(a => a != null).Select(_ => ""), // チケットが更新されたりしたら
+                CacheManager.Default.Updated.Select(_ => "")    // キャッシュが更新されたら
             }.CombineLatest().Where(_ => Redmine != null).Select(_ =>
             {
-                var proj = CacheManager.Default.Projects.Value.FirstOrDefault(p => p.Id == ticketRp.Value.Project.Id);
+                var proj = CacheManager.Default.Projects.FirstOrDefault(p => p.Id == ticketRp.Value.Project.Id);
                 if (proj != null)
                     return AllCategories.Value.Where(a => proj.TimeEntryActivities.Any(b => b.Id == a.Id)).ToList();
                 else
@@ -297,7 +298,7 @@ namespace RedmineTimePuncher.Models
 
                 // カテゴリがまだ未選択ならば自動選択をする。
                 if (Category == null)
-                    Category = ProjectCategories.Value.OrderBy(a => a.Model.Order).FirstOrDefault(a => a.IsMatch(TicketTree.Items.Select(b => b.Issue).ToList(), CacheManager.Default.MyUser.Value.Id, IsAutoSameName));
+                    Category = ProjectCategories.Value.OrderBy(a => a.Model.Order).FirstOrDefault(a => a.IsMatch(TicketTree.Items.Select(b => b.Issue).ToList(), CacheManager.Default.MyUser.Id, IsAutoSameName));
             }).AddTo(disposables);
 
             ProjectColor = this.ObserveProperty(a => a.Ticket).ObserveOnUIDispatcher().Select(_ =>

@@ -16,9 +16,6 @@ namespace RedmineTimePuncher.Models
     public class MyIssue : IdName, IComparable<MyIssue>, IDisposable
     {
         public static string UrlBase;
-        public static Task<List<IssuePriority>> PrioritiesTask;
-        public static Task<List<IssueStatus>> StatussTask { get; set; }
-        public static Task<List<Tracker>> TrakersTask { get; set; }
 
         public int? ParentId { get; set; }
         public MyPriority Priority { get; set; } = new MyPriority();
@@ -76,11 +73,12 @@ namespace RedmineTimePuncher.Models
             UpdatedOn = issue.UpdatedOn;
 
             IsExpired = DueDate < DateTime.Today;
-            IsClosed = StatussTask.Result.First(s => s.Id == issue.Status.Id).IsClosed;
+            IsClosed = CacheManager.Default.Statuss.First(s => s.Id == issue.Status.Id).IsClosed;
 
-            var priority = PrioritiesTask.Result.Indexed().First(a => a.v.Id == Priority.Id);
-            var defaultPriority = PrioritiesTask.Result.Indexed().First(a => a.v.IsDefault);
-            IsHgihPriority = PrioritiesTask.Result.Indexed().FirstOrDefault(a => a.v.Id == Priority.Id).i > defaultPriority.i;
+            var indexed = CacheManager.Default.Priorities.Indexed();
+            var myPriority = indexed.FirstOrDefault(a => a.v.Id == Priority.Id);
+            var defaultPriority = indexed.First(a => a.v.IsDefault);
+            IsHgihPriority = myPriority.v != null ? myPriority.i > defaultPriority.i : false;
 
             initRx(1);
         }
@@ -91,16 +89,16 @@ namespace RedmineTimePuncher.Models
         private void initRx(int skipCount)
         {
             this.ObserveProperty(a => a.Project.Id).Skip(skipCount).SubscribeWithErr(id => throw new InvalidProgramException("Not supported Project.Id")).AddTo(disposables);
-            this.ObserveProperty(a => a.Tracker.Id).Skip(skipCount).SubscribeWithErr(id => Tracker.Name = TrakersTask.Result.FirstOrDefault(a => a.Id == id)?.Name).AddTo(disposables);
-            this.ObserveProperty(a => a.Status.Id).Skip(skipCount).SubscribeWithErr(id =>
+            this.ObserveProperty(a => a.Tracker.Id).Skip(skipCount).CombineLatest(CacheManager.Default.Updated, (id, _) => id)
+                .SubscribeWithErr(id => Tracker.Name = CacheManager.Default.Trackers.FirstOrDefault(a => a.Id == id)?.Name).AddTo(disposables);
+            this.ObserveProperty(a => a.Status.Id).Skip(skipCount).CombineLatest(CacheManager.Default.Updated, (id, _) => id).SubscribeWithErr(id =>
             {
-                var status = StatussTask.Result.FirstOrDefault(a => a.Id == id);
+                var status = CacheManager.Default.Statuss.FirstOrDefault(a => a.Id == id);
                 if(status != null)
                 {
                     Status.Name = status.Name;
                     IsClosed = status.IsClosed;
                 }
-                
             }).AddTo(disposables);
             this.ObserveProperty(a => a.Category.Id).Skip(skipCount).SubscribeWithErr(id => throw new InvalidProgramException("Not supported Category.Id")).AddTo(disposables);
             this.ObserveProperty(a => a.AssignedTo.Id).Skip(skipCount).SubscribeWithErr(id => AssignedTo.Name = "").AddTo(disposables);
@@ -135,14 +133,20 @@ namespace RedmineTimePuncher.Models
 
         public string ToString(Journal journal)
         {
-            if(journal == null || journal.Details == null ) return ToString();
+            if(journal == null || journal.Details == null )
+                return ToString();
+
             var statusDetail = journal.Details.FirstOrDefault(a => a.Name == "status_id");
-            if (statusDetail == null) return ToString();
-            var statusOld = StatussTask.Result.FirstOrDefault(a => a.Id.ToString() == statusDetail.OldValue)?.Name;
-            if(string.IsNullOrEmpty(statusOld)) return ToString();
-            var statusNew = StatussTask.Result.FirstOrDefault(a => a.Id.ToString() == statusDetail.NewValue)?.Name;
-            if (string.IsNullOrEmpty(statusNew)) return ToString();
-            if (statusOld == statusNew) return ToString();
+            if (statusDetail == null)
+                return ToString();
+
+            var statusOld = CacheManager.Default.Statuss.FirstOrDefault(a => a.Id.ToString() == statusDetail.OldValue)?.Name;
+            if(string.IsNullOrEmpty(statusOld))
+                return ToString();
+
+            var statusNew = CacheManager.Default.Statuss.FirstOrDefault(a => a.Id.ToString() == statusDetail.NewValue)?.Name;
+            if (string.IsNullOrEmpty(statusNew) || statusOld == statusNew)
+                return ToString();
 
             return $"{Tracker.Name} #{Id} ({statusOld} → {statusNew}): {Subject}";
         }

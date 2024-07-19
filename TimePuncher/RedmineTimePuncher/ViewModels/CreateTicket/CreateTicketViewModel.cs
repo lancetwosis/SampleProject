@@ -117,20 +117,31 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             TicketNo.CombineLatest(parent.Redmine, (no, r) => (no, r)).Where(p => p.no != null && p.r != null).SubscribeWithErr(p =>
             {
                 var no = p.no.Trim().TrimStart('#');
-                if (Regex.IsMatch(no, "^[0-9]+$"))
+                if (!Regex.IsMatch(no, "^[0-9]+$"))
                 {
-                    try
-                    {
-                        Ticket = parent.Redmine.Value.GetTicketsById(no);
-                    }
-                    catch
-                    {
-                        Ticket = null;
-                    }
+                    Ticket = null;
+                    return;
+                }
+
+                MyIssue ticket = null;
+                try
+                {
+                    ticket = parent.Redmine.Value.GetTicketsById(no);
+                }
+                catch
+                {
+                    Ticket = null;
+                    return;
+                }
+
+                if (CacheManager.Default.IsMyProject(ticket.Project.Id))
+                {
+                    Ticket = ticket;
                 }
                 else
                 {
                     Ticket = null;
+                    throw new ApplicationException(Resources.ReviewErrMsgNotAssignedProject);
                 }
             });
             TicketTitle = onTicketUpdated.CombineLatest(TicketNo, (t, no) =>
@@ -145,8 +156,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             Operators = new ObservableCollection<MemberViewModel>();
 
             // 開催中ステータス
-            Statuss = parent.Redmine.Select(r => CacheManager.Default.Statuss.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-
+            Statuss = CacheManager.Default.Updated.Select(_ => CacheManager.Default.Statuss).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             this.ObserveProperty(a => MergeRequestUrl).Pairwise().Subscribe(p =>
             {
                 if (!NeedsGitIntegration || ReviewTarget == null || string.IsNullOrEmpty(p.NewItem))
@@ -159,17 +169,26 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 else
                 {
                     var label = p.NewItem.Contains("gitlab") ? "Merge Request URL" : "Pull Request URL";
-                    var link = CacheManager.Default.MarkupLang.Value.CreateLink(label, p.NewItem);
+                    var link = CacheManager.Default.MarkupLang.CreateLink(label, p.NewItem);
                     ReviewTarget = ReviewTarget + $"{Environment.NewLine}{Environment.NewLine}{link}";
                 }
             });
 
+            DetectionProcess = new DetectionProcessViewModel().AddTo(disposables);
             ReviewMethod = new ReviewMethodViewModel(parent.Settings).AddTo(disposables);
 
-            // チケット更新時の処理
+            // キャッシュおよびチケット更新時の処理
             // キャッシュの新規取得が実行された場合、コンストラクタでは前回値を反映できないためフラグで処理する
-            var needsRestorePrev = updateTicket(parent.Settings, prev, Ticket, true);
-            parent.Redmine.CombineLatest(onTicketUpdated, (r, t) => (r, t)).Skip(1).SubscribeWithErr(p =>
+            var needsRestorePrev = true;
+            try
+            {
+                needsRestorePrev = updateTicket(parent.Settings, prev, Ticket, true);
+            }
+            catch (System.Exception e)
+            {
+                Logger.Warn(e, $"Failed to updateTicket");
+            }
+            parent.Redmine.CombineLatest(onTicketUpdated, CacheManager.Default.Updated, (r, t, _) => (r, t)).Skip(1).SubscribeWithErr(p =>
             {
                 if (p.r == null || p.t == null || !parent.Settings.CreateTicket.IsValid() || !p.r.CanUseAdminApiKey())
                     return;
@@ -254,7 +273,6 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     var exception = createOutlookAppointment(
                         $"({Resources.ReviewForShcheduleAdjust}) {RawTitle}",
                         string.Format(Resources.ReviewMsgForAdjustSchedule, ApplicationInfo.Title),
-                        CacheManager.Default.Users.Value,
                         i =>
                         {
                             i.CloseEvent += (ref bool cancel) =>
@@ -288,8 +306,9 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             myDisposables?.Dispose();
             myDisposables = new CompositeDisposable().AddTo(disposables);
 
-            AllReviewers = CacheManager.Default.ProjectMemberships.Value[target.Project.Id].Select(m => new MemberViewModel(m.User, settings.CreateTicket.IsRequired)).ToList();
-            AllOperators = CacheManager.Default.ProjectMemberships.Value[target.Project.Id].Select(m => new MemberViewModel(m.User, settings.CreateTicket.IsRequired)).ToList();
+            var memberships = CacheManager.Default.ProjectMemberships.TryGetValue(target.Project.Id, out var ms) ? ms : new List<ProjectMembership>();
+            AllReviewers = memberships.Select(m => new MemberViewModel(m.User, settings.CreateTicket.IsRequired)).ToList();
+            AllOperators = memberships.Select(m => new MemberViewModel(m.User, settings.CreateTicket.IsRequired)).ToList();
             if (!AllReviewers.Any() || !AllOperators.Any())
                 throw new ApplicationException(Resources.ReviewErrMsgNoMemberAssgined);
 
@@ -317,13 +336,17 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
                 // レビュー対象
                 MergeRequestUrl = needsRestorePrev ? prev.MergeRequestUrl : "";
-                ReviewTarget = needsRestorePrev ? prev.ReviewTarget : CacheManager.Default.MarkupLang.Value.CreateTicketLink(target);
+                ReviewTarget = needsRestorePrev ? prev.ReviewTarget : CacheManager.Default.MarkupLang.CreateTicketLink(target);
 
                 // 説明
                 Description = needsRestorePrev ? prev.Description : "";
 
                 // 開催中ステータス
-                StatusUnderReview = prev.StatusUnderReview ?? CacheManager.Default.Statuss.Value.FirstOrDefault();
+                StatusUnderReview = prev.StatusUnderReview ?? CacheManager.Default.Statuss.FirstOrDefault();
+
+                // カスタムフィールドの設定への反映
+                ReviewMethod.Model?.ApplyCustomField();
+                DetectionProcess.Model?.ApplyCustomField();
             }
             else
             {
@@ -339,11 +362,14 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 NeedsCreateOutlookAppointment = false;
 
                 MergeRequestUrl = "";
-                ReviewTarget = CacheManager.Default.MarkupLang.Value.CreateTicketLink(target);
+                ReviewTarget = CacheManager.Default.MarkupLang.CreateTicketLink(target);
 
                 Description = "";
 
-                StatusUnderReview = CacheManager.Default.Statuss.Value.FirstOrDefault();
+                StatusUnderReview = CacheManager.Default.Statuss.FirstOrDefault();
+
+                ReviewMethod.Model?.ApplyCustomField();
+                DetectionProcess.Model?.ApplyCustomField();
             }
 
             return false;
@@ -358,7 +384,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             NeedsGitIntegration = settings.CreateTicket.NeedsGitIntegration;
 
             // 検出工程
-            DetectionProcess = new DetectionProcessViewModel(settings.CreateTicket.DetectionProcess).AddTo(myDisposables2);
+            DetectionProcess.Setup(settings);
             if (prev != null)
                 DetectionProcess.SetPreviousModel(prev.DetectionProcess?.Model);
 
@@ -386,8 +412,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             }
 
             // 設定のトラッカーが選択中のチケットのプロジェクトで有効かどうかのチェック
-            var projs = CacheManager.Default.Projects.Value;
-            var curProj = projs.First(proj => proj.Id == Ticket.Project.Id);
+            var curProj = CacheManager.Default.Projects.First(proj => proj.Id == Ticket.Project.Id);
 
             var disableTrackers = new List<(string TrackerName, string TicketType)>();
             if (!settings.CreateTicket.OpenTracker.TryGetIdNameOrDefault(curProj, Ticket.RawIssue.Tracker, out var openTracker))
@@ -402,7 +427,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             // 開催チケットの作成
             var p = Ticket.CreateChildTicket();
-            p.Author = CacheManager.Default.MyUser.Value.ToIdentifiableName();
+            p.Author = CacheManager.Default.MyUser.ToIdentifiableName();
             p.AssignedTo = Organizer.ToIdentifiableName();
             p.Subject = RawTitle;
             p.Tracker = openTracker;
@@ -418,22 +443,22 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             // 開催チケットの説明を更新
             var detectProcPrg = DetectionProcess.CreatePrgForTicket();
             var reviewMethodPrg = ReviewMethod.CreatePrgForTicket();
-            var targetPrg = CacheManager.Default.MarkupLang.Value.CreateParagraph(Resources.ReviewDelivarables, ReviewTarget.SplitLines());
+            var targetPrg = CacheManager.Default.MarkupLang.CreateParagraph(Resources.ReviewDelivarables, ReviewTarget.SplitLines());
             var createPointPrg = createPointParagraph(redmine, settings, openTicket, pointTracker, null);
             var showAllUrl = settings.ReviewIssueList.CreateShowAllPointIssuesUrl(redmine, openTicket.RawIssue, pointTracker.Id);
-            var showAllPointsPrg = CacheManager.Default.MarkupLang.Value.CreateParagraph(Resources.ReviewPointsList, CacheManager.Default.MarkupLang.Value.CreateLink(Resources.ReviewMsgReferPointsAtHere, showAllUrl));
+            var showAllPointsPrg = CacheManager.Default.MarkupLang.CreateParagraph(Resources.ReviewPointsList, CacheManager.Default.MarkupLang.CreateLink(Resources.ReviewMsgReferPointsAtHere, showAllUrl));
             var description = createDescription(detectProcPrg, reviewMethodPrg, targetPrg, createPointPrg, showAllPointsPrg, openTransPrg);
             if (NeedsGitIntegration && !string.IsNullOrEmpty(MergeRequestUrl))
             {
                 description += $"{Environment.NewLine}{Environment.NewLine}";
-                description += CacheManager.Default.MarkupLang.Value.CreateCollapse("Do not edit the followings.", $"_merge_request_url={MergeRequestUrl}");
+                description += CacheManager.Default.MarkupLang.CreateCollapse("Do not edit the followings.", $"_merge_request_url={MergeRequestUrl}");
             }
             openTicket.RawIssue.Description = description;
             redmine.UpdateTicket(openTicket.RawIssue);
 
             // 依頼チケットの作成
             var c = openTicket.CreateChildTicket();
-            c.Author = CacheManager.Default.MyUser.Value.ToIdentifiableName();
+            c.Author = CacheManager.Default.MyUser.ToIdentifiableName();
             c.Tracker = requestTracker;
             c.Status = settings.CreateTicket.DefaultStatus.ToIdentifiableName();
 
@@ -477,7 +502,6 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                         MarkupLangType.None.CreateParagraph(Resources.ReviewPointsList, showAllUrl),
                         Organizer.Name,
                         refKey != null ? $"{refKey} #{Ticket.Id}" : ""),
-                    CacheManager.Default.Users.Value,
                     i => i.Save());
             }
 
@@ -511,17 +535,17 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             var reviewMethod = ReviewMethod.Model.GetQueryString();
             var cfQueries = settings.ReviewCopyCustomFields.GetCopiedCustomFieldQuries(Ticket);
             var createPointUrl = redmine.CreatePointIssueURL(parent.RawIssue, pointTracker.Id, detectionProcess, saveReviewer, reviewMethod, cfQueries);
-            var createLink = CacheManager.Default.MarkupLang.Value.CreateLink(Resources.ReviewMsgAddPointAtHere, createPointUrl);
+            var createLink = CacheManager.Default.MarkupLang.CreateLink(Resources.ReviewMsgAddPointAtHere, createPointUrl);
             if (settings.CreateTicket.SaveReviewer.IsEnabled)
             {
                 var setReviewerMsg = reviewer != null ?
                     string.Format(Resources.ReviewMsgPointer, settings.CreateTicket.SaveReviewer.CustomField.Name, reviewer.Name) :
                     string.Format(Resources.ReviewMsgPointerSet, settings.CreateTicket.SaveReviewer.CustomField.Name);
-                return CacheManager.Default.MarkupLang.Value.CreateParagraph(Resources.ReviewPoints, createLink, setReviewerMsg);
+                return CacheManager.Default.MarkupLang.CreateParagraph(Resources.ReviewPoints, createLink, setReviewerMsg);
             }
             else
             {
-                return CacheManager.Default.MarkupLang.Value.CreateParagraph(Resources.ReviewPoints, createLink);
+                return CacheManager.Default.MarkupLang.CreateParagraph(Resources.ReviewPoints, createLink);
             }
         }
 
@@ -530,7 +554,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             return string.Join($"{Environment.NewLine}{Environment.NewLine}", paragraphes.Where(s => !string.IsNullOrWhiteSpace(s)));
         }
 
-        private ApplicationException createOutlookAppointment(string subject, string body, List<MyUser> allUsers, Action<AppointmentItem> previewDisplay)
+        private ApplicationException createOutlookAppointment(string subject, string body, Action<AppointmentItem> previewDisplay)
         {
             NetOffice.OutlookApi.Application outlook = null;
             try
@@ -551,14 +575,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             foreach (var r in Reviewers)
             {
-                var name = r.Name;
-                if (allUsers != null)
-                {
-                    var u = allUsers.FirstOrDefault(a => a.Id == r.Id);
-                    if (u != null)
-                        name = u.Email;
-                }
-                var rcp = item.Recipients.Add(name);
+                var user = CacheManager.Default.Users.FirstOrDefault(a => a.Id == r.Id);
+                var rcp = item.Recipients.Add(user != null ? user.Email : r.Name);
                 rcp.Type = r.GetRecipientType();
             }
             item.Recipients.ResolveAll();
@@ -580,7 +598,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
         private string[] transcribeDescription(TranscribeSettingModel settings, RedmineManager redmine)
         {
-            if (!settings.IsEnabled || !CacheManager.Default.MarkupLang.Value.CanTranscribe())
+            if (!settings.IsEnabled || !CacheManager.Default.MarkupLang.CanTranscribe())
                 return new string[] { };
 
             var transSetting = CreateMode == CreateTicketMode.Review ?
@@ -601,7 +619,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 throw new ApplicationException(string.Format(Resources.ReviewErrMsgFailedFindWikiPage, transSetting.WikiPage.Title));
             }
 
-            return wiki.GetSectionLines(CacheManager.Default.MarkupLang.Value, transSetting.Header, transSetting.IncludesHeader).Select(l => l.Text).ToArray();
+            return wiki.GetSectionLines(CacheManager.Default.MarkupLang, transSetting.Header, transSetting.IncludesHeader).Select(l => l.Text).ToArray();
         }
 
         private async Task createRequestsTicketAsync(RedmineManager redmine, SettingsModel settings)
@@ -620,8 +638,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             }
 
             // 設定のトラッカーが選択中のチケットのプロジェクトで有効かどうかのチェック
-            var projs = CacheManager.Default.Projects.Value;
-            var curProj = projs.First(proj => proj.Id == Ticket.Project.Id);
+            var curProj = CacheManager.Default.Projects.First(proj => proj.Id == Ticket.Project.Id);
             var disableTrackers = new List<(string TrackerName, string TicketType)>();
             if (!settings.CreateTicket.RequestTracker.TryGetIdNameOrDefault(curProj, Ticket.RawIssue.Tracker, out var requestTracker))
                 disableTrackers.Add((settings.CreateTicket.RequestTracker.Name, Resources.SettingsReviRequestTicket));
@@ -630,7 +647,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             // 依頼チケットの作成
             var c = Ticket.CreateChildTicket();
-            c.Author = CacheManager.Default.MyUser.Value.ToIdentifiableName();
+            c.Author = CacheManager.Default.MyUser.ToIdentifiableName();
             c.Tracker = requestTracker;
             c.StartDate = ReviewMethod.StartDate;
             c.DueDate = ReviewMethod.DueDate;
@@ -642,7 +659,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 c.Subject = $"{Resources.AppModeTicketCreaterRequestWork} : {Ticket.Subject} {o.GetPostFix()}";
                 c.CustomFields = createCustomFields(copiedCfs, o);
                 c.Description = createDescription(
-                    string.IsNullOrEmpty(Description) ? string.Format(Resources.ReviewMsgRequestFollowings, CacheManager.Default.MarkupLang.Value.CreateTicketLink(Ticket)) : Description,
+                    string.IsNullOrEmpty(Description) ? string.Format(Resources.ReviewMsgRequestFollowings, CacheManager.Default.MarkupLang.CreateTicketLink(Ticket)) : Description,
                     requestTransPrg);
                 redmine.CreateTicket(c);
             }

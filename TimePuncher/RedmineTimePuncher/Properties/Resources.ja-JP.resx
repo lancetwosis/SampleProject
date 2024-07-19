@@ -1858,4 +1858,10 @@ Outlookの状態を確認してください。</value>
   <data name="SettingsReviListSortDESC" xml:space="preserve">
     <value>降順</value>
   </data>
+  <data name="ReviewErrMsgNotAssignedProject" xml:space="preserve">
+    <value>アサインされていないプロジェクトのチケットは対象にできません。</value>
+  </data>
+  <data name="SettingsReviMsgNotExistCustomField" xml:space="preserve">
+    <value>カスタムフィールド「{0}」は存在しません。Redmineの設定を見直してください。</value>
+  </data>
 </root>

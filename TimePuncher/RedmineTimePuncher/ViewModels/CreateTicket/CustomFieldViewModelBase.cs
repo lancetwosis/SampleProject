@@ -71,7 +71,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
         protected string createPrgForTicket(string label)
         {
-            return CacheManager.Default.MarkupLang.Value.CreateParagraph(header, label);
+            return CacheManager.Default.MarkupLang.CreateParagraph(header, label);
         }
     }
 }

@@ -8,6 +8,7 @@ using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Properties;
 using RedmineTimePuncher.ViewModels.Bases;
@@ -78,7 +79,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             IsBusy = new BusyNotifier();
 
             var titlePrefix = new ReactivePropertySlim<string>().AddTo(disposables);
-            Title = parent.Redmine.CombineLatest(titlePrefix, (r, p) => getTitle(r, p)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = CacheManager.Default.Updated.CombineLatest(titlePrefix, (_, p) => getTitle(p)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             // 管理者のAPIキーが設定されていなかった場合、レイアウトが崩れるので先にダミーを作成する
             GetTimeEntriesCommand = new AsyncCommandBase(Resources.VisualizeCmdGetData, Resources.icons8_database_down_48);

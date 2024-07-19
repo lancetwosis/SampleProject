@@ -39,31 +39,25 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReviewIssueListSettingViewModel(ReviewIssueListSettingModel issueList,
             ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(issueList)
         {
-            redmine.Where(a => a != null).SubscribeWithErr(async r =>
-            {
-                await setupAsync(r, issueList);
-            }).AddTo(disposables);
-
             ErrorMessage = new IObservable<string>[] { errorMessage, issueList.IsBusy }
                 .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
+            redmine.Where(a => a != null).SubscribeWithErr(_ => setup(issueList)).AddTo(disposables);
+
             // インポートしたら、Viewを読み込み直す
-            ImportCommand = ImportCommand.WithSubscribe(async () =>
-            {
-                await setupAsync(redmine.Value, issueList);
-            }).AddTo(disposables);
+            ImportCommand = ImportCommand.WithSubscribe(() => setup(issueList)).AddTo(disposables);
         }
 
         [JsonIgnore]
         protected CompositeDisposable myDisposables;
-        private async Task setupAsync(RedmineManager r, ReviewIssueListSettingModel issueList)
+        private void setup(ReviewIssueListSettingModel issueList)
         {
             try
             {
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
-                await issueList.SetupAsync(r);
+                issueList.Setup();
 
                 ShowDescription = issueList.ToReactivePropertySlimAsSynchronized(m => m.ShowDescription).AddTo(myDisposables);
                 ShowLastNote = issueList.ToReactivePropertySlimAsSynchronized(m => m.ShowLastNote).AddTo(myDisposables);

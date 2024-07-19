@@ -43,11 +43,11 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 {
                     error2.Value = Resources.SettingsMsgNowGettingData;
 
-                    var trackers = CacheManager.Default.GetTemporaryTrackers();
+                    var trackers = CacheManager.Default.TmpTrackers;
                     CategorySettingViewModel.Trackers = trackers.Select(t => new MyTracker(t)).ToList();
-                    AssignRuleViewModel.Projects = CacheManager.Default.GetTemporaryProjects();
+                    AssignRuleViewModel.Projects = CacheManager.Default.TmpProjects;
                     AssignRuleViewModel.Trackers = trackers;
-                    AssignRuleViewModel.Statuss = CacheManager.Default.GetTemporaryStatuss();
+                    AssignRuleViewModel.Statuss = CacheManager.Default.TmpStatuss;
 
                     setUpItemsSource(model);
 
@@ -68,7 +68,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
         private void setUpItemsSource(CategorySettingsModel model)
         {
             // Redmineの情報とModelを同期する。
-            model.UpdateItems(CacheManager.Default.GetTemporaryTimeEntryActivities());
+            model.UpdateItems(CacheManager.Default.TmpTimeEntryActivities);
             Items = new EditableGridViewModel<CategorySettingViewModel>(model.Items.OrderBy(a => a.Order).Select(a => new CategorySettingViewModel(a)).ToList());
         }
 

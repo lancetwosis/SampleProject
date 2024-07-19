@@ -41,7 +41,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 parent.ResourceTypes.Add(parent.MyType);
             }).AddTo(disposables);
             Resources.CombineLatest(parent.Parent.Redmine.Where(a => a != null),
-                (users, r) => users.Select(a => a.User).Concat(new[] { CacheManager.Default.MyUser.Value }).ToList())
+                (users, r) => users.Select(a => a.User).Concat(new[] { CacheManager.Default.MyUser }).ToList())
                 .SubscribeWithErr(a => MyTimeEntry.DicUsers = a.ToDictionary(b => b.Id)).AddTo(disposables);
 
             var isAllMyWork = parent.SelectedAppointments.Select(a => a != null && a.Any() && a.All(b => b.IsActiveProject.Value));

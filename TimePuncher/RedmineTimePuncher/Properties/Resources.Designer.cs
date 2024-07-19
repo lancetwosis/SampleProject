@@ -2100,6 +2100,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Issues for unassigned projects cannot be set. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewErrMsgNotAssignedProject {
+            get {
+                return ResourceManager.GetString("ReviewErrMsgNotAssignedProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Please select operators. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewErrMsgSelectOperator {
@@ -2145,7 +2154,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Closed tickets cannot be set. に類似しているローカライズされた文字列を検索します。
+        ///   Closed issues cannot be set. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewErrMsgTargetClosed {
             get {
@@ -4326,6 +4335,15 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsReviMsgCustomFieldHelp {
             get {
                 return ResourceManager.GetString("SettingsReviMsgCustomFieldHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The custom field “{0}” does not exist, please review your Redmine configuration. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviMsgNotExistCustomField {
+            get {
+                return ResourceManager.GetString("SettingsReviMsgNotExistCustomField", resourceCulture);
             }
         }
         

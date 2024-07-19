@@ -39,12 +39,13 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
     public class DetectionProcessViewModel : CustomFieldViewModelBase<ReviewDetectionProcessSettingModel, MyCustomField, MyCustomFieldPossibleValue>
     {
-        [Obsolete("For Serialize", false)]
-        public DetectionProcessViewModel() { }
-
-        public DetectionProcessViewModel(ReviewDetectionProcessSettingModel model) : base(Resources.ReviewTargetProcess)
+        public DetectionProcessViewModel() : base(Resources.ReviewTargetProcess)
         {
-            Model = model;
+        }
+
+        public void Setup(SettingsModel settings)
+        {
+            Model = settings.CreateTicket.DetectionProcess;
         }
 
         public string CreatePrgForTicket()

@@ -44,7 +44,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 }
             }).AddTo(disposables);
 
-            var canUseTranscribe = redmine.Select(r => (r != null && !CacheManager.Default.GetTemporaryMarkupLang().CanTranscribe()) ? Resources.SettingsReviErrMsgCannotUseTranscribe : null);
+            var canUseTranscribe = redmine.Select(r => (r != null && !CacheManager.Default.TmpMarkupLang.CanTranscribe()) ? Resources.SettingsReviErrMsgCannotUseTranscribe : null);
             ErrorMessage = new IObservable<string>[] { errorMessage, transcribe.IsBusy, canUseTranscribe }
                 .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 

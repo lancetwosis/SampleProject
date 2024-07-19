@@ -42,9 +42,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                         error2.Value = Resources.SettingsMsgNowGettingData;
 
                         // ユーザの選択肢から自分自身は除外する
-                        var myUsers = CacheManager.Default.GetTemporaryUsers();
-                        var myUser = CacheManager.Default.GetTemporaryMyUser();
-                        users.Value = myUsers.Where(u => u.Id != myUser.Id).ToList();
+                        users.Value = CacheManager.Default.TmpUsers.Where(u => u.Id != CacheManager.Default.TmpMyUser.Id).ToList();
 
                         error2.Value = null;
                     }

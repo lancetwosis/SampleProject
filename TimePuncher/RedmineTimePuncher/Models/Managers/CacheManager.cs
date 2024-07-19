@@ -15,35 +15,51 @@ using Reactive.Bindings;
 using LibRedminePower.Helpers;
 using LibRedminePower.Interfaces;
 using LibRedminePower.Logging;
+using Reactive.Bindings.Extensions;
+using System.Threading;
+using System.Reactive.Linq;
+using System.Collections.Concurrent;
 
 namespace RedmineTimePuncher.Models.Managers
 {
     public class CacheManager : ICacheManager
     {
         [JsonIgnore]
-        public static CacheManager Default { get; } = read();
+        public static CacheManager Default { get; set; }
 
-        // ReactivePropertySlim だと Json からのデシリアライズが出来なかったため無印の RP を使用する
-        public ReactiveProperty<List<Project>> Projects { get; set; } = new ReactiveProperty<List<Project>>();
-        public ReactiveProperty<List<Tracker>> Trackers { get; set; } = new ReactiveProperty<List<Tracker>>();
-        public ReactiveProperty<List<IssueStatus>> Statuss { get; set; } = new ReactiveProperty<List<IssueStatus>>();
-        public ReactiveProperty<List<IssuePriority>> Priorities { get; set; } = new ReactiveProperty<List<IssuePriority>>();
-        public ReactiveProperty<List<TimeEntryActivity>> TimeEntryActivities { get; set; } = new ReactiveProperty<List<TimeEntryActivity>>();
-        public ReactiveProperty<List<Query>> Queries { get; set; } = new ReactiveProperty<List<Query>>();
-        public ReactiveProperty<List<CustomField>> CustomFields { get; set; } = new ReactiveProperty<List<CustomField>>();
-        public ReactiveProperty<Dictionary<int, List<ProjectMembership>>> ProjectMemberships { get; set; } = new ReactiveProperty<Dictionary<int, List<ProjectMembership>>>();
+        [JsonIgnore]
+        public ReadOnlyReactivePropertySlim<DateTime> Updated { get; set; }
 
-        public ReactiveProperty<MyUser> MyUser { get; set; } = new ReactiveProperty<MyUser>();
-        public ReactiveProperty<List<MyUser>> Users { get; set; } = new ReactiveProperty<List<MyUser>>();
+        public List<Project> Projects { get; set; }
+        public List<Tracker> Trackers { get; set; }
+        public List<IssueStatus> Statuss { get; set; }
+        public List<IssuePriority> Priorities { get; set; }
+        public List<TimeEntryActivity> TimeEntryActivities { get; set; }
+        public List<Query> Queries { get; set; }
+        public List<CustomField> CustomFields { get; set; }
+        public Dictionary<int, List<ProjectMembership>> ProjectMemberships { get; set; }
 
-        public ReactiveProperty<MarkupLangType> MarkupLang { get; set; } = new ReactiveProperty<MarkupLangType>(MarkupLangType.Undefined);
+        public MyUser MyUser { get; set; }
+        /// <summary>
+        /// ステータスが「有効」のユーザの一覧
+        /// </summary>
+        public List<MyUser> Users { get; set; }
+
+        public MarkupLangType MarkupLang { get; set; } = MarkupLangType.Undefined;
 
         public RedmineSettingsModel RedmineSetting { get; set; }
 
-        public CacheManager()
-        { }
+        private ReactivePropertySlim<DateTime> updated = new ReactivePropertySlim<DateTime>();
 
-        private static CacheManager read()
+        public CacheManager()
+        {
+            Updated = updated.ObserveOnUIDispatcher().ToReadOnlyReactivePropertySlim();
+        }
+
+        /// <summary>
+        /// Updated の通知を UIThread で行うため、本メソッドを UIThread から実行すること
+        /// </summary>
+        public static void Init()
         {
             if (!string.IsNullOrEmpty(Properties.Settings.Default.Cache))
             {
@@ -52,117 +68,224 @@ namespace RedmineTimePuncher.Models.Managers
                     var result = CloneExtentions.ToObject<CacheManager>(Properties.Settings.Default.Cache);
                     result.RedmineSetting.LoadProperties();
 
-                    return result;
+                    Default = result;
                 }
                 catch
                 {
                     Logger.Warn("Failed to read the json of Cache.");
+                    Default = new CacheManager();
                 }
             }
-            return new CacheManager();
+            else
+            {
+                Default = new CacheManager();
+            }
         }
 
         public bool IsExist()
         {
             return
-                Projects.Value != null &&
-                Trackers.Value != null &&
-                Statuss.Value != null &&
-                Priorities.Value != null &&
-                TimeEntryActivities.Value != null &&
-                CustomFields.Value != null &&
-                Users.Value != null &&
-                Queries.Value != null &&
-                MyUser.Value != null &&
-                MarkupLang.Value != MarkupLangType.Undefined &&
-                ProjectMemberships.Value != null;
+                Projects != null &&
+                Trackers != null &&
+                Statuss != null &&
+                Priorities != null &&
+                TimeEntryActivities != null &&
+                CustomFields != null &&
+                Users != null &&
+                Queries != null &&
+                MyUser != null &&
+                MarkupLang != MarkupLangType.Undefined &&
+                ProjectMemberships != null;
         }
 
+        private ReactiveTimer updateCacheTimer { get; set; }
         public void UpdateCacheIfNeeded(RedmineManager redmine, RedmineSettingsModel settings)
         {
-            // キャッシュが存在しない場合、またはRedmine設定が変更された場合、更新を行う
+            updateCacheTimer?.Stop();
+            updateCacheTimer?.Dispose();
+
+            // キャッシュの更新は30分毎に行う
+            updateCacheTimer = new ReactiveTimer(TimeSpan.FromMinutes(30));
+
+            // キャッシュが存在しない場合、またはRedmine設定が変更された場合
             if (!Default.IsExist() ||
                 Default.RedmineSetting == null || !Default.RedmineSetting.Equals(settings))
             {
+                // 初回は同期的に更新する
                 Update(redmine, settings);
+
+                // 次回以降は非同期に更新する
+                updateCacheTimer.Skip(1).SubscribeWithErr(_ => Update(redmine, settings));
             }
+            else
+            {
+                // 非同期の更新を即座に開始する
+                updateCacheTimer.SubscribeWithErr(_ => Update(redmine, settings));
+            }
+
+            updateCacheTimer.Start();
         }
 
         public void SaveCache(RedmineManager redmine, RedmineSettingsModel settings)
         {
+            updateCacheTimer?.Stop();
+            updateCacheTimer?.Dispose();
+
             if (redmine == null)
                 return;
 
-            Update(redmine, settings);
+            try
+            {
+                Update(redmine, settings, false);
 
-            Properties.Settings.Default.Cache = Default.ToJson();
-            Properties.Settings.Default.Save();
+                Properties.Settings.Default.Cache = Default.ToJson();
+                Properties.Settings.Default.Save();
+            }
+            catch (Exception e)
+            {
+                Logger.Warn(e, "Failed to update cache on WindowClosed");
+            }
+        }
+
+        private CancellationTokenSource cts;
+        /// <summary>
+        /// キャッシュと設定を更新する
+        /// </summary>
+        public void Update(RedmineManager redmine, RedmineSettingsModel settings, bool needsNotify = true)
+        {
+            cts?.Cancel();
+            cts = new CancellationTokenSource();
+
+            var tMyUser = Task.Run(() => redmine.GetMyUser(), cts.Token);
+            var tProjects = Task.Run(() => redmine.GetProjects(), cts.Token);
+            var tTrackers = Task.Run(() => redmine.GetTrackers(), cts.Token);
+            var tStatuss = Task.Run(() => redmine.GetStatuss(), cts.Token);
+            var tPriorities = Task.Run(() => redmine.GetPriorities(), cts.Token);
+            var tTimeEntryActivities = Task.Run(() => redmine.GetTimeEntryActivities(), cts.Token);
+            var tQueries = Task.Run(() => redmine.GetQueries(), cts.Token);
+            var tCustomFields = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetCustomFields() : new List<CustomField>(), cts.Token);
+            var tUsers = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetUsers() : new List<MyUser>(), cts.Token);
+            var tMarkupLang = Task.Run(() => redmine.GetMarkupLangType(), cts.Token);
+
+            var valueChanged = false;
+            if (needsChange(valueChanged, MyUser, tMyUser.Result, out valueChanged))
+                MyUser = tMyUser.Result;
+            if (needsChange(valueChanged, Projects, tProjects.Result, out valueChanged))
+                Projects = tProjects.Result;
+            if (needsChange(valueChanged, Users, tUsers.Result, out valueChanged))
+                Users = tUsers.Result;
+
+            var tProjectMemberships = Task.Run(async () =>
+            {
+                var tMemberships = MyUser.Memberships.Where(m => IsMyProject(m.Project.Id)).Select(m =>
+                {
+                    return Task.Run(() => (ProjectId:m.Project.Id, Memberships:redmine.GetMemberships(m.Project.Id)));
+                }).ToList();
+                var memberships = await Task.WhenAll(tMemberships);
+                var result = new Dictionary<int, List<ProjectMembership>>();
+                foreach (var p in memberships)
+                {
+                    // プロジェクトの MemeberShips にはロック中のユーザも含まれるため除外する
+                    result[p.ProjectId] = p.Memberships.Where(m => m.User != null && Users.Any(u => u.Id == m.User.Id)).ToList();
+                }
+                return result;
+            }, cts.Token);
+
+            if (needsChange(valueChanged, Trackers, tTrackers.Result, out valueChanged))
+                Trackers = tTrackers.Result;
+            if (needsChange(valueChanged, Statuss, tStatuss.Result, out valueChanged))
+                Statuss = tStatuss.Result;
+            if (needsChange(valueChanged, Priorities, tPriorities.Result, out valueChanged))
+                Priorities = tPriorities.Result;
+            if (needsChange(valueChanged, TimeEntryActivities, tTimeEntryActivities.Result, out valueChanged))
+                TimeEntryActivities = tTimeEntryActivities.Result;
+            if (needsChange(valueChanged, Queries, tQueries.Result, out valueChanged))
+                Queries = tQueries.Result;
+            if (needsChange(valueChanged, CustomFields, tCustomFields.Result, out valueChanged))
+                CustomFields = tCustomFields.Result;
+            if (needsChange(valueChanged, ProjectMemberships, tProjectMemberships.Result, out valueChanged))
+                ProjectMemberships = tProjectMemberships.Result;
+            if (valueChanged || MarkupLang != tMarkupLang.Result)
+            {
+                MarkupLang = tMarkupLang.Result;
+                valueChanged = true;
+            }
+
+            RedmineSetting = settings;
+
+            if (valueChanged)
+                Logger.Info("Updating cache has completed.");
+            else
+                Logger.Info("Updating cache has completed but there is no change.");
+
+            if (needsNotify && valueChanged)
+            {
+                ClearShortCache();
+                updated.Value = DateTime.Now;
+            }
+        }
+
+        private bool needsChange<T>(bool allreadyChanged, T oldValue, T newValue, out bool valueChanged) where T : class
+        {
+            if (allreadyChanged || oldValue == null || oldValue.ToJson() != newValue.ToJson())
+            {
+                valueChanged = true;
+                return true;
+            }
+            else
+            {
+                valueChanged = false;
+                return false;
+            }
         }
 
         public bool IsActiveProject(int projectId)
         {
-            var proj = Projects.Value.FirstOrDefault(p => p.Id == projectId);
+            var proj = Projects.FirstOrDefault(p => p.Id == projectId);
             return proj != null && proj.Status == ProjectStatus.Active;
         }
 
-        /// <summary>
-        /// キャッシュと設定を更新する
-        /// </summary>
-        public void Update(RedmineManager redmine, RedmineSettingsModel settings)
+        public bool IsMyProject(int projectId)
         {
-            // TODO: キャッシュの更新処理に失敗した場合の例外処理を検討すること
-
-            var tMyUser = Task.Run(() => redmine.GetMyUser());
-            var tProjects = Task.Run(() => redmine.GetProjects());
-            var tTrackers = Task.Run(() => redmine.GetTrackers());
-            var tStatuss = Task.Run(() => redmine.GetStatuss());
-            var tPriorities = Task.Run(() => redmine.GetPriorities());
-            var tTimeEntryActivities = Task.Run(() => redmine.GetTimeEntryActivities());
-            var tQueries = Task.Run(() => redmine.GetQueries());
-            var tCustomFields = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetCustomFields() : new List<CustomField>());
-            var tUsers = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetUsers() : new List<MyUser>());
-            var tMarkupLang = Task.Run(() => redmine.GetMarkupLangType());
-
-            MyUser.Value = tMyUser.Result;
-            Projects.Value = tProjects.Result;
-            Users.Value = tUsers.Result;
-
-            var tProjectMemberships = Task.Run(() =>
-            {
-                var result = new Dictionary<int, List<ProjectMembership>>();
-                foreach (var m in MyUser.Value.Memberships)
-                {
-                    if (Projects.Value.Any(p => p.Id == m.Project.Id))
-                    {
-                        result[m.Project.Id] = redmine.GetMemberships(m.Project.Id);
-                    }
-                }
-                return result;
-            });
-
-            Trackers.Value = tTrackers.Result;
-            Statuss.Value = tStatuss.Result;
-            Priorities.Value = tPriorities.Result;
-            TimeEntryActivities.Value = tTimeEntryActivities.Result;
-            Queries.Value = tQueries.Result;
-            CustomFields.Value = tCustomFields.Result;
-            ProjectMemberships.Value = tProjectMemberships.Result;
-            MarkupLang.Value = tMarkupLang.Result;
-
-            RedmineSetting = settings;
+            return MyUser.Memberships.Any(m => projectId == m.Project.Id);
         }
 
-        private List<Project> tmpProjects;
-        private List<Tracker> tmpTrackers;
-        private List<IssueStatus> tmpStatuss;
-        private List<TimeEntryActivity> tmpTimeEntryActivities;
-        private List<Query> tmpQueries;
-        private List<CustomField> tmpCustomFields;
-        private List<MyUser> tmpUsers;
-        private MyUser tmpMyUser;
-        private MarkupLangType tmpMarkupLang;
+        // 応答性向上のための短期的なキャッシュ
+        [JsonIgnore]
+        public ConcurrentDictionary<string, Project> ProjectsShortCache { get; set; } = new ConcurrentDictionary<string, Project>();
+        [JsonIgnore]
+        public ConcurrentDictionary<string, Issue> JournalIssuesShortCache { get; set; } = new ConcurrentDictionary<string, Issue>();
+        [JsonIgnore]
+        public ConcurrentDictionary<string, int> IssueCountShortCache { get; set; } = new ConcurrentDictionary<string, int>();
+        [JsonIgnore]
+        public ConcurrentDictionary<string, TimeEntry> TimeEntriesShortCache { get; set; } = new ConcurrentDictionary<string, TimeEntry>();
+        [JsonIgnore]
+        public ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>> VersionsShortCache { get; set; } = new ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>>();
+
+        public void ClearShortCache()
+        {
+            ProjectsShortCache.Clear();
+            JournalIssuesShortCache.Clear();
+            IssueCountShortCache.Clear();
+            TimeEntriesShortCache.Clear();
+            VersionsShortCache.Clear();
+        }
+
+        // 設定ダイアログで最新の情報を使用するための一時的なキャッシュ
+        // 以下のプロパティにアクセスする場合、事前に UpdateTemporaryCacheAsync を実行しておくこと。
+        public List<Project> TmpProjects { get; set; }
+        public List<Tracker> TmpTrackers { get; set; }
+        public List<IssueStatus> TmpStatuss { get; set; }
+        public List<TimeEntryActivity> TmpTimeEntryActivities { get; set; }
+        public List<Query> TmpQueries { get; set; }
+        public List<CustomField> TmpCustomFields { get; set; }
+        public List<CustomField> TmpMyCustomFields { get; set; }
+        public List<MyUser> TmpUsers { get; set; }
+        public MyUser TmpMyUser { get; set; }
+        public MarkupLangType TmpMarkupLang { get; set; }
+
         /// <summary>
-        /// 一時的なキャッシュを Redmine から取得する。GetTemporaryXXX を実行する前に適切なタイミングで本メソッドを実行すること。
+        /// 一時的なキャッシュを Redmine から取得する。TmpXXX にアクセスする前に適切なタイミングで本メソッドを実行すること。
         /// </summary>
         public async Task UpdateTemporaryCacheAsync(RedmineManager redmine)
         {
@@ -178,60 +301,30 @@ namespace RedmineTimePuncher.Models.Managers
 
             await Task.WhenAll(tProjects, tTrackers, tStatuss, tTimeEntryActivities, tQueries, tCustomFields, tUsers, tMyUser, tMarkupLang);
 
-            tmpProjects = tProjects.Result;
-            tmpTrackers = tTrackers.Result;
-            tmpStatuss = tStatuss.Result;
-            tmpTimeEntryActivities = tTimeEntryActivities.Result;
-            tmpQueries = tQueries.Result;
-            tmpCustomFields = tCustomFields.Result;
-            tmpUsers = tUsers.Result;
-            tmpMyUser = tMyUser.Result;
-            tmpMarkupLang = tMarkupLang.Result;
+            TmpProjects = tProjects.Result;
+            TmpTrackers = tTrackers.Result;
+            TmpStatuss = tStatuss.Result;
+            TmpTimeEntryActivities = tTimeEntryActivities.Result;
+            TmpQueries = tQueries.Result;
+            TmpCustomFields = tCustomFields.Result;
+            TmpUsers = tUsers.Result;
+            TmpMyUser = tMyUser.Result;
+            TmpMarkupLang = tMarkupLang.Result;
+
+            TmpMyCustomFields = new List<CustomField>();
+            if (redmine.CanUseAdminApiKey())
+            {
+                await Task.Run(async () =>
+                {
+                    var tMyProjects = TmpProjects.Where(p => TmpMyUser.Memberships.Any(m => p.Name == m.Project.Name))
+                        .Select(p => Task.Run(() => redmine.GetProject(p.Id.ToString()))).ToList();
+                    var myProjects = await Task.WhenAll(tMyProjects);
+                    var enableCfIds = myProjects.Where(p => p.CustomFields != null)
+                        .SelectMany(p => p.CustomFields.Select(a => a.Id))
+                        .Distinct().ToList();
+                    TmpMyCustomFields = TmpCustomFields.Where(c => c.IsIssueType() && enableCfIds.Contains(c.Id)).ToList();
+                });
+            }
         }
-
-        /// <summary>
-        /// Projects の一時的なキャッシュを返す。実行前に必ず UpdateTemporaryCacheAsync を実行しておくこと。
-        /// </summary>
-        public List<Project> GetTemporaryProjects() => tmpProjects;
-
-        /// <summary>
-        /// Trackers の一時的なキャッシュを返す。実行前に必ず UpdateTemporaryCacheAsync を実行しておくこと。
-        /// </summary>
-        public List<Tracker> GetTemporaryTrackers() => tmpTrackers;
-
-        /// <summary>
-        /// Statuss の一時的なキャッシュを返す。実行前に必ず UpdateTemporaryCacheAsync を実行しておくこと。
-        /// </summary>
-        public List<IssueStatus> GetTemporaryStatuss() => tmpStatuss;
-
-        /// <summary>
-        /// TimeEntryActivities の一時的なキャッシュを返す。実行前に必ず UpdateTemporaryCacheAsync を実行しておくこと。
-        /// </summary>
-        public List<TimeEntryActivity> GetTemporaryTimeEntryActivities() => tmpTimeEntryActivities;
-
-        /// <summary>
-        /// Queries の一時的なキャッシュを返す。実行前に必ず UpdateTemporaryCacheAsync を実行しておくこと。
-        /// </summary>
-        public List<Query> GetTemporaryQueries() => tmpQueries;
-
-        /// <summary>
-        /// CustomFields の一時的なキャッシュを返す。実行前に必ず UpdateTemporaryCacheAsync を実行しておくこと。
-        /// </summary>
-        public List<CustomField> GetTemporaryCustomFields() => tmpCustomFields;
-
-        /// <summary>
-        /// Users の一時的なキャッシュを返す。実行前に必ず UpdateTemporaryCacheAsync を実行しておくこと。
-        /// </summary>
-        public List<MyUser> GetTemporaryUsers() => tmpUsers;
-
-        /// <summary>
-        /// MyUser の一時的なキャッシュを返す。実行前に必ず UpdateTemporaryCacheAsync を実行しておくこと。
-        /// </summary>
-        public MyUser GetTemporaryMyUser() => tmpMyUser;
-
-        /// <summary>
-        /// MarkupLang の一時的なキャッシュを返す。実行前に必ず UpdateTemporaryCacheAsync を実行しておくこと。
-        /// </summary>
-        public MarkupLangType GetTemporaryMarkupLang() => tmpMarkupLang;
     }
 }

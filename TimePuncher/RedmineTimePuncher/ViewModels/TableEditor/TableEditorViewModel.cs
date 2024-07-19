@@ -34,7 +34,7 @@ namespace RedmineTimePuncher.ViewModels.TableEditor
                     ViewModel.LoadFirstSettings(fileName);
             }).AddTo(disposables);
 
-            Title = parent.Redmine.CombineLatest(ViewModel.TitlePrefix, (r, p) => getTitle(r, p)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = CacheManager.Default.Updated.CombineLatest(ViewModel.TitlePrefix, (_, p) => getTitle(p)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             ErrorMessage = IsSelected.CombineLatest(ViewModel.ErrorMessage, (isSelected, err) => (isSelected, err)).Select(t =>
             {
                 if (!t.isSelected)

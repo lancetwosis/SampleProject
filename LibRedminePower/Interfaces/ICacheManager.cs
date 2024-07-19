@@ -11,13 +11,15 @@ namespace LibRedminePower.Interfaces
 {
     public interface ICacheManager
     {
-        ReactiveProperty<List<Project>> Projects { get; set; }
-        ReactiveProperty<List<Tracker>> Trackers { get; set; }
-        ReactiveProperty<List<IssueStatus>> Statuss { get; set; }
-        ReactiveProperty<List<IssuePriority>> Priorities { get; set; }
-        ReactiveProperty<List<TimeEntryActivity>> TimeEntryActivities { get; set; }
-        ReactiveProperty<List<Query>> Queries { get; set; }
-        ReactiveProperty<List<CustomField>> CustomFields { get; set; }
-        ReactiveProperty<MarkupLangType> MarkupLang { get; set; }
+        ReadOnlyReactivePropertySlim<DateTime> Updated { get; set; }
+
+        List<Project> Projects { get; set; }
+        List<Tracker> Trackers { get; set; }
+        List<IssueStatus> Statuss { get; set; }
+        List<IssuePriority> Priorities { get; set; }
+        List<TimeEntryActivity> TimeEntryActivities { get; set; }
+        List<Query> Queries { get; set; }
+        List<CustomField> CustomFields { get; set; }
+        MarkupLangType MarkupLang { get; set; }
     }
 }

@@ -31,25 +31,25 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
         public ExpandableTwinListBoxViewModel<MyProject> Projects { get; set; }
 
         // https://www.colordic.org/colorsample/fff1e6
-        public SpecifyProjectsViewModel(TicketFiltersModel model, ReactivePropertySlim<RedmineManager> redmine)
+        public SpecifyProjectsViewModel(TicketFiltersModel model)
             : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyProjects), ColorEx.ToBrush("#fff1e6"))
         {
             CompositeDisposable myDisposables = null;
-            redmine.Where(r => r != null).Subscribe(r =>
+            CacheManager.Default.Updated.Subscribe(_ =>
             {
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
-                var allProjects = CacheManager.Default.Projects.Value.Select(p => new MyProject(p)).ToList();
+                var allProjects = CacheManager.Default.Projects.Select(p => new MyProject(p)).ToList();
 
-                setProjectsIfNeeded(model, CacheManager.Default.MyUser.Value, allProjects);
+                setProjectsIfNeeded(model, CacheManager.Default.MyUser, allProjects);
 
                 Projects = new ExpandableTwinListBoxViewModel<MyProject>(allProjects, model.Projects).AddTo(myDisposables);
                 IsEnabled.Skip(1).Subscribe(i =>
                 {
                     Projects.Expanded = i;
                     if (i)
-                        setProjectsIfNeeded(model, CacheManager.Default.MyUser.Value, allProjects);
+                        setProjectsIfNeeded(model, CacheManager.Default.MyUser, allProjects);
                 }).AddTo(myDisposables);
             });
 

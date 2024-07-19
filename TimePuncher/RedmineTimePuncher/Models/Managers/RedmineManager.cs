@@ -38,13 +38,6 @@ namespace RedmineTimePuncher.Models.Managers
 
         private RedmineWebManager webManager;
 
-        private ConcurrentDictionary<string, Project> dicProjects;
-        private ConcurrentDictionary<string, Issue> dicJournalIssues;
-        private ConcurrentDictionary<string, int> dicIssueCount;
-        private ConcurrentDictionary<string, TimeEntry> dicTimeEntries;
-        private ConcurrentDictionary<string, List<ProjectMembership>> dicMemberShips;
-        private ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>> dicVersions;
-
         private RedmineSettingsModel settings;
 
         private Regex regIssuePattern = new Regex(@"#\d+", RegexOptions.Compiled);
@@ -56,7 +49,6 @@ namespace RedmineTimePuncher.Models.Managers
         {
             this.settings = settings;
 
-            ClearCash();
             var sem = new SemaphoreSlim(settings.ConcurrencyMax);
             if (settings.UseBasicAuth)
             {
@@ -100,16 +92,6 @@ namespace RedmineTimePuncher.Models.Managers
             }
         }
 
-        public void ClearCash()
-        {
-            dicProjects = new ConcurrentDictionary<string, Project>();
-            dicJournalIssues = new ConcurrentDictionary<string, Issue>();
-            dicIssueCount = new ConcurrentDictionary<string, int>();
-            dicTimeEntries = new ConcurrentDictionary<string, TimeEntry>();
-            dicMemberShips = new ConcurrentDictionary<string, List<ProjectMembership>>();
-            dicVersions = new ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>>();
-        }
-
         public async Task CheckConnectAsync()
         {
             try
@@ -147,14 +129,10 @@ namespace RedmineTimePuncher.Models.Managers
 
         public bool CanUseAdminApiKey() => MasterManager != null;
 
-        /// <summary>
-        /// プロジェクトのメンバーのうち、ステータスが「有効」のユーザを取得する
-        /// </summary>
         public List<ProjectMembership> GetMemberships(int projectId)
         {
-            var allMembers = getObjectsByMasterManager<ProjectMembership>(
+            return Manager.GetObjectsWithErrConv<ProjectMembership>(
                 new NameValueCollection() { { RedmineKeys.PROJECT_ID, projectId.ToString() } });
-            return allMembers.Where(m => m.User != null && CacheManager.Default.Users.Value.Any(u => u.Id == m.User.Id)).ToList();
         }
 
         public string GetTicketNo(params string[] contents)
@@ -174,6 +152,7 @@ namespace RedmineTimePuncher.Models.Managers
             }
             return null;
         }
+
         public string GetTicketNo(string refsKeywords, string content)
         {
             var ptrns = refsKeywords.Split(new[] { "," }, StringSplitOptions.RemoveEmptyEntries).Select(a => new Regex($@"{a.Trim()} #\d+", RegexOptions.IgnoreCase));
@@ -188,7 +167,7 @@ namespace RedmineTimePuncher.Models.Managers
                         if (getCount(result2) > 0)
                         {
                             return result2;
-                        }                        
+                        }
                     }
                 }
             }
@@ -204,23 +183,12 @@ namespace RedmineTimePuncher.Models.Managers
 
         public Project GetProject(string id)
         {
-            return dicProjects.GetOrAdd(id, _ => Manager.GetObjectWithErrConv<Project>(id,
+            return CacheManager.Default.ProjectsShortCache.GetOrAdd(id, _ => Manager.GetObjectWithErrConv<Project>(id,
                 new NameValueCollection()
                 {
                     { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES },
                     { RedmineKeys.INCLUDE, RedmineKeys.ISSUE_CUSTOM_FIELDS }
                 }));
-        }
-
-        public List<Project> GetMyProjects()
-        {
-            var myProjs = CacheManager.Default.Projects.Value.Where(p => CacheManager.Default.MyUser.Value.Memberships.Any(m => p.Name == m.Project.Name)).ToList();
-            var results = new List<Project>();
-            foreach (var p in myProjs)
-            {
-                results.Add(GetProject(p.Id.ToString()));
-            }
-            return results;
         }
 
         public List<Project> GetProjects()
@@ -266,7 +234,7 @@ namespace RedmineTimePuncher.Models.Managers
 
         public List<Redmine.Net.Api.Types.Version> GetVersions(int projectId)
         {
-            return dicVersions.GetOrAdd(projectId, _ => Manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId));
+            return CacheManager.Default.VersionsShortCache.GetOrAdd(projectId, _ => Manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId));
         }
 
         public IEnumerable<MyIssue> GetMyTickets()
@@ -274,7 +242,7 @@ namespace RedmineTimePuncher.Models.Managers
             return exec(nameof(GetMyTickets),
                 () =>
                 {
-                    var results = Manager.GetObjectsWithErrConv<Issue>(new NameValueCollection { { "assigned_to_id", $"{CacheManager.Default.MyUser.Value.Id}" } });
+                    var results = Manager.GetObjectsWithErrConv<Issue>(new NameValueCollection { { "assigned_to_id", $"{CacheManager.Default.MyUser.Id}" } });
                     return results != null ? results.Select(a => new MyIssue(a)) : Enumerable.Empty<MyIssue>();
                 },
                 e => Properties.Resources.RedmineMngMsgFailedToGetMyTicket);
@@ -446,14 +414,14 @@ namespace RedmineTimePuncher.Models.Managers
         /// </summary>
         public TimeEntry GetTimeEntry(string subject)
         {
-            return dicTimeEntries.GetOrAdd(subject, _ =>
+            return CacheManager.Default.TimeEntriesShortCache.GetOrAdd(subject, _ =>
             {
                 var parameters = new NameValueCollection()
                 {
                     // 「~」を追加することで文字列が正規表現として扱われる
                     { RedmineKeys.COMMENTS, $"~{System.Web.HttpUtility.UrlEncode(subject)}" },
                     { RedmineKeys.LIMIT, "1" },
-                    { RedmineKeys.USER_ID, $"{CacheManager.Default.MyUser.Value.Id}" },
+                    { RedmineKeys.USER_ID, $"{CacheManager.Default.MyUser.Id}" },
                 };
                 var entries = Manager.GetObjectsWithErrConv<TimeEntry>(parameters);
                 return entries != null ? entries.FirstOrDefault() : null;
@@ -466,7 +434,7 @@ namespace RedmineTimePuncher.Models.Managers
         public List<MyTimeEntry> GetTimeEntries(List<MemberResource> memberResources, DateTime start, DateTime end, out List<int> errorIds)
         {
             var userIds = new List<string>();
-            userIds.Add(CacheManager.Default.MyUser.Value.Id.ToString());
+            userIds.Add(CacheManager.Default.MyUser.Id.ToString());
             userIds.AddRange(memberResources.Select(a => a.ResourceName));
             return GetTimeEntries(userIds, start, end, out errorIds);
         }
@@ -476,7 +444,7 @@ namespace RedmineTimePuncher.Models.Managers
         /// </summary>
         public List<MyTimeEntry> GetMyTimeEntries(DateTime start, DateTime end, out List<int> errorIds)
         {
-            return GetTimeEntries(new List<string>() { CacheManager.Default.MyUser.Value.Id.ToString() }, start, end, out errorIds);
+            return GetTimeEntries(new List<string>() { CacheManager.Default.MyUser.Id.ToString() }, start, end, out errorIds);
         }
 
         public List<MyTimeEntry> GetTimeEntries(List<string> userIds, DateTime start, DateTime end, out List<int> errorIds)
@@ -520,7 +488,7 @@ namespace RedmineTimePuncher.Models.Managers
             foreach (var entry in allEntries.Where(a => a.Entry.Hours > 0))
             {
                 var res =
-                    (entry.UserId == CacheManager.Default.MyUser.Value.Id) ? myResource :
+                    (entry.UserId == CacheManager.Default.MyUser.Id) ? myResource :
                     memberResources.FirstOrDefault(a => a.ResourceName == entry.UserId.ToString());
                 MyAppointment apo = null;
                 if (res != null && entry.Entry.Issue != null)
@@ -536,7 +504,7 @@ namespace RedmineTimePuncher.Models.Managers
                     {
                         if (!fromEntries.Any(a => a.UserId == memberId.v))
                         {
-                            var res2 = (memberId.v == CacheManager.Default.MyUser.Value.Id) ? myResource :
+                            var res2 = (memberId.v == CacheManager.Default.MyUser.Id) ? myResource :
                                 memberResources.FirstOrDefault(a => a.ResourceName == memberId.v.ToString());
                             if (res2 != null)
                             {
@@ -692,7 +660,7 @@ namespace RedmineTimePuncher.Models.Managers
             if (debugDataManager.IsExist) return debugDataManager.GetData(resource, start, end, Enums.AppointmentType.RedmineActivity);
 
             // WEBから活動を取得する。
-            var items = await webManager.GetActivitiesAsync(token, CacheManager.Default.MyUser.Value.Id, start, end);
+            var items = await webManager.GetActivitiesAsync(token, CacheManager.Default.MyUser.Id, start, end);
             // WEB活動からそのときのチケットを復元する。
             var issueItems = items.Where(a => a.IssueId != null).ToList();
             var tasks = issueItems.Select(a => a.ToIssueAtTheTimeAsync(this)).ToList();
@@ -726,14 +694,14 @@ namespace RedmineTimePuncher.Models.Managers
         public Issue GetIssueIncludeJournal(string ticketNo, bool reload = false)
         {
             if (reload)
-                dicJournalIssues.TryRemove(ticketNo, out _);
+                CacheManager.Default.JournalIssuesShortCache.TryRemove(ticketNo, out _);
 
-            return dicJournalIssues.GetOrAdd(ticketNo, _ => getIssueJournalApi(ticketNo));
+            return CacheManager.Default.JournalIssuesShortCache.GetOrAdd(ticketNo, _ => getIssueJournalApi(ticketNo));
         }
 
         private int getCount(string ticketNo)
         {
-            return dicIssueCount.GetOrAdd(ticketNo, 
+            return CacheManager.Default.IssueCountShortCache.GetOrAdd(ticketNo, 
                 _ => Manager.Count<Issue>(new NameValueCollection { { RedmineKeys.ISSUE_ID, ticketNo } }));
         }
 
@@ -810,7 +778,7 @@ namespace RedmineTimePuncher.Models.Managers
 
         public List<MyProject> GetMyProjectsOnlyWikiEnabled()
         {
-            var myProjects = CacheManager.Default.Projects.Value.Where(p => CacheManager.Default.MyUser.Value.Memberships.Any(m => p.Name == m.Project.Name)).ToList();
+            var myProjects = CacheManager.Default.Projects.Where(p => CacheManager.Default.MyUser.Memberships.Any(m => p.Name == m.Project.Name)).ToList();
             return myProjects.Where(p => p.EnabledModules.Any(m => m.Name == RedmineKeys.WIKI)).Select(p => new MyProject(p)).ToList();
         }
 

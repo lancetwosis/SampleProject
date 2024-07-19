@@ -28,31 +28,25 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReviewCopyCustomFieldsSettingViewModel(ReviewCopyCustomFieldsSettingModel copyCustomFields,
             ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(copyCustomFields)
         {
-            redmine.Where(a => a != null).SubscribeWithErr(async r =>
-            {
-                await setupAsync(r, copyCustomFields);
-            }).AddTo(disposables);
-
             ErrorMessage = new IObservable<string>[] { errorMessage, copyCustomFields.IsBusy }
                 .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
+            redmine.Where(a => a != null).SubscribeWithErr(_ => setup(copyCustomFields)).AddTo(disposables);
+
             // インポートしたら、Viewを読み込み直す
-            ImportCommand = ImportCommand.WithSubscribe(async () =>
-            {
-                await setupAsync(redmine.Value, copyCustomFields);
-            }).AddTo(disposables);
+            ImportCommand = ImportCommand.WithSubscribe(() => setup(copyCustomFields)).AddTo(disposables);
         }
 
         [JsonIgnore]
         protected CompositeDisposable myDisposables;
-        private async Task setupAsync(RedmineManager r, ReviewCopyCustomFieldsSettingModel copyCustomFields)
+        private void setup(ReviewCopyCustomFieldsSettingModel copyCustomFields)
         {
             try
             {
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
-                await copyCustomFields.SetupAsync(r);
+                copyCustomFields.Setup();
 
                 CustomFields = new TwinListBoxViewModel<MyCustomField>(copyCustomFields.AllCustomFields, copyCustomFields.SelectedCustomFields).AddTo(myDisposables);
             }

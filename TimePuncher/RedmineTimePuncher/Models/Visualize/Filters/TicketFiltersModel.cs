@@ -67,7 +67,7 @@ namespace RedmineTimePuncher.Models.Visualize.Filters
             else
             {
                 // 自分にアサインされているプロジェクトを対象とする
-                results = getTimeEntries(redmine, prms, CacheManager.Default.MyUser.Value.Memberships.Select(m => m.Project.Id).ToList());
+                results = getTimeEntries(redmine, prms, CacheManager.Default.MyUser.Memberships.Select(m => m.Project.Id).ToList());
             }
 
             if (results == null || results.Count == 0)

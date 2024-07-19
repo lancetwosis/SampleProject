@@ -28,8 +28,6 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
         public BusyNotifier IsBusy { get; set; }
         public string ErrorMessage { get; set; }
 
-        public MyQuery Query { get; set; }
-
         public AsyncCommandBase ReloadCommand { get; set; }
         public CommandBase GoToTicketCommand { get; set; }
         public CommandBase CopyRefsCommand { get; set; }
@@ -53,7 +51,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
             Items = new ReactiveProperty<List<MyIssue>>(new List<MyIssue>()).AddTo(disposables);
             SelectedItem = new ReactivePropertySlim<MyIssue>().AddTo(disposables);
 
-            var myDisposables = new CompositeDisposable();
+            CompositeDisposable myDisposables = null;
             ReloadCommand = new AsyncCommandBase(
                 Properties.Resources.IssueGridCmdUpdate, 'U', App.Current.Resources["GlyphReload"] as string,
                 new ReactivePropertySlim<string>(),
@@ -64,12 +62,9 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
 
                     using (IsBusy.ProcessStart())
                     {
-                        Items.Value = null;
-                        var t = Task.Run(() => getItemsAction.Invoke());
                         try
                         {
-                            await t;
-                            Items.Value = t.Result;
+                            Items.Value = await Task.Run(() => getItemsAction.Invoke());
                             ErrorMessage = "";
 
                             if (isFavoriteGrid)

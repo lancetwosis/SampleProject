@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Reactive.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -40,6 +41,9 @@ namespace RedmineTableEditor.Models
             this.manager = redmine.Manager;
             this.masterManager = redmine.MasterManager;
             this.cacheManager = redmine.CacheManager;
+
+            // インスタンス生成時は外部から実行するので初回はスキップする
+            this.cacheManager.Updated.Skip(1).SubscribeWithErr(_ => Update());
         }
 
         public string IsValid()
@@ -52,16 +56,16 @@ namespace RedmineTableEditor.Models
                 return null;
         }
 
-        public async Task UpdateAsync()
+        public void Update()
         {
-            allTrackers = cacheManager.Trackers.Value;
-            allCustomFields = cacheManager.CustomFields.Value
+            allTrackers = cacheManager.Trackers;
+            allCustomFields = cacheManager.CustomFields
                 .Where(c => c.Trackers != null && c.Trackers.Any() && c.CustomizedType == "issue").ToList();
 
-            Statuses = cacheManager.Statuss.Value;
-            Priorities = cacheManager.Priorities.Value;
-            Queries = cacheManager.Queries.Value;
-            Projects = cacheManager.Projects.Value;
+            Statuses = cacheManager.Statuss;
+            Priorities = cacheManager.Priorities;
+            Queries = cacheManager.Queries;
+            Projects = cacheManager.Projects;
         }
 
         public async Task UpdateByQueryAsync(Query query)
@@ -131,7 +135,7 @@ namespace RedmineTableEditor.Models
                         new List<IdentifiableName>();
                 }),
                 Task.Run(() => Versions = manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId)),
-                Task.Run(() => Categories = manager.GetObjectsWithErrConv<IssueCategory>(projectId)));
+                Task.Run(() => Categories = masterManager.GetObjectsWithErrConv<IssueCategory>(projectId)));
         }
 
         private async Task<List<T>> getItemsAsync<T>(List<Project> projs, Func<T, T, bool> isSame) where T : class, new()

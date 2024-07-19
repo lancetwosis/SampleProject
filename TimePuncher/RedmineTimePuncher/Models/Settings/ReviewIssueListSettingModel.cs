@@ -46,7 +46,7 @@ namespace RedmineTimePuncher.Models.Settings
 
         private CompositeDisposable myDisposables;
 
-        public async Task SetupAsync(Managers.RedmineManager r)
+        public void Setup()
         {
             try
             {
@@ -54,8 +54,6 @@ namespace RedmineTimePuncher.Models.Settings
 
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
-
-                var customFields = CacheManager.Default.GetTemporaryCustomFields();
 
                 AllProperties.Clear();
                 AllProperties.Add(new IssueProperty(IssuePropertyType.Status));
@@ -69,14 +67,10 @@ namespace RedmineTimePuncher.Models.Settings
                 AllProperties.Add(new IssueProperty(IssuePropertyType.StartDate));
                 AllProperties.Add(new IssueProperty(IssuePropertyType.DueDate));
                 AllProperties.Add(new IssueProperty(IssuePropertyType.DoneRatio));
-
-                // 自分が担当しているプロジェクトで有効になっているカスタムフィールドのみを対象とする
-                var enableCfIds = r.GetMyProjects().Where(p => p.CustomFields != null).SelectMany(p => p.CustomFields.Select(a => a.Id)).Distinct().ToList();
-                var cfProperties = customFields.Where(c => c.IsIssueType() && enableCfIds.Contains(c.Id)).Select(a => new IssueProperty(a)).ToList();
-                AllProperties.AddRange(cfProperties);
+                AllProperties.AddRange(CacheManager.Default.TmpMyCustomFields.Select(a => new IssueProperty(a)));
 
                 var notExists = SelectedProperties.Where(p => !AllProperties.Contains(p)).ToList();
-                foreach(var i in notExists)
+                foreach (var i in notExists)
                 {
                     SelectedProperties.Remove(i);
                 }
@@ -108,8 +102,7 @@ namespace RedmineTimePuncher.Models.Settings
                 CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.StartDate));
                 CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.DueDate));
                 CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.DoneRatio));
-                var canGroupBys =customFields.Where(c => c.CanGroupBy() && enableCfIds.Contains(c.Id)).Select(a => new IssueProperty(a)).ToList();
-                CanGroupByProperties.AddRange(canGroupBys);
+                CanGroupByProperties.AddRange(CacheManager.Default.TmpMyCustomFields.Where(c => c.CanGroupBy()).Select(a => new IssueProperty(a)));
                 if (!CanGroupByProperties.Contains(GroupBy))
                     GroupBy = IssueProperty.NOT_SPECIFIED;
             }

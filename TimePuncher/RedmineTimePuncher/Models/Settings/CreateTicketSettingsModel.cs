@@ -58,10 +58,7 @@ namespace RedmineTimePuncher.Models.Settings
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
                 
-                var trackers = CacheManager.Default.GetTemporaryTrackers();
-                var customFields = CacheManager.Default.GetTemporaryCustomFields();
-                var statuses = CacheManager.Default.GetTemporaryStatuss();
-
+                var trackers = CacheManager.Default.TmpTrackers;
                 if (!trackers.Any())
                     throw new ApplicationException(Resources.SettingsReviErrMsgNoTrackers);
 
@@ -72,10 +69,11 @@ namespace RedmineTimePuncher.Models.Settings
                 RequestTracker = Trackers.FirstOrDefault(RequestTracker);
                 PointTracker = Trackers.FirstOrDefault(PointTracker);
 
-                Statuses = statuses.Select(s => new IdName(s)).ToList();
+                Statuses = CacheManager.Default.TmpStatuss.Select(s => new IdName(s)).ToList();
                 OpenStatus = Statuses.FirstOrDefault(OpenStatus);
                 DefaultStatus = Statuses.FirstOrDefault(DefaultStatus);
 
+                var customFields = CacheManager.Default.TmpCustomFields;
                 var boolCustomFields = customFields.Where(c => c.IsIssueType() && c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
                 var listCustomFields = customFields.Where(c => c.IsIssueType() && c.IsListFormat()).Select(c => new MyCustomField(c)).ToList();
                 var userCustomFields = customFields.Where(c => c.IsIssueType() && c.IsUserFormat()).Select(c => new MyCustomField(c)).ToList();

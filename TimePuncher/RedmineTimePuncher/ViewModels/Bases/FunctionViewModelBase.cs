@@ -36,12 +36,12 @@ namespace RedmineTimePuncher.ViewModels.Bases
             Mode = mode;
             Icon = mode.GetIcon();
             IsSelected = parent.Mode.Select(m => m == mode).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Title = parent.Redmine.Select(r => getTitle(r)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = CacheManager.Default.Updated.Select(_ => getTitle()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
-        protected string getTitle(RedmineManager r, string prefix = null)
+        protected string getTitle(string prefix = null)
         {
-            var title = $"{CacheManager.Default.MyUser.Value?.Name}  -  {ApplicationInfo.Title}";
+            var title = $"{CacheManager.Default.MyUser?.Name}  -  {ApplicationInfo.Title}";
             return string.IsNullOrEmpty(prefix) ? title : $"{prefix}  {title}";
         }
 

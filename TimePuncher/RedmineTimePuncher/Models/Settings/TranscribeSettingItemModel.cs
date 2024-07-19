@@ -73,9 +73,8 @@ namespace RedmineTimePuncher.Models.Settings
                 await updateWikiPagesAsync(p, isBusy, () => WikiPages.FirstOrDefault(w => w.IsTopWiki, WikiPages[0]));
             }).AddTo(myDisposables);
 
-            var trackers = CacheManager.Default.GetTemporaryTrackers();
             var myTrackers = new List<MyTracker>() { MyTracker.NOT_SPECIFIED };
-            myTrackers.AddRange(trackers.Select(t => new MyTracker(t)));
+            myTrackers.AddRange(CacheManager.Default.TmpTrackers.Select(t => new MyTracker(t)));
             PossibleTrackers = myTrackers;
             Tracker = PossibleTrackers.FirstOrDefault(t => t.Equals(Tracker), PossibleTrackers[0]);
 
@@ -135,7 +134,7 @@ namespace RedmineTimePuncher.Models.Settings
                     var wiki = TranscribeSettingModel.REDMINE.GetWikiPage(w.ProjectId, w.Title);
 
                     var headers = new List<WikiLine>() { WikiLine.NOT_SPECIFIED };
-                    headers.AddRange(wiki.GetHeaders(CacheManager.Default.GetTemporaryMarkupLang()));
+                    headers.AddRange(wiki.GetHeaders(CacheManager.Default.TmpMarkupLang));
 
                     Headers = headers;
                     Header = selector.Invoke();

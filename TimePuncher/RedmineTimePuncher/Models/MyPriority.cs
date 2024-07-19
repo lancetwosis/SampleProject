@@ -1,4 +1,5 @@
 ﻿using Redmine.Net.Api.Types;
+using RedmineTimePuncher.Models.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,7 +27,7 @@ namespace RedmineTimePuncher.Models
             {
                 styleDic = new Dictionary<int, Style>();
 
-                var priorities = MyIssue.PrioritiesTask.Result.ToList();
+                var priorities = CacheManager.Default.Priorities;
                 var defaultPriority = priorities.First(p => p.IsDefault);
 
                 var highs = priorities.Where(p => p.Id > defaultPriority.Id).OrderByDescending(p => p.Id).ToList();

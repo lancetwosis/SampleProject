@@ -1,4 +1,5 @@
-﻿using Redmine.Net.Api.Types;
+﻿using LibRedminePower.Extentions;
+using Redmine.Net.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -21,7 +22,7 @@ namespace RedmineTimePuncher.Models
             Id = user.Id;
             Name = $"{user.LastName} {user.FirstName}";
             Email = user.Email;
-            Memberships = user.Memberships;
+            Memberships = user.Memberships != null ? user.Memberships : new List<Membership>();
         }
 
         public static string GetUrl(int id)
@@ -36,7 +37,8 @@ namespace RedmineTimePuncher.Models
             return obj is MyUser user &&
                    Id == user.Id &&
                    Name == user.Name &&
-                   Email == user.Email;
+                   Email == user.Email &&
+                   Memberships?.ToJson() == user.Memberships?.ToJson();
         }
 
         public override int GetHashCode()

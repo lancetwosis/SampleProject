@@ -1,5 +1,7 @@
 ﻿using Reactive.Bindings.Extensions;
+using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings.Bases;
 using RedmineTimePuncher.Properties;
 using System;
@@ -35,6 +37,8 @@ namespace RedmineTimePuncher.Models.Settings
                     PossibleValues = NeedsSaveToCustomField ? CustomField.PossibleValues : defaultValues;
                     this.updateValue();
                 }).AddTo(disposables);
+
+            this.fieldCreater = (cf) => new ReviewMethodCustomField(new MyCustomField(cf), CustomField);
         }
 
         public void Update(List<MyCustomField> possibleCustomFields)

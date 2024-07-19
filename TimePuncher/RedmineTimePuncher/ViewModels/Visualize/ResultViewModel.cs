@@ -194,16 +194,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             if (!r.HasValue)
                 return;
 
-            Model.CustomFields = CacheManager.Default.CustomFields.Value;
-            Model.Users = CacheManager.Default.Users.Value;
+            Model.CustomFields = CacheManager.Default.CustomFields;
+            Model.Users = CacheManager.Default.Users;
             Model.Categories = parent.Parent.Settings.Category.Items.ToList();
 
             Model.TimeEntries = filters.GetTimeEntries();
             Model.Tickets = await filters.GetTicketsAsync(Model.TimeEntries);
 
-            var projects = CacheManager.Default.Projects.Value;
             Model.Projects = Model.Tickets.Select(t => t.RawIssue.Project.Id).Distinct()
-                .Select(id => new MyProject(projects.First(p => p.Id == id), parent.Parent.Redmine.Value.GetVersions(id))).ToList();
+                .Select(id => new MyProject(CacheManager.Default.Projects.First(p => p.Id == id), parent.Parent.Redmine.Value.GetVersions(id))).ToList();
 
             setupTicketTree(isNew);
 

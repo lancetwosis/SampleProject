@@ -37,7 +37,7 @@ namespace RedmineTimePuncher.Models.Settings
             {
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
-                var trackers = CacheManager.Default.GetTemporaryTrackers();
+                var trackers = CacheManager.Default.TmpTrackers;
                 if (!trackers.Any())
                     throw new ApplicationException(Resources.SettingsReviErrMsgNoTrackers);
 
@@ -45,8 +45,7 @@ namespace RedmineTimePuncher.Models.Settings
                 Trackers.Insert(0, MyTracker.USE_PARENT_TRACKER);
                 RequestTracker = Trackers.FirstOrDefault(RequestTracker);
 
-                var customFields = CacheManager.Default.GetTemporaryCustomFields();
-                var boolCustomFields = customFields.Where(c => c.IsIssueType() && c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
+                var boolCustomFields = CacheManager.Default.TmpCustomFields.Where(c => c.IsIssueType() && c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
                 IsRequired.Update(boolCustomFields);
 
                 await RequestTranscribe.SetupAsync(r, IsBusy);

@@ -67,7 +67,7 @@ namespace RedmineTableEditor.ViewModels
             ErrorMessage = new ReactivePropertySlim<string>().AddTo(disposables);
 
             Redmine = new ReactivePropertySlim<RedmineManager>().AddTo(disposables);
-            redmine.Select(r => new RedmineManager(r)).Subscribe(async r =>
+            redmine.Select(r => new RedmineManager(r)).Subscribe(r =>
             {
                 var err = r.IsValid();
                 if (err != null)
@@ -82,7 +82,7 @@ namespace RedmineTableEditor.ViewModels
                 Issues?.Clear();
                 Issues?.Dispose();
 
-                await r.UpdateAsync();
+                r.Update();
 
                 Redmine.Value = r;
 

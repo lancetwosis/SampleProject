@@ -112,11 +112,6 @@ namespace RedmineTimePuncher.ViewModels
 
                             await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(manager, s));
 
-                            // TODO: すぐに必要にならない情報なので、裏で取得しておく。RP を Subscribe する対応の時に修正すること
-                            MyIssue.TrakersTask = Task.Run(() => CacheManager.Default.Trackers.Value);
-                            MyIssue.StatussTask = Task.Run(() => CacheManager.Default.Statuss.Value);
-                            MyIssue.PrioritiesTask = Task.Run(() => CacheManager.Default.Priorities.Value);
-
                             Redmine.Value = manager;
                         }
                         catch (Exception ex)

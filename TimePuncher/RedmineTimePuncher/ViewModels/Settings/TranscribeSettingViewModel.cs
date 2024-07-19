@@ -35,7 +35,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
         public TranscribeSettingViewModel(ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> isBusy)
         {
-            ErrorMessage = redmine.Select(r => r != null && !CacheManager.Default.GetTemporaryMarkupLang().CanTranscribe())
+            ErrorMessage = redmine.Select(r => r != null && !CacheManager.Default.TmpMarkupLang.CanTranscribe())
                                   .Select(a => a ? Resources.SettingsReviErrMsgCannotUseTranscribe : null)
                                   .ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
@@ -82,7 +82,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                     isBusy.Value = null;
                 }
 
-                var lines = wiki.GetSectionLines(CacheManager.Default.GetTemporaryMarkupLang(), selectedItem.Header, selectedItem.IncludesHeader);
+                var lines = wiki.GetSectionLines(CacheManager.Default.TmpMarkupLang, selectedItem.Header, selectedItem.IncludesHeader);
                 MessageBoxHelper.Input(Resources.ReviewMsgTranscribeFollowings, string.Join(Environment.NewLine, lines.Select(l => l.Text)), true);
             }).AddTo(myDisposables);
         }

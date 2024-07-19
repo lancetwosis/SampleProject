@@ -309,7 +309,7 @@ namespace RedmineTimePuncher.ViewModels.Input
 
                     updateDisplayRange();
 
-                    Parent.Redmine.Value.ClearCash();
+                    CacheManager.Default.ClearShortCache();
 
                     // 現在実行中のコマンドがあれば、キャンセルする。
                     await Task.WhenAll(reloadCommands.Where(a => a.CancelCommand.CanExecute()).Select(a => a.CancelCommand.ExecuteAsync()));
@@ -592,7 +592,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 e.Handled = true;
             }).AddTo(disposables);
 
-            Title = parent.Redmine.CombineLatest(SelectedDate, (r, c) => getTitle(r, c.ToDateString())).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = CacheManager.Default.Updated.CombineLatest(SelectedDate, (_, c) => getTitle(c.ToDateString())).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
         private DateTime getMyToday()

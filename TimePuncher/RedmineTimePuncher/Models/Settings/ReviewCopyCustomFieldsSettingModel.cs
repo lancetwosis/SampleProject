@@ -32,23 +32,17 @@ namespace RedmineTimePuncher.Models.Settings
             AllCustomFields = new List<MyCustomField>();
         }
 
-        public async Task SetupAsync(Managers.RedmineManager r)
+        public void Setup()
         {
             try
             {
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
-                var customFields = CacheManager.Default.CustomFields.Value;
-
                 AllCustomFields.Clear();
-
-                // 自分が担当しているプロジェクトで有効になっているカスタムフィールドのみを対象とする
-                var enableCfIds = r.GetMyProjects().Where(p => p.CustomFields != null).SelectMany(p => p.CustomFields.Select(a => a.Id)).Distinct().ToList();
-                var enableCfs = customFields.Where(c => c.IsIssueType() && enableCfIds.Contains(c.Id)).Select(a => new MyCustomField(a)).ToList();
-                AllCustomFields.AddRange(enableCfs);
+                AllCustomFields.AddRange(CacheManager.Default.TmpMyCustomFields.Select(a => new MyCustomField(a)));
 
                 var notExists = SelectedCustomFields.Where(sc => !AllCustomFields.Any(c => c.Id == sc.Id)).ToList();
-                foreach(var i in notExists)
+                foreach (var i in notExists)
                 {
                     SelectedCustomFields.Remove(i);
                 }

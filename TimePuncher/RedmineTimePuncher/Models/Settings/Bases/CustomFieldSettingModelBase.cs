@@ -1,5 +1,7 @@
 ﻿using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
+using RedmineTimePuncher.Models.Managers;
+using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,6 +65,22 @@ namespace RedmineTimePuncher.Models.Settings.Bases
             {
                 CustomField = PossibleCustomFields.First();
             }
+        }
+
+        protected Func<CustomField, TField> fieldCreater;
+        /// <summary>
+        /// キャッシュのカスタムフィールドを設定に反映する。
+        /// </summary>
+        public void ApplyCustomField()
+        {
+            if (!IsEnabled)
+                return;
+
+            var newCf = CacheManager.Default.CustomFields.FirstOrDefault(c => c.Id == CustomField.Id);
+            if (newCf == null)
+                throw new ApplicationException(string.Format(Resources.SettingsReviMsgNotExistCustomField, CustomField.Name));
+
+            CustomField = fieldCreater.Invoke(newCf);
         }
 
         public bool GetIssueCustomFieldIfNeeded(out IssueCustomField customField)

@@ -62,9 +62,9 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
             }).AddTo(disposables);
             SearchText.SubscribeWithErr(_ => View.Value.Refresh()).AddTo(disposables);
 
-            parent.Parent.Redmine.CombineLatest(AllSettings, (r, allCates) => (r, allCates)).SubscribeWithErr(p =>
+            parent.Parent.Redmine.CombineLatest(AllSettings, CacheManager.Default.Updated, (r, allCates, _) => (r, allCates)).SubscribeWithErr(p =>
             {
-                // Redmine や設定が更新された場合は必ず update する
+                // Redmine や設定、キャッシュが更新された場合は必ず update する
                 update(p.r, p.allCates, parent.SelectedAppointments.Value);
             }).AddTo(disposables);
             parent.SelectedAppointments.SubscribeWithErr(a =>
@@ -120,7 +120,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
                 return;
             }
 
-            var projects = CacheManager.Default.Projects.Value;
+            var projects = CacheManager.Default.Projects;
             var notAsigned = appointments.Select(a => a.Ticket).FirstOrDefault(t => !projects.Any(pro => pro.Id == t.Project.Id));
             if (notAsigned != null)
             {

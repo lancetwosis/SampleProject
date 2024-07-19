@@ -1,5 +1,6 @@
 ﻿using LibRedminePower.Applications;
 using LibRedminePower.Logging;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.ViewModels;
 using RedmineTimePuncher.Views;
@@ -31,6 +32,9 @@ namespace RedmineTimePuncher
 
             TraceMonitor.AnalyticsMonitor = new LibRedminePower.GoogleAnalytics.CustomAnalitycsMonitor("UA-201230008-1", "G-D9BSJFGQS1");
             TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(App) + ".Start");
+
+            // Updated の通知を UIThread で行いたいのでこのタイミングで実施する
+            CacheManager.Init();
 
             // スプラッシュ画面も言語切り替えを行いたいのでこのタイミングで実施する
             SettingsModel.InitLocale();

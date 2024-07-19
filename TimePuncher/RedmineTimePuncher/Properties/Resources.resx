@@ -1043,7 +1043,7 @@ Please reinstall.</value>
  The schedule is reflected in {0} by closing the window. You do not need to save this appointment.</value>
   </data>
   <data name="ReviewErrMsgTargetClosed" xml:space="preserve">
-    <value>Closed tickets cannot be set.</value>
+    <value>Closed issues cannot be set.</value>
   </data>
   <data name="ReviewErrMsgSelectOrganizer" xml:space="preserve">
     <value>Please select an organizer.</value>
@@ -1991,5 +1991,11 @@ Do you want to continue creating tickets?</value>
   </data>
   <data name="SettingsReviListSortDESC" xml:space="preserve">
     <value>DESC</value>
+  </data>
+  <data name="ReviewErrMsgNotAssignedProject" xml:space="preserve">
+    <value>Issues for unassigned projects cannot be set.</value>
+  </data>
+  <data name="SettingsReviMsgNotExistCustomField" xml:space="preserve">
+    <value>The custom field “{0}” does not exist, please review your Redmine configuration.</value>
   </data>
 </root>
