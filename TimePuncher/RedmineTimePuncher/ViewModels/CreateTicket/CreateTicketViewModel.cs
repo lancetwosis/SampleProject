@@ -37,7 +37,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
     public class CreateTicketViewModel : FunctionViewModelBase
     {
         [JsonIgnore]
-        public BusyNotifier IsBusy { get; set; }
+        public BusyTextNotifier IsBusy { get; set; }
 
         public CreateTicketMode CreateMode { get; set; }
 
@@ -80,13 +80,13 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         public AsyncCommandBase OrgnizeReviewCommand { get; set; }
 
         [JsonIgnore]
-        public AsyncCommandBase AdjustScheduleCommand { get; set; }
+        public CommandBase AdjustScheduleCommand { get; set; }
 
         public CreateTicketViewModel() { }
 
         public CreateTicketViewModel(MainWindowViewModel parent) : base(ApplicationMode.TicketCreater, parent)
         {
-            IsBusy = new BusyNotifier();
+            IsBusy = new BusyTextNotifier();
 
             CreateTicketViewModel prev = null;
             var json = Properties.Settings.Default.CreateTicket;
@@ -259,16 +259,19 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 canCreateReviewTicket,
                 async () =>
                 {
-                    if (CreateMode == CreateTicketMode.Review)
-                        await createReviewTicketAsync(parent.Redmine.Value, parent.Settings);
-                    else if (CreateMode == CreateTicketMode.Work)
-                        await createRequestsTicketAsync(parent.Redmine.Value, parent.Settings);
+                    using (IsBusy.ProcessStart(Resources.ProgressMsgCreatingIssues))
+                    {
+                        if (CreateMode == CreateTicketMode.Review)
+                            await createReviewTicketAsync(parent.Redmine.Value, parent.Settings);
+                        else if (CreateMode == CreateTicketMode.Work)
+                            await createRequestsTicketAsync(parent.Redmine.Value, parent.Settings);
+                    }
                 }).AddTo(disposables);
 
-            AdjustScheduleCommand = new AsyncCommandBase(
+            AdjustScheduleCommand = new CommandBase(
                 Resources.RibbonCmdAdjustSchedule, Resources.icons8_calendar_48_mod,
                 canCreateReviewTicket,
-                async () =>
+                () =>
                 {
                     var exception = createOutlookAppointment(
                         $"({Resources.ReviewForShcheduleAdjust}) {RawTitle}",
@@ -401,8 +404,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             var requestTransPrg = "";
             try
             {
-                openTransPrg = MarkupLangType.None.CreateParagraph(null, transcribeDescription(settings.TranscribeSettings.OpenTranscribe, redmine));
-                requestTransPrg = MarkupLangType.None.CreateParagraph(null, transcribeDescription(settings.TranscribeSettings.RequestTranscribe, redmine));
+                openTransPrg = MarkupLangType.None.CreateParagraph(null, await transcribeAsync(settings.TranscribeSettings.OpenTranscribe, redmine));
+                requestTransPrg = MarkupLangType.None.CreateParagraph(null, await transcribeAsync(settings.TranscribeSettings.RequestTranscribe, redmine));
             }
             catch (ApplicationException e)
             {
@@ -438,7 +441,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             var copiedCfs = settings.ReviewCopyCustomFields.GetCopiedCustomFields(Ticket);
             p.CustomFields = createCustomFields(copiedCfs);
 
-            var openTicket = new MyIssue(redmine.CreateTicket(p));
+            var openTicket = new MyIssue(await Task.Run(() => redmine.CreateTicket(p)));
 
             // 開催チケットの説明を更新
             var detectProcPrg = DetectionProcess.CreatePrgForTicket();
@@ -454,7 +457,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 description += CacheManager.Default.MarkupLang.CreateCollapse("Do not edit the followings.", $"_merge_request_url={MergeRequestUrl}");
             }
             openTicket.RawIssue.Description = description;
-            redmine.UpdateTicket(openTicket.RawIssue);
+            await Task.Run(() => redmine.UpdateTicket(openTicket.RawIssue));
 
             // 依頼チケットの作成
             var c = openTicket.CreateChildTicket();
@@ -475,7 +478,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     createPointParagraph(redmine, settings, openTicket, pointTracker, r),
                     showAllPointsPrg,
                     requestTransPrg);
-                redmine.CreateTicket(c);
+                await Task.Run(() => redmine.CreateTicket(c));
             }
 
             // Outlook への予定の追加
@@ -508,7 +511,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             // レビュー対象チケットのステータスの更新（ステータスだけ更新したいので最新のものを取得）
             var currentTicket = redmine.GetTicketsById(Ticket.Id.ToString());
             currentTicket.RawIssue.Status = StatusUnderReview;
-            redmine.UpdateTicket(currentTicket.RawIssue);
+            await Task.Run(() => redmine.UpdateTicket(currentTicket.RawIssue));
 
             Process.Start(openTicket.Url);
 
@@ -596,7 +599,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             return null;
         }
 
-        private string[] transcribeDescription(TranscribeSettingModel settings, RedmineManager redmine)
+        private async Task<string[]> transcribeAsync(TranscribeSettingModel settings, RedmineManager redmine)
         {
             if (!settings.IsEnabled || !CacheManager.Default.MarkupLang.CanTranscribe())
                 return new string[] { };
@@ -612,7 +615,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             MyWikiPage wiki = null;
             try
             {
-                wiki = redmine.GetWikiPage(transSetting.Project.Id.ToString(), transSetting.WikiPage.Title);
+                wiki = await Task.Run(() => redmine.GetWikiPage(transSetting.Project.Id.ToString(), transSetting.WikiPage.Title));
             }
             catch
             {
@@ -628,7 +631,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             var requestTransPrg = "";
             try
             {
-                requestTransPrg = MarkupLangType.None.CreateParagraph(null, transcribeDescription(settings.RequestWork.RequestTranscribe, redmine));
+                requestTransPrg = MarkupLangType.None.CreateParagraph(null, await transcribeAsync(settings.RequestWork.RequestTranscribe, redmine));
             }
             catch (ApplicationException e)
             {
@@ -661,12 +664,12 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 c.Description = createDescription(
                     string.IsNullOrEmpty(Description) ? string.Format(Resources.ReviewMsgRequestFollowings, CacheManager.Default.MarkupLang.CreateTicketLink(Ticket)) : Description,
                     requestTransPrg);
-                redmine.CreateTicket(c);
+                await Task.Run(() => redmine.CreateTicket(c));
             }
 
             // 作業内容チケットのステータスの更新
             Ticket.RawIssue.Status = StatusUnderReview;
-            redmine.UpdateTicket(Ticket.RawIssue);
+            await Task.Run(() => redmine.UpdateTicket(Ticket.RawIssue));
 
             Process.Start(Ticket.Url);
         }

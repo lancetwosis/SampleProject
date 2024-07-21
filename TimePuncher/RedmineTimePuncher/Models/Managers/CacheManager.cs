@@ -108,8 +108,7 @@ namespace RedmineTimePuncher.Models.Managers
             updateCacheTimer = new ReactiveTimer(TimeSpan.FromMinutes(30));
 
             // キャッシュが存在しない場合、またはRedmine設定が変更された場合
-            if (!Default.IsExist() ||
-                Default.RedmineSetting == null || !Default.RedmineSetting.Equals(settings))
+            if (!IsExist() || RedmineSetting == null || !RedmineSetting.Equals(settings))
             {
                 // 初回は同期的に更新する
                 Update(redmine, settings);

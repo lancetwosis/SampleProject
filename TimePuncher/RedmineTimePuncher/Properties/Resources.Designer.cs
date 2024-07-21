@@ -1753,6 +1753,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Creating issues... に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ProgressMsgCreatingIssues {
+            get {
+                return ResourceManager.GetString("ProgressMsgCreatingIssues", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Getting issues... に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ProgressMsgGettingIssues {

@@ -1864,4 +1864,7 @@ Outlookの状態を確認してください。</value>
   <data name="SettingsReviMsgNotExistCustomField" xml:space="preserve">
     <value>カスタムフィールド「{0}」は存在しません。Redmineの設定を見直してください。</value>
   </data>
+  <data name="ProgressMsgCreatingIssues" xml:space="preserve">
+    <value>チケット作成中</value>
+  </data>
 </root>

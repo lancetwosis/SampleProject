@@ -1998,4 +1998,7 @@ Do you want to continue creating tickets?</value>
   <data name="SettingsReviMsgNotExistCustomField" xml:space="preserve">
     <value>The custom field “{0}” does not exist, please review your Redmine configuration.</value>
   </data>
+  <data name="ProgressMsgCreatingIssues" xml:space="preserve">
+    <value>Creating issues...</value>
+  </data>
 </root>
