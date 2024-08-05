@@ -490,7 +490,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }.CombineLatest(a => a.Where(b => b != null).FirstOrDefault()),
                 () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(SelectAposCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(SelectAposCommand));
 
                     var slot = SelectedSlot.Value;
                     var apos = Appointments.Where(a => slot.Start <= a.Start && a.End <= slot.End && a.Resources.Contains(slot.Resources.First())).ToList();

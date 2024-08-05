@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Applications;
+using LibRedminePower.Helpers;
 using LibRedminePower.Logging;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
@@ -29,9 +30,7 @@ namespace RedmineTimePuncher
 
             // 初期化
             LibRedminePower.Initializer.Init(this);
-
-            TraceMonitor.AnalyticsMonitor = new LibRedminePower.GoogleAnalytics.CustomAnalitycsMonitor("UA-201230008-1", "G-D9BSJFGQS1");
-            TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(App) + ".Start");
+            TraceHelper.TrackAtomicFeature(ApplicationInfo.Title.Replace(" ", "") + ".Start");
 
             // Updated の通知を UIThread で行いたいのでこのタイミングで実施する
             CacheManager.Init();

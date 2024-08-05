@@ -24,6 +24,7 @@ using TelerikEx.PersistenceProvider;
 using Newtonsoft.Json;
 using RedmineTimePuncher.Models.Settings;
 using System.Reactive.Disposables;
+using LibRedminePower.Helpers;
 
 namespace RedmineTimePuncher.ViewModels.Input
 {
@@ -169,7 +170,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(GoToTicketCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(GoToTicketCommand));
 
                     if (parent.SelectedAppointments.Value.Count() > 1)
                     {

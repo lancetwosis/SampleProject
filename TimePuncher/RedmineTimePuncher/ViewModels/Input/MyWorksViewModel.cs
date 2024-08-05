@@ -297,7 +297,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }).CombineLatestFirstOrDefault(a => a != null),
                 async () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(SaveCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(SaveCommand));
 
                     var setFails = new List<(MyAppointment, Exception)>();
                     var delFails = new List<(MyAppointment, Exception)>();
@@ -362,7 +362,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     if (!r.Date.HasValue)
                         return;
 
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(ToCSVCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(ToCSVCommand));
 
                     parent.Parent.Settings.OutputData.CsvExport.Export(r.Date.Value, r.Appointments);
                     await Task.CompletedTask;
@@ -384,7 +384,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     if (!r.Date.HasValue)
                         return;
 
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(ToExtToolCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(ToExtToolCommand));
 
                     parent.Parent.Settings.OutputData.ExportToExtTool(r.Date.Value, r.Appointments);
                     await Task.CompletedTask;
@@ -462,7 +462,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 new[] { selectAny, canEdit, notContainsCollab }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(AlignCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(AlignCommand));
                     alignApos(parent.SelectedAppointments.Value);
                 }).AddTo(disposables);
 
@@ -482,7 +482,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(CopyToMyWorksCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(CopyToMyWorksCommand));
                     var items = parent.SelectedAppointments.Value.Select(apo =>
                     {
                         var copiedApo = new MyAppointment();
@@ -504,7 +504,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 new[] { selectAny, canEdit }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(DeleteCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(DeleteCommand));
 
                     if (parent.SelectedAppointments.Value.Count() > 1)
                     {
@@ -528,7 +528,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }.CombineLatest(a => a.Where(b => b != null).FirstOrDefault()),
                 () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(AlignEvenlyCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(AlignEvenlyCommand));
 
                     var slot = parent.SelectedSlot.Value;
                     var prohibitedTerms = parent.Parent.Settings.Schedule.SpecialTerms
@@ -605,7 +605,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 canExecCopy,
                 () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(CopyToPreviousDayCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(CopyToPreviousDayCommand));
                     copyToOtherDay(parent.SelectedDate.Value.AddDays(-1).Date, false);
                 }).AddTo(disposables);
             CopyToNextDayCommand = new CommandBase(
@@ -613,7 +613,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 canExecCopy,
                 () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(CopyToNextDayCommand) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(CopyToNextDayCommand));
                     copyToOtherDay(parent.SelectedDate.Value.AddDays(1).Date, true);
                 }).AddTo(disposables);
         }

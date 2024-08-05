@@ -26,7 +26,7 @@ namespace LibRedminePower.Helpers
         }
 
         public static bool? ConfirmInformation(string message, ButtonType button = ButtonType.Ok)
-        => Show(message, IconType.Warning, button);
+        => Show(message, IconType.Information, button);
 
         public static bool? ConfirmWarning(string message, ButtonType button = ButtonType.Ok)
             => Show(message, IconType.Warning, button);

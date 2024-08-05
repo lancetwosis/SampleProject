@@ -1426,6 +1426,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   The connection to Redmine failed during the last start. Would you like to try to reconnect using your current settings? に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string msgConfReconnectRedmine {
+            get {
+                return ResourceManager.GetString("msgConfReconnectRedmine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Failed to execute because there are time entries associated with the inactive project.
         ///
         ///{0} に類似しているローカライズされた文字列を検索します。
@@ -1549,12 +1558,21 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Failed to connect redmine, please review your Redmine configuration. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string msgErrUnauthorizedRedmineSettings {
+            get {
+                return ResourceManager.GetString("msgErrUnauthorizedRedmineSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Redmine settings are not configured.
         ///Please set them correctly in the settings screen. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string msgErrUnsetRedminSettings {
+        public static string msgErrUnsetRedmineSettings {
             get {
-                return ResourceManager.GetString("msgErrUnsetRedminSettings", resourceCulture);
+                return ResourceManager.GetString("msgErrUnsetRedmineSettings", resourceCulture);
             }
         }
         
@@ -3791,6 +3809,24 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Successfully connected. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsGenMsgSuccessConnect {
+            get {
+                return ResourceManager.GetString("SettingsGenMsgSuccessConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   If you have changed your Redmine settings, please run “Try Connection”. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsGenMsgTryConnect {
+            get {
+                return ResourceManager.GetString("SettingsGenMsgTryConnect", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Password に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsGenPassword {
@@ -3815,6 +3851,15 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsGenSysApi {
             get {
                 return ResourceManager.GetString("SettingsGenSysApi", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Try Connection に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsGenTryConnect {
+            get {
+                return ResourceManager.GetString("SettingsGenTryConnect", resourceCulture);
             }
         }
         

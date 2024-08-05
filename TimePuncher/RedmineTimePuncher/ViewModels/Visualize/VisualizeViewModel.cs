@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Helpers;
 using LibRedminePower.ViewModels;
 using Microsoft.Win32;
 using Reactive.Bindings;
@@ -126,6 +127,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                    new[] { IsBusy.Select(i => i ? "" : null), Filters.IsValid }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
                    async () =>
                    {
+                       TraceHelper.TrackCommand(nameof(GetTimeEntriesCommand));
                        using (IsBusy.ProcessStart())
                        using (parent.IsBusy.ProcessStart(""))
                        {
@@ -139,6 +141,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                    new[] { IsBusy.Select(i => i ? "" : null), Result.ObserveProperty(a => a.Model.HasValue).Select(h => h ? null : "") }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
                    async () =>
                    {
+                       TraceHelper.TrackCommand(nameof(UpdateTimeEntriesCommand));
                        using (IsBusy.ProcessStart())
                        using (parent.IsBusy.ProcessStart(""))
                        {
@@ -154,6 +157,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
                     async () =>
                     {
+                        TraceHelper.TrackCommand(nameof(OpenResultCommand));
                         using (IsBusy.ProcessStart())
                         using (parent.IsBusy.ProcessStart(""))
                         {
@@ -169,12 +173,20 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 SaveResultCommand = new CommandBase(
                     Resources.VisualizeCmdSave, Resources.save,
                     new[] { hasResult, Result.IsEdited, }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
-                    () => Result.SaveToFile()).AddTo(myDisposables);
+                    () =>
+                    {
+                        TraceHelper.TrackCommand(nameof(SaveResultCommand));
+                        Result.SaveToFile();
+                    }).AddTo(myDisposables);
 
                 SaveAsResultCommand = new CommandBase(
                     Resources.VisualizeCmdSaveAs, Resources.saveas_icon,
                     hasResult.Select(a => a ? null : ""),
-                    () => Result.SaveAsToFile()).AddTo(myDisposables);
+                    () =>
+                    {
+                        TraceHelper.TrackCommand(nameof(SaveAsResultCommand));
+                        Result.SaveAsToFile();
+                    }).AddTo(myDisposables);
 
                 ExpandCommand = Result.SelectedTickets.AnyAsObservable(t => !t.IsExpanded && t.Children.Any()).ToReactiveCommand().WithSubscribe(() =>
                 {

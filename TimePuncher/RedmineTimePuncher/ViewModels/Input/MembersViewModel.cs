@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Helpers;
 using LibRedminePower.ViewModels;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -65,7 +66,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 return new ChildCommand(res.DisplayName, canAddMember.Select(a => a ? null : ""), () =>
                     {
-                        TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(AddMemberCommand) + ".Executed");
+                        TraceHelper.TrackCommand(nameof(AddMemberCommand));
 
                         parent.SelectedAppointments.Value.ForEach(apo =>
                         {
@@ -108,7 +109,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             {
                 return new ChildCommand(res.DisplayName, canRemoveMember.Select(a => a ? null : ""), () =>
                                         {
-                                            TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(RemoveMemberCommand) + ".Executed");
+                                            TraceHelper.TrackCommand(nameof(RemoveMemberCommand));
 
                                             parent.SelectedAppointments.Value.ForEach(apo =>
                                             {
@@ -147,7 +148,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
-                    TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(AgreeMemberWork) + ".Executed");
+                    TraceHelper.TrackCommand(nameof(AgreeMemberWork));
 
                     foreach (var item in parent.SelectedAppointments.Value)
                     {

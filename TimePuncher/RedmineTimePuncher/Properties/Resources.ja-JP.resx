@@ -332,7 +332,7 @@
   <data name="ProgressMsgConnectingRedmine" xml:space="preserve">
     <value>Redmine 通信中</value>
   </data>
-  <data name="msgErrUnsetRedminSettings" xml:space="preserve">
+  <data name="msgErrUnsetRedmineSettings" xml:space="preserve">
     <value>Redmine の接続情報が未設定です。
 設定画面より正しく設定してください。</value>
   </data>
@@ -1866,5 +1866,21 @@ Outlookの状態を確認してください。</value>
   </data>
   <data name="ProgressMsgCreatingIssues" xml:space="preserve">
     <value>チケット作成中</value>
+  </data>
+  <data name="SettingsGenMsgTryConnect" xml:space="preserve">
+    <value>Redmineの設定を変更した場合、「接続確認」を実行してください。</value>
+  </data>
+  <data name="SettingsGenTryConnect" xml:space="preserve">
+    <value>接続確認</value>
+  </data>
+  <data name="SettingsGenMsgSuccessConnect" xml:space="preserve">
+    <value>接続に成功しました。</value>
+  </data>
+  <data name="msgErrUnauthorizedRedmineSettings" xml:space="preserve">
+    <value>Redmine との接続ができませんでした。
+Redmine の設定を見直してください。</value>
+  </data>
+  <data name="msgConfReconnectRedmine" xml:space="preserve">
+    <value>前回の起動時にRedmineとの接続に失敗しました。現在の設定のまま再接続を試みますか？</value>
   </data>
 </root>

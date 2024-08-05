@@ -24,7 +24,7 @@ namespace LibRedminePower
         {
             // ログ設定
             Logger.Init();
-            Logger.Info($"{ApplicationInfo.Title} has started.");
+            TraceHelper.Init();
 
             // これを入れておかないと、Redmine4.2にて、RedmineAPI発行時にエラーになる場合がある。
             ServicePointManager.Expect100Continue = false;
@@ -48,6 +48,7 @@ namespace LibRedminePower
                 Properties.Settings.Default.Save();
             }
         }
+
         private static void App_DispatcherUnhandledException(object sender, System.Windows.Threading.DispatcherUnhandledExceptionEventArgs e)
         {
             e.Handled = true;

@@ -33,14 +33,14 @@ namespace RedmineTimePuncher.Views.Settings
             };
         }
 
-        private void passwordBox_LostFocus(object sender, RoutedEventArgs e)
+        private void passwordBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             var passwordBox = sender as RadPasswordBox;
             var vm = this.DataContext as ViewModels.Settings.SettingsViewModel;
             vm.Redmine.Password.Value = passwordBox.Password;
         }
 
-        private void passwordBoxOfBasic_LostFocus(object sender, RoutedEventArgs e)
+        private void passwordBoxOfBasic_TextChanged(object sender, TextChangedEventArgs e)
         {
             var passwordBox = sender as RadPasswordBox;
             var vm = this.DataContext as ViewModels.Settings.SettingsViewModel;

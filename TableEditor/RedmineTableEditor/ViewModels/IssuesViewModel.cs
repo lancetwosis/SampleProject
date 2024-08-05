@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Helpers;
 using LibRedminePower.ViewModels;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -90,6 +91,7 @@ namespace RedmineTableEditor.ViewModels
                 }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
                 async () =>
                 {
+                    TraceHelper.TrackCommand(nameof(parent.ApplyCommand));
                     await ApplyAsync(parent.FileSettings.Model.Value);
                 }).AddTo(disposables);
 
@@ -105,6 +107,7 @@ namespace RedmineTableEditor.ViewModels
                 }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
                 async () =>
                 {
+                    TraceHelper.TrackCommand(nameof(parent.UpdateContentCommand));
                     using (parent.IsBusy.ProcessStart())
                     {
                         var allIssues = IssuesView.SelectMany(i => i.ChildrenDic.Values).Where(a => a != null).Cast<MyIssueBase>()
@@ -126,6 +129,7 @@ namespace RedmineTableEditor.ViewModels
                 }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
                 async () =>
                 {
+                    TraceHelper.TrackCommand(nameof(parent.SaveToRedmineCommand));
                     try
                     {
                         using (parent.IsBusy.ProcessStart())

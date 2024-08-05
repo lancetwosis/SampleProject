@@ -4,6 +4,7 @@ using LibRedminePower.Logging;
 using Microsoft.Win32;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
@@ -25,6 +26,9 @@ namespace RedmineTimePuncher.ViewModels.Settings
     public class SettingsViewModel : LibRedminePower.ViewModels.Bases.ViewModelBase
     {
         public ReadOnlyReactivePropertySlim<ApplicationMode> Mode { get; }
+
+        public ReactivePropertySlim<int> SelectedIndex { get; set; }
+        public ReactiveCommand TryConnectCommand { get; set; }
 
         public RedmineSettingsViewModel Redmine { get; set; }
         public ScheduleSettingsViewModel Schedule { get; set; }
@@ -49,13 +53,32 @@ namespace RedmineTimePuncher.ViewModels.Settings
         private CompositeDisposable myDisposables;
         private const string defaultFileName = "TimePuncherSetting";
 
+        private SettingsModel model { get; set; }
+
         public SettingsViewModel(MainWindowViewModel parent, SettingsModel model)
         {
+            this.model = model;
+
             Mode = parent.Mode;
 
-            setViewModel(model);
+            // 接続確認が必要かどうかのフラグ。一度確認を行ったら false、設定が変更されたら true
+            needsTryConnect = new ReactivePropertySlim<bool>(true).AddTo(disposables);
+            model.Redmine.IsValid.SubscribeWithErr(isValid =>
+            {
+                // Redmineの設定が更新されたら接続確認を実施する
+                needsTryConnect.Value = isValid;
+            }).AddTo(disposables);
+            SelectedIndex = new ReactivePropertySlim<int>().AddTo(disposables);
+            SelectedIndex.Pairwise().SubscribeWithErr(async p =>
+            {
+                // 「全般」から他のタブに移動したら必要に応じて接続確認をする
+                if (p.OldItem == 0 && p.NewItem > 0)
+                    await tryConnectAsync(false, false);
+            }).AddTo(disposables);
+            TryConnectCommand = model.Redmine.IsValid.CombineLatest(needsTryConnect, (i, n) => i && n)
+                .ToReactiveCommand().WithSubscribe(async () => await tryConnectAsync(true, true)).AddTo(disposables);
 
-            ImportAllCommand = new ReactiveCommand<SettingsDialog>().WithSubscribe(win =>
+            ImportAllCommand = new ReactiveCommand<SettingsDialog>().WithSubscribe(async win =>
             {
                 var dialog = new OpenFileDialog();
                 dialog.FileName = defaultFileName;
@@ -68,9 +91,9 @@ namespace RedmineTimePuncher.ViewModels.Settings
                     try
                     {
                         model.Import(dialog.FileName);
-                        setViewModel(model);
+                        await SetupAsync(true);
                     }
-                    catch(Exception ex)
+                    catch (Exception ex)
                     {
                         throw new ApplicationException(string.Format(Properties.Resources.errImport, ex.Message), ex);
                     }
@@ -100,7 +123,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
             OkCommand = new ReactiveCommand<SettingsDialog>().WithSubscribe(dialog => 
             {
-
                 if (Redmine.Locale.NeedsRestart ||
                     Appointment.Outlook.Value.IsEnabled.NeedsRestart ||
                     Appointment.Teams.Value.IsEnabled.NeedsRestart)
@@ -133,44 +155,25 @@ namespace RedmineTimePuncher.ViewModels.Settings
             }).AddTo(disposables);
         }
 
-        private void setViewModel(SettingsModel model)
+        private ReactivePropertySlim<RedmineManager> redmineManager;
+        private ReactivePropertySlim<string> message;
+        public async Task SetupAsync(bool forceConnect = false)
         {
             myDisposables?.Dispose();
             myDisposables = new CompositeDisposable().AddTo(disposables);
 
             Redmine = new RedmineSettingsViewModel(model.Redmine).AddTo(myDisposables);
-            var redmineManager = new ReactivePropertySlim<RedmineManager>().AddTo(myDisposables);
-            var message = new ReactivePropertySlim<string>().AddTo(myDisposables);
-            model.Redmine.IsValid.SubscribeWithErr(async a => 
-            {
-                if (a)
-                {
-                    try
-                    {
-                        message.Value = Properties.Resources.SettingsMsgNowConnecting;
-                        var r = new RedmineManager(model.Redmine);
-                        await r.CheckConnectAsync();
+            this.redmineManager = new ReactivePropertySlim<RedmineManager>().AddTo(myDisposables);
+            this.message = new ReactivePropertySlim<string>().AddTo(myDisposables);
 
-                        // 設定画面では Redmine の現在の情報を使って選択肢などを表示する必要がある
-                        // よって Projects などのデータを再取得し、それらを使って処理を行う
-                        await CacheManager.Default.UpdateTemporaryCacheAsync(r);
+            // インポートした場合、フラグが false になっている可能性があるので明示的に true にする
+            needsTryConnect.Value = true;
 
-                        redmineManager.Value = r;
-                        message.Value = "";
-                    }
-                    catch (Exception ex)
-                    {
-                        redmineManager.Value = null;
-                        message.Value = ex.Message;
-                        Logger.Error(ex, "Failed to create RedmineManager on SettingsViewModel.");
-                    }
-                }
-                else
-                {
-                    redmineManager.Value = null;
-                    message.Value = Properties.Resources.SettingsMsgSetRedmineSettings;
-                }
-            }).AddTo(myDisposables);
+            // 前回、接続に失敗していた場合、設定画面を開いた段階でも接続に失敗する可能性が高いため接続しない
+            // ただし、インポートした場合は必ず接続する
+            if (Properties.Settings.Default.LastAuthorized || forceConnect)
+                await tryConnectAsync(false, true);
+
             Schedule = new ScheduleSettingsViewModel(model.Schedule).AddTo(myDisposables);
             Calendar = new CalendarSettingsViewModel(model.Calendar).AddTo(myDisposables);
             Category = new CategorySettingsViewModel(model.Category, redmineManager, message) { }.AddTo(myDisposables);
@@ -183,6 +186,58 @@ namespace RedmineTimePuncher.ViewModels.Settings
             ReviewCopyCustomFields = new ReviewCopyCustomFieldsSettingViewModel(model.ReviewCopyCustomFields, redmineManager, message).AddTo(myDisposables);
             RequestWork = new RequestWorkSettingsViewModel(model.RequestWork, redmineManager, message).AddTo(myDisposables);
             PersonHourReport = new PersonHourReportSettingsViewModel(model.PersonHourReport).AddTo(myDisposables);
+        }
+
+        private ReactivePropertySlim<bool> needsTryConnect { get; set; }
+        private BusyNotifier nowConnecting { get; set; } = new BusyNotifier();
+        private async Task tryConnectAsync(bool showMsg, bool showErrorMsg)
+        {
+            if (nowConnecting.IsBusy)
+                return;
+
+            using (nowConnecting.ProcessStart())
+            {
+                if (model.Redmine.IsValid.Value)
+                {
+                    if (!needsTryConnect.Value)
+                        return;
+
+                    try
+                    {
+                        message.Value = Properties.Resources.SettingsMsgNowConnecting;
+                        var r = new RedmineManager(model.Redmine);
+                        await r.CheckConnectAsync();
+
+                        // 設定画面では Redmine の現在の情報を使って選択肢などを表示する必要がある
+                        // よって Projects などのデータを再取得し、それらを使って処理を行う
+                        await CacheManager.Default.UpdateTemporaryCacheAsync(r);
+
+                        redmineManager.Value = r;
+                        message.Value = "";
+
+                        // 接続に成功したら次回以降、確認を実施しない
+                        needsTryConnect.Value = false;
+
+                        if (showMsg)
+                            MessageBoxHelper.ConfirmInformation(Properties.Resources.SettingsGenMsgSuccessConnect);
+                    }
+                    catch (Exception ex)
+                    {
+                        redmineManager.Value = null;
+                        message.Value = ex.Message;
+                        Logger.Error(ex, "Failed to create RedmineManager on SettingsViewModel.");
+                        needsTryConnect.Value = true;
+
+                        if (showErrorMsg)
+                            MessageBoxHelper.ConfirmWarning(ex.Message);
+                    }
+                }
+                else
+                {
+                    redmineManager.Value = null;
+                    message.Value = Properties.Resources.SettingsMsgSetRedmineSettings;
+                }
+            }
         }
     }
 }

@@ -31,7 +31,8 @@
             <RowDefinition Height="5" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
-        <telerik:RadTabControl Grid.Row="0">
+        <telerik:RadTabControl Grid.Row="0"
+                               SelectedIndex="{Binding SelectedIndex.Value}">
             <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryGeneral}"
                                 IsSelected="True">
                 <local:RedmineSettingsView Margin="5"

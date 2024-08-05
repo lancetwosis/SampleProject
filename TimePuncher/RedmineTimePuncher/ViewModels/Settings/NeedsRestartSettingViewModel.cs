@@ -22,7 +22,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public NeedsRestartSettingViewModel(ReactivePropertySlim<T> value)
         {
             Value = value;
-            Value.Skip(1).SubscribeWithErr(_ => MessageBoxHelper.ConfirmInformation(Properties.Resources.msgNeedRestart)).AddTo(disposables);
+            Value.Skip(1).SubscribeWithErr(_ => MessageBoxHelper.ConfirmWarning(Properties.Resources.msgNeedRestart)).AddTo(disposables);
 
             initialValue = Value.Value;
         }

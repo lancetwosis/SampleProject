@@ -46,6 +46,7 @@ using LibRedminePower.Applications;
 using RedmineTimePuncher.ViewModels.TableEditor;
 using RedmineTimePuncher.ViewModels.Visualize;
 using System.Diagnostics;
+using RedmineTimePuncher.Properties;
 
 namespace RedmineTimePuncher.ViewModels
 {
@@ -101,32 +102,14 @@ namespace RedmineTimePuncher.ViewModels
             ErrorMessage = new TextNotifier().AddTo(disposables);
             Settings.ObserveProperty(a => a.Redmine).SubscribeWithErr(async s =>
             {
-                if (s.IsValid.Value)
+                if (!Properties.Settings.Default.LastAuthorized)
                 {
-                    using (IsBusy.ProcessStart(Properties.Resources.ProgressMsgConnectingRedmine))
-                    {
-                        try
-                        {
-                            var manager = new RedmineManager(s);
-                            ErrorMessage.Value = null;
-
-                            await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(manager, s));
-
-                            Redmine.Value = manager;
-                        }
-                        catch (Exception ex)
-                        {
-                            Redmine.Value = null;
-                            ErrorMessage.Value = ex.Message;
-                            Logger.Error(ex, "Failed to create RedmineManager on MainWindowViewModel.");
-                        }
-                    }
+                    // 前回、接続に失敗していた場合は一旦エラーメッセージを出し、WindowLoaded でユーザに確認する
+                    ErrorMessage.Value = Resources.msgErrUnauthorizedRedmineSettings;
+                    return;
                 }
-                else
-                {
-                    Redmine.Value = null;
-                    ErrorMessage.Value = Properties.Resources.msgErrUnsetRedminSettings;
-                }
+
+                await tryConnectAsync(s);
             }).AddTo(disposables);
             Redmine.Where(a => a != null).SubscribeWithErr(r =>
             {
@@ -135,6 +118,15 @@ namespace RedmineTimePuncher.ViewModels
                 MyScheduleViewDragDropBehavior.Redmine = r;
                 MyGridViewDragDropBehavior.Redmine = r;
             });
+            CacheManager.Default.Authorized.Skip(1).SubscribeWithErr(authorized =>
+            {
+                if (!authorized)
+                {
+                    Redmine.Value = null;
+                    ErrorMessage.Value = Resources.msgErrUnauthorizedRedmineSettings;
+                    Properties.Settings.Default.LastAuthorized = false;
+                }
+            }).AddTo(disposables);
 
             Input = new InputViewModel(this).AddTo(disposables);
             TableEditor = new TableEditorViewModel(this).AddTo(disposables);
@@ -159,7 +151,7 @@ namespace RedmineTimePuncher.ViewModels
             // バージョンダイアログを開く
             ShowVersionDialogCommand = new ReactiveCommand().WithSubscribe(() =>
             {
-                TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(ShowVersionDialogCommand) + ".Executed");
+                TraceHelper.TrackCommand(nameof(ShowVersionDialogCommand));
 
                 using (var vm = new VersionDialogViewModel())
                 {
@@ -177,7 +169,7 @@ namespace RedmineTimePuncher.ViewModels
             // 設定ダイアログを開く
             ShowSettingDialogCommand = IsBusy.Inverse().ToReactiveCommand().WithSubscribe(async () =>
             {
-                TraceMonitor.AnalyticsMonitor.TrackAtomicFeature(nameof(ShowSettingDialogCommand) + ".Executed");
+                TraceHelper.TrackAtomicFeature($"{nameof(ShowSettingDialogCommand)}.Executed@{Mode.Value}");
 
                 // 自動更新を止めておく
                 Input.Timers.Where(a => a != null).Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Stop());
@@ -193,6 +185,8 @@ namespace RedmineTimePuncher.ViewModels
                 clone.Redmine.PasswordOfBasicAuth = Settings.Redmine.PasswordOfBasicAuth;
                 using (var vm = new SettingsViewModel(this, clone))
                 {
+                    await vm.SetupAsync();
+
                     var dialog = new Views.Settings.SettingsDialog();
                     dialog.DataContext = vm;
                     dialog.Owner = App.Current.MainWindow;
@@ -202,12 +196,21 @@ namespace RedmineTimePuncher.ViewModels
                     {
                         // [IgnoreDataMember] のプロパティがあるため Equals で同値判定を行う
                         if (!Settings.Redmine.Equals(clone.Redmine))
+                        {
+                            Properties.Settings.Default.LastAuthorized = true;
                             Settings.Redmine = clone.Redmine;
+                        }
                         else
-                            using (IsBusy.ProcessStart(Properties.Resources.ProgressMsgConnectingRedmine))
-                            {
-                                await Task.Run(() => CacheManager.Default.Update(Redmine.Value, Settings.Redmine));
-                            }
+                        {
+                            if (!Properties.Settings.Default.LastAuthorized)
+                                // 前回、接続に失敗していた場合、更新がなくても新規での接続を試みる
+                                await tryConnectAsync(Settings.Redmine);
+                            else
+                                using (IsBusy.ProcessStart(Resources.ProgressMsgConnectingRedmine))
+                                {
+                                    await Task.Run(() => CacheManager.Default.Update(Redmine.Value, Settings.Redmine));
+                                }
+                        }
 
                         if (Settings.Schedule.ToJson() != clone.Schedule.ToJson())
                         {
@@ -263,12 +266,10 @@ namespace RedmineTimePuncher.ViewModels
                 }
             }).AddTo(disposables);
 
-            WindowLoadedEventCommand = new ReactiveCommand<RoutedEventArgs>().WithSubscribe(e =>
+            WindowLoadedEventCommand = new ReactiveCommand<RoutedEventArgs>().WithSubscribe(async e =>
             {
                 // スプラッシュウィンドウを非表示にする
                 RadSplashScreenManager.Close();
-
-                autoUpdateCheck();
 
                 // 画面をアクティブにする
                 (e.Source as Window).Activate();
@@ -284,6 +285,22 @@ namespace RedmineTimePuncher.ViewModels
                 {
                     SelectedIndex.Value = Properties.Settings.Default.LastSelectedIndex;
                 }
+
+                if (!Properties.Settings.Default.LastAuthorized)
+                {
+                    // 前回接続に失敗していた場合、ユーザに確認してから接続を行う
+                    var result = MessageBoxHelper.ConfirmWarning(Resources.msgConfReconnectRedmine, MessageBoxHelper.ButtonType.OkCancel);
+                    if (result.HasValue && result.Value == true)
+                    {
+                        await tryConnectAsync(Settings.Redmine);
+                    }
+                    else
+                    {
+                        ErrorMessage.Value = Resources.msgErrUnauthorizedRedmineSettings;
+                    }
+                }
+
+                autoUpdateCheck();
             }).AddTo(disposables);
 
             WindowClosingEventCommand = new ReactiveCommand<CancelEventArgs>().WithSubscribe(e =>
@@ -306,12 +323,79 @@ namespace RedmineTimePuncher.ViewModels
             }).AddTo(disposables);
         }
 
+        private async Task tryConnectAsync(RedmineSettingsModel s)
+        {
+            if (s.IsValid.Value)
+            {
+                using (IsBusy.ProcessStart(Resources.ProgressMsgConnectingRedmine))
+                {
+                    try
+                    {
+                        var manager = new RedmineManager(s);
+                        ErrorMessage.Value = null;
+
+                        await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(manager, s));
+
+                        Properties.Settings.Default.LastAuthorized = true;
+                        Redmine.Value = manager;
+                    }
+                    catch (Exception ex)
+                    {
+                        Properties.Settings.Default.LastAuthorized = false;
+                        Redmine.Value = null;
+
+                        if (ex is AggregateException ae && ae.InnerException is RedmineApiException rae)
+                        {
+                            ErrorMessage.Value = Resources.msgErrUnauthorizedRedmineSettings;
+                            Logger.Error(rae, "Failed to create RedmineManager on MainWindowViewModel.");
+                        }
+                        else
+                        {
+                            ErrorMessage.Value = ex.Message;
+                            Logger.Error(ex, "Failed to create RedmineManager on MainWindowViewModel.");
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Redmine.Value = null;
+                ErrorMessage.Value = Resources.msgErrUnsetRedmineSettings;
+            }
+        }
+
         private void autoUpdateCheck()
         {
-            string url = "https://www.redmine-power.com/";
-            if (DateTime.Today >= new DateTime(2024, 8, 1))
+            var url = "https://www.redmine-power.com/";
+            var limit = new DateTime(2025, 7, 24);
+
+#if DEBUG
+            // #1537 参照
+            var debug = limit.AddMonths(-2);
+            if (DateTime.Today >= debug)
             {
-                System.Diagnostics.Process.Start(this.url);
+                Process.Start(this.url);
+            }
+#else
+#endif
+
+            var final = limit.AddDays(10);
+            if (DateTime.Today >= final)
+            {
+                Properties.Settings.Default.NeedsAutoUpdate = false;
+                Properties.Settings.Default.Save();
+                Process.Start(this.url);
+            }
+            else if (DateTime.Today >= limit)
+            {
+                var needsUpdate = Properties.Settings.Default.NeedsAutoUpdate;
+                Properties.Settings.Default.NeedsAutoUpdate = !needsUpdate;
+                Properties.Settings.Default.Save();
+
+                if (!needsUpdate)
+                {
+                    Process.Start(this.url);
+                }
             }
         }
     }

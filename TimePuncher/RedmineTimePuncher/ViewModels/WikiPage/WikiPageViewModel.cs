@@ -239,6 +239,7 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
                 SelectedProject.Select(p => p != null ? null : ""),
                 async () =>
                 {
+                    TraceHelper.TrackCommand(nameof(ReloadCommand));
                     using (IsBusy.ProcessStart())
                     using (parent.IsBusy.ProcessStart(""))
                     {
@@ -267,6 +268,7 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
                 isBusyUpdateSummary.ObserveProperty(a => a.Value.Value).Select(a => a ? "" : null),
                 async () =>
                 {
+                    TraceHelper.TrackCommand(nameof(ExportCommand));
                     var dialog = new SaveFileDialog();
                     dialog.FileName = $"{SelectedProject.Value.Name}_{DateTime.Today.ToString("yyMMdd")}.csv";
                     dialog.Filter = "CSV Files|*.csv";

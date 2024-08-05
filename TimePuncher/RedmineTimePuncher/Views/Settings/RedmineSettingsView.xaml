@@ -34,7 +34,7 @@
         </Grid.Resources>
         <StackPanel Grid.IsSharedSizeScope="True"
                     Orientation="Vertical">
-            <Grid Margin="0,0,0,5">
+            <Grid Margin="0,0,0,10">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"
                                       SharedSizeGroup="FirstColumn" />
@@ -53,6 +53,14 @@
                 <telerik:RadComboBox Grid.Column="3"
                                      ItemsSource="{Binding Redmine.Locales}"
                                      SelectedItem="{Binding Redmine.Locale.Value.Value}" />
+            </Grid>
+            <Grid Margin="0,0,0,5">
+                <TextBlock Text="{x:Static props:Resources.SettingsGenMsgTryConnect}" />
+                <Button Margin="5,0,0,0"
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Command="{Binding TryConnectCommand}"
+                        Content="{x:Static props:Resources.SettingsGenTryConnect}" />
             </Grid>
             <Grid Margin="0,0,0,5">
                 <Grid.ColumnDefinitions>
@@ -77,7 +85,8 @@
                 <telerik:RadWatermarkTextBox Grid.Column="3"
                                              telerik:TextBoxBehavior.UpdateTextOnEnter="True"
                                              Text="{Binding Redmine.UrlBase.Value,
-                                                            Mode=TwoWay}"
+                                                            Mode=TwoWay,
+                                                            UpdateSourceTrigger=PropertyChanged}"
                                              WatermarkContent="{x:Static props:Resources.SettingsGenMsgSetRedmineUrl}" />
             </Grid>
             <Grid Margin="0,0,0,5">
@@ -103,7 +112,8 @@
                 <telerik:RadWatermarkTextBox Grid.Column="3"
                                              telerik:TextBoxBehavior.UpdateTextOnEnter="True"
                                              Text="{Binding Redmine.UserName.Value,
-                                                            Mode=TwoWay}"
+                                                            Mode=TwoWay,
+                                                            UpdateSourceTrigger=PropertyChanged}"
                                              WatermarkContent="{x:Static props:Resources.SettingsGenMsgSetUserName}" />
             </Grid>
             <Grid Margin="0,0,0,5">
@@ -128,7 +138,7 @@
                            Text=" : " />
                 <telerik:RadPasswordBox x:Name="passwordBox"
                                         Grid.Column="3"
-                                        LostFocus="passwordBox_LostFocus"
+                                        TextChanged="passwordBox_TextChanged"
                                         WatermarkContent="{x:Static props:Resources.SettingsGenMsgSetPassword}" />
             </Grid>
 
@@ -181,7 +191,8 @@
                 <telerik:RadWatermarkTextBox Grid.Column="3"
                                              telerik:TextBoxBehavior.UpdateTextOnEnter="True"
                                              Text="{Binding Redmine.AdminApiKey.Value,
-                                                            Mode=TwoWay}"
+                                                            Mode=TwoWay,
+                                                            UpdateSourceTrigger=PropertyChanged}"
                                              WatermarkContent="{x:Static props:Resources.SettingsGenMsgSetAdminAPIKey}" />
                 <TextBlock Grid.Row="1"
                            Grid.Column="3"
@@ -227,7 +238,8 @@
                         <telerik:RadWatermarkTextBox Grid.Column="3"
                                                      telerik:TextBoxBehavior.UpdateTextOnEnter="True"
                                                      Text="{Binding Redmine.ApiKey.Value,
-                                                                    Mode=TwoWay}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                      WatermarkContent="{x:Static props:Resources.SettingsGenMsgSetAPIKey}" />
                     </Grid>
                     <Grid Height="25"
@@ -257,7 +269,8 @@
                         <telerik:RadWatermarkTextBox Grid.Column="3"
                                                      telerik:TextBoxBehavior.UpdateTextOnEnter="True"
                                                      Text="{Binding Redmine.UserNameOfBasicAuth.Value,
-                                                                    Mode=TwoWay}"
+                                                                    Mode=TwoWay,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
                                                      WatermarkContent="{x:Static props:Resources.SettingsGenMsgSetUserName}" />
                     </Grid>
                     <Grid Height="25"
@@ -286,7 +299,7 @@
                                    Text=" : " />
                         <telerik:RadPasswordBox x:Name="passwordBoxOfBasic"
                                                 Grid.Column="3"
-                                                LostFocus="passwordBoxOfBasic_LostFocus"
+                                                TextChanged="passwordBoxOfBasic_TextChanged"
                                                 WatermarkContent="{x:Static props:Resources.SettingsGenMsgSetPassword}" />
                     </Grid>
 

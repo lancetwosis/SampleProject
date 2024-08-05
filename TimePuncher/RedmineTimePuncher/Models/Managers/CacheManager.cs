@@ -19,6 +19,8 @@ using Reactive.Bindings.Extensions;
 using System.Threading;
 using System.Reactive.Linq;
 using System.Collections.Concurrent;
+using LibRedminePower.Exceptions;
+using Redmine.Net.Api.Exceptions;
 
 namespace RedmineTimePuncher.Models.Managers
 {
@@ -29,6 +31,8 @@ namespace RedmineTimePuncher.Models.Managers
 
         [JsonIgnore]
         public ReadOnlyReactivePropertySlim<DateTime> Updated { get; set; }
+        [JsonIgnore]
+        public ReadOnlyReactivePropertySlim<bool> Authorized { get; set; }
 
         public List<Project> Projects { get; set; }
         public List<Tracker> Trackers { get; set; }
@@ -50,10 +54,12 @@ namespace RedmineTimePuncher.Models.Managers
         public RedmineSettingsModel RedmineSetting { get; set; }
 
         private ReactivePropertySlim<DateTime> updated = new ReactivePropertySlim<DateTime>();
+        private ReactivePropertySlim<bool> authorized = new ReactivePropertySlim<bool>();
 
         public CacheManager()
         {
             Updated = updated.ObserveOnUIDispatcher().ToReadOnlyReactivePropertySlim();
+            Authorized = authorized.ObserveOnUIDispatcher().ToReadOnlyReactivePropertySlim();
         }
 
         /// <summary>
@@ -104,6 +110,8 @@ namespace RedmineTimePuncher.Models.Managers
             updateCacheTimer?.Stop();
             updateCacheTimer?.Dispose();
 
+            authorized.Value = true;
+
             // キャッシュの更新は30分毎に行う
             updateCacheTimer = new ReactiveTimer(TimeSpan.FromMinutes(30));
 
@@ -152,75 +160,96 @@ namespace RedmineTimePuncher.Models.Managers
         /// </summary>
         public void Update(RedmineManager redmine, RedmineSettingsModel settings, bool needsNotify = true)
         {
-            cts?.Cancel();
-            cts = new CancellationTokenSource();
-
-            var tMyUser = Task.Run(() => redmine.GetMyUser(), cts.Token);
-            var tProjects = Task.Run(() => redmine.GetProjects(), cts.Token);
-            var tTrackers = Task.Run(() => redmine.GetTrackers(), cts.Token);
-            var tStatuss = Task.Run(() => redmine.GetStatuss(), cts.Token);
-            var tPriorities = Task.Run(() => redmine.GetPriorities(), cts.Token);
-            var tTimeEntryActivities = Task.Run(() => redmine.GetTimeEntryActivities(), cts.Token);
-            var tQueries = Task.Run(() => redmine.GetQueries(), cts.Token);
-            var tCustomFields = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetCustomFields() : new List<CustomField>(), cts.Token);
-            var tUsers = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetUsers() : new List<MyUser>(), cts.Token);
-            var tMarkupLang = Task.Run(() => redmine.GetMarkupLangType(), cts.Token);
-
-            var valueChanged = false;
-            if (needsChange(valueChanged, MyUser, tMyUser.Result, out valueChanged))
-                MyUser = tMyUser.Result;
-            if (needsChange(valueChanged, Projects, tProjects.Result, out valueChanged))
-                Projects = tProjects.Result;
-            if (needsChange(valueChanged, Users, tUsers.Result, out valueChanged))
-                Users = tUsers.Result;
-
-            var tProjectMemberships = Task.Run(async () =>
+            try
             {
-                var tMemberships = MyUser.Memberships.Where(m => IsMyProject(m.Project.Id)).Select(m =>
+                cts?.Cancel();
+                cts = new CancellationTokenSource();
+
+                var tMyUser = Task.Run(() => redmine.GetMyUser(), cts.Token);
+                var tProjects = Task.Run(() => redmine.GetProjects(), cts.Token);
+                var tTrackers = Task.Run(() => redmine.GetTrackers(), cts.Token);
+                var tStatuss = Task.Run(() => redmine.GetStatuss(), cts.Token);
+                var tPriorities = Task.Run(() => redmine.GetPriorities(), cts.Token);
+                var tTimeEntryActivities = Task.Run(() => redmine.GetTimeEntryActivities(), cts.Token);
+                var tQueries = Task.Run(() => redmine.GetQueries(), cts.Token);
+                var tCustomFields = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetCustomFields() : new List<CustomField>(), cts.Token);
+                var tUsers = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetUsers() : new List<MyUser>(), cts.Token);
+                var tMarkupLang = Task.Run(() => redmine.GetMarkupLangType(), cts.Token);
+
+                var valueChanged = false;
+                if (needsChange(valueChanged, MyUser, tMyUser.Result, out valueChanged))
+                    MyUser = tMyUser.Result;
+                if (needsChange(valueChanged, Projects, tProjects.Result, out valueChanged))
+                    Projects = tProjects.Result;
+                if (needsChange(valueChanged, Users, tUsers.Result, out valueChanged))
+                    Users = tUsers.Result;
+
+                var tProjectMemberships = Task.Run(async () =>
                 {
-                    return Task.Run(() => (ProjectId:m.Project.Id, Memberships:redmine.GetMemberships(m.Project.Id)));
-                }).ToList();
-                var memberships = await Task.WhenAll(tMemberships);
-                var result = new Dictionary<int, List<ProjectMembership>>();
-                foreach (var p in memberships)
+                    var tMemberships = MyUser.Memberships.Where(m => IsMyProject(m.Project.Id)).Select(m =>
+                    {
+                        return Task.Run(() => (ProjectId: m.Project.Id, Memberships: redmine.GetMemberships(m.Project.Id)));
+                    }).ToList();
+                    var memberships = await Task.WhenAll(tMemberships);
+                    var result = new Dictionary<int, List<ProjectMembership>>();
+                    foreach (var p in memberships)
+                    {
+                        // プロジェクトの MemeberShips にはロック中のユーザも含まれるため除外する
+                        result[p.ProjectId] = p.Memberships.Where(m => m.User != null && Users.Any(u => u.Id == m.User.Id)).ToList();
+                    }
+                    return result;
+                }, cts.Token);
+
+                if (needsChange(valueChanged, Trackers, tTrackers.Result, out valueChanged))
+                    Trackers = tTrackers.Result;
+                if (needsChange(valueChanged, Statuss, tStatuss.Result, out valueChanged))
+                    Statuss = tStatuss.Result;
+                if (needsChange(valueChanged, Priorities, tPriorities.Result, out valueChanged))
+                    Priorities = tPriorities.Result;
+                if (needsChange(valueChanged, TimeEntryActivities, tTimeEntryActivities.Result, out valueChanged))
+                    TimeEntryActivities = tTimeEntryActivities.Result;
+                if (needsChange(valueChanged, Queries, tQueries.Result, out valueChanged))
+                    Queries = tQueries.Result;
+                if (needsChange(valueChanged, CustomFields, tCustomFields.Result, out valueChanged))
+                    CustomFields = tCustomFields.Result;
+                if (needsChange(valueChanged, ProjectMemberships, tProjectMemberships.Result, out valueChanged))
+                    ProjectMemberships = tProjectMemberships.Result;
+                if (valueChanged || MarkupLang != tMarkupLang.Result)
                 {
-                    // プロジェクトの MemeberShips にはロック中のユーザも含まれるため除外する
-                    result[p.ProjectId] = p.Memberships.Where(m => m.User != null && Users.Any(u => u.Id == m.User.Id)).ToList();
+                    MarkupLang = tMarkupLang.Result;
+                    valueChanged = true;
                 }
-                return result;
-            }, cts.Token);
 
-            if (needsChange(valueChanged, Trackers, tTrackers.Result, out valueChanged))
-                Trackers = tTrackers.Result;
-            if (needsChange(valueChanged, Statuss, tStatuss.Result, out valueChanged))
-                Statuss = tStatuss.Result;
-            if (needsChange(valueChanged, Priorities, tPriorities.Result, out valueChanged))
-                Priorities = tPriorities.Result;
-            if (needsChange(valueChanged, TimeEntryActivities, tTimeEntryActivities.Result, out valueChanged))
-                TimeEntryActivities = tTimeEntryActivities.Result;
-            if (needsChange(valueChanged, Queries, tQueries.Result, out valueChanged))
-                Queries = tQueries.Result;
-            if (needsChange(valueChanged, CustomFields, tCustomFields.Result, out valueChanged))
-                CustomFields = tCustomFields.Result;
-            if (needsChange(valueChanged, ProjectMemberships, tProjectMemberships.Result, out valueChanged))
-                ProjectMemberships = tProjectMemberships.Result;
-            if (valueChanged || MarkupLang != tMarkupLang.Result)
-            {
-                MarkupLang = tMarkupLang.Result;
-                valueChanged = true;
+                RedmineSetting = settings;
+
+                if (valueChanged)
+                    Logger.Info("Updating cache has completed.");
+                else
+                    Logger.Info("Updating cache has completed but there is no change.");
+
+                if (needsNotify && valueChanged)
+                {
+                    ClearShortCache();
+                    updated.Value = DateTime.Now;
+                }
             }
-
-            RedmineSetting = settings;
-
-            if (valueChanged)
-                Logger.Info("Updating cache has completed.");
-            else
-                Logger.Info("Updating cache has completed but there is no change.");
-
-            if (needsNotify && valueChanged)
+            catch (Exception e)
             {
-                ClearShortCache();
-                updated.Value = DateTime.Now;
+                cts.Cancel();
+
+                if ((e is AggregateException ae &&
+                    ae.InnerException is RedmineApiException rae &&
+                    rae.InnerException is UnauthorizedException) ||
+                    e is RedmineLoginFailedException)
+                {
+                    Logger.Error(e, "Updating cache failed by UnauthorizedException");
+                    authorized.Value = false;
+                    throw new ApplicationException(Properties.Resources.msgErrUnauthorizedRedmineSettings, e);
+                }
+                else
+                {
+                    throw;
+                }
             }
         }
 

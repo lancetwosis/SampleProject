@@ -259,6 +259,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 canCreateReviewTicket,
                 async () =>
                 {
+                    TraceHelper.TrackCommand(nameof(OrgnizeReviewCommand));
                     using (IsBusy.ProcessStart(Resources.ProgressMsgCreatingIssues))
                     {
                         if (CreateMode == CreateTicketMode.Review)
@@ -273,6 +274,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 canCreateReviewTicket,
                 () =>
                 {
+                    TraceHelper.TrackCommand(nameof(AdjustScheduleCommand));
                     var exception = createOutlookAppointment(
                         $"({Resources.ReviewForShcheduleAdjust}) {RawTitle}",
                         string.Format(Resources.ReviewMsgForAdjustSchedule, ApplicationInfo.Title),

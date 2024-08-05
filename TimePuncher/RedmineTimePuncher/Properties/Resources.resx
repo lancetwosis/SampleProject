@@ -364,7 +364,7 @@ Spent time</value>
   <data name="ProgressMsgConnectingRedmine" xml:space="preserve">
     <value>Connecting Redmine...</value>
   </data>
-  <data name="msgErrUnsetRedminSettings" xml:space="preserve">
+  <data name="msgErrUnsetRedmineSettings" xml:space="preserve">
     <value>Redmine settings are not configured.
 Please set them correctly in the settings screen.</value>
   </data>
@@ -2000,5 +2000,20 @@ Do you want to continue creating tickets?</value>
   </data>
   <data name="ProgressMsgCreatingIssues" xml:space="preserve">
     <value>Creating issues...</value>
+  </data>
+  <data name="SettingsGenMsgTryConnect" xml:space="preserve">
+    <value>If you have changed your Redmine settings, please run “Try Connection”.</value>
+  </data>
+  <data name="SettingsGenTryConnect" xml:space="preserve">
+    <value>Try Connection</value>
+  </data>
+  <data name="SettingsGenMsgSuccessConnect" xml:space="preserve">
+    <value>Successfully connected.</value>
+  </data>
+  <data name="msgErrUnauthorizedRedmineSettings" xml:space="preserve">
+    <value>Failed to connect redmine, please review your Redmine configuration.</value>
+  </data>
+  <data name="msgConfReconnectRedmine" xml:space="preserve">
+    <value>The connection to Redmine failed during the last start. Would you like to try to reconnect using your current settings?</value>
   </data>
 </root>

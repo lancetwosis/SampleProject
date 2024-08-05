@@ -111,6 +111,7 @@ namespace RedmineTableEditor.ViewModels
                 }.CombineLatestValuesAreAllTrue().Select(a => a ? null : ""),
                 async () =>
                 {
+                    TraceHelper.TrackCommand(nameof(OpenCommand));
                     var r = FileSettings.SaveIfNeeded();
                     if (!r.HasValue)
                         return;

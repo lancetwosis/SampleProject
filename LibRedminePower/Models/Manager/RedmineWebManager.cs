@@ -132,7 +132,7 @@ namespace LibRedminePower.Models.Manager
                         // ログインに失敗すると、id=flash_error が含まれるhtmlが返ってくるので、エラーとする。
                         var isFailed = doc2.GetElementById("flash_error") != null;
                         if(isFailed)
-                            throw new ApplicationException(Properties.Resources.errLoginFailed);
+                            throw new RedmineLoginFailedException();
                     }
                 }
                 else

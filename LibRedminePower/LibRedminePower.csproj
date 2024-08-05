@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enums\IssuePropertyType.cs" />
+    <Compile Include="Exceptions\RedmineLoginFailedException.cs" />
     <Compile Include="Extended\ColumnDefinitionExtended.cs" />
     <Compile Include="Converters\ZeroToCollapsedConverter.cs" />
     <Compile Include="Converters\VisibilityAnyConverter.cs" />
@@ -97,6 +98,7 @@
     <Compile Include="Extentions\HsbColorEx.cs" />
     <Compile Include="Extentions\IssueExtentions.cs" />
     <Compile Include="Helpers\AsyncHelper.cs" />
+    <Compile Include="Helpers\TraceHelper.cs" />
     <Compile Include="Interfaces\ICacheManager.cs" />
     <Compile Include="Models\Bases\ModelBaseSlim.cs" />
     <Compile Include="ViewModels\EditableGridViewModel.cs" />

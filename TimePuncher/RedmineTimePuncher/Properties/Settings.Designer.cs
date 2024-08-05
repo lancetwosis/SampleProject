@@ -424,5 +424,29 @@ namespace RedmineTimePuncher.Properties {
                 this["Cache"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool LastAuthorized {
+            get {
+                return ((bool)(this["LastAuthorized"]));
+            }
+            set {
+                this["LastAuthorized"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool NeedsAutoUpdate {
+            get {
+                return ((bool)(this["NeedsAutoUpdate"]));
+            }
+            set {
+                this["NeedsAutoUpdate"] = value;
+            }
+        }
     }
 }
