@@ -223,6 +223,11 @@ namespace RedmineTableEditor.Models
             return results;
         }
 
+        public Issue GetIssueIncludeJournals(int id)
+        {
+            return manager.GetObjectWithErrConv<Issue>(id.ToString(), new NameValueCollection { { RedmineKeys.INCLUDE, RedmineKeys.JOURNALS } });
+        }
+
         public void UpdateTicket(Issue issue)
         {
             manager.UpdateObjectWithErrConv(issue.Id.ToString(), issue);

@@ -31,6 +31,8 @@ using LibRedminePower.Logging;
 using LibRedminePower.Enums;
 using RedmineTimePuncher.Extentions;
 using System.Reactive.Disposables;
+using RedmineTimePuncher.ViewModels.CreateTicket.CustomFields;
+using RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases;
 
 namespace RedmineTimePuncher.ViewModels.CreateTicket
 {
@@ -73,6 +75,12 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         public ObservableCollection<MemberViewModel> Operators { get; set; }
         public List<MemberViewModel> AllOperators { get; set; }
 
+        public OpenCustomFieldsViewModel OpenCustomFields { get; set; }
+        public RequestCustomFieldsViewModel RequestCustomFields { get; set; }
+        public PointCustomFieldsViewModel PointCustomFields { get; set; }
+        [JsonIgnore]
+        public ReadOnlyReactivePropertySlim<bool> ShowCustomFields { get; set; }
+
         [JsonIgnore]
         public ReactiveCommand GoToTicketCommand { get; set; }
 
@@ -82,10 +90,15 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         [JsonIgnore]
         public CommandBase AdjustScheduleCommand { get; set; }
 
+        [JsonIgnore]
+        public MainWindowViewModel Parent { get; set; }
+
         public CreateTicketViewModel() { }
 
         public CreateTicketViewModel(MainWindowViewModel parent) : base(ApplicationMode.TicketCreater, parent)
         {
+            Parent = parent;
+
             IsBusy = new BusyTextNotifier();
 
             CreateTicketViewModel prev = null;
@@ -157,7 +170,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             // 開催中ステータス
             Statuss = CacheManager.Default.Updated.Select(_ => CacheManager.Default.Statuss).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            this.ObserveProperty(a => MergeRequestUrl).Pairwise().Subscribe(p =>
+            this.ObserveProperty(a => MergeRequestUrl).Pairwise().SubscribeWithErr(p =>
             {
                 if (!NeedsGitIntegration || ReviewTarget == null || string.IsNullOrEmpty(p.NewItem))
                     return;
@@ -176,6 +189,19 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             DetectionProcess = new DetectionProcessViewModel().AddTo(disposables);
             ReviewMethod = new ReviewMethodViewModel(parent.Settings).AddTo(disposables);
+
+            ReviewerTwinList = new ReviewersTwinListViewModel().AddTo(disposables);
+            OperatorTwinList = new ReviewersTwinListViewModel().AddTo(disposables);
+
+            OpenCustomFields = new OpenCustomFieldsViewModel(this, prev).AddTo(disposables);
+            RequestCustomFields = new RequestCustomFieldsViewModel(this, prev).AddTo(disposables);
+            PointCustomFields = new PointCustomFieldsViewModel(this, prev).AddTo(disposables);
+            ShowCustomFields = new[]
+            {
+                OpenCustomFields.Fields.AnyAsObservable(),
+                RequestCustomFields.Fields.AnyAsObservable(),
+                PointCustomFields.Fields.AnyAsObservable(),
+            }.CombineLatest().Select(a => a.Any(b => b)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             // キャッシュおよびチケット更新時の処理
             // キャッシュの新規取得が実行された場合、コンストラクタでは前回値を反映できないためフラグで処理する
@@ -401,6 +427,15 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
         private async Task createReviewTicketAsync(RedmineManager redmine,SettingsModel settings)
         {
+            // カスタムフィールドのチェック
+            var errMsgs = new[] { (CustomFieldsViewModelBase)OpenCustomFields, RequestCustomFields, PointCustomFields }
+                .Select(cf => cf.Validate()).Where(e => e != null).ToList();
+            if (errMsgs.Count > 0)
+            {
+                throw new ApplicationException(string.Format(Resources.ReviewErrMsgSetCustomFields,
+                                                             string.Join(Environment.NewLine, errMsgs)));
+            }
+
             // 説明の転記機能のチェック
             var openTransPrg = "";
             var requestTransPrg = "";
@@ -440,8 +475,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             p.DueDate = ReviewMethod.GetDue().GetDateOnly();
             p.Description = "";
             p.Status = settings.CreateTicket.OpenStatus.ToIdentifiableName();
-            var copiedCfs = settings.ReviewCopyCustomFields.GetCopiedCustomFields(Ticket);
-            p.CustomFields = createCustomFields(copiedCfs);
+            p.CustomFields = createCustomFields(OpenCustomFields.GetIssueCustomFields());
 
             var openTicket = new MyIssue(await Task.Run(() => redmine.CreateTicket(p)));
 
@@ -471,7 +505,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             {
                 c.AssignedTo = r.ToIdentifiableName();
                 c.Subject = $"{RawTitle} {r.GetPostFix()}";
-                c.CustomFields = createCustomFields(copiedCfs, r);
+                c.CustomFields = createCustomFields(RequestCustomFields.GetIssueCustomFields(), r);
                 c.Description = createDescription(
                     string.IsNullOrEmpty(Description) ? Resources.ReviewPleaseFollwings : Description,
                     detectProcPrg,
@@ -493,7 +527,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                                         DetectionProcess.Model.GetQueryString(),
                                         null,
                                         ReviewMethod.Model.GetQueryString(),
-                                        settings.ReviewCopyCustomFields.GetCopiedCustomFieldQuries(Ticket));
+                                        PointCustomFields.GetIssueCustomFieldQuries());
                 var refKey = settings.Appointment.Outlook.RefsKeywords.Split(",".ToCharArray()).FirstOrDefault();
                 failedToCreateAppointment = createOutlookAppointment(
                     RawTitle,
@@ -513,12 +547,21 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             // レビュー対象チケットのステータスの更新（ステータスだけ更新したいので最新のものを取得）
             var currentTicket = redmine.GetTicketsById(Ticket.Id.ToString());
             currentTicket.RawIssue.Status = StatusUnderReview;
-            await Task.Run(() => redmine.UpdateTicket(currentTicket.RawIssue));
+            System.Exception failedToUpdate = null;
+            try
+            {
+                await Task.Run(() => redmine.UpdateTicket(currentTicket.RawIssue));
+            }
+            catch (System.Exception e)
+            {
+                failedToUpdate = e;
+            }
 
             Process.Start(openTicket.Url);
 
-            if (failedToCreateAppointment != null)
-                throw failedToCreateAppointment;
+            var errs = new[] { failedToCreateAppointment, failedToUpdate }.Where(a => a != null).ToList();
+            if (errs.Count > 0)
+                throw new AggregateException(errs);
         }
 
         private bool confirmDisableTrackers(List<(string TrackerName, string TicketType)> disableTrackers)
@@ -538,7 +581,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             var detectionProcess = DetectionProcess.Model.GetQueryString();
             var saveReviewer = reviewer != null ? settings.CreateTicket.SaveReviewer.GetQueryString(reviewer.Id.ToString()) : null;
             var reviewMethod = ReviewMethod.Model.GetQueryString();
-            var cfQueries = settings.ReviewCopyCustomFields.GetCopiedCustomFieldQuries(Ticket);
+            var cfQueries = PointCustomFields.GetIssueCustomFieldQuries();
             var createPointUrl = redmine.CreatePointIssueURL(parent.RawIssue, pointTracker.Id, detectionProcess, saveReviewer, reviewMethod, cfQueries);
             var createLink = CacheManager.Default.MarkupLang.CreateLink(Resources.ReviewMsgAddPointAtHere, createPointUrl);
             if (settings.CreateTicket.SaveReviewer.IsEnabled)
@@ -657,12 +700,11 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             c.StartDate = ReviewMethod.StartDate;
             c.DueDate = ReviewMethod.DueDate;
 
-            var copiedCfs = settings.ReviewCopyCustomFields.GetCopiedCustomFields(Ticket);
             foreach (var o in Operators)
             {
                 c.AssignedTo = o.ToIdentifiableName();
                 c.Subject = $"{Resources.AppModeTicketCreaterRequestWork} : {Ticket.Subject} {o.GetPostFix()}";
-                c.CustomFields = createCustomFields(copiedCfs, o);
+                c.CustomFields = createCustomFields(settings.ReviewCopyCustomFields.GetCopiedCustomFields(Ticket), o);
                 c.Description = createDescription(
                     string.IsNullOrEmpty(Description) ? string.Format(Resources.ReviewMsgRequestFollowings, CacheManager.Default.MarkupLang.CreateTicketLink(Ticket)) : Description,
                     requestTransPrg);
@@ -676,25 +718,20 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             Process.Start(Ticket.Url);
         }
 
-        private List<IssueCustomField> createCustomFields(List<IssueCustomField> copied, MemberViewModel reviewer = null)
+        private List<IssueCustomField> createCustomFields(List<IssueCustomField> fields, MemberViewModel reviewer = null)
         {
-            var results = new List<IssueCustomField>();
-
-            if (copied != null)
-                results.AddRange(copied);
-
             if (DetectionProcess.Model.GetIssueCustomFieldIfNeeded(out var proc))
-                results.Add(proc);
+                fields.Add(proc);
 
             if (ReviewMethod.Model.GetIssueCustomFieldIfNeeded(out var face))
-                results.Add(face);
+                fields.Add(face);
 
             if (reviewer != null && reviewer.IsRequired.GetIssueCustomFieldIfNeeded(out var requierd))
-                results.Add(requierd);
+                fields.Add(requierd);
 
             // 空のリストを CustomFields に設定すると以下の箇所で例外が発生するため、空の場合は null を返す
             // Redmine.Net.Api.Extensions.CollectionExtensions の Dump メソッド
-            return results.Count > 0 ? results : null;
+            return fields.Count > 0 ? fields : null;
         }
 
         public override void OnWindowClosed()

@@ -9,6 +9,8 @@ namespace RedmineTimePuncher.Models
 {
     public class IdName : LibRedminePower.Models.Bases.ModelBaseSlim
     {
+        public static int INVALID_ID = -1;
+
         public int Id { get; set; }
         public string Name{ get; set; }
 

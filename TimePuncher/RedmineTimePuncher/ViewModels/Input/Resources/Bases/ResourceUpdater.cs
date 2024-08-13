@@ -109,7 +109,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Resources.Bases
                 UpdateCommand.CanExecuteChangedAsObservable()
                     .Where(_ => UpdateCommand.CanExecute())
                     .Take(1)
-                    .Subscribe(_ => UpdateCommand.ExecuteAsync().WithErrHandleAsync());
+                    .SubscribeWithErr(_ => UpdateCommand.ExecuteAsync().WithErrHandleAsync());
             }
         }
     }

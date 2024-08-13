@@ -234,7 +234,7 @@ namespace RedmineTimePuncher.Models.Managers
 
         public List<Redmine.Net.Api.Types.Version> GetVersions(int projectId)
         {
-            return CacheManager.Default.VersionsShortCache.GetOrAdd(projectId, _ => Manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId));
+            return Manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId);
         }
 
         public IEnumerable<MyIssue> GetMyTickets()
@@ -711,11 +711,13 @@ namespace RedmineTimePuncher.Models.Managers
             {
                 return Manager.GetObjectWithErrConv<Issue>(ticketNo, new NameValueCollection { { RedmineKeys.INCLUDE, RedmineKeys.JOURNALS } });
             }
-            catch (Exception)
+            catch (RedmineApiException e)
             {
-                // 見つからなかった場合は、NULL応答をする。
-                // これ以外の例外の場合は、集約例外に通知する
-                return null;
+                // 見つからない or 権限がなかった場合は null を返す
+                if (e.InnerException is NotFoundException || e.InnerException is ForbiddenException)
+                    return null;
+
+                throw;
             }
         }
 

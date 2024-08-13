@@ -49,7 +49,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             Points = new ReactivePropertySlim<ObservableCollection<TreeMapItemViewModelBase>>().AddTo(disposables);
             SelectedPoints = new ObservableCollection<TreeMapItemViewModelBase>();
-            SelectedPoints.CollectionChangedAsObservable().Subscribe(_ =>
+            SelectedPoints.CollectionChangedAsObservable().SubscribeWithErr(_ =>
             {
                 updateTreeListSelection(SelectedPoints.Where(p => p.Issue != null).Select(p => p.Issue.Id).ToArray());
             }).AddTo(disposables);
@@ -78,7 +78,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
             var grouping = new FactorTypeViewModel(title, isEnabled, selectedType,
                 FactorTypes.None, FactorTypes.Project, FactorTypes.User, FactorTypes.Category, FactorTypes.FixedVersion, FactorTypes.OnTime).AddTo(disposables);
-            grouping.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
+            grouping.SelectedType.Skip(1).SubscribeWithErr(_ => SetupSeries());
             return grouping;
         }
 

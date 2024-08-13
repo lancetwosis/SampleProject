@@ -1,4 +1,5 @@
-﻿using LibRedminePower.Interfaces;
+﻿using LibRedminePower.Extentions;
+using LibRedminePower.Interfaces;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Redmine.Net.Api.Types;
@@ -28,7 +29,7 @@ namespace RedmineTimePuncher.ViewModels.TableEditor
             var redmine = parent.Redmine.Select(r => (r?.Manager, r?.MasterManager, (ICacheManager)CacheManager.Default)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             ViewModel = new RedmineTableEditor.ViewModels.TableEditorViewModel(redmine).AddTo(disposables);
 
-            IsSelected.Subscribe(i =>
+            IsSelected.SubscribeWithErr(i =>
             {
                 if (i)
                     ViewModel.LoadFirstSettings(fileName);

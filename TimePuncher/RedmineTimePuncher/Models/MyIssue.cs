@@ -84,7 +84,7 @@ namespace RedmineTimePuncher.Models
         }
 
         /// <summary>
-        /// 普通に new した場合とデシリアライズした場合で Subscribe のスキップする必要回数が異なるため引数で指定する
+        /// 普通に new した場合とデシリアライズした場合で SubscribeWithErr のスキップする必要回数が異なるため引数で指定する
         /// </summary>
         private void initRx(int skipCount)
         {

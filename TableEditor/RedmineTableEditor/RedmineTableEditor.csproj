@@ -106,6 +106,7 @@
     <Compile Include="Attachments\ExpanderAttachment.cs" />
     <Compile Include="Behaviors\GridViewCurrentCellToMyIssueChildBehavior.cs" />
     <Compile Include="Enums\FieldFormat.cs" />
+    <Compile Include="Enums\MyIssuePropertyType.cs" />
     <Compile Include="Enums\StatusCompareType.cs" />
     <Compile Include="Extentions\CustomFieldExtentions.cs" />
     <Compile Include="Extentions\IssuePropertyTypeExtensions.cs" />

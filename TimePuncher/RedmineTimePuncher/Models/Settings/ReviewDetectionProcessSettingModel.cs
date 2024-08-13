@@ -29,7 +29,7 @@ namespace RedmineTimePuncher.Models.Settings
             }).AddTo(disposables);
 
             // 「レビュー対象の工程の指定」は必ずカスタムフィールドに保存する必要があるため、有効・無効と連動させる
-            this.ObserveProperty(a => a.IsEnabled).Subscribe(i => NeedsSaveToCustomField = i).AddTo(disposables);
+            this.ObserveProperty(a => a.IsEnabled).SubscribeWithErr(i => NeedsSaveToCustomField = i).AddTo(disposables);
 
             this.fieldCreater = (cf) => new MyCustomField(cf);
         }

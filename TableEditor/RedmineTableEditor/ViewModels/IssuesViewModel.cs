@@ -64,7 +64,7 @@ namespace RedmineTableEditor.ViewModels
             LocalData.ItemsSource = allChildren;
 
             var editedIssues = new ObservableCollection<MyIssueBase>();
-            parentIssues.ObserveResetChanged().Subscribe(_ => editedIssues.Clear());
+            parentIssues.ObserveResetChanged().SubscribeWithErr(_ => editedIssues.Clear());
             MyIssueEditedListener.EditedChanged = (i, b) =>
             {
                 if (b)
@@ -92,7 +92,9 @@ namespace RedmineTableEditor.ViewModels
                 async () =>
                 {
                     TraceHelper.TrackCommand(nameof(parent.ApplyCommand));
-                    await ApplyAsync(parent.FileSettings.Model.Value);
+                    var updated = await ApplyAsync(parent.FileSettings.Model.Value);
+                    if (!updated)
+                        MessageBoxHelper.ConfirmInformation(Resources.MsgNoChangeDisplayConditions);
                 }).AddTo(disposables);
 
             //----------------------------
@@ -182,22 +184,21 @@ namespace RedmineTableEditor.ViewModels
             }).AddTo(disposables);
         }
 
-        public async Task ApplyAsync(FileSettingsModel fileSettings)
+        public async Task<bool> ApplyAsync(FileSettingsModel fileSettings)
         {
             parent.CTS = new CancellationTokenSource();
             using (parent.IsBusy.ProcessStart())
             {
-                // ファイル設定
-                var readAllFlag = true;
-
                 parent.CTS.Token.ThrowIfCancellationRequested();
+
+                var updated = false;
 
                 // 自動色設定
                 if (lastFileSettings == null ||
                     lastFileSettings.AutoBackColor.ToJson() != fileSettings.AutoBackColor.ToJson())
                 {
                     AutoBackColor = fileSettings.AutoBackColor.Clone();
-                    readAllFlag = false;
+                    updated = true;
                 }
 
                 parent.CTS.Token.ThrowIfCancellationRequested();
@@ -221,21 +222,20 @@ namespace RedmineTableEditor.ViewModels
                     foreach (var g in fileSettings.SubIssues.Items.Where(a => a.IsEnabled && a.IsValid).OrderBy(a => a.Order))
                     {
                         columns.AddRange(fileSettings.SubIssues.Properties
-                            .Where(a => a.Field.HasValue || Redmine.Value.CustomFields.Any(b => b.Id == a.CustomFieldId))
+                            .Where(a => a.Field.HasValue || a.MyField.HasValue || Redmine.Value.CustomFields.Any(b => b.Id == a.CustomFieldId))
                             .Select(a => a.CreateColumn(Redmine.Value, g.Order))
                             .Where(a => a != null));
                     }
                     Columns = columns;
-                    readAllFlag = false;
+                    updated = true;
                 }
 
                 parent.CTS.Token.ThrowIfCancellationRequested();
 
                 // 一覧に影響があるものが更新された場合のみ全更新する。
-                if (readAllFlag ||
-                    lastFileSettings == null ||
+                if (lastFileSettings == null ||
                     lastFileSettings.ParentIssues.ToJson() != fileSettings.ParentIssues.ToJson() ||
-                    lastFileSettings.SubIssues.Items.ToJson() != fileSettings.SubIssues.Items.ToJson())
+                    lastFileSettings.SubIssues.ToJson() != fileSettings.SubIssues.ToJson())
                 {
                     clearIssues();
 
@@ -243,7 +243,7 @@ namespace RedmineTableEditor.ViewModels
                     var myItems = await fileSettings.ParentIssues.GetIssuesAsync(Redmine.Value, parent.CTS.Token);
                     if (myItems != null && myItems.Any())
                     {
-                        var issues = myItems.Select(issue => new MyIssue(Redmine.Value, fileSettings.SubIssues.Items, issue)).ToList();
+                        var issues = myItems.Select(issue => new MyIssue(Redmine.Value, fileSettings, issue)).ToList();
                         if (fileSettings.ParentIssues.UseQuery)
                             parentIssues.AddRange(issues);
                         else
@@ -263,11 +263,14 @@ namespace RedmineTableEditor.ViewModels
                         LocalData = new LocalDataSourceProvider();
                         LocalData.ItemsSource = allChildren;
 
-                        allChildren.Select(a => a.PropertyChangedAsObservable()).Merge().ObserveOnUIDispatcher().Subscribe(_ => LocalData.Refresh());
+                        allChildren.Select(a => a.PropertyChangedAsObservable()).Merge().ObserveOnUIDispatcher().SubscribeWithErr(_ => LocalData.Refresh());
                     }
+                    updated = true;
                 }
 
                 lastFileSettings = parent.FileSettings.Model.Value.Clone();
+
+                return updated;
             }
         }
 

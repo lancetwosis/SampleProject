@@ -1,5 +1,6 @@
 ﻿using LibRedminePower.Attributes;
 using LibRedminePower.Converters;
+using Redmine.Net.Api;
 using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
@@ -20,7 +21,14 @@ namespace RedmineTimePuncher.Enums
         [LocalizedDescription(nameof(Resources.CustomFieldFormatUser), typeof(Resources))]
         User,
         Version,
-        // 他にも int, string, date, link などが存在するが現在対応する処理が存在しないため一括で扱う
+        Int,
+        String,
+        Float,
+        Link,
+        Text,
+        Date,
+        Enumeration,
+        Attachment,
         Other,
     }
 
@@ -30,14 +38,30 @@ namespace RedmineTimePuncher.Enums
         {
             switch (str)
             {
-                case "bool":
+                case RedmineKeys.CF_BOOL:
                     return CustomFieldFormat.Bool;
-                case "list":
+                case RedmineKeys.CF_LIST:
                     return CustomFieldFormat.List;
-                case "user":
+                case RedmineKeys.CF_USER:
                     return CustomFieldFormat.User;
-                case "version":
+                case RedmineKeys.CF_VERSION:
                     return CustomFieldFormat.Version;
+                case RedmineKeys.CF_INT:
+                    return CustomFieldFormat.Int;
+                case RedmineKeys.CF_STRING:
+                    return CustomFieldFormat.String;
+                case RedmineKeys.CF_FLOAT:
+                    return CustomFieldFormat.Float;
+                case RedmineKeys.CF_LINK:
+                    return CustomFieldFormat.Link;
+                case RedmineKeys.CF_TEXT:
+                    return CustomFieldFormat.Text;
+                case RedmineKeys.CF_DATE:
+                    return CustomFieldFormat.Date;
+                case RedmineKeys.CF_ENUMERATION:
+                    return CustomFieldFormat.Enumeration;
+                case RedmineKeys.CF_ATTACHMENT:
+                    return CustomFieldFormat.Attachment;
                 default:
                     return CustomFieldFormat.Other;
             }

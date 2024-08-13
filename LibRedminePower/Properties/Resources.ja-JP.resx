@@ -291,9 +291,6 @@
   <data name="enumIssuePropertyTypeCategory" xml:space="preserve">
     <value>カテゴリ</value>
   </data>
-  <data name="enumIssuePropertyTypeDiffEstimatedSpent" xml:space="preserve">
-    <value>残り工数</value>
-  </data>
   <data name="enumIssuePropertyTypeDoneRatio" xml:space="preserve">
     <value>進捗率</value>
   </data>
@@ -308,9 +305,6 @@
   </data>
   <data name="enumIssuePropertyTypeId" xml:space="preserve">
     <value>#</value>
-  </data>
-  <data name="enumIssuePropertyTypeMySpentHours" xml:space="preserve">
-    <value>担当実績</value>
   </data>
   <data name="enumIssuePropertyTypePriority" xml:space="preserve">
     <value>優先度</value>

@@ -235,7 +235,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             if (Properties.Settings.Default.ResourcesUnVisibles == null)
                 Properties.Settings.Default.ResourcesUnVisibles = new System.Collections.Specialized.StringCollection();
             ResourceSettingList = MyType.Resources.ToReadOnlyReactiveCollection(a => new ResourceSettingViewModel(a as MyResourceBase)).AddTo(disposables);
-            ResourceSettingList.CollectionChangedAsObservable().StartWithDefault().Subscribe(_ => ResourceSettingList.ToList().ForEach(r => r.SetIsLastEnabled(ResourceSettingList))).AddTo(disposables);
+            ResourceSettingList.CollectionChangedAsObservable().StartWithDefault().SubscribeWithErr(_ => ResourceSettingList.ToList().ForEach(r => r.SetIsLastEnabled(ResourceSettingList))).AddTo(disposables);
 
             GroupFilter = ResourceSettingList.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
                 ResourceSettingList.ObserveElementProperty(a => a.IsEnabled).StartWithDefault(), (_, __) =>
@@ -333,7 +333,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             #region "********* 日付関連コマンド ************"
             // 日付選択された場合の動作を作成する。
             var periodChanging = new BusyNotifier();
-            PeriodType.Skip(1).Subscribe(p =>
+            PeriodType.Skip(1).SubscribeWithErr(p =>
             {
                 if (periodChanging.IsBusy) return;
 
@@ -343,7 +343,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     updateDisplayRange();
                 }
             });
-            ActiveViewIndex.Skip(1).Subscribe(i =>
+            ActiveViewIndex.Skip(1).SubscribeWithErr(i =>
             {
                 if (periodChanging.IsBusy) return;
                 // View で日付をダブルクリックすると「１日表示」に切り替わるため設定に反映する
@@ -356,19 +356,19 @@ namespace RedmineTimePuncher.ViewModels.Input
             });
 
             // ScheduleView で予定をクリック、もしくは予定がないところをクリックしたら、「選択中の日付」を更新
-            SelectedAppointments.Where(a => a != null && a.Any()).Subscribe(a =>
+            SelectedAppointments.Where(a => a != null && a.Any()).SubscribeWithErr(a =>
             {
                 SelectedDate.Value = a.Last().Start.GetDateOnly();
                 RibbonIndex = 0;
             });
-            SelectedSlot.Where(s => s != null).Subscribe(s =>
+            SelectedSlot.Where(s => s != null).SubscribeWithErr(s =>
             {
                 SelectedDate.Value = s.Start.GetDateOnly();
                 RibbonIndex = 0;
             });
 
             // ScheduleView の CurrentDate が更新されたら「選択中の日付」を更新
-            CurrentDate.Skip(1).Subscribe(d => SelectedDate.Value = d);
+            CurrentDate.Skip(1).SubscribeWithErr(d => SelectedDate.Value = d);
 
             SelectedDate.Pairwise().SubscribeWithErr(async p =>
             {

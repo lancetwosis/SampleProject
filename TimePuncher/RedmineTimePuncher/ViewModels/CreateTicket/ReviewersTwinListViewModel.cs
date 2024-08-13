@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace RedmineTimePuncher.ViewModels.CreateTicket
 {
-    public class ReviewersTwinListViewModel : TwinListBoxViewModel<MemberViewModel>
+    public class ReviewersTwinListViewModel : ExpandableTwinListBoxViewModel<MemberViewModel>
     {
         public ReviewersTwinListViewModel(IEnumerable<MemberViewModel> allItems, ObservableCollection<MemberViewModel> selectedItems, IEnumerable<MemberViewModel> defaultReviewers = null)
             : base(allItems, selectedItems)
@@ -27,6 +27,13 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     }
                 }
             }
+        }
+
+        /// <summary>
+        /// チケットが設定されていない状態で起動するとレイアウトが崩れるのでダミーを設定する
+        /// </summary>
+        public ReviewersTwinListViewModel() : base(new List<MemberViewModel>(), new ObservableCollection<MemberViewModel>())
+        {
         }
     }
 }

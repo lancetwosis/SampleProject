@@ -36,7 +36,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
 
             FileName = Settings.Default.LastFileName;
 
-            parent.Redmine.Subscribe(r =>
+            parent.Redmine.SubscribeWithErr(r =>
             {
                 if (r.IsValid() != null) return;
 
@@ -53,7 +53,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                     AutoBackColor.ObserveProperty(a => a.Value.IsEdited.Value).Where(a => a),
                 }.Merge().Select(_ => true).ToReactiveProperty().AddTo(disposables);
 
-                IsEdited.Subscribe(a =>
+                IsEdited.SubscribeWithErr(a =>
                 {
                     if (a)
                     {

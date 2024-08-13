@@ -60,25 +60,5 @@ namespace RedmineTimePuncher.Models.Settings
 
             return parent.RawIssue.CustomFields.Where(c => SelectedCustomFields.Any(sc => sc.Id == c.Id)).ToList();
         }
-
-        public List<string> GetCopiedCustomFieldQuries(MyIssue parent)
-        {
-            var result = new List<string>();
-            foreach (var cf in GetCopiedCustomFields(parent))
-            {
-                if (cf.Multiple)
-                {
-                    foreach (var v in cf.Values)
-                    {
-                        result.Add($"issue[custom_field_values][{cf.Id}][]={HttpUtility.UrlEncode(v.Info)}");
-                    }
-                }
-                else
-                {
-                    result.Add($"issue[custom_field_values][{cf.Id}]={HttpUtility.UrlEncode(cf.Values[0].Info)}");
-                }
-            }
-            return result;
-        }
     }
 }

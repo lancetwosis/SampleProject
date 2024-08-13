@@ -50,7 +50,7 @@ namespace RedmineTimePuncher.Models
             Children = new ObservableCollection<MyWikiPageCount>();
 
             IsBusyUpdateSummary = new BusyNotifier();
-            IsBusyUpdateSummary.Where(a => !a).Subscribe(_ => 
+            IsBusyUpdateSummary.Where(a => !a).SubscribeWithErr(_ => 
             {
                 if (Children.Any())
                 {

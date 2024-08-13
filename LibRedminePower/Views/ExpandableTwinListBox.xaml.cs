@@ -20,9 +20,24 @@ namespace LibRedminePower.Views
     /// </summary>
     public partial class ExpandableTwinListBox : UserControl
     {
+        public DataTemplate ToItemTemplate
+        {
+            get { return (DataTemplate)GetValue(ToItemTemplateProperty); }
+            set { SetValue(ToItemTemplateProperty, value); }
+        }
+        public static readonly DependencyProperty ToItemTemplateProperty =
+            DependencyProperty.Register("ToItemTemplate", typeof(DataTemplate), typeof(ExpandableTwinListBox), new PropertyMetadata());
+
         public ExpandableTwinListBox()
         {
             InitializeComponent();
+        }
+
+        private void twinListGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // ラベルの ItemsControl に TwinListBox 全体の幅から「＋」ボタンの幅を除いたものを設定する
+            // MaxWidth の指定を行わないと WrapPanel が機能せずすべて一列に表示されてしまう
+            this.labelItemsControl.MaxWidth = this.twinListGrid.ActualWidth - 35;
         }
     }
 }

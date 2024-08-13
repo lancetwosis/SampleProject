@@ -74,12 +74,12 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
             var selectedPeriod = SelectedPeriodType.CombineLatest(SelectedPeriodNumeric, SelectedStartDate, SelectedEndDate)
                 .Select(a => a.First.GetPeriod(a.Second, a.Third, a.Fourth)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            SelectedPeriodType.Subscribe(_ =>
+            SelectedPeriodType.SubscribeWithErr(_ =>
                 SelectedWikiPages.ToList().ForEach(async wiki => await wiki.UpdateHistoriesAsync(parent.Redmine.Value, selectedPeriod.Value))).AddTo(disposables);
-            SelectedWikiPages.ObserveAddChanged().Subscribe(async wiki =>
+            SelectedWikiPages.ObserveAddChanged().SubscribeWithErr(async wiki =>
                 await wiki.UpdateHistoriesAsync(parent.Redmine.Value, selectedPeriod.Value)).AddTo(disposables);
-            SelectedWikiPages.ObserveRemoveChanged().Subscribe(wiki => wiki.CtsUpdateHistories?.Cancel()).AddTo(disposables);
-            SelectedWikiPages.ObserveResetChanged().Subscribe(_ => SelectedWikiPages.ToList().ForEach(a  => a.CtsUpdateHistories?.Cancel())).AddTo(disposables);
+            SelectedWikiPages.ObserveRemoveChanged().SubscribeWithErr(wiki => wiki.CtsUpdateHistories?.Cancel()).AddTo(disposables);
+            SelectedWikiPages.ObserveResetChanged().SubscribeWithErr(_ => SelectedWikiPages.ToList().ForEach(a  => a.CtsUpdateHistories?.Cancel())).AddTo(disposables);
 
             IsHistories = SelectedPeriodType.Select(a => a == WikiPeriodType.None).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 

@@ -69,6 +69,9 @@
             <telerik:RadListBox Grid.Row="1"
                                 telerik:ListBoxSelectedItemsBehavior.SelectedItemsSource="{Binding ToSelectedItems,
                                                                                                    Mode=TwoWay}"
+                                ItemTemplate="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                      AncestorType=UserControl},
+                                                       Path=ToItemTemplate}"
                                 ItemsSource="{Binding ToItemsCVS}"
                                 SelectionMode="Extended">
                 <telerik:EventToCommandBehavior.EventBindings>

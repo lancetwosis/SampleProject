@@ -41,15 +41,15 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         {
             XAxisType = new FactorTypeViewModel(Resources.VisualizeFactorXAxis, IsEnabled,
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarXAxis), FactorTypes.GetGroupings()).AddTo(disposables);
-            XAxisType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
+            XAxisType.SelectedType.Skip(1).SubscribeWithErr(_ => SetupSeries());
             CombineType = new FactorTypeViewModel(Resources.VisualizeFactorGrouping, IsEnabled,
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarCombine), FactorTypes.Get2ndGroupings()).AddTo(disposables);
-            CombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
+            CombineType.SelectedType.Skip(1).SubscribeWithErr(_ => SetupSeries());
 
             SortType = new FactorTypeViewModel(Resources.VisualizeFactorSort,
                 IsEnabled.CombineLatest(XAxisType.IsContinuous, (ie, ic) => ie && !ic).ToReadOnlyReactivePropertySlim().AddTo(disposables),
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.BarSort), FactorTypes.GetSortDirections()).AddTo(disposables);
-            SortType.SelectedType.Skip(1).Subscribe(_ => reorderXLabels()).AddTo(disposables);
+            SortType.SelectedType.Skip(1).SubscribeWithErr(_ => reorderXLabels()).AddTo(disposables);
 
             Serieses = new ObservableCollection<SeriesViewModel>();
 
@@ -138,7 +138,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             }).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
 
             // 表示非表示が切り替わったら並べ替え
-            Serieses.Select(s => s.IsVisible).CombineLatest().Subscribe(_ => reorderXLabels()).AddTo(myDisposables);
+            Serieses.Select(s => s.IsVisible).CombineLatest().SubscribeWithErr(_ => reorderXLabels()).AddTo(myDisposables);
 
             // 凡例の表示非表示チェックボックスの復元
             if (needsSetVisible &&
@@ -155,7 +155,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             }
 
             // 凡例の表示非表示チェックボックスの保存
-            Serieses.Select(a => a.IsVisible).CombineLatest().Subscribe(_ =>
+            Serieses.Select(a => a.IsVisible).CombineLatest().SubscribeWithErr(_ =>
             {
                 parent.Model.ChartSettings.BarPreviousCombine = CombineType.SelectedType.Value;
                 parent.Model.ChartSettings.BarVisibleSeriesNames = Serieses.Where(a => a.IsVisible.Value).Select(a => a.Title).ToList();

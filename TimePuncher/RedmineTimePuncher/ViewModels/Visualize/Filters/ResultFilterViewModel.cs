@@ -57,7 +57,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
             AllFactors = getAllFactors(parent, model.Type);
             Factors = model.Factors;
-            Type.Skip(1).Subscribe(t =>
+            Type.Skip(1).SubscribeWithErr(t =>
             {
                 Factors.Clear();
                 AllFactors = getAllFactors(parent, t);

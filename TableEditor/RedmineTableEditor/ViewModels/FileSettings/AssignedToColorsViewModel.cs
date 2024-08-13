@@ -47,7 +47,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             IsEnabled = model.ToReactivePropertySlimAsSynchronized(a => a.IsEnabled).AddTo(disposables);
             IsEnabledClosed = model.ToReactivePropertySlimAsSynchronized(a => a.IsEnabledClosed).AddTo(disposables);
             Items = new EditableGridViewModel<AssignedToColorViewModel, AssignedToColorModel>(model.Items, a => new AssignedToColorViewModel(a), a => a.Model);
-            Items.CollectionChangedAsObservable().Subscribe(_ => RowDropCommand.Execute()).AddTo(disposables);
+            Items.CollectionChangedAsObservable().SubscribeWithErr(_ => RowDropCommand.Execute()).AddTo(disposables);
 
             RowDropCommand = new ReactiveCommand().WithSubscribe(() =>
             {
@@ -63,7 +63,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 Items.ObserveElementObservableProperty(a => a.IsEdited).Where(a => a.Value).Select(_ => true),
             }.Merge().Select(_ => true).ToReactiveProperty().AddTo(disposables);
 
-            IsEdited.Where(a => !a).Subscribe(_ =>
+            IsEdited.Where(a => !a).SubscribeWithErr(_ =>
             {
                 Items.ToList().ForEach(a => a.IsEdited.Value = false);
             });

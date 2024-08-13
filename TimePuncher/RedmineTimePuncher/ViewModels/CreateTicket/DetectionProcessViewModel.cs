@@ -37,7 +37,7 @@ using RedmineTimePuncher.Models.Settings.Bases;
 namespace RedmineTimePuncher.ViewModels.CreateTicket
 {
 
-    public class DetectionProcessViewModel : CustomFieldViewModelBase<ReviewDetectionProcessSettingModel, MyCustomField, MyCustomFieldPossibleValue>
+    public class DetectionProcessViewModel : CustomFieldSettingViewModelBase<ReviewDetectionProcessSettingModel, MyCustomField, MyCustomFieldPossibleValue>
     {
         public DetectionProcessViewModel() : base(Resources.ReviewTargetProcess)
         {

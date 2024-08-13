@@ -1,4 +1,5 @@
-﻿using Reactive.Bindings.Extensions;
+﻿using LibRedminePower.Extentions;
+using Reactive.Bindings.Extensions;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models.Managers;
@@ -29,7 +30,7 @@ namespace RedmineTimePuncher.Models.Settings
             // レビュー方法の指定はデフォルトで有効に
             IsEnabled = true;
 
-            this.ObserveProperty(a => a.NeedsSaveToCustomField).CombineLatest(this.ObserveProperty(a => a.CustomField), (_1, _2) => (_1, _2)).Subscribe(_ =>
+            this.ObserveProperty(a => a.NeedsSaveToCustomField).CombineLatest(this.ObserveProperty(a => a.CustomField), (_1, _2) => (_1, _2)).SubscribeWithErr(_ =>
                 {
                     if (NeedsSaveToCustomField && CustomField == null)
                         return;

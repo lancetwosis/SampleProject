@@ -143,6 +143,33 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   Remain Hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumMyIssuePropertyTypeDiffEstimatedSpent {
+            get {
+                return ResourceManager.GetString("enumMyIssuePropertyTypeDiffEstimatedSpent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Assigned Spent Hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumMyIssuePropertyTypeMySpentHours {
+            get {
+                return ResourceManager.GetString("enumMyIssuePropertyTypeMySpentHours", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Reply Count に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumMyIssuePropertyTypeReplyCount {
+            get {
+                return ResourceManager.GetString("enumMyIssuePropertyTypeReplyCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Equals に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumStatusCompareTypeEquals {
@@ -365,6 +392,17 @@ namespace RedmineTableEditor.Properties {
         public static string msgErrUnsetRedminSettings {
             get {
                 return ResourceManager.GetString("msgErrUnsetRedminSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Display conditions have not been changed.
+        ///
+        ///To update the contents of the displayed issues, please execute &quot;Update Contents&quot;. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MsgNoChangeDisplayConditions {
+            get {
+                return ResourceManager.GetString("MsgNoChangeDisplayConditions", resourceCulture);
             }
         }
         

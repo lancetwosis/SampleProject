@@ -8,6 +8,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using LibRedminePower.Extentions;
 
 namespace RedmineTableEditor.Models
 {
@@ -35,7 +36,7 @@ namespace RedmineTableEditor.Models
         public double? EstimatedHours => target.EstimatedHours.Value;
         [LocalizedDisplayName(nameof(Resources.enumIssuePropertyTypeSpentHours), typeof(Resources))]
         public double? MySpentHours => target.MySpentHours;
-        [LocalizedDisplayName(nameof(Resources.enumIssuePropertyTypeDiffEstimatedSpent), typeof(Resources))]
+        [LocalizedDisplayName(nameof(Properties.Resources.enumMyIssuePropertyTypeDiffEstimatedSpent), typeof(Properties.Resources))]
         public double? DiffEstimatedSpent => target.DiffEstimatedSpent;
 
         private MySubIssue target;
@@ -43,17 +44,17 @@ namespace RedmineTableEditor.Models
         {
             this.target = target;
             Title = target.TargetSubTicket.Title;
-            target.ObserveProperty(a => a.Status.Value).Subscribe(_ => RaisePropertyChanged(nameof(Status))).AddTo(disposables);
-            target.ObserveProperty(a => a.AssignedTo.Value).Subscribe(_ => RaisePropertyChanged(nameof(AssignedTo))).AddTo(disposables);
-            target.ObserveProperty(a => a.FixedVersion.Value).Subscribe(_ => RaisePropertyChanged(nameof(FixedVersion))).AddTo(disposables);
-            target.ObserveProperty(a => a.Priority.Value).Subscribe(_ => RaisePropertyChanged(nameof(Priority))).AddTo(disposables);
-            target.ObserveProperty(a => a.Category.Value).Subscribe(_ => RaisePropertyChanged(nameof(Category))).AddTo(disposables);
-            target.ObserveProperty(a => a.StartDate.Value).Subscribe(_ => RaisePropertyChanged(nameof(StartDate))).AddTo(disposables);
-            target.ObserveProperty(a => a.DueDate.Value).Subscribe(_ => RaisePropertyChanged(nameof(DueDate))).AddTo(disposables);
-            target.ObserveProperty(a => a.DoneRatio.Value).Subscribe(_ => RaisePropertyChanged(nameof(DoneRatio))).AddTo(disposables);
-            target.ObserveProperty(a => a.EstimatedHours.Value).Subscribe(_ => RaisePropertyChanged(nameof(EstimatedHours))).AddTo(disposables);
-            target.ObserveProperty(a => a.MySpentHours).Subscribe(_ => RaisePropertyChanged(nameof(MySpentHours))).AddTo(disposables);
-            target.ObserveProperty(a => a.DiffEstimatedSpent).Subscribe(_ => RaisePropertyChanged(nameof(DiffEstimatedSpent))).AddTo(disposables);
+            target.ObserveProperty(a => a.Status.Value).SubscribeWithErr(_ => RaisePropertyChanged(nameof(Status))).AddTo(disposables);
+            target.ObserveProperty(a => a.AssignedTo.Value).SubscribeWithErr(_ => RaisePropertyChanged(nameof(AssignedTo))).AddTo(disposables);
+            target.ObserveProperty(a => a.FixedVersion.Value).SubscribeWithErr(_ => RaisePropertyChanged(nameof(FixedVersion))).AddTo(disposables);
+            target.ObserveProperty(a => a.Priority.Value).SubscribeWithErr(_ => RaisePropertyChanged(nameof(Priority))).AddTo(disposables);
+            target.ObserveProperty(a => a.Category.Value).SubscribeWithErr(_ => RaisePropertyChanged(nameof(Category))).AddTo(disposables);
+            target.ObserveProperty(a => a.StartDate.Value).SubscribeWithErr(_ => RaisePropertyChanged(nameof(StartDate))).AddTo(disposables);
+            target.ObserveProperty(a => a.DueDate.Value).SubscribeWithErr(_ => RaisePropertyChanged(nameof(DueDate))).AddTo(disposables);
+            target.ObserveProperty(a => a.DoneRatio.Value).SubscribeWithErr(_ => RaisePropertyChanged(nameof(DoneRatio))).AddTo(disposables);
+            target.ObserveProperty(a => a.EstimatedHours.Value).SubscribeWithErr(_ => RaisePropertyChanged(nameof(EstimatedHours))).AddTo(disposables);
+            target.ObserveProperty(a => a.MySpentHours).SubscribeWithErr(_ => RaisePropertyChanged(nameof(MySpentHours))).AddTo(disposables);
+            target.ObserveProperty(a => a.DiffEstimatedSpent).SubscribeWithErr(_ => RaisePropertyChanged(nameof(DiffEstimatedSpent))).AddTo(disposables);
         }
     }
 }

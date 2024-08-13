@@ -50,7 +50,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 model.Query = Queries.FirstOrDefault(q => q.Id == model.Query.Id);
 
             SelectedQuery = model.ToReactivePropertySlimAsSynchronized(a => a.Query).AddTo(disposables);
-            UseQuery.CombineLatest(SelectedQuery, (u, q) => (u, q)).Subscribe(async p =>
+            UseQuery.CombineLatest(SelectedQuery, (u, q) => (u, q)).SubscribeWithErr(async p =>
             {
                 if (p.u && p.q != null)
                 {
@@ -94,7 +94,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                         return null;
                     }
                 }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            UseQuery.CombineLatest(parentIssue, (u, i) => (u, i)).Subscribe(async p =>
+            UseQuery.CombineLatest(parentIssue, (u, i) => (u, i)).SubscribeWithErr(async p =>
             {
                 if (!p.u && p.i != null)
                 {
@@ -108,7 +108,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             }).AddTo(disposables);
 
             CompositeDisposable myDisposables = null;
-            this.ObserveProperty(a => a.VisibleProps).Where(v => v != null).Subscribe(v =>
+            this.ObserveProperty(a => a.VisibleProps).Where(v => v != null).SubscribeWithErr(v =>
             {
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
@@ -137,7 +137,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 this.ObserveProperty(a => a.VisibleProps.IsEdited.Value).Where(a => a),
             }.Merge().Select(_ => true).ToReactiveProperty().AddTo(disposables);
 
-            IsEdited.Where(a => !a).Subscribe(_ =>
+            IsEdited.Where(a => !a).SubscribeWithErr(_ =>
             {
                 if (VisibleProps != null)
                     VisibleProps.IsEdited.Value = false;

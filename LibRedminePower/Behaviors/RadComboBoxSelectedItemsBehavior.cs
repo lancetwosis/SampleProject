@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Reactive.Bindings.Notifiers;
+using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Linq;
@@ -25,16 +26,11 @@ namespace LibRedminePower.Behaviors
 
         private static void onSelectedItemsPropertyChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
         {
-            if (!nowTransfering)
+            var behavior = target as RadComboBoxSelectedItemsBehavior;
+            if (behavior.AssociatedObject != null)
             {
-                var comboBox = (target as RadComboBoxSelectedItemsBehavior).AssociatedObject;
-                if(comboBox != null)
-                {
-                    var items = e.NewValue as IList;
-                    nowTransfering = true;
-                    transfer(items, comboBox.SelectedItems);
-                    nowTransfering = false;
-                }
+                behavior.OnCleanup();
+                behavior.OnSetup();
             }
         }
 
@@ -42,8 +38,21 @@ namespace LibRedminePower.Behaviors
         {
             base.OnSetup();
 
-            if(AssociatedObject != null)
+            if (AssociatedObject != null)
+            {
                 AssociatedObject.SelectionChanged += AssociatedObject_SelectionChanged;
+            }
+
+            if (SelectedItems != null)
+            {
+                transfer(SelectedItems as IList, AssociatedObject.SelectedItems);
+                SelectedItems.CollectionChanged += SelectedItems_CollectionChanged;
+            }
+        }
+
+        private void SelectedItems_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            transfer(SelectedItems as IList, AssociatedObject.SelectedItems);
         }
 
         protected override void OnCleanup()
@@ -52,29 +61,29 @@ namespace LibRedminePower.Behaviors
 
             if (AssociatedObject != null)
                 AssociatedObject.SelectionChanged -= AssociatedObject_SelectionChanged;
+            if (SelectedItems != null)
+                SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
         }
 
         private void AssociatedObject_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
-            if (!nowTransfering)
-            {
-                nowTransfering = true;
-                transfer(AssociatedObject.SelectedItems, SelectedItems as IList);
-                nowTransfering = false;
-            }
+            transfer(AssociatedObject.SelectedItems, SelectedItems as IList);
         }
 
-        private static bool nowTransfering = false;
-
-        private static void transfer(IList source, IList target)
+        private BusyNotifier nowTransfering = new BusyNotifier();
+        private void transfer(IList source, IList target)
         {
-            if (source == null || target == null) return;
-            target.Clear();
-            foreach (var item in source)
+            if (nowTransfering.IsBusy || source == null || target == null)
+                return;
+
+            using (nowTransfering.ProcessStart())
             {
-                target.Add(item);
+                target.Clear();
+                foreach (var item in source)
+                {
+                    target.Add(item);
+                }
             }
         }
-
     }
 }

@@ -38,6 +38,12 @@
                TargetType="TextBlock">
             <Setter Property="Foreground" Value="Black" />
         </Style>
+        <Style x:Key="LabelStyle"
+               BasedOn="{StaticResource {x:Type TextBlock}}"
+               TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Right" />
+            <Setter Property="FontWeight" Value="Bold" />
+        </Style>
     </UserControl.Resources>
 
     <telerik1:RadBusyIndicator BusyContent="{Binding CreateTicket.IsBusy.Text}"
@@ -108,7 +114,8 @@
                                        IsBusy="{Binding IsBusy.IsBusy}"
                                        IsIndeterminate="True">
 
-                <Grid Grid.IsSharedSizeScope="True">
+                <Grid Background="#F6F6F6"
+                      Grid.IsSharedSizeScope="True">
                     <Grid Margin="5"
                           Visibility="{Binding CreateTicket.CreateMode,
                                                Converter={StaticResource ModeToVisivilityConverter},
@@ -127,12 +134,14 @@
                             <RowDefinition Height="AUTO" />
                             <RowDefinition Height="AUTO" />
                             <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="AUTO" />
+                            <RowDefinition Height="AUTO" />
                             <RowDefinition Height="*" />
-                            <RowDefinition Height="2*" />
+                            <RowDefinition Height="*" />
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewTargetIssueNo}" />
                         <Grid Grid.Column="1">
                             <Grid.ColumnDefinitions>
@@ -163,6 +172,7 @@
 
                         <TextBlock Grid.Row="1"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewTitleOfOpenIssue}" />
                         <TextBox Grid.Row="1"
                                  Grid.Column="1"
@@ -171,6 +181,7 @@
 
                         <TextBlock Grid.Row="2"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewOrganizer}" />
                         <telerik:RadComboBox Grid.Row="2"
                                              Grid.Column="1"
@@ -180,6 +191,7 @@
 
                         <TextBlock Grid.Row="3"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewStatusUnderReview}" />
                         <telerik:RadComboBox Grid.Row="3"
                                              Grid.Column="1"
@@ -194,6 +206,7 @@
 
                         <TextBlock Grid.Row="4"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewTargetProcess}"
                                    Visibility="{Binding CreateTicket.DetectionProcess.Model.IsEnabled,
                                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -212,6 +225,7 @@
 
                         <TextBlock Grid.Row="5"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewReviewMethod}"
                                    Visibility="{Binding CreateTicket.ReviewMethod.Model.IsEnabled,
                                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
@@ -230,22 +244,11 @@
 
                         <TextBlock Grid.Row="6"
                                    Margin="0,5,0,0"
-                                   Text="{x:Static props:Resources.ReviewMergeRequestURL}"
-                                   Visibility="{Binding CreateTicket.NeedsGitIntegration,
-                                                        Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBox Grid.Row="6"
-                                 Grid.Column="1"
-                                 Margin="5,5,0,0"
-                                 Text="{Binding CreateTicket.MergeRequestUrl}"
-                                 Visibility="{Binding CreateTicket.NeedsGitIntegration,
-                                                      Converter={StaticResource BooleanToVisibilityConverter}}" />
-
-                        <TextBlock Grid.Row="7"
-                                   Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewDuration}"
                                    Visibility="{Binding CreateTicket.ReviewMethod.NeedsOnDesktop.Value,
                                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <Grid Grid.Row="7"
+                        <Grid Grid.Row="6"
                               Grid.Column="1"
                               Margin="5,5,0,0"
                               Visibility="{Binding CreateTicket.ReviewMethod.NeedsOnDesktop.Value,
@@ -282,12 +285,13 @@
                             </telerik:RadDateTimePicker>
                         </Grid>
 
-                        <TextBlock Grid.Row="8"
+                        <TextBlock Grid.Row="7"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewDateTime}"
                                    Visibility="{Binding CreateTicket.ReviewMethod.NeedsFaceToFace.Value,
                                                         Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <Grid Grid.Row="8"
+                        <Grid Grid.Row="7"
                               Grid.Column="1"
                               Margin="5,5,0,0"
                               Visibility="{Binding CreateTicket.ReviewMethod.NeedsFaceToFace.Value,
@@ -331,90 +335,86 @@
                                                            Converter={StaticResource BooleanToVisibilityConverter}}" />
                         </Grid>
 
+                        <TextBlock Grid.Row="8"
+                                   Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
+                                   Text="{x:Static props:Resources.ReviewReviewer}" />
+                        <lib:ExpandableTwinListBox Grid.Row="8"
+                                                   Grid.Column="1"
+                                                   Margin="5,5,0,-5"
+                                                   DataContext="{Binding CreateTicket.ReviewerTwinList}">
+                            <lib:ExpandableTwinListBox.ToItemTemplate>
+                                <DataTemplate>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Text="{Binding User.Name}" />
+                                        <CheckBox Grid.Column="2"
+                                                  Margin="5,0,0,0"
+                                                  Content="{x:Static props:Resources.ReviewReviewerRequired}"
+                                                  IsChecked="{Binding IsRequiredReviewer.Value}"
+                                                  Visibility="{Binding IsRequired.IsEnabled,
+                                                                       Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    </Grid>
+                                </DataTemplate>
+                            </lib:ExpandableTwinListBox.ToItemTemplate>
+                        </lib:ExpandableTwinListBox>
+
                         <TextBlock Grid.Row="9"
                                    Margin="0,5,0,0"
-                                   Text="{x:Static props:Resources.ReviewReviewer}" />
-                        <Grid Grid.Row="9"
-                              Grid.Column="1"
-                              Margin="5,5,0,0"
-                              IsSharedSizeScope="True">
-                            <Grid.Resources>
-                                <Style BasedOn="{StaticResource GlyphButtonStyle}"
-                                       TargetType="Button" />
-                            </Grid.Resources>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"
-                                                  SharedSizeGroup="ListBoxSize" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto"
-                                                  SharedSizeGroup="ListBoxSize" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <Grid Grid.Column="0">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="Auto" />
-                                    <RowDefinition />
-                                </Grid.RowDefinitions>
-                                <libControls:FilterTextBox Grid.Row="0"
-                                                           MaxWidth="99999"
-                                                           ClearTextCommand="{Binding CreateTicket.ReviewerTwinList.ClearFromFilterCommand}"
-                                                           Text="{Binding CreateTicket.ReviewerTwinList.FromFilter,
-                                                                          Mode=TwoWay,
-                                                                          UpdateSourceTrigger=PropertyChanged}" />
-                                <telerik:RadListBox Grid.Row="1"
-                                                    telerik:ListBoxSelectedItemsBehavior.SelectedItemsSource="{Binding CreateTicket.ReviewerTwinList.FromSelectedItemsCVS.SourceCollection}"
-                                                    ItemsSource="{Binding CreateTicket.ReviewerTwinList.FromItemsCVS}"
-                                                    SelectionMode="Extended">
-                                    <telerik:EventToCommandBehavior.EventBindings>
-                                        <telerik:EventBinding Command="{Binding CreateTicket.ReviewerTwinList.AddFromSelectedItems}"
-                                                              EventName="MouseDoubleClick" />
-                                    </telerik:EventToCommandBehavior.EventBindings>
-                                </telerik:RadListBox>
-                            </Grid>
-
-                            <lib:TwinListBoxAddRemoveCommands Grid.Column="1"
-                                                              DataContext="{Binding CreateTicket.ReviewerTwinList}" />
-
-                            <Grid Grid.Column="2">
-                                <telerik:RadListBox telerik:ListBoxSelectedItemsBehavior.SelectedItemsSource="{Binding CreateTicket.ReviewerTwinList.ToSelectedItems,
-                                                                                                                       Mode=TwoWay}"
-                                                    ItemsSource="{Binding CreateTicket.ReviewerTwinList.ToItemsCVS}"
-                                                    SelectionMode="Extended">
-                                    <telerik:EventToCommandBehavior.EventBindings>
-                                        <telerik:EventBinding Command="{Binding CreateTicket.ReviewerTwinList.RemoveFromSelectedItems}"
-                                                              EventName="MouseDoubleClick" />
-                                    </telerik:EventToCommandBehavior.EventBindings>
-                                    <telerik:RadListBox.ItemTemplate>
-                                        <DataTemplate>
-                                            <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="Auto" />
-                                                    <ColumnDefinition Width="*" />
-                                                    <ColumnDefinition Width="Auto" />
-                                                </Grid.ColumnDefinitions>
-                                                <TextBlock Text="{Binding User.Name}" />
-                                                <CheckBox Grid.Column="2"
-                                                          Margin="5,0,0,0"
-                                                          Content="{x:Static props:Resources.ReviewReviewerRequired}"
-                                                          IsChecked="{Binding IsRequiredReviewer.Value}"
-                                                          Visibility="{Binding IsRequired.IsEnabled,
-                                                                               Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                            </Grid>
-                                        </DataTemplate>
-                                    </telerik:RadListBox.ItemTemplate>
-                                </telerik:RadListBox>
-                            </Grid>
-
-                            <lib:TwinListBoxSortCommands Grid.Column="3"
-                                                         DataContext="{Binding CreateTicket.ReviewerTwinList}" />
-                        </Grid>
+                                   Style="{StaticResource LabelStyle}"
+                                   Text="{x:Static props:Resources.ReviewCustomFields}"
+                                   Visibility="{Binding CreateTicket.ShowCustomFields.Value,
+                                                        Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        <telerik:RadTabControl Grid.Row="9"
+                                               Grid.Column="1"
+                                               Margin="5,5,0,0"
+                                               Background="#F6F6F6"
+                                               Visibility="{Binding CreateTicket.ShowCustomFields.Value,
+                                                                    Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <telerik:RadTabControl.Resources>
+                                <DataTemplate x:Key="CfHeaderTemplte">
+                                    <TextBlock FontWeight="Bold"
+                                               Text="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                             AncestorType=telerik:RadTabItem},
+                                                              Path=DataContext.TicketType}" />
+                                </DataTemplate>
+                            </telerik:RadTabControl.Resources>
+                            <telerik:RadTabItem DataContext="{Binding CreateTicket.OpenCustomFields}"
+                                                HeaderTemplate="{StaticResource CfHeaderTemplte}">
+                                <local:CustomFieldsView />
+                            </telerik:RadTabItem>
+                            <telerik:RadTabItem DataContext="{Binding CreateTicket.RequestCustomFields}"
+                                                HeaderTemplate="{StaticResource CfHeaderTemplte}">
+                                <local:CustomFieldsView />
+                            </telerik:RadTabItem>
+                            <telerik:RadTabItem DataContext="{Binding CreateTicket.PointCustomFields}"
+                                                HeaderTemplate="{StaticResource CfHeaderTemplte}">
+                                <local:CustomFieldsView />
+                            </telerik:RadTabItem>
+                        </telerik:RadTabControl>
 
                         <TextBlock Grid.Row="10"
                                    Margin="0,5,0,0"
-                                   Text="{x:Static props:Resources.ReviewDelivarables}" />
+                                   Style="{StaticResource LabelStyle}"
+                                   Text="{x:Static props:Resources.ReviewMergeRequestURL}"
+                                   Visibility="{Binding CreateTicket.NeedsGitIntegration,
+                                                        Converter={StaticResource BooleanToVisibilityConverter}}" />
                         <TextBox Grid.Row="10"
+                                 Grid.Column="1"
+                                 Margin="5,5,0,0"
+                                 Text="{Binding CreateTicket.MergeRequestUrl}"
+                                 Visibility="{Binding CreateTicket.NeedsGitIntegration,
+                                                      Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                        <TextBlock Grid.Row="11"
+                                   Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
+                                   Text="{x:Static props:Resources.ReviewDelivarables}" />
+                        <TextBox Grid.Row="11"
                                  Grid.Column="1"
                                  Margin="5,5,0,0"
                                  VerticalContentAlignment="Top"
@@ -424,10 +424,12 @@
                                  TextWrapping="Wrap"
                                  ToolTip="{x:Static props:Resources.ReviewMsgMarkupLangEnable}"
                                  VerticalScrollBarVisibility="Auto" />
-                        <TextBlock Grid.Row="11"
+
+                        <TextBlock Grid.Row="12"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewDesctiptionOfRequestIssue}" />
-                        <TextBox Grid.Row="11"
+                        <TextBox Grid.Row="12"
                                  Grid.Column="1"
                                  Margin="5,5,0,0"
                                  VerticalContentAlignment="Top"
@@ -438,6 +440,7 @@
                                  TextWrapping="Wrap"
                                  ToolTip="{x:Static props:Resources.ReviewMsgMarkupLangEnable}"
                                  VerticalScrollBarVisibility="Auto" />
+
                     </Grid>
 
                     <Grid Margin="5"
@@ -457,6 +460,7 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewTargetIssueNoWork}" />
                         <Grid Grid.Column="1">
                             <Grid.ColumnDefinitions>
@@ -487,6 +491,7 @@
 
                         <TextBlock Grid.Row="1"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewStatusUnderWork}" />
                         <telerik:RadComboBox Grid.Row="1"
                                              Grid.Column="1"
@@ -501,6 +506,7 @@
 
                         <TextBlock Grid.Row="2"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewDuration}" />
                         <Grid Grid.Row="2"
                               Grid.Column="1"
@@ -539,6 +545,7 @@
 
                         <TextBlock Grid.Row="3"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewReviewerWork}" />
                         <Grid Grid.Row="3"
                               Grid.Column="1"
@@ -619,6 +626,7 @@
                         </Grid>
                         <TextBlock Grid.Row="4"
                                    Margin="0,5,0,0"
+                                   Style="{StaticResource LabelStyle}"
                                    Text="{x:Static props:Resources.ReviewDesctiptionOfRequestIssue}" />
                         <TextBox Grid.Row="4"
                                  Grid.Column="1"

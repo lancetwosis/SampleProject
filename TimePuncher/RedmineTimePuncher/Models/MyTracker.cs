@@ -13,13 +13,13 @@ namespace RedmineTimePuncher.Models
     {
         public static MyTracker USE_PARENT_TRACKER = new MyTracker()
         {
-            Id = -1,
+            Id = INVALID_ID,
             Name = Properties.Resources.ReviewSameTracker
         };
 
         public static MyTracker NOT_SPECIFIED = new MyTracker()
         {
-            Id = -1,
+            Id = INVALID_ID,
             Name = LibRedminePower.Properties.Resources.SettingsNotSpecified
         };
 

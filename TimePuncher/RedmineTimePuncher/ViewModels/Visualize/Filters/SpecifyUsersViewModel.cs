@@ -34,13 +34,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyUsers), ColorEx.ToBrush("#fff7f0"))
         {
             CompositeDisposable myDisposables = null;
-            CacheManager.Default.Updated.Subscribe(_ =>
+            CacheManager.Default.Updated.SubscribeWithErr(_ =>
             {
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
                 Users = new ExpandableTwinListBoxViewModel<MyUser>(CacheManager.Default.Users, model.Users).AddTo(myDisposables);
-                IsEnabled.Skip(1).Subscribe(i =>
+                IsEnabled.Skip(1).SubscribeWithErr(i =>
                 {
                     Users.Expanded = i;
                     if (i && model.Users.Count == 0)

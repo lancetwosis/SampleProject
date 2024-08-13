@@ -57,7 +57,6 @@ namespace RedmineTimePuncher.Models.Settings
             {
                 IsBusy.Value = Resources.SettingsMsgNowGettingData;
 
-                
                 var trackers = CacheManager.Default.TmpTrackers;
                 if (!trackers.Any())
                     throw new ApplicationException(Resources.SettingsReviErrMsgNoTrackers);
@@ -92,6 +91,24 @@ namespace RedmineTimePuncher.Models.Settings
         public bool IsValid()
         {
             return OpenTracker != null && RequestTracker != null && PointTracker != null;
+        }
+
+        public List<int> GetSettingCustomFieldIds()
+        {
+            var result = new List<int>();
+            if (DetectionProcess.IsEnabled)
+                result.Add(DetectionProcess.CustomField.Id);
+
+            if (ReviewMethod.IsEnabled && ReviewMethod.NeedsSaveToCustomField)
+                result.Add(ReviewMethod.CustomField.Id);
+
+            if (IsRequired.IsEnabled && IsRequired.NeedsSaveToCustomField)
+                result.Add(IsRequired.CustomField.Id);
+
+            if (SaveReviewer.IsEnabled)
+                result.Add(SaveReviewer.CustomField.Id);
+
+            return result;
         }
     }
 }

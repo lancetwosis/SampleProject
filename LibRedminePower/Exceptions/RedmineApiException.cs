@@ -12,8 +12,8 @@ namespace LibRedminePower.Exceptions
 {
     public class RedmineApiException : ApplicationException
     {
-        public RedmineApiException(string method, Type targetType, RedmineException exception)
-            : base(createMessage(method, targetType,exception), exception)
+        public RedmineApiException(string method, Type targetType, RedmineException exception, string id = null)
+            : base(createMessage(method, targetType,exception, id), exception)
         {
         }
 
@@ -35,28 +35,32 @@ namespace LibRedminePower.Exceptions
             { typeof(Redmine.Net.Api.Types.WikiPage),           Resources.DisplayNameWikiPage },
         };
 
-        private static string createMessage(string method, Type targetType, RedmineException exception)
+        private static string createMessage(string method, Type targetType, RedmineException exception, string id)
         {
             var sb = new StringBuilder();
             if (method == nameof(RedmineManagerExtenstions.GetCurrentUserWithErrConv))
             {
                 sb.Append(Resources.msgErrRedmineFailedToGetCurrentUser);
             }
-            else if (method == HttpVerbs.GET)
+            else
             {
-                sb.Append(string.Format(Resources.msgErrRedmineFailedToGet, displayNames[targetType]));
-            }
-            else if (method == HttpVerbs.POST)
-            {
-                sb.Append(string.Format(Resources.msgErrRedmineFailedToPost, displayNames[targetType]));
-            }
-            else if (method == HttpVerbs.PUT)
-            {
-                sb.Append(string.Format(Resources.msgErrRedmineFailedToPut, displayNames[targetType]));
-            }
-            else if (method == HttpVerbs.DELETE)
-            {
-                sb.Append(string.Format(Resources.msgErrRedmineFailedToDelete, displayNames[targetType]));
+                var target = id != null ? $"{displayNames[targetType]} (#{id}) " : displayNames[targetType];
+                if (method == HttpVerbs.GET)
+                {
+                    sb.Append(string.Format(Resources.msgErrRedmineFailedToGet, target));
+                }
+                else if (method == HttpVerbs.POST)
+                {
+                    sb.Append(string.Format(Resources.msgErrRedmineFailedToPost, target));
+                }
+                else if (method == HttpVerbs.PUT)
+                {
+                    sb.Append(string.Format(Resources.msgErrRedmineFailedToPut, target));
+                }
+                else if (method == HttpVerbs.DELETE)
+                {
+                    sb.Append(string.Format(Resources.msgErrRedmineFailedToDelete, target));
+                }
             }
 
             sb.AppendLine();

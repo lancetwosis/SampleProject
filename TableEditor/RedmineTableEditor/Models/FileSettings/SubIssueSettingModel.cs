@@ -33,25 +33,17 @@ namespace RedmineTableEditor.Models.FileSettings
 
         public bool IsMatch(Issue issue)
         {
-            
-            if (TrackerId == TicketFields.Standard.Tracker.NOT_SPECIFIED.Id || issue.Tracker.Id == TrackerId)
-            {
-                if (!string.IsNullOrEmpty(Subject) && SubjectCompare.IsMatch(issue.Subject, Subject))
-                {
-                    if (StatusIds.Any())
-                    {
-                        if (StatusCompare.IsMatch(issue.Status.Id, StatusIds))
-                        {
-                            return true;
-                        }
-                    }
-                    else
-                    {
-                        return true;
-                    }
-                }
-            }
-            return false;
+            if (TrackerId != TicketFields.Standard.Tracker.NOT_SPECIFIED.Id &&
+                issue.Tracker.Id != TrackerId)
+                return false;
+
+            if (!string.IsNullOrEmpty(Subject) && !SubjectCompare.IsMatch(issue.Subject, Subject))
+                return false;
+
+            if (StatusIds.Count > 0 && !StatusCompare.IsMatch(issue.Status.Id, StatusIds))
+                return false;
+
+            return true;
         }
     }
 }

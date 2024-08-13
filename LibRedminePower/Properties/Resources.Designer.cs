@@ -286,15 +286,6 @@ namespace LibRedminePower.Properties {
         }
         
         /// <summary>
-        ///   Remain Hours に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string enumIssuePropertyTypeDiffEstimatedSpent {
-            get {
-                return ResourceManager.GetString("enumIssuePropertyTypeDiffEstimatedSpent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Done Ratio に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumIssuePropertyTypeDoneRatio {
@@ -336,15 +327,6 @@ namespace LibRedminePower.Properties {
         public static string enumIssuePropertyTypeId {
             get {
                 return ResourceManager.GetString("enumIssuePropertyTypeId", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Assigned Spent Hours に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string enumIssuePropertyTypeMySpentHours {
-            get {
-                return ResourceManager.GetString("enumIssuePropertyTypeMySpentHours", resourceCulture);
             }
         }
         

@@ -323,18 +323,19 @@ namespace RedmineTimePuncher.ViewModels
             }).AddTo(disposables);
         }
 
-        private async Task tryConnectAsync(RedmineSettingsModel s)
+        private async Task tryConnectAsync(RedmineSettingsModel settings)
         {
-            if (s.IsValid.Value)
+            if (settings.IsValid.Value)
             {
                 using (IsBusy.ProcessStart(Resources.ProgressMsgConnectingRedmine))
                 {
                     try
                     {
-                        var manager = new RedmineManager(s);
+                        var manager = new RedmineManager(settings);
                         ErrorMessage.Value = null;
 
-                        await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(manager, s));
+                        await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(
+                            manager, settings, Properties.Settings.Default.LastAuthorized));
 
                         Properties.Settings.Default.LastAuthorized = true;
                         Redmine.Value = manager;

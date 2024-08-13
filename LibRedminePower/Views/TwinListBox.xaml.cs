@@ -20,6 +20,14 @@ namespace LibRedminePower.Views
     /// </summary>
     public partial class TwinListBox : UserControl
     {
+        public DataTemplate ToItemTemplate
+        {
+            get { return (DataTemplate)GetValue(ToItemTemplateProperty); }
+            set { SetValue(ToItemTemplateProperty, value); }
+        }
+        public static readonly DependencyProperty ToItemTemplateProperty =
+            DependencyProperty.Register("ToItemTemplate", typeof(DataTemplate), typeof(TwinListBox), new PropertyMetadata());
+
         public TwinListBox()
         {
             InitializeComponent();

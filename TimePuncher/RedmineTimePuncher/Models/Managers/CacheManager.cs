@@ -42,7 +42,7 @@ namespace RedmineTimePuncher.Models.Managers
         public List<Query> Queries { get; set; }
         public List<CustomField> CustomFields { get; set; }
         public Dictionary<int, List<ProjectMembership>> ProjectMemberships { get; set; }
-
+        public Dictionary<int, List<Redmine.Net.Api.Types.Version>> ProjectVersions { get; set; }
         public MyUser MyUser { get; set; }
         /// <summary>
         /// ステータスが「有効」のユーザの一覧
@@ -105,7 +105,7 @@ namespace RedmineTimePuncher.Models.Managers
         }
 
         private ReactiveTimer updateCacheTimer { get; set; }
-        public void UpdateCacheIfNeeded(RedmineManager redmine, RedmineSettingsModel settings)
+        public void UpdateCacheIfNeeded(RedmineManager redmine, RedmineSettingsModel settings, bool lastAuthorized)
         {
             updateCacheTimer?.Stop();
             updateCacheTimer?.Dispose();
@@ -115,8 +115,8 @@ namespace RedmineTimePuncher.Models.Managers
             // キャッシュの更新は30分毎に行う
             updateCacheTimer = new ReactiveTimer(TimeSpan.FromMinutes(30));
 
-            // キャッシュが存在しない場合、またはRedmine設定が変更された場合
-            if (!IsExist() || RedmineSetting == null || !RedmineSetting.Equals(settings))
+            // キャッシュが存在しない場合、またはRedmine設定が変更された場合、前回接続に失敗していた場合、
+            if (!IsExist() || RedmineSetting == null || !RedmineSetting.Equals(settings) || !lastAuthorized)
             {
                 // 初回は同期的に更新する
                 Update(redmine, settings);
@@ -200,6 +200,16 @@ namespace RedmineTimePuncher.Models.Managers
                     return result;
                 }, cts.Token);
 
+                var tProjectVersions = Task.Run(async () =>
+                {
+                    var tVersions = MyUser.Memberships.Where(m => IsMyProject(m.Project.Id)).Select(m =>
+                    {
+                        return Task.Run(() => (ProjectId: m.Project.Id, Versions: redmine.GetVersions(m.Project.Id)));
+                    }).ToList();
+                    var versions = await Task.WhenAll(tVersions);
+                    return versions.ToDictionary(p => p.ProjectId, p => p.Versions);
+                }, cts.Token);
+
                 if (needsChange(valueChanged, Trackers, tTrackers.Result, out valueChanged))
                     Trackers = tTrackers.Result;
                 if (needsChange(valueChanged, Statuss, tStatuss.Result, out valueChanged))
@@ -214,6 +224,8 @@ namespace RedmineTimePuncher.Models.Managers
                     CustomFields = tCustomFields.Result;
                 if (needsChange(valueChanged, ProjectMemberships, tProjectMemberships.Result, out valueChanged))
                     ProjectMemberships = tProjectMemberships.Result;
+                if (needsChange(valueChanged, ProjectVersions, tProjectVersions.Result, out valueChanged))
+                    ProjectVersions = tProjectVersions.Result;
                 if (valueChanged || MarkupLang != tMarkupLang.Result)
                 {
                     MarkupLang = tMarkupLang.Result;
@@ -237,12 +249,27 @@ namespace RedmineTimePuncher.Models.Managers
             {
                 cts.Cancel();
 
-                if ((e is AggregateException ae &&
-                    ae.InnerException is RedmineApiException rae &&
-                    rae.InnerException is UnauthorizedException) ||
-                    e is RedmineLoginFailedException)
+                if (e is AggregateException ae &&
+                    ae.InnerException is RedmineApiException rae)
                 {
-                    Logger.Error(e, "Updating cache failed by UnauthorizedException");
+                    if (rae.InnerException is UnauthorizedException)
+                    {
+                        Logger.Error(rae, "Updating cache failed by UnauthorizedException.");
+                        authorized.Value = false;
+                        throw new ApplicationException(Properties.Resources.msgErrUnauthorizedRedmineSettings, e);
+                    }
+                    else if (rae.InnerException is ForbiddenException)
+                    {
+                        Logger.Error(rae, $"Updating cache failed by ForbiddenException.");
+                        authorized.Value = false;
+                        throw new ApplicationException(string.Format(Properties.Resources.msgErrFailedToGetForbidden, rae.Message), e);
+                    }
+
+                    throw;
+                }
+                else if (e is RedmineLoginFailedException)
+                {
+                    Logger.Error(e, "Updating cache failed by Login Failure");
                     authorized.Value = false;
                     throw new ApplicationException(Properties.Resources.msgErrUnauthorizedRedmineSettings, e);
                 }
@@ -287,8 +314,6 @@ namespace RedmineTimePuncher.Models.Managers
         public ConcurrentDictionary<string, int> IssueCountShortCache { get; set; } = new ConcurrentDictionary<string, int>();
         [JsonIgnore]
         public ConcurrentDictionary<string, TimeEntry> TimeEntriesShortCache { get; set; } = new ConcurrentDictionary<string, TimeEntry>();
-        [JsonIgnore]
-        public ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>> VersionsShortCache { get; set; } = new ConcurrentDictionary<int, List<Redmine.Net.Api.Types.Version>>();
 
         public void ClearShortCache()
         {
@@ -296,7 +321,6 @@ namespace RedmineTimePuncher.Models.Managers
             JournalIssuesShortCache.Clear();
             IssueCountShortCache.Clear();
             TimeEntriesShortCache.Clear();
-            VersionsShortCache.Clear();
         }
 
         // 設定ダイアログで最新の情報を使用するための一時的なキャッシュ

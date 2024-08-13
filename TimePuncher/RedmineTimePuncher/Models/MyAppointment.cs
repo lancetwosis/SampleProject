@@ -324,7 +324,7 @@ namespace RedmineTimePuncher.Models
             IsMyWork = this.Resources.CollectionChangedAsObservable().StartWithDefault().Select(_ =>
                 this.Resources.OfType<MyResourceBase>().Any(a => a.IsMyWorks())).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            ticketRp.Where(t => t != null).Subscribe(t =>
+            ticketRp.Where(t => t != null).SubscribeWithErr(t =>
             {
                 ProjectStatus = Redmine == null || CacheManager.Default.IsActiveProject(t.Project.Id) ?
                     ProjectStatusType.Active :
@@ -393,7 +393,7 @@ namespace RedmineTimePuncher.Models
             // そのため、システム作業分類のチェックが外れていると Id が異なったものになっている
             // よって、プロジェクトで有効になっている作業分類が更新されたら Category を設定しなおす
             Category = AllCategories.Value.FirstOrDefault(c => c.DisplayName == saved.CategoryName);
-            ProjectCategories.Where(a => a != null).Subscribe(_ =>
+            ProjectCategories.Where(a => a != null).SubscribeWithErr(_ =>
             {
                 Category = ProjectCategories.Value.FirstOrDefault(a => a.DisplayName == saved.CategoryName);
             }).AddTo(disposables);
@@ -435,7 +435,7 @@ namespace RedmineTimePuncher.Models
             Category = ProjectCategories.Value.FirstOrDefault(a => a.DisplayName == categoryName);
 
             // プロジェクトで有効になっている作業分類が更新されたら Category を設定しなおす
-            ProjectCategories.Where(a => a != null).Subscribe(_ =>
+            ProjectCategories.Where(a => a != null).SubscribeWithErr(_ =>
             {
                 Category = ProjectCategories.Value.FirstOrDefault(a => a.DisplayName == categoryName);
             }).AddTo(disposables);

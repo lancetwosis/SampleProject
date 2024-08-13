@@ -14,10 +14,9 @@ namespace RedmineTableEditor.Extentions
     public static class IssuePropertyTypeExtensions
     {
         /// <summary>
-        /// 親チケットのカラムの選択肢として有効かどうかを返す。
-        /// （「合計作業時間」と「合計予想工数」は親チケットでは無効）
+        /// TableEditor で有効かどうかを返す。
         /// </summary>
-        public static bool IsTargetParrent(this IssuePropertyType type)
+        public static bool IsEnabledInTableEditor(this IssuePropertyType type)
         {
             switch (type)
             {
@@ -37,8 +36,6 @@ namespace RedmineTableEditor.Extentions
                 case IssuePropertyType.TotalSpentHours:
                 case IssuePropertyType.TotalEstimatedHours:
                     return true;
-                case IssuePropertyType.MySpentHours:
-                case IssuePropertyType.DiffEstimatedSpent:
                 default:
                     return false;
             }
@@ -68,8 +65,6 @@ namespace RedmineTableEditor.Extentions
                 case IssuePropertyType.DueDate:
                 case IssuePropertyType.DoneRatio:
                 case IssuePropertyType.EstimatedHours:
-                case IssuePropertyType.MySpentHours:
-                case IssuePropertyType.DiffEstimatedSpent:
                 default:
                     return false;
             }
@@ -92,8 +87,6 @@ namespace RedmineTableEditor.Extentions
                 case IssuePropertyType.DoneRatio:
                 case IssuePropertyType.EstimatedHours:
                 case IssuePropertyType.SpentHours:
-                case IssuePropertyType.MySpentHours:
-                case IssuePropertyType.DiffEstimatedSpent:
                 case IssuePropertyType.TotalSpentHours:
                 case IssuePropertyType.TotalEstimatedHours: return FieldFormat.@float;
                 default:
@@ -118,8 +111,6 @@ namespace RedmineTableEditor.Extentions
                 case IssuePropertyType.DoneRatio:
                 case IssuePropertyType.EstimatedHours:
                 case IssuePropertyType.SpentHours:
-                case IssuePropertyType.MySpentHours:
-                case IssuePropertyType.DiffEstimatedSpent:
                 case IssuePropertyType.TotalSpentHours:
                 case IssuePropertyType.TotalEstimatedHours:
                 default:

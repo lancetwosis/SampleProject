@@ -30,21 +30,31 @@ namespace RedmineTableEditor.ViewModels.FileSettings
         [Obsolete("Design Only", true)]
         public IssueSettingsViewModelBase() { }
 
-        public IssueSettingsViewModelBase(IssueSettingsModelBase model, RedmineManager redmine)
+        public IssueSettingsViewModelBase(IssueSettingsModelBase model, RedmineManager redmine, bool isSubIssues = false)
         {
-            var allFields = redmine.ObserveProperty(r => r.CustomFields).Select(c =>
+            var allFields = redmine.ObserveProperty(r => r.CustomFields).Select(cs =>
             {
-                var fields = Enum.GetValues(typeof(IssuePropertyType)).Cast<IssuePropertyType>().Where(a => a.IsTargetParrent()).Select(a => new FieldViewModel(new FieldModel(a), null)).ToList();
-                if (c != null && c.Any())
+                var fields = Enum.GetValues(typeof(IssuePropertyType)).Cast<IssuePropertyType>()
+                    .Where(a => a.IsEnabledInTableEditor())
+                    .Select(a => new FieldViewModel(new FieldModel(a), null)).ToList();
+
+                fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.ReplyCount), null));
+                if (isSubIssues)
                 {
-                    fields.AddRange(c.Where(a => a.Visible).Select(a => new FieldViewModel(new FieldModel(a.Id), a)));
+                    fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.DiffEstimatedSpent), null));
+                    fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.MySpentHours), null));
+                }
+
+                if (cs != null && cs.Any())
+                {
+                    fields.AddRange(cs.Where(a => a.Visible).Select(a => new FieldViewModel(new FieldModel(a.Id), a)));
                 }
 
                 return fields;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             CompositeDisposable myDisposables = null;
-            allFields.ObserveOnUIDispatcher().Subscribe(_ =>
+            allFields.ObserveOnUIDispatcher().SubscribeWithErr(_ =>
             {
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);

@@ -76,7 +76,7 @@ namespace RedmineTimePuncher.Models.Settings
                 }
 
                 // 現在選択されている項目のみを並び替えの選択肢として表示する
-                SelectedProperties.CollectionChangedAsObservable().StartWithDefault().Subscribe(_ =>
+                SelectedProperties.CollectionChangedAsObservable().StartWithDefault().SubscribeWithErr(_ =>
                 {
                     // CanSortByProperties を Clear すると SortBy が null になるため現在値を保持しておく
                     var previous = SortBy;

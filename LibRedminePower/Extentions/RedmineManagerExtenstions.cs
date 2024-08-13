@@ -22,7 +22,7 @@ namespace LibRedminePower.Extentions
 
         public static T GetObjectWithErrConv<T>(this IRedmineManager manager, string id, NameValueCollection parameters = null) where T : class, new()
         {
-            return getObject(() => manager.GetObject<T>(id, parameters != null ? parameters : new NameValueCollection()), HttpVerbs.GET);
+            return getObject(() => manager.GetObject<T>(id, parameters != null ? parameters : new NameValueCollection()), HttpVerbs.GET, id);
         }
 
         public static List<T> GetObjectsWithErrConv<T>(this IRedmineManager manager, params string[] include) where T : class, new()
@@ -55,12 +55,12 @@ namespace LibRedminePower.Extentions
 
         public static void UpdateObjectWithErrConv<T>(this IRedmineManager manager, string id, T obj) where T : class, new()
         {
-            exec<T>(() => manager.UpdateObject(id, obj, null), HttpVerbs.PUT);
+            exec<T>(() => manager.UpdateObject(id, obj, null), HttpVerbs.PUT, id);
         }
 
         public static void DeleteObjectWithErrConv<T>(this IRedmineManager manager, string id, NameValueCollection parameters = null) where T : class, new()
         {
-            exec<T>(() => manager.DeleteObject<T>(id, parameters), HttpVerbs.DELETE);
+            exec<T>(() => manager.DeleteObject<T>(id, parameters), HttpVerbs.DELETE, id);
         }
 
         public static List<WikiPage> GetAllWikiPagesWithErrConv(this IRedmineManager manager, string projIdentifier)
@@ -68,7 +68,7 @@ namespace LibRedminePower.Extentions
             return getObjects(() => manager.GetAllWikiPages(projIdentifier), HttpVerbs.GET);
         }
 
-        private static void exec<T>(Action action, string method)
+        private static void exec<T>(Action action, string method, string id)
         {
             try
             {
@@ -76,12 +76,12 @@ namespace LibRedminePower.Extentions
             }
             catch (Exception e)
             {
-                convertException(e, method, typeof(T));
+                convertException(e, method, typeof(T), id);
                 throw;
             }
         }
 
-        private static T getObject<T>(Func<T> action, string method)
+        private static T getObject<T>(Func<T> action, string method, string id = null)
         {
             try
             {
@@ -89,7 +89,7 @@ namespace LibRedminePower.Extentions
             }
             catch (Exception e)
             {
-                convertException(e, method, typeof(T));
+                convertException(e, method, typeof(T), id);
                 throw;
             }
         }
@@ -108,12 +108,12 @@ namespace LibRedminePower.Extentions
             }
         }
 
-        private static void convertException(Exception e, string httpVerb, Type type)
+        private static void convertException(Exception e, string httpVerb, Type type, string id = null)
         {
             var re = e.InnerException as RedmineException;
             if (re != null)
             {
-                throw new RedmineApiException(httpVerb, type, re);
+                throw new RedmineApiException(httpVerb, type, re, id);
             }
         }
     }

@@ -69,11 +69,11 @@ namespace RedmineTimePuncher.Models.Settings.Bases
 
         protected Func<CustomField, TField> fieldCreater;
         /// <summary>
-        /// キャッシュのカスタムフィールドを設定に反映する。
+        /// キャッシュのカスタムフィールドを設定に反映する。これによりユーザが画面で選択できる選択肢が更新される。
         /// </summary>
         public void ApplyCustomField()
         {
-            if (!IsEnabled)
+            if (!IsEnabled || !NeedsSaveToCustomField || CustomField == null)
                 return;
 
             var newCf = CacheManager.Default.CustomFields.FirstOrDefault(c => c.Id == CustomField.Id);

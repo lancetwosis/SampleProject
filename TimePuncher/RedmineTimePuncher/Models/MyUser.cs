@@ -10,11 +10,12 @@ namespace RedmineTimePuncher.Models
 {
     public class MyUser : IdName
     {
+        public static MyUser NOT_SPECIFIED = new MyUser() { Name = "", Id = INVALID_ID };
+
         public static string UrlBase;
         public string Email { get; set; }
         public List<Membership> Memberships { get; set; }
 
-        [Obsolete("For Serialize", true)]
         public MyUser() { }
 
         public MyUser(User user)

@@ -329,4 +329,18 @@ Please set them correctly in the settings screen.</value>
   <data name="ParentIssueIssueShowParentIssueMsg" xml:space="preserve">
     <value>Display the parent issue in this list</value>
   </data>
+  <data name="enumMyIssuePropertyTypeMySpentHours" xml:space="preserve">
+    <value>Assigned Spent Hours</value>
+  </data>
+  <data name="enumMyIssuePropertyTypeDiffEstimatedSpent" xml:space="preserve">
+    <value>Remain Hours</value>
+  </data>
+  <data name="enumMyIssuePropertyTypeReplyCount" xml:space="preserve">
+    <value>Reply Count</value>
+  </data>
+  <data name="MsgNoChangeDisplayConditions" xml:space="preserve">
+    <value>Display conditions have not been changed.
+
+To update the contents of the displayed issues, please execute "Update Contents".</value>
+  </data>
 </root>

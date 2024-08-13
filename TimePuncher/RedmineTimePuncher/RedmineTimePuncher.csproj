@@ -140,6 +140,7 @@
     <Compile Include="Converters\BoolToTextStrikethroughConverter .cs" />
     <Compile Include="Converters\DateTimeToHeaderTextStyleConverter.cs" />
     <Compile Include="Converters\DateTimeToHeaderBackgroundConverter.cs" />
+    <Compile Include="Converters\HasErrorToBrushConverter.cs" />
     <Compile Include="Converters\SliderValueToVisibilityConverter.cs" />
     <Compile Include="Converters\PeriodToIsEnabledConverter.cs" />
     <Compile Include="Converters\BoolToFontBoldConverter.cs" />
@@ -155,6 +156,7 @@
     <Compile Include="Enums\ExportItems.cs" />
     <Compile Include="Enums\AppointmentColorType.cs" />
     <Compile Include="Enums\InputPeriodType.cs" />
+    <Compile Include="Models\MyVersion.cs" />
     <Compile Include="Models\Settings\ReviewCopyCustomFieldsSettingModel.cs" />
     <Compile Include="Models\Managers\CacheManager.cs" />
     <Compile Include="Models\Settings\ReviewIssueListSettingModel.cs" />
@@ -232,9 +234,27 @@
     <Compile Include="Models\IssueProperty.cs" />
     <Compile Include="Models\WikiLine.cs" />
     <Compile Include="Models\WikiUserSummary.cs" />
+    <Compile Include="Selectors\CustomFieldTemplateSelector.cs" />
     <Compile Include="ViewModels\Bases\FunctionViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Bases\CustomFieldsViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Bases\IdNameCustomFieldViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Bases\PopupCustomFieldViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\KeyValueCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\FloatCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\BoolCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\DateCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\PointCustomFieldsViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\RequestCustomFieldsViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\TextCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\VersionCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\UserCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\ListCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\StringCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\IntCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\Bases\CustomFieldViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFields\OpenCustomFieldsViewModel.cs" />
     <Compile Include="ViewModels\CreateTicket\DetectionProcessViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFieldViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\CustomFieldSettingViewModelBase.cs" />
     <Compile Include="ViewModels\CreateTicket\ReviewMethodViewModel.cs" />
     <Compile Include="ViewModels\Settings\ReviewCopyCustomFieldsSettingViewModel.cs" />
     <Compile Include="ViewModels\CreateTicket\ReviewersTwinListViewModel.cs" />
@@ -366,6 +386,9 @@
     <Compile Include="ViewModels\Input\Slots\TeamsStatusSlot.cs" />
     <Compile Include="Views\Controls\Charts\FactorSelectorView.xaml.cs">
       <DependentUpon>FactorSelectorView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Controls\CustomFieldsView.xaml.cs">
+      <DependentUpon>CustomFieldsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\TicketGridView.xaml.cs">
       <DependentUpon>TicketGridView.xaml</DependentUpon>
@@ -603,6 +626,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Controls\Charts\FactorSelectorView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\Controls\CustomFieldsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>

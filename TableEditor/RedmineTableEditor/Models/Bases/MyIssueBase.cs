@@ -103,6 +103,8 @@ namespace RedmineTableEditor.Models.Bases
         public float? SpentHours => Issue?.SpentHours;
         public float? TotalSpentHours => Issue?.TotalSpentHours;
         public float? TotalEstimatedHours => Issue?.TotalEstimatedHours;
+
+        protected List<TimeEntry> timeEntries { get; set; }
         public double? MySpentHours
         {
             get
@@ -136,6 +138,32 @@ namespace RedmineTableEditor.Models.Bases
             }
         }
 
+        private List<Detail> assignJournals { get; set; }
+        public int? ReplyCount
+        {
+            get
+            {
+                if (assignJournals == null)
+                    return null;
+
+                return assignJournals.Count;
+            }
+        }
+        public string ReplyCountToolTip
+        {
+            get
+            {
+                if (assignJournals == null || assignJournals.Count == 0)
+                    return null;
+
+                var sb = new StringBuilder();
+                sb.AppendLine($"{redmine.Users.First(u => u.Id.ToString() == assignJournals[0].OldValue).Name}");
+                var assinees = assignJournals.Select(d => redmine.Users.First(u => u.Id.ToString() == d.NewValue).Name).ToList();
+                sb.Append(string.Join(Environment.NewLine, assinees.Select(a => $"  > {a}")));
+                return sb.ToString();
+            }
+        }
+
         // 当初は、カスタムフィールドのプロパティは、型毎に作らずに、一つのプロパティにまとめるため、Generic型のプロパティを定義していた。
         // Generic型のプロパティの場合、GridView側が型判断が出来ずに、コピペができないことがわかった。
         // よって、多少煩雑であるが型毎にプロパティを用意した。
@@ -147,18 +175,17 @@ namespace RedmineTableEditor.Models.Bases
         public Dictionary<int, CfInts> DicCustomFieldInts { get; set; }
         public Dictionary<int, CfStrings> DicCustomFieldStrings { get; set; }
 
-        private List<TimeEntry> timeEntries;
-        private RedmineManager redmine;
-        private bool isSub = false;
+        protected FileSettingsModel settings { get; }
+        protected RedmineManager redmine { get; }
 
-        public MyIssueBase(bool isSub, Issue issue, RedmineManager redmine)
+        public MyIssueBase(Issue issue, RedmineManager redmine, FileSettingsModel settings)
         {
-            this.isSub = isSub;
             this.redmine = redmine;
+            this.settings = settings;
             SetIssue(issue);
         }
 
-        public void SetIssue(Issue issue)
+        public virtual void SetIssue(Issue issue)
         {
             this.Issue = issue;
             this.Url = issue != null ? redmine.GetIssueUrl(issue.Id) : "";
@@ -219,18 +246,18 @@ namespace RedmineTableEditor.Models.Bases
                 }
             }
 
-            EstimatedHours.ObserveProperty(a => a.Value).Where(a => a.HasValue).Subscribe(v =>
+            EstimatedHours.ObserveProperty(a => a.Value).Where(a => a.HasValue).SubscribeWithErr(v =>
             {
                 if (EstimatedHoursMax < v)
                     EstimatedHoursMax = v.Value;
             }).AddTo(disposables);
-            this.ObserveProperty(a => a.SpentHours).Where(a => a.HasValue).Subscribe(v =>
+            this.ObserveProperty(a => a.SpentHours).Where(a => a.HasValue).SubscribeWithErr(v =>
             {
                 if (SpentHoursMax < v)
                     SpentHoursMax = v.Value;
             }).AddTo(disposables);
 
-            editableProps.ObserveElementProperty(a => a.IsEdited).Subscribe(a =>
+            editableProps.ObserveElementProperty(a => a.IsEdited).SubscribeWithErr(a =>
             {
                 MyIssueEditedListener.EditedChanged?.Invoke(this, a.Value);
             });
@@ -238,21 +265,20 @@ namespace RedmineTableEditor.Models.Bases
             var editedProps = editableProps.ToFilteredReadOnlyObservableCollection(a => a.IsEdited).AddTo(disposables);
 
             IsEdited = editableProps.Select(a => a.ObserveProperty(b => b.IsEdited)).CombineLatestValuesAreAllFalse().Inverse().ToReactiveProperty().AddTo(disposables);
-            IsEdited.Where(a => !a).Subscribe(_ => editableProps.ToList().ForEach(a => a.IsEdited = false));
+            IsEdited.Where(a => !a).SubscribeWithErr(_ => editableProps.ToList().ForEach(a => a.IsEdited = false));
+        }
 
-            // サブタスクの場合のみ
-            if (isSub && issue != null)
+        protected void getReplyCount()
+        {
+            var _ = Task.Run(() =>
             {
-                Task.Run(() =>
-                {
-                    timeEntries = redmine.GetTimeEntries(issue.Id);
-                    RaisePropertyChanged(nameof(MySpentHours));
-                    RaisePropertyChanged(nameof(DiffEstimatedSpent));
-                });
-                // アサインが変更された場合は、合計時間の変更通知を行う。
-                this.ObserveProperty(a => a.AssignedTo.Value).Subscribe(_ => RaisePropertyChanged(nameof(MySpentHours))).AddTo(disposables);
-                this.ObserveProperty(a => a.EstimatedHours.Value).Subscribe(_ => RaisePropertyChanged(nameof(DiffEstimatedSpent))).AddTo(disposables);
-            }
+                var i = redmine.GetIssueIncludeJournals(Issue.Id);
+                this.assignJournals = i.Journals.Select(j => j.Details.FirstOrDefault(d => d.Name == "assigned_to_id"))
+                                                .Where(a => a != null)
+                                                .ToList();
+                RaisePropertyChanged(nameof(ReplyCount));
+                RaisePropertyChanged(nameof(ReplyCountToolTip));
+            });
         }
 
         public virtual void Read()

@@ -800,5 +800,57 @@ namespace Redmine.Net.Api
         /// </summary>
         public const string ISSUE_CUSTOM_FIELDS = "issue_custom_fields";
         // カスタマイズ(S):Project の CustomFields を取得するために実施したカスタマイズ
+
+        // カスタマイズ(S):カスタムフィールドの FieldFormat の文字列を追加
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_LIST = "list";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_INT = "int";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_STRING = "string";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_FLOAT = "float";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_LINK = "link";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_USER = "user";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_VERSION = "version";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_BOOL = "bool";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_TEXT = "text";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_DATE = "date";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_ENUMERATION = "enumeration";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CF_ATTACHMENT = "attachment";
+        // カスタマイズ(E):カスタムフィールドの FieldFormat の文字列を追加
+
     }
 }

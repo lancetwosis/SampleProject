@@ -30,6 +30,7 @@ namespace RedmineTableEditor.Models.FileSettings
     public class FieldModel : LibRedminePower.Models.Bases.ModelBaseSlim
     {
         public IssuePropertyType? Field { get; set; }
+        public MyIssuePropertyType? MyField { get; set; }
         public int CustomFieldId { get; set; }
 
         [Obsolete("For Serialize", true)]
@@ -38,6 +39,11 @@ namespace RedmineTableEditor.Models.FileSettings
         public FieldModel(IssuePropertyType field)
         {
             Field = field;
+        }
+
+        public FieldModel(MyIssuePropertyType myField)
+        {
+            MyField = myField;
         }
 
         public FieldModel(int cfId)
@@ -57,6 +63,9 @@ namespace RedmineTableEditor.Models.FileSettings
                 if (other.Field.HasValue && Field.HasValue &&
                     other.Field.Value == Field.Value)
                     return true;
+                else if (other.MyField.HasValue && MyField.HasValue &&
+                    other.MyField.Value == MyField.Value)
+                    return true;
                 else if (other.CustomFieldId != 0 && CustomFieldId != 0 &&
                          other.CustomFieldId == CustomFieldId)
                     return true;
@@ -71,6 +80,7 @@ namespace RedmineTableEditor.Models.FileSettings
         {
             int hashCode = 743879;
             hashCode = hashCode * -1521134295 + Field.GetHashCode();
+            hashCode = hashCode * -1521134295 + MyField.GetHashCode();
             hashCode = hashCode * -1521134295 + CustomFieldId.GetHashCode();
             return hashCode;
         }
@@ -113,12 +123,10 @@ namespace RedmineTableEditor.Models.FileSettings
                             CellStyle = getCellStyle(
                                 getForegroundPropertyIsEdited(bindingBase + getPropertyName(prop) + $".{nameof(FieldBase.IsEdited)}"),
                                 getAutoBackColorPropertyStatus(bindingBase)),
-                            CellTemplate = getDataTemplate(prop, key),
+                            CellTemplate = getDataTemplate(prop, bindingBase),
                             IsCellMergingEnabled = prop == IssuePropertyType.Subject,
                         };
                     case IssuePropertyType.SpentHours:
-                    case IssuePropertyType.MySpentHours:
-                    case IssuePropertyType.DiffEstimatedSpent:
                     case IssuePropertyType.TotalSpentHours:
                     case IssuePropertyType.TotalEstimatedHours:
                         return new GridViewDataColumn()
@@ -132,7 +140,7 @@ namespace RedmineTableEditor.Models.FileSettings
                             DataFormatString = prop.ToFieldFormat().GetDataFormatString(),
                             CellStyle = getCellStyle(
                                 getAutoBackColorPropertyStatus(bindingBase)),
-                            CellTemplate = getDataTemplate(prop, key),
+                            CellTemplate = getDataTemplate(prop, bindingBase),
                             IsCellMergingEnabled = false,
                         };
                     case IssuePropertyType.Tracker:
@@ -162,7 +170,45 @@ namespace RedmineTableEditor.Models.FileSettings
                             IsFilterable = true,
                         };
                     default:
-                        throw new InvalidOperationException();
+                        throw new InvalidOperationException($"This IssuePropertyType '{prop}' is not supported.");
+                }
+            }
+            else if (MyField.HasValue)
+            {
+                var prop = MyField.Value;
+                switch (prop)
+                {
+                    case MyIssuePropertyType.MySpentHours:
+                    case MyIssuePropertyType.DiffEstimatedSpent:
+                        return new GridViewDataColumn()
+                        {
+                            Header = prop.GetDescription(),
+                            Tag = key,
+                            ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
+                            DataMemberBinding = new Binding(bindingBase + getPropertyName(prop)),
+                            TextAlignment = prop.ToFieldFormat().GetTextAlignment(),
+                            IsReadOnly = true,
+                            DataFormatString = prop.ToFieldFormat().GetDataFormatString(),
+                            CellStyle = getCellStyle(getAutoBackColorPropertyStatus(bindingBase)),
+                            CellTemplate = getDataTemplate(prop, bindingBase),
+                            IsCellMergingEnabled = false,
+                        };
+                    case MyIssuePropertyType.ReplyCount:
+                        return new GridViewDataColumn()
+                        {
+                            Header = prop.GetDescription(),
+                            Tag = key,
+                            ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
+                            DataMemberBinding = new Binding(bindingBase + getPropertyName(prop)),
+                            TextAlignment = prop.ToFieldFormat().GetTextAlignment(),
+                            IsReadOnly = true,
+                            DataFormatString = prop.ToFieldFormat().GetDataFormatString(),
+                            CellStyle = getCellStyle(getAutoBackColorPropertyStatus(bindingBase)),
+                            CellTemplate = getDataTemplate(prop, bindingBase),
+                            IsCellMergingEnabled = false,
+                        };
+                    default:
+                        throw new InvalidOperationException($"This MyIssuePropertyType '{prop}' is not supported.");
                 }
             }
             else
@@ -290,8 +336,6 @@ namespace RedmineTableEditor.Models.FileSettings
             {
                 case IssuePropertyType.EstimatedHours:     return nameof(MyIssueBase.EstimatedHoursMax);
                 case IssuePropertyType.SpentHours:         return nameof(MyIssueBase.SpentHoursMax);
-                case IssuePropertyType.MySpentHours:       return nameof(MyIssueBase.MySpentHoursMax);
-                case IssuePropertyType.DiffEstimatedSpent: return nameof(MyIssueBase.DiffEstimatedSpentMax);
                 case IssuePropertyType.Status:
                 case IssuePropertyType.AssignedTo:
                 case IssuePropertyType.FixedVersion:
@@ -304,6 +348,17 @@ namespace RedmineTableEditor.Models.FileSettings
                 case IssuePropertyType.DoneRatio:
                 case IssuePropertyType.TotalSpentHours:
                 case IssuePropertyType.TotalEstimatedHours:
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        private string getPropertyMax(MyIssuePropertyType prop)
+        {
+            switch (prop)
+            {
+                case MyIssuePropertyType.MySpentHours:       return nameof(MyIssueBase.MySpentHoursMax);
+                case MyIssuePropertyType.DiffEstimatedSpent: return nameof(MyIssueBase.DiffEstimatedSpentMax);
                 default:
                     throw new InvalidOperationException();
             }
@@ -326,10 +381,20 @@ namespace RedmineTableEditor.Models.FileSettings
                 case IssuePropertyType.DoneRatio:           return nameof(MyIssueBase.DoneRatio);
                 case IssuePropertyType.EstimatedHours:      return nameof(MyIssueBase.EstimatedHours);
                 case IssuePropertyType.SpentHours:          return nameof(MyIssueBase.SpentHours);
-                case IssuePropertyType.MySpentHours:        return nameof(MyIssueBase.MySpentHours);
-                case IssuePropertyType.DiffEstimatedSpent:  return nameof(MyIssueBase.DiffEstimatedSpent);
                 case IssuePropertyType.TotalSpentHours:     return nameof(MyIssueBase.TotalSpentHours);
                 case IssuePropertyType.TotalEstimatedHours: return nameof(MyIssueBase.TotalEstimatedHours);
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        private string getPropertyName(MyIssuePropertyType prop)
+        {
+            switch (prop)
+            {
+                case MyIssuePropertyType.MySpentHours:       return nameof(MyIssueBase.MySpentHours);
+                case MyIssuePropertyType.DiffEstimatedSpent: return nameof(MyIssueBase.DiffEstimatedSpent);
+                case MyIssuePropertyType.ReplyCount:         return nameof(MyIssueBase.ReplyCount);
                 default:
                     throw new InvalidOperationException();
             }
@@ -411,44 +476,13 @@ namespace RedmineTableEditor.Models.FileSettings
             return binding;
         }
 
-        private static NullToVisibilityConverter NULL_TO_VISIBLE = new NullToVisibilityConverter();
-        protected DataTemplate getDataTemplate(IssuePropertyType prop, int? key)
+        protected DataTemplate getDataTemplate(IssuePropertyType prop, string bindingBase)
         {
-            if (!key.HasValue) return null;
-
-            var bindingBase = $"{nameof(MyIssue.ChildrenDic)}[{key}].";
             switch (prop)
             {
                 case IssuePropertyType.EstimatedHours:
                 case IssuePropertyType.SpentHours:
-                case IssuePropertyType.MySpentHours:
-                case IssuePropertyType.DiffEstimatedSpent:
-                    {
-                        var template = new DataTemplate();
-                        var grid = new FrameworkElementFactory(typeof(Grid));
-
-                        var propName = getPropertyName(prop);
-                        var propInfo = typeof(MyIssueBase).GetProperty(propName);
-                        var valuePath = bindingBase + propName;
-                        if (propInfo.CanWrite) valuePath += ".Value";
-
-                        var maxPropInfo = typeof(MyIssueBase).GetProperty(getPropertyMax(prop));
-                        var maxPropPath = new PropertyPath("(0)", maxPropInfo);
-                        var progressBar = new FrameworkElementFactory(typeof(ProgressBar));
-                        progressBar.SetBinding(ProgressBar.ValueProperty, new Binding(valuePath) { Mode = BindingMode.OneWay, TargetNullValue = (double)0, FallbackValue = (double)0 });
-                        progressBar.SetBinding(ProgressBar.MaximumProperty, new Binding() { Path = maxPropPath });
-                        progressBar.SetBinding(ProgressBar.VisibilityProperty, new Binding(valuePath) { Converter = NULL_TO_VISIBLE, TargetNullValue = Visibility.Collapsed, FallbackValue = Visibility.Collapsed });
-                        grid.AppendChild(progressBar);
-
-                        var textBlock = new FrameworkElementFactory(typeof(TextBlock));
-                        textBlock.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Right);
-                        textBlock.SetBinding(TextBlock.TextProperty, new Binding(valuePath) { StringFormat = prop.ToFieldFormat().GetDataFormatString() });
-                        grid.AppendChild(textBlock);
-
-                        template.VisualTree = grid;
-                        template.Seal();
-                        return template;
-                    }
+                    return createSpentHoursTemplate(bindingBase, getPropertyName(prop), getPropertyMax(prop), prop.ToFieldFormat().GetDataFormatString());
                 case IssuePropertyType.StartDate:
                 case IssuePropertyType.DueDate:
                 case IssuePropertyType.Id:
@@ -466,5 +500,62 @@ namespace RedmineTableEditor.Models.FileSettings
             }
         }
 
+        protected DataTemplate getDataTemplate(MyIssuePropertyType prop, string bindingBase)
+        {
+            switch (prop)
+            {
+                case MyIssuePropertyType.MySpentHours:
+                case MyIssuePropertyType.DiffEstimatedSpent:
+                    return createSpentHoursTemplate(bindingBase, getPropertyName(prop), getPropertyMax(prop), prop.ToFieldFormat().GetDataFormatString());
+                case MyIssuePropertyType.ReplyCount:
+                    var template = new DataTemplate();
+                    var textBlock = new FrameworkElementFactory(typeof(TextBlock));
+                    textBlock.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Right);
+                    textBlock.SetBinding(TextBlock.TextProperty, new Binding(bindingBase + nameof(MyIssueBase.ReplyCount)));
+
+                    var tooltip = new TextBlock();
+                    tooltip.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Left);
+                    tooltip.SetBinding(TextBlock.TextProperty, new Binding(bindingBase + nameof(MyIssueBase.ReplyCountToolTip)));
+                    textBlock.SetValue(TextBlock.ToolTipProperty, tooltip);
+
+                    template.VisualTree = textBlock;
+                    template.Seal();
+                    return template;
+                default:
+                    return null;
+            }
+        }
+
+        private static NullToVisibilityConverter NULL_TO_VISIBLE = new NullToVisibilityConverter();
+        private DataTemplate createSpentHoursTemplate(string bindingBase, string propName, string maxPropName, string stringFormat)
+        {
+            // 子チケットの場合のみ設定する
+            if (string.IsNullOrEmpty(bindingBase))
+                return null;
+
+            var template = new DataTemplate();
+            var grid = new FrameworkElementFactory(typeof(Grid));
+
+            var propInfo = typeof(MyIssueBase).GetProperty(propName);
+            var valuePath = bindingBase + propName;
+            if (propInfo.CanWrite) valuePath += ".Value";
+
+            var maxPropInfo = typeof(MyIssueBase).GetProperty(maxPropName);
+            var maxPropPath = new PropertyPath("(0)", maxPropInfo);
+            var progressBar = new FrameworkElementFactory(typeof(ProgressBar));
+            progressBar.SetBinding(ProgressBar.ValueProperty, new Binding(valuePath) { Mode = BindingMode.OneWay, TargetNullValue = (double)0, FallbackValue = (double)0 });
+            progressBar.SetBinding(ProgressBar.MaximumProperty, new Binding() { Path = maxPropPath });
+            progressBar.SetBinding(ProgressBar.VisibilityProperty, new Binding(valuePath) { Converter = NULL_TO_VISIBLE, TargetNullValue = Visibility.Collapsed, FallbackValue = Visibility.Collapsed });
+            grid.AppendChild(progressBar);
+
+            var textBlock = new FrameworkElementFactory(typeof(TextBlock));
+            textBlock.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Right);
+            textBlock.SetBinding(TextBlock.TextProperty, new Binding(valuePath) { StringFormat = stringFormat });
+            grid.AppendChild(textBlock);
+
+            template.VisualTree = grid;
+            template.Seal();
+            return template;
+        }
     }
 }

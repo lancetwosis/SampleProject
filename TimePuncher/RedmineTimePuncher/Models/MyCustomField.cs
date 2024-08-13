@@ -1,6 +1,7 @@
 ﻿using LibRedminePower.Attributes;
 using LibRedminePower.Converters;
 using LibRedminePower.Extentions;
+using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Properties;
@@ -29,7 +30,7 @@ namespace RedmineTimePuncher.Models
 
         public string CreateQueryString(string value)
         {
-            return $"issue[custom_field_values][{Id}]={HttpUtility.UrlEncode(value)}";
+            return string.Format(MyCustomField.QUERY_FORMAT, Id, HttpUtility.UrlEncode(value));
         }
 
         public override string ToString()
@@ -40,6 +41,9 @@ namespace RedmineTimePuncher.Models
 
     public class MyCustomField : MyCustomField<MyCustomFieldPossibleValue>
     {
+        public static string MULTI_QUERY_FORMAT { get; } = "issue[custom_field_values][{0}][]={1}";
+        public static string QUERY_FORMAT { get; } = "issue[custom_field_values][{0}]={1}";
+
         public MyCustomField()
         {
         }
@@ -80,22 +84,22 @@ namespace RedmineTimePuncher.Models
 
         public static bool IsBoolFormat(this CustomField c)
         {
-            return c.FieldFormat == "bool";
+            return c.FieldFormat == RedmineKeys.CF_BOOL;
         }
 
         public static bool IsListFormat(this CustomField c)
         {
-            return c.FieldFormat == "list";
+            return c.FieldFormat == RedmineKeys.CF_LIST;
         }
 
         public static bool IsUserFormat(this CustomField c)
         {
-            return c.FieldFormat == "user";
+            return c.FieldFormat == RedmineKeys.CF_USER;
         }
 
         public static bool IsVersionFormat(this CustomField c)
         {
-            return c.CustomizedType == "issue" && c.FieldFormat == "version";
+            return c.FieldFormat == RedmineKeys.CF_VERSION;
         }
 
         public static bool CanUseVisualizeFactor(this CustomField c)
@@ -121,13 +125,13 @@ namespace RedmineTimePuncher.Models
 
             switch (c.FieldFormat)
             {
-                case "version":     // バージョン
-                case "user":        // ユーザー
-                case "list":        // リスト
-                case "int":         // 整数
-                case "bool":        // 真偽値
-                case "date":        // 日付
-                case "enumeration": // キーバリューリスト
+                case RedmineKeys.CF_VERSION:     // バージョン
+                case RedmineKeys.CF_USER:        // ユーザー
+                case RedmineKeys.CF_LIST:        // リスト
+                case RedmineKeys.CF_INT:         // 整数
+                case RedmineKeys.CF_BOOL:        // 真偽値
+                case RedmineKeys.CF_DATE:        // 日付
+                case RedmineKeys.CF_ENUMERATION: // キーバリューリスト
                     return true;
                 default:
                     return false;

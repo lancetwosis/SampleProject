@@ -24,37 +24,43 @@ using System.Threading;
 
 namespace RedmineTableEditor.Models
 {
-    public class MyIssue : Bases.MyIssueBase
+    public class MyIssue : MyIssueBase
     {
         public Dictionary<int, List<MySubIssue>> ChildrenListDic { get; set; }
         public Dictionary<int, MySubIssue> ChildrenDic { get; set; }
 
-        private RedmineManager redmine;
-        private IEnumerable<SubIssueSettingModel> subIssueSettings;
-        private Issue issue;
-
-        public MyIssue(RedmineManager reminde, IEnumerable<SubIssueSettingModel> subIssues, Issue issue)
-            : base(false, issue, reminde)
+        public MyIssue(RedmineManager redmine, FileSettingsModel settings, Issue issue)
+            : base(issue, redmine, settings)
         {
-            this.redmine = reminde;
-            this.subIssueSettings = subIssues;
-            this.issue = issue;
-
             ChildrenDic = new Dictionary<int, MySubIssue>();
             ChildrenListDic = new Dictionary<int, List<MySubIssue>>();
-            foreach (var sub in subIssues)
+            foreach (var sub in settings.SubIssues.Items)
             {
-                var child = new MySubIssue(reminde, sub, null);
+                var child = new MySubIssue(redmine, sub, null, settings);
                 ChildrenListDic.Add(sub.Order, new List<MySubIssue>() { child });
+            }
+        }
+
+        public override void SetIssue(Issue issue)
+        {
+            base.SetIssue(issue);
+
+            if (issue == null)
+                return;
+
+            if (settings.ParentIssues.Properties.Any(p => p.MyField.HasValue &&
+                p.MyField.Value == Enums.MyIssuePropertyType.ReplyCount))
+            {
+                getReplyCount();
             }
         }
 
         public async Task UpdateChildrenAsync(CancellationToken token, bool isDetail)
         {
-            if (subIssueSettings.Any())
+            if (settings.SubIssues.Items.Any())
             {
                 // 子チケットを再帰的にすべて取得する。
-                var rawIssues = await Task.Run(() => redmine.GetChildIssues(issue.Id)?.ToArray()).WithCancel(token);
+                var rawIssues = await Task.Run(() => redmine.GetChildIssues(Issue.Id)?.ToArray()).WithCancel(token);
 
                 if (rawIssues != null && isDetail)
                 {
@@ -62,11 +68,11 @@ namespace RedmineTableEditor.Models
                     rawIssues = await Task.WhenAll(getDetailTasks).WithCancel(token);
                 }
 
-                foreach (var sub in subIssueSettings)
+                foreach (var sub in settings.SubIssues.Items)
                 {
                     ChildrenListDic[sub.Order] = rawIssues?.Where(a => sub.IsMatch(a))
                                                            .OrderBy(a => a.Id)
-                                                           .Select(a => new MySubIssue(redmine, sub, a))
+                                                           .Select(a => new MySubIssue(redmine, sub, a, settings))
                                                            .ToList();
                     ChildrenDic[sub.Order] = null;
                 }
@@ -98,7 +104,7 @@ namespace RedmineTableEditor.Models
         /// </summary>
         public List<MyIssue> ToViewRows()
         {
-            if (!subIssueSettings.Any() || !ChildrenListDic.Values.Where(a => a != null).Any())
+            if (!settings.SubIssues.Items.Any() || !ChildrenListDic.Values.Where(a => a != null).Any())
                 return new List<MyIssue>() { this };
 
             var max = ChildrenListDic.Values.Max(a => a.Count());
@@ -108,8 +114,8 @@ namespace RedmineTableEditor.Models
             var result = new List<MyIssue>();
             foreach (var i in Enumerable.Range(0, max))
             {
-                var parent = new MyIssue(redmine, subIssueSettings, Issue);
-                foreach (var sub in subIssueSettings)
+                var parent = new MyIssue(redmine, settings, Issue);
+                foreach (var sub in settings.SubIssues.Items)
                 {
                     if (ChildrenListDic[sub.Order].Count() >= i + 1)
                     {

@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Behaviors.Bases;
+using LibRedminePower.Extentions;
 using Microsoft.Win32;
 using RedmineTimePuncher.Behaviors;
 using RedmineTimePuncher.ViewModels;
@@ -57,12 +58,12 @@ namespace RedmineTimePuncher.Views
                 return;
 
             var vm = (DataContext as MainWindowViewModel).Input;
-            vm.SelectedDate.Subscribe(d =>
+            vm.SelectedDate.SubscribeWithErr(d =>
             {
                 this.calendar.DisplayDate = d;
                 applyDayTemplate();
             });
-            vm.DisplayStartTime.CombineLatest(vm.DisplayEndTime, (_, __) => true).Subscribe(_ =>
+            vm.DisplayStartTime.CombineLatest(vm.DisplayEndTime, (_, __) => true).SubscribeWithErr(_ =>
             {
                 applyDayTemplate();
             });

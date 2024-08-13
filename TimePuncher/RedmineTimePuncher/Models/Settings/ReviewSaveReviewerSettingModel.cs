@@ -18,6 +18,8 @@ namespace RedmineTimePuncher.Models.Settings
 
         public override void Update(List<MyCustomField> possibleCustomFields)
         {
+            NeedsSaveToCustomField = true;
+
             this.updateCustomFields(possibleCustomFields);
 
             // リスト形式のカスタムフィールドがない場合、

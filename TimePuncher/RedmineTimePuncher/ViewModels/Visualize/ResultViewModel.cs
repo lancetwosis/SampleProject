@@ -66,7 +66,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             Tickets = new ObservableCollection<TicketViewModel>();
             AllTickets = new ObservableCollection<TicketViewModel>();
             SelectedTickets = new ObservableCollection<TicketViewModel>();
-            SelectedTickets.CollectionChangedAsObservable().StartWithDefault().Subscribe(_ => 
+            SelectedTickets.CollectionChangedAsObservable().StartWithDefault().SubscribeWithErr(_ => 
             {
                 updateViewSelection(SelectedTickets.Select(t => t.Model.RawIssue.Id).ToArray());
             }).AddTo(disposables);
@@ -79,14 +79,14 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             initializeDisposables = new CompositeDisposable().AddTo(disposables);
 
             ViewType = Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.ViewType).AddTo(initializeDisposables);
-            ViewType.Skip(1).Subscribe(_ => updateSerieses(true));
+            ViewType.Skip(1).SubscribeWithErr(_ => updateSerieses(true));
 
             BarChart = new BarChartViewModel(this).AddTo(initializeDisposables);
             PieChart = new PieChartViewModel(this).AddTo(initializeDisposables);
             TreeMap = new TreeMapViewModel(this).AddTo(initializeDisposables);
 
             new[] { BarChart.IsEdited, PieChart.IsEdited, TreeMap.IsEdited }.CombineLatest()
-                .Subscribe(l =>
+                .SubscribeWithErr(l =>
                 {
                     if (l.Any(a => a))
                         Model.IsEdited = true;
@@ -162,12 +162,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
                 var onIsEnable = AllTickets.Select(a => a.IsEnabled).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
                 var onIsExpanded = AllTickets.Select(a => a.ObserveProperty(b => b.IsExpanded)).CombineLatest().Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher();
-                onIsEnable.CombineLatest(onIsExpanded, (_1, _2) => true).Skip(1).Subscribe(_ => updateSerieses(true)).AddTo(setupTreeDisposables);
+                onIsEnable.CombineLatest(onIsExpanded, (_1, _2) => true).Skip(1).SubscribeWithErr(_ => updateSerieses(true)).AddTo(setupTreeDisposables);
 
                 var onFiltersChanged = ResultFilters.Items.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
                     ResultFilters.Items.ObserveElementProperty(i => i.IsEnabled.Value),
                     ResultFilters.Items.ObserveElementProperty(i => i.NowEditing.Value), (_1, _2, _3) => true);
-                onFiltersChanged.Skip(1).Subscribe(_ => updateSerieses(true, false));
+                onFiltersChanged.Skip(1).SubscribeWithErr(_ => updateSerieses(true, false));
 
                 updateSerieses();
             }
@@ -202,7 +202,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             Model.Tickets = await filters.GetTicketsAsync(Model.TimeEntries);
 
             Model.Projects = Model.Tickets.Select(t => t.RawIssue.Project.Id).Distinct()
-                .Select(id => new MyProject(CacheManager.Default.Projects.First(p => p.Id == id), parent.Parent.Redmine.Value.GetVersions(id))).ToList();
+                .Select(id => new MyProject(CacheManager.Default.Projects.First(p => p.Id == id), CacheManager.Default.ProjectVersions[id])).ToList();
 
             setupTicketTree(isNew);
 

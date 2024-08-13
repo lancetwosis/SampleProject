@@ -2016,4 +2016,44 @@ Do you want to continue creating tickets?</value>
   <data name="msgConfReconnectRedmine" xml:space="preserve">
     <value>The connection to Redmine failed during the last start. Would you like to try to reconnect using your current settings?</value>
   </data>
+  <data name="ReviewCfErrMsgIsRequired" xml:space="preserve">
+    <value>This field is required.</value>
+  </data>
+  <data name="ReviewCfErrMsgRegex" xml:space="preserve">
+    <value>Input does not match regular expression "{0}".</value>
+  </data>
+  <data name="ReviewCfErrMsgMaxLength" xml:space="preserve">
+    <value>Enter up to {0} characters.</value>
+  </data>
+  <data name="ReviewCfErrMsgMinLength" xml:space="preserve">
+    <value>Enter at least {0} characters.</value>
+  </data>
+  <data name="ReviewCfErrMsgEnterInteger" xml:space="preserve">
+    <value>Enter an integer.</value>
+  </data>
+  <data name="ReviewCfErrMsgEnterNumber" xml:space="preserve">
+    <value>Enter a number.</value>
+  </data>
+  <data name="ReviewCfValueYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="ReviewCfValueNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="ReviewCfDateWatermark" xml:space="preserve">
+    <value>year / month / date</value>
+  </data>
+  <data name="ReviewCustomFields" xml:space="preserve">
+    <value>Custom Fields</value>
+  </data>
+  <data name="ReviewErrMsgSetCustomFields" xml:space="preserve">
+    <value>Please set the custom fields correctly.
+
+{0}</value>
+  </data>
+  <data name="msgErrFailedToGetForbidden" xml:space="preserve">
+    <value>{0}
+
+Please review your account settings.</value>
+  </data>
 </root>

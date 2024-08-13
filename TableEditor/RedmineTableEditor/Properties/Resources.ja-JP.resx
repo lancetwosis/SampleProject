@@ -319,4 +319,18 @@
   <data name="ParentIssueIssueShowParentIssueMsg" xml:space="preserve">
     <value>親チケットも一覧に含める</value>
   </data>
+  <data name="enumMyIssuePropertyTypeMySpentHours" xml:space="preserve">
+    <value>担当実績</value>
+  </data>
+  <data name="enumMyIssuePropertyTypeDiffEstimatedSpent" xml:space="preserve">
+    <value>残り工数</value>
+  </data>
+  <data name="enumMyIssuePropertyTypeReplyCount" xml:space="preserve">
+    <value>返答回数</value>
+  </data>
+  <data name="MsgNoChangeDisplayConditions" xml:space="preserve">
+    <value>表示条件が変更されていません。
+
+表示されているチケットの内容を更新するには「内容更新」を実行してください。</value>
+  </data>
 </root>

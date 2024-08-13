@@ -36,7 +36,7 @@ using RedmineTimePuncher.Models.Settings.Bases;
 
 namespace RedmineTimePuncher.ViewModels.CreateTicket
 {
-    public class ReviewMethodViewModel : CustomFieldViewModelBase<ReviewMethodSettingModel, ReviewMethodCustomField, ReviewMethodValue>
+    public class ReviewMethodViewModel : CustomFieldSettingViewModelBase<ReviewMethodSettingModel, ReviewMethodCustomField, ReviewMethodValue>
     {
         public DateTime StartDate { get; set; }
         public DateTime DueDate { get; set; }

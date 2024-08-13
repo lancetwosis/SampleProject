@@ -291,9 +291,6 @@ Please check the network status and Redmine connection settings.</value>
   <data name="enumIssuePropertyTypeCategory" xml:space="preserve">
     <value>Category</value>
   </data>
-  <data name="enumIssuePropertyTypeDiffEstimatedSpent" xml:space="preserve">
-    <value>Remain Hours</value>
-  </data>
   <data name="enumIssuePropertyTypeDoneRatio" xml:space="preserve">
     <value>Done Ratio</value>
   </data>
@@ -308,9 +305,6 @@ Please check the network status and Redmine connection settings.</value>
   </data>
   <data name="enumIssuePropertyTypeId" xml:space="preserve">
     <value>#</value>
-  </data>
-  <data name="enumIssuePropertyTypeMySpentHours" xml:space="preserve">
-    <value>Assigned Spent Hours</value>
   </data>
   <data name="enumIssuePropertyTypePriority" xml:space="preserve">
     <value>Priority</value>

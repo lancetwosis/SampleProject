@@ -45,16 +45,16 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
         {
             CombineType = new FactorTypeViewModel(Resources.VisualizeFactorGrouping1, IsEnabled,
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieCombine), FactorTypes.GetGroupings()).AddTo(disposables);
-            CombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
+            CombineType.SelectedType.Skip(1).SubscribeWithErr(_ => SetupSeries());
 
             SecondCombineType = new FactorTypeViewModel(Resources.VisualizeFactorGrouping2, IsEnabled,
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieSecondCombine), FactorTypes.Get2ndGroupings()).AddTo(disposables);
-            SecondCombineType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
+            SecondCombineType.SelectedType.Skip(1).SubscribeWithErr(_ => SetupSeries());
             ShowSecondSeries = SecondCombineType.SelectedType.Select(a => a != FactorTypes.None).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             SortType = new FactorTypeViewModel(Resources.VisualizeFactorSort, IsEnabled,
                 parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieSort), FactorTypes.GetSortDirections()).AddTo(disposables);
-            SortType.SelectedType.Skip(1).Subscribe(_ => SetupSeries());
+            SortType.SelectedType.Skip(1).SubscribeWithErr(_ => SetupSeries());
 
             ShowTotal = new TotalLabelViewModel(IsEnabled, parent.Model.ChartSettings.ToReactivePropertySlimAsSynchronized(a => a.PieShowTotal)).AddTo(disposables);
 
@@ -101,7 +101,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             // 表示非表示が切り替わったら合計の再計算
             ShowTotal.TotalHours = series.Points.Select(p => p.IsVisible).CombineLatest().Select(_ => series.Points.Sum(p => p.Hours)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
 
-            // PointViewModel の IsVisible.Subscribe により Series.Points には表示されているもののみが含まれる
+            // PointViewModel の IsVisible.SubscribeWithErr により Series.Points には表示されているもののみが含まれる
             Series.VisibleAllCommand = Series.Points.CollectionChangedAsObservable()
                 .Select(_ => Series.Points.Count < points.Count).ToReactiveCommand().WithSubscribe(() =>
             {
@@ -143,7 +143,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
 
                 SecondSeries = secondSeries;
 
-                Series.Points.CollectionChangedAsObservable().Subscribe(e =>
+                Series.Points.CollectionChangedAsObservable().SubscribeWithErr(e =>
                 {
                     if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
                     {
@@ -185,8 +185,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Charts
             }
 
             // 凡例の表示非表示チェックボックスの保存
-            // PointViewModel の IsVisible.Subscribe により Series.Points には表示されているもののみが含まれる
-            Series.Points.CollectionChangedAsObservable().StartWithDefault().Subscribe(_ =>
+            // PointViewModel の IsVisible.SubscribeWithErr により Series.Points には表示されているもののみが含まれる
+            Series.Points.CollectionChangedAsObservable().StartWithDefault().SubscribeWithErr(_ =>
             {
                 parent.Model.ChartSettings.PiePreviousCombine = CombineType.SelectedType.Value;
                 parent.Model.ChartSettings.PieVisiblePointNames = Series.Points.Select(a => a.Factor.Name).ToList();

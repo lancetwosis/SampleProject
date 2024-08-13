@@ -67,7 +67,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             {
                 Color = factor.GetColor();
                 IsVisible = new ReactivePropertySlim<bool>(true);
-                IsVisible.Skip(1).Subscribe(_ =>
+                IsVisible.Skip(1).SubscribeWithErr(_ =>
                 {
                     var i = this.series.Points.IndexOf(this);
                     if (i >= 0)
@@ -117,7 +117,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             {
                 var label = Factor.Type.Equals(FactorTypes.Issue) ? (Factor.RawValue as Issue).GetFullLabel() : Factor.Name;
                 ToolTip = new ToolTipViewModel(label, Hours, total, true);
-                ToolTip.Percentage.Subscribe(per =>
+                ToolTip.Percentage.SubscribeWithErr(per =>
                 {
                     DisplayValue = string.Join(Environment.NewLine, new[]
                     {

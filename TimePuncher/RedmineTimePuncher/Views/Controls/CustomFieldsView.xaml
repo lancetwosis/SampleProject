@@ -1,0 +1,385 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.Controls.CustomFieldsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+             xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:controls="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases"
+             xmlns:controls1="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+             xmlns:converters1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
+             xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.Controls"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:selectors="clr-namespace:RedmineTimePuncher.Selectors"
+             xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerikEx="clr-namespace:TelerikEx.Behaviors;assembly=TelerikEx"
+             d:DataContext="{d:DesignInstance {x:Type controls:CustomFieldsViewModelBase},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <converters:HasErrorToBorderBrushConverter x:Key="HasErrorToBorderBrush" />
+        <converters:HasErrorToLabelBrushConverter x:Key="HasErrorToLableBrush" />
+
+        <Style x:Key="CfLabelPanelStyle"
+               TargetType="StackPanel">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="HorizontalAlignment" Value="Right" />
+        </Style>
+
+        <Style x:Key="CfLabelStyle"
+               BasedOn="{StaticResource MyTextBlockStyle}"
+               TargetType="TextBlock">
+            <Setter Property="TextAlignment" Value="Right" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="{Binding HasError.Value, Converter={StaticResource HasErrorToLableBrush}}" />
+            <Setter Property="Text" Value="{Binding CustomField.Name}" />
+            <Setter Property="ToolTip" Value="{Binding ErrorMessage.Value}" />
+        </Style>
+
+        <Style x:Key="RequiredStarStyle"
+               BasedOn="{StaticResource MyTextBlockStyle}"
+               TargetType="TextBlock">
+            <Setter Property="Visibility" Value="{Binding CustomField.IsRequired, Converter={StaticResource BooleanToVisibilityConverter}}" />
+            <Setter Property="TextAlignment" Value="Right" />
+            <Setter Property="FontWeight" Value="Bold" />
+            <Setter Property="Foreground" Value="Red" />
+            <Setter Property="Text" Value=" *" />
+            <Setter Property="ToolTip" Value="{Binding ErrorMessage.Value}" />
+        </Style>
+
+        <Style x:Key="EditPanelStyle"
+               TargetType="Border">
+            <Setter Property="Grid.Column" Value="1" />
+            <Setter Property="Margin" Value="5,0,0,0" />
+            <Setter Property="BorderThickness" Value="0.5" />
+            <Setter Property="BorderBrush" Value="{Binding HasError.Value, Converter={StaticResource HasErrorToBorderBrush}}" />
+            <Setter Property="ToolTip" Value="{Binding ErrorMessage.Value}" />
+        </Style>
+
+        <styleselectors:CustomFieldTemplateSelector x:Key="CustomFieldTemplateSelector">
+            <styleselectors:CustomFieldTemplateSelector.TextBoxTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,10,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfFirstColumn" />
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfSecondColumn" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Style="{StaticResource CfLabelPanelStyle}">
+                            <TextBlock Style="{StaticResource CfLabelStyle}" />
+                            <TextBlock Style="{StaticResource RequiredStarStyle}" />
+                        </StackPanel>
+                        <Border Style="{StaticResource EditPanelStyle}">
+                            <TextBox MinWidth="150"
+                                     BorderThickness="0"
+                                     Text="{Binding Value,
+                                                    UpdateSourceTrigger=PropertyChanged}" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </styleselectors:CustomFieldTemplateSelector.TextBoxTemplate>
+
+            <styleselectors:CustomFieldTemplateSelector.LongTextBoxTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,10,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfFirstColumn" />
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfSecondColumn" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Style="{StaticResource CfLabelPanelStyle}">
+                            <TextBlock Style="{StaticResource CfLabelStyle}" />
+                            <TextBlock Style="{StaticResource RequiredStarStyle}" />
+                        </StackPanel>
+                        <Border Style="{StaticResource EditPanelStyle}">
+                            <!--  入力された文字の長さ == Grid.Width になってしまうため MaxWidth を設定  -->
+                            <Grid MinWidth="150"
+                                  MaxWidth="210">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="AUTO" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="longTextBox"
+                                         Height="23"
+                                         BorderThickness="0"
+                                         IsReadOnly="True"
+                                         Text="{Binding Value,
+                                                        UpdateSourceTrigger=PropertyChanged}"
+                                         TextWrapping="NoWrap"
+                                         ToolTip="{Binding Value}" />
+                                <Button Grid.Column="1"
+                                        Margin="1,0,0,0"
+                                        Background="White"
+                                        Command="{Binding EditCommand}"
+                                        Style="{StaticResource GlyphButtonStyle}">
+                                    <Button.Content>
+                                        <telerik:RadGlyph Glyph="{StaticResource GlyphEdit}" />
+                                    </Button.Content>
+                                </Button>
+                                <Popup AllowsTransparency="True"
+                                       IsOpen="{Binding NowEditing,
+                                                        Mode=TwoWay}"
+                                       Placement="Relative"
+                                       PlacementTarget="{Binding ElementName=longTextBox}"
+                                       StaysOpen="False">
+                                    <Border Width="500"
+                                            Height="300"
+                                            Background="White"
+                                            BorderBrush="Gray"
+                                            BorderThickness="0.5"
+                                            CornerRadius="3">
+                                        <Grid Margin="3">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="AUTO" />
+                                            </Grid.RowDefinitions>
+                                            <TextBox VerticalContentAlignment="Top"
+                                                     AcceptsReturn="True"
+                                                     Text="{Binding Value,
+                                                                    UpdateSourceTrigger=PropertyChanged}"
+                                                     TextAlignment="Left"
+                                                     TextWrapping="Wrap"
+                                                     VerticalScrollBarVisibility="Auto" />
+                                            <Grid Grid.Row="1"
+                                                  Margin="0,2,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="AUTO" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="AUTO" />
+                                                </Grid.ColumnDefinitions>
+                                                <Button Command="{Binding DeleteCommand}"
+                                                        Style="{StaticResource GlyphButtonStyle}"
+                                                        Visibility="{Binding CustomField.IsRequired,
+                                                                             Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                                                    <Button.Content>
+                                                        <telerik:RadGlyph Glyph="{StaticResource GlyphDelete}" />
+                                                    </Button.Content>
+                                                </Button>
+                                                <Button Grid.Column="2"
+                                                        Command="{Binding SaveCommand}"
+                                                        Style="{StaticResource GlyphButtonStyle}">
+                                                    <Button.Content>
+                                                        <telerik:RadGlyph Glyph="{StaticResource GlyphSave}" />
+                                                    </Button.Content>
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </styleselectors:CustomFieldTemplateSelector.LongTextBoxTemplate>
+
+            <styleselectors:CustomFieldTemplateSelector.DateTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,10,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfFirstColumn" />
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfSecondColumn" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Style="{StaticResource CfLabelPanelStyle}">
+                            <TextBlock Style="{StaticResource CfLabelStyle}" />
+                            <TextBlock Style="{StaticResource RequiredStarStyle}" />
+                        </StackPanel>
+                        <Border Style="{StaticResource EditPanelStyle}">
+                            <Grid MinWidth="150">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="AUTO" />
+                                </Grid.ColumnDefinitions>
+                                <TextBox x:Name="dateTextBox"
+                                         Height="23"
+                                         BorderThickness="0"
+                                         Text="{Binding DisplayDate.Value,
+                                                        UpdateSourceTrigger=LostFocus}" />
+                                <Button Grid.Column="1"
+                                        Margin="1,0,0,0"
+                                        Background="White"
+                                        Command="{Binding EditCommand}"
+                                        Style="{StaticResource GlyphButtonStyle}">
+                                    <Button.Content>
+                                        <telerik:RadGlyph Glyph="{StaticResource GlyphCalendarDate}" />
+                                    </Button.Content>
+                                </Button>
+                                <Popup AllowsTransparency="True"
+                                       IsOpen="{Binding NowEditing,
+                                                        Mode=TwoWay}"
+                                       Placement="Relative"
+                                       PlacementTarget="{Binding ElementName=dateTextBox}"
+                                       StaysOpen="False">
+                                    <Border Background="White"
+                                            BorderBrush="Gray"
+                                            BorderThickness="0.5"
+                                            CornerRadius="3">
+                                        <Grid Margin="3">
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="AUTO" />
+                                            </Grid.RowDefinitions>
+                                            <telerik:RadCalendar AreWeekNumbersVisible="False"
+                                                                 BorderBrush="{x:Null}"
+                                                                 SelectedDate="{Binding Date.Value,
+                                                                                        Mode=TwoWay}" />
+                                            <Grid Grid.Row="1"
+                                                  Margin="0,2,0,0">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="AUTO" />
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="AUTO" />
+                                                </Grid.ColumnDefinitions>
+                                                <Button Command="{Binding DeleteCommand}"
+                                                        Style="{StaticResource GlyphButtonStyle}"
+                                                        Visibility="{Binding CustomField.IsRequired,
+                                                                             Converter={StaticResource InvertedBooleanToVisibilityConverter}}">
+                                                    <Button.Content>
+                                                        <telerik:RadGlyph Glyph="{StaticResource GlyphDelete}" />
+                                                    </Button.Content>
+                                                </Button>
+                                                <Button Grid.Column="2"
+                                                        Command="{Binding SaveCommand}"
+                                                        Style="{StaticResource GlyphButtonStyle}">
+                                                    <Button.Content>
+                                                        <telerik:RadGlyph Glyph="{StaticResource GlyphSave}" />
+                                                    </Button.Content>
+                                                </Button>
+                                            </Grid>
+                                        </Grid>
+                                    </Border>
+                                </Popup>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </styleselectors:CustomFieldTemplateSelector.DateTemplate>
+
+            <styleselectors:CustomFieldTemplateSelector.ComboBoxTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,10,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfFirstColumn" />
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfSecondColumn" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Style="{StaticResource CfLabelPanelStyle}">
+                            <TextBlock Style="{StaticResource CfLabelStyle}" />
+                            <TextBlock Style="{StaticResource RequiredStarStyle}" />
+                        </StackPanel>
+                        <Border Style="{StaticResource EditPanelStyle}">
+                            <telerik:RadComboBox BorderThickness="0"
+                                                 ItemsSource="{Binding Values}"
+                                                 SelectedItem="{Binding Value}"
+                                                 Style="{StaticResource FilterableComboBoxStyleKey}" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </styleselectors:CustomFieldTemplateSelector.ComboBoxTemplate>
+
+            <styleselectors:CustomFieldTemplateSelector.MultiComboBoxTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,10,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfFirstColumn" />
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfSecondColumn" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Style="{StaticResource CfLabelPanelStyle}">
+                            <TextBlock Style="{StaticResource CfLabelStyle}" />
+                            <TextBlock Style="{StaticResource RequiredStarStyle}" />
+                        </StackPanel>
+                        <Border Style="{StaticResource EditPanelStyle}">
+                            <telerik:RadComboBox AllowMultipleSelection="True"
+                                                 BorderThickness="0"
+                                                 ItemsSource="{Binding Values}"
+                                                 MultipleSelectionSeparator=", ">
+                                <b:Interaction.Behaviors>
+                                    <behaviors1:RadComboBoxSelectedItemsBehavior SelectedItems="{Binding SelectedValues}" />
+                                </b:Interaction.Behaviors>
+                            </telerik:RadComboBox>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </styleselectors:CustomFieldTemplateSelector.MultiComboBoxTemplate>
+
+            <styleselectors:CustomFieldTemplateSelector.IdNameComboBoxTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,10,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfFirstColumn" />
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfSecondColumn" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Style="{StaticResource CfLabelPanelStyle}">
+                            <TextBlock Style="{StaticResource CfLabelStyle}" />
+                            <TextBlock Style="{StaticResource RequiredStarStyle}" />
+                        </StackPanel>
+                        <Border Style="{StaticResource EditPanelStyle}">
+                            <telerik:RadComboBox BorderThickness="0"
+                                                 DisplayMemberPath="Name"
+                                                 ItemsSource="{Binding Values}"
+                                                 SelectedItem="{Binding SelectedValue.Value}"
+                                                 Style="{StaticResource FilterableComboBoxStyleKey}" />
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </styleselectors:CustomFieldTemplateSelector.IdNameComboBoxTemplate>
+
+            <styleselectors:CustomFieldTemplateSelector.IdNameMultiComboBoxTemplate>
+                <DataTemplate>
+                    <Grid Margin="0,0,10,5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfFirstColumn" />
+                            <ColumnDefinition Width="AUTO"
+                                              SharedSizeGroup="CfSecondColumn" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Style="{StaticResource CfLabelPanelStyle}">
+                            <TextBlock Style="{StaticResource CfLabelStyle}" />
+                            <TextBlock Style="{StaticResource RequiredStarStyle}" />
+                        </StackPanel>
+                        <Border Style="{StaticResource EditPanelStyle}">
+                            <telerik:RadComboBox AllowMultipleSelection="True"
+                                                 BorderThickness="0"
+                                                 DisplayMemberPath="Name"
+                                                 ItemsSource="{Binding Values}"
+                                                 MultipleSelectionSeparator=", ">
+                                <b:Interaction.Behaviors>
+                                    <behaviors1:RadComboBoxSelectedItemsBehavior SelectedItems="{Binding SelectedValues}" />
+                                </b:Interaction.Behaviors>
+                            </telerik:RadComboBox>
+                        </Border>
+                    </Grid>
+                </DataTemplate>
+            </styleselectors:CustomFieldTemplateSelector.IdNameMultiComboBoxTemplate>
+
+        </styleselectors:CustomFieldTemplateSelector>
+    </UserControl.Resources>
+
+    <ItemsControl MinHeight="28"
+                  Margin="5"
+                  Grid.IsSharedSizeScope="True"
+                  ItemTemplateSelector="{StaticResource CustomFieldTemplateSelector}"
+                  ItemsSource="{Binding Fields}">
+        <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+                <telerik:RadWrapPanel Orientation="Horizontal" />
+            </ItemsPanelTemplate>
+        </ItemsControl.ItemsPanel>
+    </ItemsControl>
+
+</UserControl>

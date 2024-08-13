@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Applications;
+using LibRedminePower.Extentions;
 using LibRedminePower.Helpers;
 using LibRedminePower.Interfaces;
 using LibRedminePower.ViewModels;
@@ -67,7 +68,7 @@ namespace RedmineTableEditor.ViewModels
             ErrorMessage = new ReactivePropertySlim<string>().AddTo(disposables);
 
             Redmine = new ReactivePropertySlim<RedmineManager>().AddTo(disposables);
-            redmine.Select(r => new RedmineManager(r)).Subscribe(r =>
+            redmine.Select(r => new RedmineManager(r)).SubscribeWithErr(r =>
             {
                 var err = r.IsValid();
                 if (err != null)
@@ -142,7 +143,7 @@ namespace RedmineTableEditor.ViewModels
             {
                 first = false;
                 this.ObserveProperty(a => a.FileSettings).CombineLatest(this.ObserveProperty(a => a.Issues), (f, i) => (f, i))
-                    .Where(p => p.f != null && p.i != null).Take(1).ObserveOnUIDispatcher().Subscribe(async _ =>
+                    .Where(p => p.f != null && p.i != null).Take(1).ObserveOnUIDispatcher().SubscribeWithErr(async _ =>
                     {
                         if (await FileSettings.LoadFirstSettingAsync(fileName))
                         {

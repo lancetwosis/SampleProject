@@ -39,12 +39,12 @@ namespace RedmineTableEditor.ViewModels.FileSettings
         [Obsolete("Design Only", true)]
         public SubIssueSettingsViewModel() {}
 
-        public SubIssueSettingsViewModel(SubIssueSettingsModel model, RedmineManager redmine) : base(model, redmine)
+        public SubIssueSettingsViewModel(SubIssueSettingsModel model, RedmineManager redmine) : base(model, redmine, true)
         {
             Redmine = redmine;
 
             Items = new EditableGridViewModel<SubIssueSettingViewModel, SubIssueSettingModel>(model.Items, a => new SubIssueSettingViewModel(a), a => a.Model).AddTo(disposables);
-            Items.CollectionChangedAsObservable().Subscribe(_ => RowDropCommand.Execute()).AddTo(disposables);
+            Items.CollectionChangedAsObservable().SubscribeWithErr(_ => RowDropCommand.Execute()).AddTo(disposables);
 
             RowDropCommand = new ReactiveCommand().WithSubscribe(() =>
             {
@@ -68,7 +68,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 this.ObserveProperty(a => a.VisibleProps.IsEdited.Value).Where(a => a),
             }.Merge().Select(_ => true).ToReactiveProperty().AddTo(disposables);
 
-            IsEdited.Where(a => !a).Subscribe(_ =>
+            IsEdited.Where(a => !a).SubscribeWithErr(_ =>
             {
                 Items.ToList().ForEach(a => a.IsEdited.Value = false);
 

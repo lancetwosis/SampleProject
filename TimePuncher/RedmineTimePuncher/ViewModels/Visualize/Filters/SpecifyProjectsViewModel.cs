@@ -35,7 +35,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyProjects), ColorEx.ToBrush("#fff1e6"))
         {
             CompositeDisposable myDisposables = null;
-            CacheManager.Default.Updated.Subscribe(_ =>
+            CacheManager.Default.Updated.SubscribeWithErr(_ =>
             {
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
@@ -45,7 +45,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 setProjectsIfNeeded(model, CacheManager.Default.MyUser, allProjects);
 
                 Projects = new ExpandableTwinListBoxViewModel<MyProject>(allProjects, model.Projects).AddTo(myDisposables);
-                IsEnabled.Skip(1).Subscribe(i =>
+                IsEnabled.Skip(1).SubscribeWithErr(i =>
                 {
                     Projects.Expanded = i;
                     if (i)

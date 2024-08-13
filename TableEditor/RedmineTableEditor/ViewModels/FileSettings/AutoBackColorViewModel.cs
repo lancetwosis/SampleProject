@@ -11,6 +11,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Helpers;
 using Redmine.Net.Api.Types;
 using RedmineTableEditor.Models;
+using LibRedminePower.Extentions;
 
 namespace RedmineTableEditor.ViewModels.FileSettings
 {
@@ -29,7 +30,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
 
             NotUse = new ReactivePropertySlim<bool>().AddTo(disposables);
             StatusColors.IsEnabled.CombineLatest(AssignedToColors.IsEnabled, (s, a) => (s, a))
-                .Subscribe(p => { NotUse.Value = !p.s && !p.a; }).AddTo(disposables);
+                .SubscribeWithErr(p => { NotUse.Value = !p.s && !p.a; }).AddTo(disposables);
 
             IsEdited = new[]
             {
@@ -38,7 +39,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 AssignedToColors.IsEdited.Where(a => a),
             }.Merge().Select(_ => true).ToReactiveProperty().AddTo(disposables);
 
-            IsEdited.Where(a => !a).Subscribe(_ =>
+            IsEdited.Where(a => !a).SubscribeWithErr(_ =>
             {
                 // IsEdited が後で更新されるため
                 if(StatusColors.IsEdited != null)

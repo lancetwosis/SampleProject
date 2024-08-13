@@ -1466,6 +1466,17 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   {0}
+        ///
+        ///Please review your account settings. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string msgErrFailedToGetForbidden {
+            get {
+                return ResourceManager.GetString("msgErrFailedToGetForbidden", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Failed to get {0}. Check the API key settings of the system administrator. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string msgErrFailedToGetXXXByAdminApiKey {
@@ -1990,11 +2001,101 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   year / month / date に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCfDateWatermark {
+            get {
+                return ResourceManager.GetString("ReviewCfDateWatermark", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Enter an integer. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCfErrMsgEnterInteger {
+            get {
+                return ResourceManager.GetString("ReviewCfErrMsgEnterInteger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Enter a number. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCfErrMsgEnterNumber {
+            get {
+                return ResourceManager.GetString("ReviewCfErrMsgEnterNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   This field is required. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCfErrMsgIsRequired {
+            get {
+                return ResourceManager.GetString("ReviewCfErrMsgIsRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Enter up to {0} characters. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCfErrMsgMaxLength {
+            get {
+                return ResourceManager.GetString("ReviewCfErrMsgMaxLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Enter at least {0} characters. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCfErrMsgMinLength {
+            get {
+                return ResourceManager.GetString("ReviewCfErrMsgMinLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Input does not match regular expression &quot;{0}&quot;. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCfErrMsgRegex {
+            get {
+                return ResourceManager.GetString("ReviewCfErrMsgRegex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   No に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCfValueNo {
+            get {
+                return ResourceManager.GetString("ReviewCfValueNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Yes に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCfValueYes {
+            get {
+                return ResourceManager.GetString("ReviewCfValueYes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Create Outlook appointment に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewCreateOutlookAppo {
             get {
                 return ResourceManager.GetString("ReviewCreateOutlookAppo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Custom Fields に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewCustomFields {
+            get {
+                return ResourceManager.GetString("ReviewCustomFields", resourceCulture);
             }
         }
         
@@ -2168,6 +2269,17 @@ namespace RedmineTimePuncher.Properties {
         public static string ReviewErrMsgSelectTargetTicket {
             get {
                 return ResourceManager.GetString("ReviewErrMsgSelectTargetTicket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please set the custom fields correctly.
+        ///
+        ///{0} に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewErrMsgSetCustomFields {
+            get {
+                return ResourceManager.GetString("ReviewErrMsgSetCustomFields", resourceCulture);
             }
         }
         

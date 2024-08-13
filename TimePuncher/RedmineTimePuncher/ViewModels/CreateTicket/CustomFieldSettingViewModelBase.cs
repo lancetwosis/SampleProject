@@ -36,7 +36,7 @@ using RedmineTimePuncher.Models.Settings.Bases;
 
 namespace RedmineTimePuncher.ViewModels.CreateTicket
 {
-    public class CustomFieldViewModelBase<TModel, TField, TValue> : ViewModelBase
+    public class CustomFieldSettingViewModelBase<TModel, TField, TValue> : ViewModelBase
         where TModel : CustomFieldSettingModelBase<TField, TValue>
         where TField : MyCustomField<TValue> where TValue : MyCustomFieldPossibleValue
     {
@@ -45,11 +45,11 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         private string header { get; set; }
 
         [Obsolete("For Serialize", false)]
-        public CustomFieldViewModelBase()
+        public CustomFieldSettingViewModelBase()
         {
         }
 
-        public CustomFieldViewModelBase(string header)
+        public CustomFieldSettingViewModelBase(string header)
         {
             this.header = header;
         }

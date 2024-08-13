@@ -1883,4 +1883,44 @@ Redmine の設定を見直してください。</value>
   <data name="msgConfReconnectRedmine" xml:space="preserve">
     <value>前回の起動時にRedmineとの接続に失敗しました。現在の設定のまま再接続を試みますか？</value>
   </data>
+  <data name="ReviewCfErrMsgIsRequired" xml:space="preserve">
+    <value>入力が必須の項目です</value>
+  </data>
+  <data name="ReviewCfErrMsgRegex" xml:space="preserve">
+    <value>入力が正規表現（{0}）に一致しません</value>
+  </data>
+  <data name="ReviewCfErrMsgMaxLength" xml:space="preserve">
+    <value>{0}文字以内で入力してください</value>
+  </data>
+  <data name="ReviewCfErrMsgMinLength" xml:space="preserve">
+    <value>{0}文字以上入力してください</value>
+  </data>
+  <data name="ReviewCfErrMsgEnterInteger" xml:space="preserve">
+    <value>整数を入力してください</value>
+  </data>
+  <data name="ReviewCfErrMsgEnterNumber" xml:space="preserve">
+    <value>数値を入力してください</value>
+  </data>
+  <data name="ReviewCfValueYes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="ReviewCfValueNo" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
+  <data name="ReviewCfDateWatermark" xml:space="preserve">
+    <value>年 / 月 / 日</value>
+  </data>
+  <data name="ReviewCustomFields" xml:space="preserve">
+    <value>カスタムフィールド</value>
+  </data>
+  <data name="ReviewErrMsgSetCustomFields" xml:space="preserve">
+    <value>カスタムフィールドを正しく設定してください。
+
+{0}</value>
+  </data>
+  <data name="msgErrFailedToGetForbidden" xml:space="preserve">
+    <value>{0}
+
+お使いのアカウントの設定を見直してください。</value>
+  </data>
 </root>

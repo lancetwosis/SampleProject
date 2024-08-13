@@ -39,10 +39,6 @@ namespace LibRedminePower.Enums
         EstimatedHours,
         [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeSpentHours), typeof(Resources))]
         SpentHours,
-        [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeMySpentHours), typeof(Resources))]
-        MySpentHours,
-        [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeDiffEstimatedSpent), typeof(Resources))]
-        DiffEstimatedSpent,
         [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeTotalSpentHours), typeof(Resources))]
         TotalSpentHours,
         [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeTotalEstimatedHours), typeof(Resources))]

@@ -59,13 +59,13 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             IsEnabled = Model.ToReactivePropertySlimAsSynchronized(a => a.IsEnabled).AddTo(disposables);
-            IsEnabled.Subscribe(i =>
+            IsEnabled.SubscribeWithErr(i =>
             {
                 updateRelatedIsEnabled(i);
             });
 
             IsExpanded = Model.IsExpanded;
-            this.ObserveProperty(a => a.IsExpanded).Subscribe(i => Model.IsExpanded = i).AddTo(disposables);
+            this.ObserveProperty(a => a.IsExpanded).SubscribeWithErr(i => Model.IsExpanded = i).AddTo(disposables);
 
             IsReaf = IsEnabled.CombineLatest(Children.CollectionChangedAsObservable().StartWithDefault(), (_, __) => true).Select(_ =>
             {

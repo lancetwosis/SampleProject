@@ -90,7 +90,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             SaveAsResultCommand = new CommandBase(Resources.VisualizeCmdSaveAs, Resources.saveas_icon);
 
             CompositeDisposable myDisposables = null;
-            parent.Redmine.Subscribe(r =>
+            parent.Redmine.SubscribeWithErr(r =>
             {
                 if (r == null || !r.CanUseAdminApiKey())
                     return;
@@ -101,7 +101,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 Filters = new TicketFiltersViewModel(this).AddTo(myDisposables);
 
                 Result = new ResultViewModel(this).AddTo(myDisposables);
-                Result.ObserveProperty(a => a.Model.FileName).CombineLatest(Result.IsEdited, (n, i) => (name: n, isEdited: i)).Subscribe(p =>
+                Result.ObserveProperty(a => a.Model.FileName).CombineLatest(Result.IsEdited, (n, i) => (name: n, isEdited: i)).SubscribeWithErr(p =>
                 {
                     if (!Result.Model.HasValue)
                         titlePrefix.Value = null;
@@ -113,7 +113,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                         titlePrefix.Value = p.name;
                 }).AddTo(myDisposables);
 
-                IsSelected.Where(a => a).Take(1).Subscribe(_ =>
+                IsSelected.Where(a => a).Take(1).SubscribeWithErr(_ =>
                 {
                     using (IsBusy.ProcessStart())
                     using (parent.IsBusy.ProcessStart(""))
