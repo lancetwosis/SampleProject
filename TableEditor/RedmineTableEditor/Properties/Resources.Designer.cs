@@ -718,5 +718,23 @@ namespace RedmineTableEditor.Properties {
                 return ResourceManager.GetString("SubIssueConditionsMsg", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   (Invalid user) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string UserInvalid {
+            get {
+                return ResourceManager.GetString("UserInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   (No assignee) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string UserNoAssignee {
+            get {
+                return ResourceManager.GetString("UserNoAssignee", resourceCulture);
+            }
+        }
     }
 }

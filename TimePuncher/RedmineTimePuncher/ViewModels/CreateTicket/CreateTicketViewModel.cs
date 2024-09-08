@@ -428,7 +428,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         private async Task createReviewTicketAsync(RedmineManager redmine,SettingsModel settings)
         {
             // カスタムフィールドのチェック
-            var errMsgs = new[] { (CustomFieldsViewModelBase)OpenCustomFields, RequestCustomFields, PointCustomFields }
+            var errMsgs = new[] { (CustomFieldsViewModelBase)OpenCustomFields, RequestCustomFields }
                 .Select(cf => cf.Validate()).Where(e => e != null).ToList();
             if (errMsgs.Count > 0)
             {

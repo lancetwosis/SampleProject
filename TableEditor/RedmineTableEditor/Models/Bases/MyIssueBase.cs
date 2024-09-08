@@ -157,9 +157,19 @@ namespace RedmineTableEditor.Models.Bases
                     return null;
 
                 var sb = new StringBuilder();
-                sb.AppendLine($"{redmine.Users.First(u => u.Id.ToString() == assignJournals[0].OldValue).Name}");
-                var assinees = assignJournals.Select(d => redmine.Users.First(u => u.Id.ToString() == d.NewValue).Name).ToList();
-                sb.Append(string.Join(Environment.NewLine, assinees.Select(a => $"  > {a}")));
+                if (assignJournals[0].OldValue != null)
+                    sb.AppendLine($"{redmine.Users.First(u => u.Id.ToString() == assignJournals[0].OldValue).Name}");
+                else
+                    sb.AppendLine(Properties.Resources.UserNoAssignee);
+                var assignees = assignJournals.Select(d =>
+                {
+                    if (d.NewValue == null)
+                        return Properties.Resources.UserNoAssignee;
+
+                    var user = redmine.Users.FirstOrDefault(u => u.Id.ToString() == d.NewValue);
+                    return user != null ? user.Name : Properties.Resources.UserInvalid;
+                }).ToList();
+                sb.Append(string.Join(Environment.NewLine, assignees.Select(a => $"  > {a}")));
                 return sb.ToString();
             }
         }
@@ -273,9 +283,9 @@ namespace RedmineTableEditor.Models.Bases
             var _ = Task.Run(() =>
             {
                 var i = redmine.GetIssueIncludeJournals(Issue.Id);
-                this.assignJournals = i.Journals.Select(j => j.Details.FirstOrDefault(d => d.Name == "assigned_to_id"))
-                                                .Where(a => a != null)
-                                                .ToList();
+                this.assignJournals = i.Journals == null ? new List<Detail>() :
+                    i.Journals.Select(j => j.Details?.FirstOrDefault(d => d.Name == "assigned_to_id"))
+                              .Where(a => a != null).ToList();
                 RaisePropertyChanged(nameof(ReplyCount));
                 RaisePropertyChanged(nameof(ReplyCountToolTip));
             });

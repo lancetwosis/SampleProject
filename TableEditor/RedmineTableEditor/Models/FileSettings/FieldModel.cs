@@ -513,10 +513,16 @@ namespace RedmineTableEditor.Models.FileSettings
                     textBlock.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Right);
                     textBlock.SetBinding(TextBlock.TextProperty, new Binding(bindingBase + nameof(MyIssueBase.ReplyCount)));
 
-                    var tooltip = new TextBlock();
+                    textBlock.SetBinding(RadToolTipService.ToolTipContentProperty, new Binding(bindingBase + nameof(MyIssueBase.ReplyCountToolTip)));
+                    var tooltip = new FrameworkElementFactory(typeof(TextBlock));
                     tooltip.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Left);
-                    tooltip.SetBinding(TextBlock.TextProperty, new Binding(bindingBase + nameof(MyIssueBase.ReplyCountToolTip)));
-                    textBlock.SetValue(TextBlock.ToolTipProperty, tooltip);
+                    tooltip.SetBinding(TextBlock.TextProperty, new Binding());
+                    var tooltipView = new FrameworkElementFactory(typeof(RadToolTipContentView));
+                    tooltipView.AppendChild(tooltip);
+                    var tooltipTmp = new DataTemplate();
+                    tooltipTmp.VisualTree = tooltipView;
+                    tooltipTmp.Seal();
+                    textBlock.SetValue(RadToolTipService.ToolTipContentTemplateProperty, tooltipTmp);
 
                     template.VisualTree = textBlock;
                     template.Seal();

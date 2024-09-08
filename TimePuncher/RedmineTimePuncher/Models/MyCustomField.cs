@@ -18,7 +18,7 @@ namespace RedmineTimePuncher.Models
     public class MyCustomField<TValue> : IdName where TValue : MyCustomFieldPossibleValue
     {
         public CustomFieldFormat Format { get; set; }
-        public List<TValue> PossibleValues { get; set; }
+        public List<TValue> PossibleValues { get; set; } = new List<TValue>();
 
         public MyCustomField()
         {
@@ -72,6 +72,25 @@ namespace RedmineTimePuncher.Models
         public MyCustomField(CustomField cf, List<MyProject> projects) : this(cf)
         {
             PossibleValues = projects.SelectMany(p => p.Versions.Select(v => new MyCustomFieldPossibleValue(p, v, projects.Count > 1))).ToList();
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is MyCustomField field &&
+                   Id == field.Id &&
+                   Name == field.Name &&
+                   Format == field.Format &&
+                   PossibleValues.ToJson() == field.PossibleValues.ToJson();
+        }
+
+        public override int GetHashCode()
+        {
+            int hashCode = 1513809992;
+            hashCode = hashCode * -1521134295 + Id.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
+            hashCode = hashCode * -1521134295 + Format.GetHashCode();
+            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PossibleValues.ToJson());
+            return hashCode;
         }
     }
 

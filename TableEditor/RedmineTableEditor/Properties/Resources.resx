@@ -343,4 +343,10 @@ Please set them correctly in the settings screen.</value>
 
 To update the contents of the displayed issues, please execute "Update Contents".</value>
   </data>
+  <data name="UserNoAssignee" xml:space="preserve">
+    <value>(No assignee)</value>
+  </data>
+  <data name="UserInvalid" xml:space="preserve">
+    <value>(Invalid user)</value>
+  </data>
 </root>

@@ -333,4 +333,10 @@
 
 表示されているチケットの内容を更新するには「内容更新」を実行してください。</value>
   </data>
+  <data name="UserNoAssignee" xml:space="preserve">
+    <value>(担当者なし)</value>
+  </data>
+  <data name="UserInvalid" xml:space="preserve">
+    <value>(無効なユーザ)</value>
+  </data>
 </root>

@@ -82,7 +82,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
                      // レビューの設定で保存対象のカスタムフィールドに指定されていない
                      !settingFieldIds.Contains(cf.Id) &&
                      // 選択されたチケットのプロジェクトで有効
-                     proj.CustomFields.Any(a => a.Id == cf.Id) &&
+                     (proj.CustomFields != null && proj.CustomFields.Any(a => a.Id == cf.Id)) &&
                      // 開催チケットなどに割り当てられたトラッカーで有効
                      cf.Trackers.Any(t => t.Id == getTracker(settings).Id))
                 .Select(cf =>

@@ -17,7 +17,7 @@ using System.Web;
 
 namespace RedmineTimePuncher.Models.Settings
 {
-    public class ReviewCopyCustomFieldsSettingModel : Bases.SettingsModelBase<ReviewIssueListSettingModel>
+    public class ReviewCopyCustomFieldsSettingModel : Bases.SettingsModelBase<ReviewCopyCustomFieldsSettingModel>
     {
         [JsonIgnore]
         public ReactivePropertySlim<string> IsBusy { get; set; }
