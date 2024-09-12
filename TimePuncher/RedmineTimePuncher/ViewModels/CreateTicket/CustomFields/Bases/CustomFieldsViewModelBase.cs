@@ -84,7 +84,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
                      // 選択されたチケットのプロジェクトで有効
                      (proj.CustomFields != null && proj.CustomFields.Any(a => a.Id == cf.Id)) &&
                      // 開催チケットなどに割り当てられたトラッカーで有効
-                     cf.Trackers.Any(t => t.Id == getTracker(settings).Id))
+                     (cf.Trackers != null && cf.Trackers.Any(t => t.Id == getTracker(settings).Id)))
                 .Select(cf =>
                 {
                     // attachment （ファイル）以外の型に対応
