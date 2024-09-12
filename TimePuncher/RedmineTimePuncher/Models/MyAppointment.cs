@@ -260,17 +260,19 @@ namespace RedmineTimePuncher.Models
             {
                 // チケットを取得する。
                 Ticket = Redmine.GetTicketIncludeJournal(no.NewItem, out var _);
+                if (Ticket == null)
+                    return;
 
                 // 新規でチケットが設定されたら
                 if (string.IsNullOrEmpty(no.OldItem))
                 {
                     // Subject が空だった場合のみ、更新する
                     if (string.IsNullOrEmpty(Subject))
-                        Subject = Ticket?.Subject;
+                        Subject = Ticket.ToString();
                 }
                 else
                 {
-                    Subject = Ticket?.Subject;
+                    Subject = Ticket.ToString();
                 }
             }).AddTo(disposables);
 

@@ -36,6 +36,7 @@ namespace Redmine.Net.Api.Types
     {
         #region Properties
         // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
+        // カスタマイズ(S):null チェック漏れの防止のため、List 型は空のリストを初期値とする
         /// <summary>
         /// Gets or sets the name.
         /// </summary>
@@ -102,7 +103,7 @@ namespace Redmine.Net.Api.Types
         /// Gets the custom fields.
         /// </summary>
         /// <value>The custom fields.</value>
-        public IList<IssueCustomField> CustomFields { get; set; }
+        public IList<IssueCustomField> CustomFields { get; set; } = new List<IssueCustomField>();
         #endregion
 
         #region Implementation of IXmlSerializable

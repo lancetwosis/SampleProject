@@ -1,4 +1,5 @@
-﻿using LibRedminePower.Extentions;
+﻿using AutoMapper;
+using LibRedminePower.Extentions;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
@@ -150,6 +151,19 @@ namespace RedmineTimePuncher.Models.Settings
             ApiKey                     = Properties.Settings.Default.ApiKey;
             UserNameOfBasicAuth        = Properties.Settings.Default.UserNameOfBasicAuth;
             PasswordEncryptOfBasicAuth = Properties.Settings.Default.PasswordEncryptOfBasicAuth;
+        }
+
+        public override void SetupConfigure(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<RedmineSettingsModel, RedmineSettingsModel>()
+                .ForMember(m => m.UserName, o => o.Ignore())
+                .ForMember(m => m.Password, o => o.Ignore())
+                .ForMember(m => m.PasswordEncrypt, o => o.Ignore())
+                .ForMember(m => m.AdminApiKey, o => o.Ignore())
+                .ForMember(m => m.ApiKey, o => o.Ignore())
+                .ForMember(m => m.UserNameOfBasicAuth, o => o.Ignore())
+                .ForMember(m => m.PasswordOfBasicAuth, o => o.Ignore())
+                .ForMember(m => m.PasswordEncryptOfBasicAuth, o => o.Ignore());
         }
     }
 }

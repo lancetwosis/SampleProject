@@ -18,8 +18,8 @@ namespace LibRedminePower.ViewModels
 {
     public class CommandBase : CommandBase<object>
     {
-        public CommandBase(string text, Bitmap largeImage, IObservable<string> errTooltip, Action action)
-            : base(text, largeImage, Observable.Return(""), errTooltip, (a) => action())
+        public CommandBase(string text, Bitmap largeImage, IObservable<string> canExecute, Action action)
+            : base(text, largeImage, canExecute, (a) => action())
         {
         }
 
@@ -27,22 +27,27 @@ namespace LibRedminePower.ViewModels
         /// ボタン名とアイコンだけをセットしたダミー
         /// </summary>
         public CommandBase(string text, Bitmap largeImage)
-            : base(text, largeImage, Observable.Return(""), Observable.Return(""), (a) => { })
+            : base(text, largeImage, new ReactivePropertySlim<string>(""), (a) => { })
         {
         }
 
-        public CommandBase(string text, char mnemonic, Bitmap largeImage, IObservable<string> errTooltip, Action action)
-            : base(text, mnemonic, largeImage, Observable.Return(""), errTooltip, (a) => action())
+        public CommandBase(string text, char mnemonic, Bitmap largeImage, IObservable<string> canExecute, Action action)
+            : base(text, mnemonic, largeImage, canExecute, (a) => action())
         {
         }
 
-        public CommandBase(string text, Bitmap largeImage, IObservable<string> normalTooltip, IObservable<string> errTooltip, Action action)
-            : base(text, largeImage, normalTooltip, errTooltip, (a) => action())
+        public CommandBase(string text, Bitmap largeImage, IObservable<string> toolTip, IObservable<string> canExecute, Action action)
+            : base(text, largeImage, toolTip, canExecute, (a) => action())
         {
         }
 
-        public CommandBase(string text, char mnemonic, Bitmap largeImage, IObservable<string> normalTooltip, IObservable<string> errTooltip, Action action)
-            : base(text, mnemonic, largeImage, normalTooltip, errTooltip, (a) => action())
+        public CommandBase(string text, Bitmap largeImage, string toolTip, IObservable<string> canExecute, Action action)
+            : base(text, largeImage, toolTip, canExecute, (a) => action())
+        {
+        }
+
+        public CommandBase(string text, char mnemonic, Bitmap largeImage, string toolTip, IObservable<string> canExecute, Action action)
+            : base(text, mnemonic, largeImage, toolTip, canExecute, (a) => action())
         {
         }
 
@@ -50,32 +55,24 @@ namespace LibRedminePower.ViewModels
         /// アイコンは RadGlyph キーは App.Current.Resources["GlyphPlus"] のように取得可能（FontResources.xaml）
         /// https://docs.telerik.com/devtools/wpf/styling-and-appearance/glyphs/common-styles-appearance-glyphs-reference-sheet
         /// </summary>
-        public CommandBase(string text, string glyphKey, IObservable<string> errTooltip, Action action)
-            : base(text, glyphKey, errTooltip, (a) => action())
+        public CommandBase(string text, string glyphKey, IObservable<string> canExecute, Action action)
+            : base(text, glyphKey, canExecute, (a) => action())
         {
         }
 
         /// <summary>
         /// アイコンなし
         /// </summary>
-        public CommandBase(string text, IObservable<string> errTooltip, Action action)
-            : base(text, errTooltip, (a) => action())
-        {
-        }
-
-        /// <summary>
-        /// アイコンなし
-        /// </summary>
-        public CommandBase(string text, char mnemonic, IObservable<string> errTooltip, Action action)
-            : base(text, mnemonic, errTooltip, (a) => action())
+        public CommandBase(string text, char mnemonic, IObservable<string> canExecute, Action action)
+            : base(text, mnemonic, canExecute, (a) => action())
         {
         }
 
         /// <summary>
         /// ドロップダウンで子供のコマンドが保持するコマンド
         /// </summary>
-        public CommandBase(string text, Bitmap largeImage, IObservable<string> errTooltip, ReadOnlyReactivePropertySlim<List<ChildCommand>> childCommands)
-            : base(text, largeImage, errTooltip, childCommands)
+        public CommandBase(string text, Bitmap largeImage, IObservable<string> canExecute, ReadOnlyReactivePropertySlim<List<ChildCommand>> childCommands)
+            : base(text, largeImage, canExecute, childCommands)
         {
         }
     }
@@ -96,43 +93,53 @@ namespace LibRedminePower.ViewModels
 
         public ReadOnlyReactivePropertySlim<List<ChildCommand>> ChildCommands { get; set; }
 
-        public CommandBase(IObservable<string> normalMessage, IObservable<string> errorMessage, Action<T> action)
+        private CommandBase(IObservable<string> canExecute, Action<T> action, string toolTip = null, IObservable<string> toolTip2 = null)
         {
-            var normalRp = normalMessage.ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var errRp = errorMessage.ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            TooltipMessage = normalRp.CombineLatest(errRp, (n, e) => e != null ? e : n).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var errRp = canExecute.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            if (toolTip2 == null)
+            {
+                TooltipMessage = errRp.Select(e => e ?? toolTip).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            }
+            else
+            {
+                var normalRp = toolTip2.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+                TooltipMessage = normalRp.CombineLatest(errRp, (n, e) => e ?? n).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            }
+
             IsVisibleTooltip = TooltipMessage.Select(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             Command = errRp.Select(a => a == null).ToReactiveCommand<T>().WithSubscribe(action).AddTo(disposables);
         }
 
-        public CommandBase(IObservable<string> normalMessage, IObservable<string> errorMessage, Action<T> action, Bitmap largeImage)
-            : this(normalMessage, errorMessage, action)
-        {
-            LargeImage = largeImage.ToBitmapSource();
-        }
-
-        public CommandBase(string text, Bitmap largeImage, IObservable<string> normalTooltip, IObservable<string> errTooltip, Action<T> action)
-            : this(normalTooltip, errTooltip, action)
+        private CommandBase(string text, Bitmap largeImage, IObservable<string> canExecute, Action<T> action, string toolTip, IObservable<string> toolTip2)
+            : this(canExecute, action, toolTip, toolTip2)
         {
             Text = text;
             LargeImage = largeImage.ToBitmapSource();
         }
 
-        public CommandBase(string text, char mnemonic, Bitmap largeImage, IObservable<string> normalTooltip, IObservable<string> errTooltip, Action<T> action)
-            : this(text, largeImage, normalTooltip, errTooltip, action)
+        protected CommandBase(string text, Bitmap largeImage, IObservable<string> toolTip, IObservable<string> canExecute, Action<T> action)
+            : this(text, largeImage, canExecute, action, null, toolTip)
+        {
+        }
+
+        protected CommandBase(string text, Bitmap largeImage, string toolTip, IObservable<string> canExecute, Action<T> action)
+            : this(text, largeImage, canExecute, action, toolTip, null)
+        {
+        }
+
+        protected CommandBase(string text, Bitmap largeImage, IObservable<string> canExecute, Action<T> action)
+            : this(text, largeImage, canExecute, action, null, null)
+        {
+        }
+
+        protected CommandBase(string text, char mnemonic, Bitmap largeImage, string toolTip, IObservable<string> canExecute, Action<T> action)
+            : this(text, largeImage, canExecute, action, toolTip, null)
         {
             Mnemonic = mnemonic;
         }
 
-        public CommandBase(string text, Bitmap largeImage, IObservable<string> errTooltip, Action<T> action)
-            : this(Observable.Return(""), errTooltip, action)
-        {
-            Text = text;
-            LargeImage = largeImage.ToBitmapSource();
-        }
-
-        public CommandBase(string text, char mnemonic, Bitmap largeImage, IObservable<string> errTooltip, Action<T> action)
-            : this(text, largeImage, errTooltip, action)
+        public CommandBase(string text, char mnemonic, Bitmap largeImage, IObservable<string> canExecute, Action<T> action)
+            : this(text, largeImage, canExecute, action, null, null)
         {
             Mnemonic = mnemonic;
         }
@@ -141,36 +148,28 @@ namespace LibRedminePower.ViewModels
         /// アイコンは RadGlyph キーは App.Current.Resources["GlyphPlus"] のように取得可能（FontResources.xaml）
         /// https://docs.telerik.com/devtools/wpf/styling-and-appearance/glyphs/common-styles-appearance-glyphs-reference-sheet
         /// </summary>
-        public CommandBase(string text, string glyphKey, IObservable<string> errTooltip, Action<T> action)
-            : this(Observable.Return(""), errTooltip, action)
+        public CommandBase(string text, string glyphKey, IObservable<string> canExecute, Action<T> action)
+            : this(canExecute, action)
         {
             Text = text;
             GlyphKey = glyphKey;
         }
 
         /// <summary>
-        /// アイコンなし
-        /// </summary>
-        public CommandBase(string text, IObservable<string> errTooltip, Action<T> action)
-            : this(Observable.Return(""), errTooltip, action)
-        {
-            Text = text;
-        }
-
-        /// <summary>
         /// アイコンなし。
         /// </summary>
-        public CommandBase(string text, char mnemonic, IObservable<string> errTooltip, Action<T> action)
-            : this(text, errTooltip, action)
+        protected CommandBase(string text, char mnemonic, IObservable<string> canExecute, Action<T> action)
+            : this(canExecute, action)
         {
+            Text = text;
             Mnemonic = mnemonic;
         }
 
         /// <summary>
         /// ドロップダウンで子供のコマンドが保持するコマンド
         /// </summary>
-        public CommandBase(string text, Bitmap largeImage, IObservable<string> errTooltip, ReadOnlyReactivePropertySlim<List<ChildCommand>> childCommands)
-            : this(Observable.Return(""), errTooltip, (a) => { })
+        protected CommandBase(string text, Bitmap largeImage, IObservable<string> canExecute, ReadOnlyReactivePropertySlim<List<ChildCommand>> childCommands)
+            : this(canExecute, (a) => { })
         {
             Text = text;
             LargeImage = largeImage.ToBitmapSource();

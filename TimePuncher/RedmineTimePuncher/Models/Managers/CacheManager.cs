@@ -88,20 +88,31 @@ namespace RedmineTimePuncher.Models.Managers
             }
         }
 
-        public bool IsExist()
+        public bool NeedsUpdate()
         {
-            return
-                Projects != null &&
-                Trackers != null &&
-                Statuss != null &&
-                Priorities != null &&
-                TimeEntryActivities != null &&
-                CustomFields != null &&
-                Users != null &&
-                Queries != null &&
-                MyUser != null &&
-                MarkupLang != MarkupLangType.Undefined &&
-                ProjectMemberships != null;
+            // 以下の対応で値がなかった場合、空のリストを返すようにしたためチェック追加
+            // http://133.242.159.37/issues/1603
+            if (Projects == null || Projects.Any(p => p.Trackers == null ||
+                                                      p.EnabledModules == null ||
+                                                      p.CustomFields == null ||
+                                                      p.TimeEntryActivities == null))
+                return true;
+
+            if (CustomFields == null || CustomFields.Any(c => c.Trackers == null))
+                return true;
+
+            if (Trackers == null ||
+                Statuss == null ||
+                Priorities == null ||
+                TimeEntryActivities == null ||
+                Users == null ||
+                Queries == null ||
+                MyUser == null ||
+                MarkupLang == MarkupLangType.Undefined ||
+                ProjectMemberships == null)
+                return true;
+
+            return false;
         }
 
         private ReactiveTimer updateCacheTimer { get; set; }
@@ -116,7 +127,7 @@ namespace RedmineTimePuncher.Models.Managers
             updateCacheTimer = new ReactiveTimer(TimeSpan.FromMinutes(30));
 
             // キャッシュが存在しない場合、またはRedmine設定が変更された場合、前回接続に失敗していた場合、
-            if (!IsExist() || RedmineSetting == null || !RedmineSetting.Equals(settings) || !lastAuthorized)
+            if (NeedsUpdate() || RedmineSetting == null || !RedmineSetting.Equals(settings) || !lastAuthorized)
             {
                 // 初回は同期的に更新する
                 Update(redmine, settings);
@@ -371,9 +382,7 @@ namespace RedmineTimePuncher.Models.Managers
                     var tMyProjects = TmpProjects.Where(p => TmpMyUser.Memberships.Any(m => p.Name == m.Project.Name))
                         .Select(p => Task.Run(() => redmine.GetProject(p.Id.ToString()))).ToList();
                     var myProjects = await Task.WhenAll(tMyProjects);
-                    var enableCfIds = myProjects.Where(p => p.CustomFields != null)
-                        .SelectMany(p => p.CustomFields.Select(a => a.Id))
-                        .Distinct().ToList();
+                    var enableCfIds = myProjects.SelectMany(p => p.CustomFields.Select(a => a.Id)).Distinct().ToList();
                     TmpMyCustomFields = TmpCustomFields.Where(c => c.IsIssueType() && enableCfIds.Contains(c.Id)).ToList();
                 });
             }

@@ -133,7 +133,7 @@ namespace RedmineTimePuncher.Models
 
         public string ToString(Journal journal)
         {
-            if(journal == null || journal.Details == null )
+            if (journal == null || journal.Details == null || journal.Details.Count == 0)
                 return ToString();
 
             var statusDetail = journal.Details.FirstOrDefault(a => a.Name == "status_id");

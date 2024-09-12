@@ -26,7 +26,7 @@ namespace RedmineTimePuncher.Behaviors
         public DraggedAppointment(MyIssue ticket) : base()
         {
             From = DraggedType.Ticket;
-            Subject = $"{ticket.Tracker.Name} ({ticket.Status.Name}) {ticket.Subject}";
+            Subject = ticket.ToString();
             TicketNo = ticket.Id.ToString();
         }
     }

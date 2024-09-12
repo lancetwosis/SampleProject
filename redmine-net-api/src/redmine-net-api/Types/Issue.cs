@@ -42,6 +42,7 @@ namespace Redmine.Net.Api.Types
     {
         #region Properties
         // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
+        // カスタマイズ(S):null チェック漏れの防止のため、List 型は空のリストを初期値とする
         /// <summary>
         /// Gets or sets the project.
         /// </summary>
@@ -132,7 +133,7 @@ namespace Redmine.Net.Api.Types
         /// Gets or sets the custom fields.
         /// </summary>
         /// <value>The custom fields.</value>
-        public IList<IssueCustomField> CustomFields { get; set; }
+        public IList<IssueCustomField> CustomFields { get; set; } = new List<IssueCustomField>();
 
         /// <summary>
         /// Gets or sets the created on.
@@ -207,7 +208,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The journals.
         /// </value>
-        public IList<Journal> Journals { get; set; }
+        public IList<Journal> Journals { get; set; } = new List<Journal>();
 
         /// <summary>
         /// Gets or sets the change sets.
@@ -215,7 +216,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The change sets.
         /// </value>
-        public IList<ChangeSet> ChangeSets { get; set; }
+        public IList<ChangeSet> ChangeSets { get; set; } = new List<ChangeSet>();
 
         /// <summary>
         /// Gets or sets the attachments.
@@ -223,7 +224,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The attachments.
         /// </value>
-        public IList<Attachment> Attachments { get; set; }
+        public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
 
         /// <summary>
         /// Gets or sets the issue relations.
@@ -231,7 +232,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The issue relations.
         /// </value>
-        public IList<IssueRelation> Relations { get; set; }
+        public IList<IssueRelation> Relations { get; set; } = new List<IssueRelation>();
 
         /// <summary>
         /// Gets or sets the issue children.
@@ -240,7 +241,7 @@ namespace Redmine.Net.Api.Types
         /// The issue children.
         /// NOTE: Only Id, tracker and subject are filled.
         /// </value>
-        public IList<IssueChild> Children { get; set; }
+        public IList<IssueChild> Children { get; set; } = new List<IssueChild>();
 
         /// <summary>
         /// Gets or sets the attachments.
@@ -248,17 +249,17 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The attachment.
         /// </value>
-        public IList<Upload> Uploads { get; set; }
+        public IList<Upload> Uploads { get; set; } = new List<Upload>();
 
         /// <summary>
         /// 
         /// </summary>
-        public IList<Watcher> Watchers { get; set; }
-        
+        public IList<Watcher> Watchers { get; set; } = new List<Watcher>();
+
         /// <summary>
         /// 
         /// </summary>
-        public List<IssueAllowedStatus> AllowedStatuses { get; set; }
+        public List<IssueAllowedStatus> AllowedStatuses { get; set; } = new List<IssueAllowedStatus>();
         #endregion
 
         #region Implementation of IXmlSerialization

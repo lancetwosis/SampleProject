@@ -21,10 +21,15 @@ namespace RedmineTimePuncher.Models.Settings.Bases
         {
             var text = System.IO.File.ReadAllText(fileName);
             var newModel = CloneExtentions.ToObject<T>(text);
-            var config = new MapperConfiguration(cfg => cfg.CreateMap<T, T>());
+            var config = new MapperConfiguration(SetupConfigure);
             var mapper = config.CreateMapper();
             mapper.Map(newModel, this);
             return;
+        }
+
+        public virtual void SetupConfigure(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<T, T>();
         }
     }
 }

@@ -724,7 +724,7 @@ namespace RedmineTimePuncher.Models.Managers
         public MyIssue RestoreJournals(Issue issue, DateTime target)
         {
             var result = new MyIssue(issue);
-            if (issue.Journals == null)
+            if (issue.Journals == null || issue.Journals.Count == 0)
                 return result;
 
             var dic = new Dictionary<DateTime, MyIssue>();
@@ -732,7 +732,7 @@ namespace RedmineTimePuncher.Models.Managers
 
             foreach (var journal in issue.Journals.Reverse())
             {
-                if (journal.Details == null) continue;
+                if (issue.Journals == null || journal.Details.Count == 0) continue;
 
                 var targetDetails = journal.Details.Where(a => a.Property == "attr" &&
                     (a.Name == "status_id" || a.Name == "assigned_to_id"

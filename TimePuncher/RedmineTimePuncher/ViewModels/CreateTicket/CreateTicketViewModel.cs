@@ -331,7 +331,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     return needsRestorePrev;
             }
 
-            if (!CacheManager.Default.IsExist())
+            if (CacheManager.Default.NeedsUpdate())
                 return needsRestorePrev;
 
             myDisposables?.Dispose();

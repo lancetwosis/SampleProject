@@ -500,7 +500,7 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             DeleteCommand = new CommandBase(
                 Properties.Resources.RibbonCmdDelete, 'D', Properties.Resources.remove_task,
-                Observable.Return(Properties.Resources.RibbonCmdDeleteTooltip),
+                Properties.Resources.RibbonCmdDeleteTooltip,
                 new[] { selectAny, canEdit }.CombineLatestFirstOrDefault(a => a != null),
                 () =>
                 {
@@ -520,7 +520,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             // 選択範囲内のスロットになる予定を均等に整列
             AlignEvenlyCommand = new CommandBase(
                 Properties.Resources.RibbonCmdAlignAppointments, Properties.Resources.icons8_sort_by_48,
-                Observable.Return(Properties.Resources.RibbonCmdAlignAppointmentsTooltip),
+                Properties.Resources.RibbonCmdAlignAppointmentsTooltip,
                 new[]
                 {
                     parent.SelectedSlot.Select(a => a == null).Select(a => a ? Properties.Resources.msgErrSelectSlot : null),

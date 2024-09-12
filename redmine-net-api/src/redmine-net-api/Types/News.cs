@@ -35,6 +35,7 @@ namespace Redmine.Net.Api.Types
     {
         #region Properties
         // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
+        // カスタマイズ(S):null チェック漏れの防止のため、List 型は空のリストを初期値とする
         /// <summary>
         /// Gets or sets the project.
         /// </summary>
@@ -70,16 +71,16 @@ namespace Redmine.Net.Api.Types
         /// </summary>
         /// <value>The created on.</value>
         public DateTime? CreatedOn { get; set; }
-        
+
         /// <summary>
         /// 
         /// </summary>
-        public List<Attachment> Attachments { get; set; }
-        
+        public List<Attachment> Attachments { get; set; } = new List<Attachment>();
+
         /// <summary>
         /// 
         /// </summary>
-        public List<NewsComment> Comments { get; set; }
+        public List<NewsComment> Comments { get; set; } = new List<NewsComment>();
         #endregion
 
         #region Implementation of IXmlSerialization

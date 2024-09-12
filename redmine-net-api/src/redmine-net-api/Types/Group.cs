@@ -49,22 +49,23 @@ namespace Redmine.Net.Api.Types
 
         #region Properties
         // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
+        // カスタマイズ(S):null チェック漏れの防止のため、List 型は空のリストを初期値とする
         /// <summary>
         /// Represents the group's users.
         /// </summary>
-        public IList<GroupUser> Users { get;  set; }
+        public IList<GroupUser> Users { get; set; } = new List<GroupUser>();
 
         /// <summary>
         /// Gets or sets the custom fields.
         /// </summary>
         /// <value>The custom fields.</value>
-        public IList<IssueCustomField> CustomFields { get; set; }
+        public IList<IssueCustomField> CustomFields { get; set; } = new List<IssueCustomField>();
 
         /// <summary>
         /// Gets or sets the custom fields.
         /// </summary>
         /// <value>The custom fields.</value>
-        public IList<Membership> Memberships { get; set; }
+        public IList<Membership> Memberships { get; set; } = new List<Membership>();
         #endregion
 
         #region Implementation of IXmlSerializable

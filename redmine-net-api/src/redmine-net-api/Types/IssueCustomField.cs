@@ -34,6 +34,8 @@ namespace Redmine.Net.Api.Types
     public sealed class IssueCustomField : IdentifiableName, IEquatable<IssueCustomField>, ICloneable, IValue
     {
         #region Properties
+        // カスタマイズ(S):null チェック漏れの防止のため、List 型は空のリストを初期値とする
+        /// TODO: #1588 にて TableEditor に大規模な修正を行っているため、その中で実施すること！
         /// <summary>
         /// Gets or sets the value.
         /// </summary>

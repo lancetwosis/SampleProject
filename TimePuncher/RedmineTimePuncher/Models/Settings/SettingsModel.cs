@@ -1,4 +1,5 @@
-﻿using LibRedminePower.Extentions;
+﻿using AutoMapper;
+using LibRedminePower.Extentions;
 using LibRedminePower.Localization;
 using RedmineTimePuncher.Enums;
 using System;
@@ -105,6 +106,13 @@ namespace RedmineTimePuncher.Models.Settings
             Properties.Settings.Default.Setting = this.ToJson();
             Redmine.SaveProperties();
             Properties.Settings.Default.Save();
+        }
+
+        public override void SetupConfigure(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<SettingsModel, SettingsModel>();
+
+            Redmine.SetupConfigure(cfg);
         }
     }
 }

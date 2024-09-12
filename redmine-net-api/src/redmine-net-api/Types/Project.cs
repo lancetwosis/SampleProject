@@ -35,8 +35,8 @@ namespace Redmine.Net.Api.Types
     public sealed class Project : IdentifiableName, IEquatable<Project>
     {
         #region Properties
-
         // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
+        // カスタマイズ(S):null チェック漏れの防止のため、List 型は空のリストを初期値とする
         /// <summary>
         /// Gets or sets the identifier.
         /// </summary>
@@ -106,7 +106,7 @@ namespace Redmine.Net.Api.Types
         /// The trackers.
         /// </value>
         /// <remarks>Available in Redmine starting with 2.6.0 version.</remarks>
-        public IList<ProjectTracker> Trackers { get; set; }
+        public IList<ProjectTracker> Trackers { get; set; } = new List<ProjectTracker>();
 
         /// <summary>
         /// Gets or sets the enabled modules.
@@ -115,7 +115,7 @@ namespace Redmine.Net.Api.Types
         /// The enabled modules.
         /// </value>
         /// <remarks>Available in Redmine starting with 2.6.0 version.</remarks>
-        public IList<ProjectEnabledModule> EnabledModules { get; set; }
+        public IList<ProjectEnabledModule> EnabledModules { get; set; } = new List<ProjectEnabledModule>();
 
         /// <summary>
         /// Gets or sets the custom fields.
@@ -123,7 +123,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The custom fields.
         /// </value>
-        public IList<IssueCustomField> CustomFields { get; set; }
+        public IList<IssueCustomField> CustomFields { get; set; } = new List<IssueCustomField>();
 
         /// <summary>
         /// Gets the issue categories.
@@ -132,13 +132,13 @@ namespace Redmine.Net.Api.Types
         /// The issue categories.
         /// </value>
         /// <remarks>Available in Redmine starting with 2.6.0 version.</remarks>
-        public IList<ProjectIssueCategory> IssueCategories { get; set; }
+        public IList<ProjectIssueCategory> IssueCategories { get; set; } = new List<ProjectIssueCategory>();
 
         /// <summary>
         /// Gets the time entry activities.
         /// </summary>
         /// <remarks>Available in Redmine starting with 3.4.0 version.</remarks>
-        public IList<ProjectTimeEntryActivity> TimeEntryActivities { get; set; }
+        public IList<ProjectTimeEntryActivity> TimeEntryActivities { get; set; } = new List<ProjectTimeEntryActivity>();
 
         /// <summary>
         /// 

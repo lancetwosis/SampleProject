@@ -36,6 +36,7 @@ namespace Redmine.Net.Api.Types
     {
         #region Properties
         // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
+        // カスタマイズ(S):null チェック漏れの防止のため、List 型は空のリストを初期値とする
         /// <summary>
         /// Gets the title.
         /// </summary>
@@ -79,7 +80,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The attachments.
         /// </value>
-        public IList<Attachment> Attachments { get; set; }
+        public IList<Attachment> Attachments { get; set; } = new List<Attachment>();
 
         /// <summary>
         /// Sets the uploads.
@@ -88,7 +89,7 @@ namespace Redmine.Net.Api.Types
         /// The uploads.
         /// </value>
         /// <remarks>Availability starting with redmine version 3.3</remarks>
-        public IList<Upload> Uploads { get; set; }
+        public IList<Upload> Uploads { get; set; } = new List<Upload>();
 
         // カスタマイズ(S):Wiki ページの親子関係を把握するために追加
         /// <summary>

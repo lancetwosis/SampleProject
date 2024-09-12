@@ -420,7 +420,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             //--- 日付関連コマンド
             SetTodayCommand = new CommandBase(
                 Properties.Resources.RibbonCmdToday, Properties.Resources.today32,
-                Observable.Return(Properties.Resources.RibbonCmdToday),
+                Properties.Resources.RibbonCmdToday,
                 Parent.Redmine.Select(a => a != null ? null : ""),
                 () =>
                 {
@@ -483,7 +483,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             // 選択スロットの予定をすべて選択する。
             SelectAposCommand = new CommandBase(
                 Properties.Resources.RibbonCmdSelectAllAppos, 'A', Properties.Resources.icons8_select_all_files_48,
-                Observable.Return(Properties.Resources.RibbonCmdSelectAllApposTooltip),
+                Properties.Resources.RibbonCmdSelectAllApposTooltip,
                 new[]
                 {
                     SelectedSlot.Select(a => a == null).Select(a => a ? Properties.Resources.msgErrSelectSlot : null),

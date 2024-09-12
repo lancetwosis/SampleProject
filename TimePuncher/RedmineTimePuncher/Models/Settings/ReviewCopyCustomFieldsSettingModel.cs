@@ -55,7 +55,7 @@ namespace RedmineTimePuncher.Models.Settings
 
         public List<IssueCustomField> GetCopiedCustomFields(MyIssue parent)
         {
-            if (parent.RawIssue.CustomFields == null)
+            if (parent.RawIssue.CustomFields == null || parent.RawIssue.CustomFields.Count == 0)
                 return new List<IssueCustomField>();
 
             return parent.RawIssue.CustomFields.Where(c => SelectedCustomFields.Any(sc => sc.Id == c.Id)).ToList();

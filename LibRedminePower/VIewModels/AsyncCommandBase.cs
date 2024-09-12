@@ -64,7 +64,7 @@ namespace LibRedminePower.ViewModels
         /// ボタン名とアイコンだけをセットしたダミー
         /// </summary>
         public AsyncCommandBase(string text, Bitmap icon)
-            : this(text, icon, Observable.Return(""), () => Task.CompletedTask)
+            : this(text, icon, new ReactivePropertySlim<string>(""), () => Task.CompletedTask)
         {
         }
 

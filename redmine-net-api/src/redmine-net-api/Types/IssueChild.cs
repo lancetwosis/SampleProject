@@ -35,6 +35,7 @@ namespace Redmine.Net.Api.Types
     {
         #region Properties
         // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
+        // カスタマイズ(S):null チェック漏れの防止のため、List 型は空のリストを初期値とする
         /// <summary>
         /// Gets or sets the tracker.
         /// </summary>
@@ -55,7 +56,7 @@ namespace Redmine.Net.Api.Types
         /// The issue children.
         /// NOTE: Only Id, tracker and subject are filled.
         /// </value>
-        public IList<IssueChild> Children { get; set; }
+        public IList<IssueChild> Children { get; set; } = new List<IssueChild>();
         // カスタマイズ(E):子チケットを取得できるようにした。
 
         #endregion

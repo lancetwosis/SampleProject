@@ -35,6 +35,7 @@ namespace Redmine.Net.Api.Types
     {
         #region Properties
         // カスタマイズ(S):デシリアライズできるようにすべての internal set を外す
+        // カスタマイズ(S):null チェック漏れの防止のため、List 型は空のリストを初期値とする
         /// <summary>
         /// Gets or sets the user.
         /// </summary>
@@ -70,7 +71,7 @@ namespace Redmine.Net.Api.Types
         /// <value>
         /// The details.
         /// </value>
-        public IList<Detail> Details { get; set; }
+        public IList<Detail> Details { get; set; } = new List<Detail>();
         #endregion
 
         #region Implementation of IXmlSerialization

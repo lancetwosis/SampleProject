@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Redmine.Net.Api.Extensions
@@ -82,7 +83,9 @@ namespace Redmine.Net.Api.Extensions
         /// <param name="collection"></param>
         public static string Dump<TIn>(this IEnumerable<TIn> collection) where TIn : class
         {
-            if (collection == null)
+            // カスタマイズ(S):null チェック漏れの防止のため、値がなかった場合でも空のリストを返す
+            // if (collection == null)
+            if (collection == null || !collection.Any())
             {
                 return null;
             }

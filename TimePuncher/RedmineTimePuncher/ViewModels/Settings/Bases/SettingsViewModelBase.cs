@@ -1,5 +1,6 @@
 ﻿using LibRedminePower.Applications;
 using LibRedminePower.Extentions;
+using LibRedminePower.Helpers;
 using Microsoft.Win32;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -36,6 +37,7 @@ namespace RedmineTimePuncher.ViewModels.Settings.Bases
                 {
                     try
                     {
+                        TraceHelper.TrackCommand($"{this.GetType().Name}.{nameof(ImportCommand)}");
                         model.Import(dialog.FileName);
                     }
                     catch (Exception ex)
@@ -55,6 +57,7 @@ namespace RedmineTimePuncher.ViewModels.Settings.Bases
                 {
                     try
                     {
+                        TraceHelper.TrackCommand($"{this.GetType().Name}.{nameof(ExportCommand)}");
                         model.Export(dialog.FileName);
                     }
                     catch (Exception ex)

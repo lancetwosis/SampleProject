@@ -168,13 +168,17 @@ namespace Redmine.Net.Api.Extensions
         /// <returns></returns>
         public static List<T> ReadElementContentAsCollection<T>(this XmlReader reader) where T : class
         {
-            List<T> result = null;
+            // カスタマイズ(S):null チェック漏れの防止のため、値がなかった場合でも空のリストを返す
+            //List<T> result = null;
+            var result = new List<T>();
+
             var serializer = new XmlSerializer(typeof(T));
             var outerXml = reader.ReadOuterXml();
 
             if (string.IsNullOrEmpty(outerXml))
             {
-                return null;
+                //return null;
+                return result;
             }
 
             using (var stringReader = new StringReader(outerXml))
@@ -210,10 +214,10 @@ namespace Redmine.Net.Api.Extensions
 
                         if (entity != null)
                         {
-                            if (result == null)
-                            {
-                                result = new List<T>();
-                            }
+                            //if (result == null)
+                            //{
+                            //    result = new List<T>();
+                            //}
 
                             result.Add(entity);
                         }
