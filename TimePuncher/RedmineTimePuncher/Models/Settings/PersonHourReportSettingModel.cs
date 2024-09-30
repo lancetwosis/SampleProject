@@ -42,7 +42,7 @@ namespace RedmineTimePuncher.Models.Settings
                 case PersonHourReportContentType.ActualTimes:
                     return Period.HasActualTimes() && ActualTimes;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"content が {content} はサポート対象外です。");
             }
         }
     }

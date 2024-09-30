@@ -7,6 +7,7 @@ using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using RedmineTableEditor.Enums;
+using RedmineTableEditor.Extentions;
 using RedmineTableEditor.Models;
 using RedmineTableEditor.Models.Bases;
 using RedmineTableEditor.Models.FileSettings;
@@ -36,6 +37,7 @@ namespace RedmineTableEditor.ViewModels
 
         public List<GridViewColumnGroup> ColumnGroups { get; set; }
         public List<GridViewBoundColumnBase> Columns { get; set; }
+        public ReactivePropertySlim<GridViewColumn> CurrentColumn { get; set; }
 
         public AutoBackColorModel AutoBackColor { get; set; }
         public ReactivePropertySlim<Models.RedmineManager> Redmine => parent.Redmine;
@@ -49,7 +51,6 @@ namespace RedmineTableEditor.ViewModels
         private TableEditorViewModel parent;
         private RadObservableCollection<MyIssue> parentIssues;
         private RadObservableCollection<MyIssuePivot> allChildren;
-        private FileSettingsModel lastFileSettings;
 
         public IssuesViewModel(TableEditorViewModel parent)
         {
@@ -79,23 +80,33 @@ namespace RedmineTableEditor.ViewModels
                 }
             };
 
+            CurrentColumn = new ReactivePropertySlim<GridViewColumn>().AddTo(disposables);
+
             //----------------------------
             // 表示条件の適用
             //----------------------------
-            parent.ApplyCommand = new AsyncCommandBase(
-                Resources.RibbonCmdApply, Resources.apply_icon,
-                new[] {
+            var canApply = new[] {
                     Redmine.Select(a => a != null ? a.IsValid() : ""),
                     parent.IsBusy.Select(a => !a ? null : ""),
                     parent.ObserveProperty(p => p.FileSettings.ParentIssues.Value.IsValid.Value),
-                }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null)),
+                }.CombineLatest().Select(a => a.FirstOrDefault(m => m != null));
+            parent.ApplyCommand = new AsyncCommandBase(
+                Resources.RibbonCmdApply, Resources.apply_icon,
+                canApply,
                 async () =>
                 {
                     TraceHelper.TrackCommand(nameof(parent.ApplyCommand));
-                    var updated = await ApplyAsync(parent.FileSettings.Model.Value);
-                    if (!updated)
-                        MessageBoxHelper.ConfirmInformation(Resources.MsgNoChangeDisplayConditions);
-                }).AddTo(disposables);
+                    await ApplyAsync(parent.FileSettings.Model.Value, false);
+                },
+                new ReactivePropertySlim<List<ChildCommand>>(new List<ChildCommand>()
+                {
+                    new ChildCommand(Resources.RibbonCmdApplyAll, canApply,
+                    async () =>
+                    {
+                        TraceHelper.TrackCommand("ApplyAndUpdateCacheCommand");
+                        await ApplyAsync(parent.FileSettings.Model.Value, true);
+                    }),
+                }).ToReadOnlyReactivePropertySlim().AddTo(disposables)).AddTo(disposables);
 
             //----------------------------
             // チケットの内容の読み込み
@@ -147,6 +158,40 @@ namespace RedmineTableEditor.ViewModels
                 }).AddTo(disposables);
 
             //----------------------------
+            // チケット一覧の Redmine での表示
+            //----------------------------
+            parent.ShowOnRedmineCommand = new CommandBase(
+                Resources.RibbonCmdShowRedmine, Resources.icons8_show_on_redmine_48,
+                canApply,
+                () =>
+                {
+                    TraceHelper.TrackCommand(nameof(parent.ShowOnRedmineCommand));
+                    parent.FileSettings.ParentIssues.Value.ShowIssuesOnRedmine();
+                }).AddTo(disposables);
+
+            //----------------------------
+            // 左端のカラムの固定
+            //----------------------------
+            parent.SetFrozenColumnCommand = new CommandBase(
+                Resources.RibbonCmdSetFrozenColumn, Resources.icons8_select_column_32,
+                CurrentColumn.Select(a => a != null ? null : ""),
+                () =>
+                {
+                    var frozenIndex = CurrentColumn.Value.DisplayIndex + 1;
+                    if (parent.FileSettings.Model.Value.FrozenColumnCount == frozenIndex)
+                        return;
+
+                    parent.FileSettings.Model.Value.FrozenColumnCount = frozenIndex;
+                    parent.FileSettings.IsEdited.Value = true;
+
+                    var issues = parentIssues.ToList();
+                    Clear();
+                    updateColumns(parent.FileSettings.Model.Value);
+                    parentIssues.AddRange(issues);
+                    updateView();
+                }).AddTo(disposables);
+
+            //----------------------------
             // チケット読み込み
             //----------------------------
             ReadTicketCommand = this.ObserveProperty(a => a.CurrentIssue).Select(a => a != null).ToReactiveCommand().WithSubscribe(async () =>
@@ -155,8 +200,7 @@ namespace RedmineTableEditor.ViewModels
                 {
                     using (parent.IsBusy.ProcessStart())
                     {
-                        await Task.Run(() =>
-                        SelectedIsuues.ToList().AsParallel().ForAll(a => a.Read()));
+                        await Task.Run(() => SelectedIsuues.ToList().AsParallel().ForAll(a => a.Read()));
                     }
                 }
                 catch (AggregateException ex)
@@ -184,94 +228,79 @@ namespace RedmineTableEditor.ViewModels
             }).AddTo(disposables);
         }
 
-        public async Task<bool> ApplyAsync(FileSettingsModel fileSettings)
+        private void updateColumns(FileSettingsModel fileSettings)
+        {
+            // カラムグループを作成する。
+            ColumnGroups = fileSettings.SubIssues.CreateSubIssueColumnGroups();
+
+            var columns = fileSettings.ParentIssues.CreateColumns(Redmine.Value)
+                .Concat(fileSettings.SubIssues.CreateColumns(Redmine.Value)).ToList();
+
+            if (columns.Count < fileSettings.FrozenColumnCount)
+            {
+                fileSettings.FrozenColumnCount = FileSettingsModel.DEFAULT_FROZEN_COUNT;
+                parent.FileSettings.IsEdited.Value = true;
+            }
+
+            // カラム作成。LeftFrozenColumnCount を正常に作動させるために一旦クリアしてから追加する
+            Columns = new List<GridViewBoundColumnBase>();
+            LeftFrozenColumnCount = fileSettings.FrozenColumnCount;
+            Columns = columns;
+        }
+
+        public async Task ApplyAsync(FileSettingsModel fileSettings, bool updateCache)
         {
             parent.CTS = new CancellationTokenSource();
             using (parent.IsBusy.ProcessStart())
             {
-                parent.CTS.Token.ThrowIfCancellationRequested();
+                Clear();
 
-                var updated = false;
+                // 親チケットを取得する。
+                var rawIssues = await fileSettings.ParentIssues.GetIssuesAsync(Redmine.Value, parent.CTS.Token);
+                if (rawIssues != null && rawIssues.Any())
+                    await Task.Run(() => Redmine.Value.UpdateAsync(rawIssues, updateCache));
+                else
+                    return;
+
+                parent.CTS.Token.ThrowIfCancellationRequested();
 
                 // 自動色設定
-                if (lastFileSettings == null ||
-                    lastFileSettings.AutoBackColor.ToJson() != fileSettings.AutoBackColor.ToJson())
-                {
-                    AutoBackColor = fileSettings.AutoBackColor.Clone();
-                    updated = true;
-                }
+                AutoBackColor = fileSettings.AutoBackColor.Clone();
+
+                // カラムを更新
+                updateColumns(fileSettings);
 
                 parent.CTS.Token.ThrowIfCancellationRequested();
 
-                // カラムを作成する。
-                if (lastFileSettings == null ||
-                    lastFileSettings.ParentIssues.Properties.ToJson() != fileSettings.ParentIssues.Properties.ToJson() ||
-                    lastFileSettings.SubIssues.ToJson() != fileSettings.SubIssues.ToJson())
-                {
-                    // カラムグループを作成する。
-                    ColumnGroups = fileSettings.SubIssues.Items.OrderBy(a => a.Order).Where(a => a.IsEnabled).Select(b => new GridViewColumnGroup()
-                    {
-                        Name = b.Order.ToString(),
-                        Header = b.Title
-                    }).ToList();
+                // 親チケットを設定する。
+                var issues = rawIssues.Select(issue => new MyIssue(Redmine.Value, fileSettings, issue)).ToList();
+                if (fileSettings.ParentIssues.UseQuery)
+                    parentIssues.AddRange(issues);
+                else
+                    parentIssues.AddRange(issues.OrderBy(i => i.Id));
+                    // TODO: 親子関係でのソートを対応するときに整理すること！
+                    //if (fileSettings.ParentIssues.Recoursive)
+                    //    parentIssues.AddRange(orderByParentChild(fileSettings.ParentIssues, issues));
+                    //else
+                    //    parentIssues.AddRange(issues.OrderBy(i => i.Id));
 
-                    // カラム作成。LeftFrozenColumnCount を正常に作動させるために一旦クリアしてから追加する
-                    Columns = new List<GridViewBoundColumnBase>();
-                    var columns = fileSettings.ParentIssues.Properties.Select(p => p.CreateColumn(Redmine.Value)).Where(a => a != null).ToList();
-                    LeftFrozenColumnCount = columns.Count();
-                    foreach (var g in fileSettings.SubIssues.Items.Where(a => a.IsEnabled && a.IsValid).OrderBy(a => a.Order))
-                    {
-                        columns.AddRange(fileSettings.SubIssues.Properties
-                            .Where(a => a.Field.HasValue || a.MyField.HasValue || Redmine.Value.CustomFields.Any(b => b.Id == a.CustomFieldId))
-                            .Select(a => a.CreateColumn(Redmine.Value, g.Order))
-                            .Where(a => a != null));
-                    }
-                    Columns = columns;
-                    updated = true;
-                }
+                // 子チケットの情報を取得する。
+                await Task.WhenAll(parentIssues.Select(a => a.UpdateChildrenAsync(parent.CTS.Token)));
 
-                parent.CTS.Token.ThrowIfCancellationRequested();
-
-                // 一覧に影響があるものが更新された場合のみ全更新する。
-                if (lastFileSettings == null ||
-                    lastFileSettings.ParentIssues.ToJson() != fileSettings.ParentIssues.ToJson() ||
-                    lastFileSettings.SubIssues.ToJson() != fileSettings.SubIssues.ToJson())
-                {
-                    clearIssues();
-
-                    // 親チケットを取得する。
-                    var myItems = await fileSettings.ParentIssues.GetIssuesAsync(Redmine.Value, parent.CTS.Token);
-                    if (myItems != null && myItems.Any())
-                    {
-                        var issues = myItems.Select(issue => new MyIssue(Redmine.Value, fileSettings, issue)).ToList();
-                        if (fileSettings.ParentIssues.UseQuery)
-                            parentIssues.AddRange(issues);
-                        else
-                            if (fileSettings.ParentIssues.Recoursive)
-                                parentIssues.AddRange(orderByParentChild(fileSettings.ParentIssues, issues));
-                            else
-                                parentIssues.AddRange(issues.OrderBy(i => i.Id));
-
-                        // 子チケットの情報を取得する。
-                        var needsDetail = fileSettings.SubIssues.Properties.Any(a => a.IsDetail());
-                        await Task.WhenAll(parentIssues.Select(a => a.UpdateChildrenAsync(parent.CTS.Token, needsDetail)));
-
-                        IssuesView.AddRange(parentIssues.SelectMany(a => a.ToViewRows()));
-                        IssuesView.SelectMany(a => a.ChildrenDic.Values).Where(a => a != null)
-                            .Select(a => new MyIssuePivot(a)).ToList().ForEach(a => allChildren.Add(a));
-
-                        LocalData = new LocalDataSourceProvider();
-                        LocalData.ItemsSource = allChildren;
-
-                        allChildren.Select(a => a.PropertyChangedAsObservable()).Merge().ObserveOnUIDispatcher().SubscribeWithErr(_ => LocalData.Refresh());
-                    }
-                    updated = true;
-                }
-
-                lastFileSettings = parent.FileSettings.Model.Value.Clone();
-
-                return updated;
+                updateView();
             }
+        }
+
+        private void updateView()
+        {
+            IssuesView.AddRange(parentIssues.SelectMany(a => a.ToViewRows()));
+            IssuesView.SelectMany(a => a.ChildrenDic.Values).Where(a => a != null)
+                .Select(a => new MyIssuePivot(a)).ToList().ForEach(a => allChildren.Add(a));
+
+            LocalData = new LocalDataSourceProvider();
+            LocalData.ItemsSource = allChildren;
+
+            allChildren.Select(a => a.PropertyChangedAsObservable()).Merge().ObserveOnUIDispatcher().SubscribeWithErr(_ => LocalData.Refresh());
         }
 
         private List<MyIssue> orderByParentChild(ParentIssueSettingsModel setting, List<MyIssue> issues)
@@ -311,8 +340,11 @@ namespace RedmineTableEditor.ViewModels
             }
         }
 
-        private void clearIssues()
+        public void Clear()
         {
+            ColumnGroups = new List<GridViewColumnGroup>();
+            Columns = new List<GridViewBoundColumnBase>();
+
             parentIssues.Clear();
             IssuesView.Clear();
             allChildren.Clear();
@@ -320,16 +352,6 @@ namespace RedmineTableEditor.ViewModels
             MyIssueBase.SpentHoursMax = 0;
             MyIssueBase.MySpentHoursMax = 0;
             MyIssueBase.DiffEstimatedSpentMax = 0;
-        }
-
-        public void Clear()
-        {
-            ColumnGroups = new List<GridViewColumnGroup>();
-            Columns = new List<GridViewBoundColumnBase>();
-
-            clearIssues();
-
-            lastFileSettings = null;
         }
     }
 }

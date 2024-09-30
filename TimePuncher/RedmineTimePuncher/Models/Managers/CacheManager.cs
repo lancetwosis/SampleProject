@@ -21,6 +21,7 @@ using System.Reactive.Linq;
 using System.Collections.Concurrent;
 using LibRedminePower.Exceptions;
 using Redmine.Net.Api.Exceptions;
+using LibRedminePower.Models;
 
 namespace RedmineTimePuncher.Models.Managers
 {
@@ -52,6 +53,8 @@ namespace RedmineTimePuncher.Models.Managers
         public MarkupLangType MarkupLang { get; set; } = MarkupLangType.Undefined;
 
         public RedmineSettingsModel RedmineSetting { get; set; }
+        public DateTime UpdatedDate { get; set; }
+
 
         private ReactivePropertySlim<DateTime> updated = new ReactivePropertySlim<DateTime>();
         private ReactivePropertySlim<bool> authorized = new ReactivePropertySlim<bool>();
@@ -72,8 +75,6 @@ namespace RedmineTimePuncher.Models.Managers
                 try
                 {
                     var result = CloneExtentions.ToObject<CacheManager>(Properties.Settings.Default.Cache);
-                    result.RedmineSetting.LoadProperties();
-
                     Default = result;
                 }
                 catch
@@ -115,40 +116,30 @@ namespace RedmineTimePuncher.Models.Managers
             return false;
         }
 
-        private ReactiveTimer updateCacheTimer { get; set; }
-        public void UpdateCacheIfNeeded(RedmineManager redmine, RedmineSettingsModel settings, bool lastAuthorized)
+        public void UpdateCacheIfNeeded(RedmineManager redmine, RedmineSettingsModel settings)
         {
-            updateCacheTimer?.Stop();
-            updateCacheTimer?.Dispose();
+            this.redmine = redmine;
+            this.settings = settings;
 
             authorized.Value = true;
 
-            // キャッシュの更新は30分毎に行う
-            updateCacheTimer = new ReactiveTimer(TimeSpan.FromMinutes(30));
-
             // キャッシュが存在しない場合、またはRedmine設定が変更された場合、前回接続に失敗していた場合、
-            if (NeedsUpdate() || RedmineSetting == null || !RedmineSetting.Equals(settings) || !lastAuthorized)
+            if (NeedsUpdate() || RedmineSetting == null || !RedmineSetting.Equals(settings) || (DateTime.Now - UpdatedDate).TotalDays > 10)
             {
                 // 初回は同期的に更新する
                 Update(redmine, settings);
-
-                // 次回以降は非同期に更新する
-                updateCacheTimer.Skip(1).SubscribeWithErr(_ => Update(redmine, settings));
             }
-            else
-            {
-                // 非同期の更新を即座に開始する
-                updateCacheTimer.SubscribeWithErr(_ => Update(redmine, settings));
-            }
+        }
 
-            updateCacheTimer.Start();
+        private RedmineManager redmine { get; set; }
+        private RedmineSettingsModel settings { get; set; }
+        public void ForceUpdate()
+        {
+            UpdateCacheIfNeeded(redmine, settings);
         }
 
         public void SaveCache(RedmineManager redmine, RedmineSettingsModel settings)
         {
-            updateCacheTimer?.Stop();
-            updateCacheTimer?.Dispose();
-
             if (redmine == null)
                 return;
 
@@ -255,6 +246,8 @@ namespace RedmineTimePuncher.Models.Managers
                     ClearShortCache();
                     updated.Value = DateTime.Now;
                 }
+
+                UpdatedDate = DateTime.Now;
             }
             catch (Exception e)
             {
@@ -377,14 +370,11 @@ namespace RedmineTimePuncher.Models.Managers
             TmpMyCustomFields = new List<CustomField>();
             if (redmine.CanUseAdminApiKey())
             {
-                await Task.Run(async () =>
-                {
-                    var tMyProjects = TmpProjects.Where(p => TmpMyUser.Memberships.Any(m => p.Name == m.Project.Name))
-                        .Select(p => Task.Run(() => redmine.GetProject(p.Id.ToString()))).ToList();
-                    var myProjects = await Task.WhenAll(tMyProjects);
-                    var enableCfIds = myProjects.SelectMany(p => p.CustomFields.Select(a => a.Id)).Distinct().ToList();
-                    TmpMyCustomFields = TmpCustomFields.Where(c => c.IsIssueType() && enableCfIds.Contains(c.Id)).ToList();
-                });
+                var enableCfIds = TmpProjects.Where(p => TmpMyUser.Memberships.Any(m => p.Name == m.Project.Name))
+                    .Where(p => p.CustomFields != null)
+                    .SelectMany(p => p.CustomFields.Select(a => a.Id))
+                    .Distinct().ToList();
+                TmpMyCustomFields = TmpCustomFields.Where(c => c.IsIssueType() && enableCfIds.Contains(c.Id)).ToList();
             }
         }
     }

@@ -3,6 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:controls="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:local="clr-namespace:RedmineTableEditor.Views.FileSettings"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:props="clr-namespace:RedmineTableEditor.Properties"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
@@ -30,6 +31,30 @@
                 </Grid.RowDefinitions>
                 <GroupBox>
                     <GroupBox.Header>
+                        <CheckBox x:Name="useIssueIdCheckBox"
+                                  Content="{x:Static props:Resources.ParentIssueFilter}"
+                                  IsChecked="{Binding UseQuery.Value,
+                                                      Converter={StaticResource InvertedBooleanConverter}}" />
+                    </GroupBox.Header>
+                    <Grid IsEnabled="{Binding ElementName=useIssueIdCheckBox, Path=IsChecked}">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="AUTO" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock Grid.Row="0"
+                                   Margin="0,5,0,5"
+                                   Text="{x:Static props:Resources.ParentIssueFilterMsg}" />
+                        <local:FiltersView Grid.Row="1"
+                                           MaxHeight="300"
+                                           DataContext="{Binding Filters}"
+                                           Visibility="{Binding ElementName=useIssueIdCheckBox,
+                                                                Path=IsChecked,
+                                                                Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </Grid>
+                </GroupBox>
+                <GroupBox Grid.Row="1"
+                          Margin="0,5,0,0">
+                    <GroupBox.Header>
                         <CheckBox x:Name="useQueryCheckBox"
                                   Content="{x:Static props:Resources.ParentIssueCustomQuery}"
                                   IsChecked="{Binding UseQuery.Value}" />
@@ -49,60 +74,12 @@
                                              ItemsSource="{Binding Queries}"
                                              SelectedItem="{Binding SelectedQuery.Value,
                                                                     Mode=TwoWay}"
-                                             TextSearchMode="Contains" />
-                        <telerik:RadButton Grid.Row="1"
-                                           Margin="0,1,27,0"
-                                           HorizontalAlignment="Right"
-                                           VerticalAlignment="Center"
-                                           Background="{telerik1:Office2019Resource ResourceKey=AccentBackgroundBrush}"
-                                           ClickMode="Press"
-                                           Command="{Binding GoToQueryCommand}"
-                                           Foreground="{telerik1:Office2019Resource ResourceKey=CheckedForegroundBrush}"
-                                           Style="{StaticResource GotoTicketButtonStyle}" />
+                                             TextSearchMode="Contains"
+                                             Visibility="{Binding ElementName=useQueryCheckBox,
+                                                                  Path=IsChecked,
+                                                                  Converter={StaticResource BooleanToVisibilityConverter}}" />
                     </Grid>
                 </GroupBox>
-                <GroupBox Grid.Row="1"
-                          Margin="0,5,0,0">
-                    <GroupBox.Header>
-                        <CheckBox x:Name="useIssueIdCheckBox"
-                                  Content="{x:Static props:Resources.ParentIssueIssueId}"
-                                  IsChecked="{Binding UseQuery.Value,
-                                                      Converter={StaticResource InvertedBooleanConverter}}" />
-                    </GroupBox.Header>
-                    <Grid IsEnabled="{Binding ElementName=useIssueIdCheckBox, Path=IsChecked}">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                        </Grid.RowDefinitions>
-                        <TextBlock Grid.Row="0"
-                                   Margin="0,5,0,5"
-                                   Text="{x:Static props:Resources.ParentIssueIssueIdMsg}" />
-                        <TextBox Grid.Row="1"
-                                 Text="{Binding ParentIssueId.Value,
-                                                UpdateSourceTrigger=PropertyChanged}"
-                                 TextAlignment="Right" />
-                        <telerik:RadButton Grid.Row="1"
-                                           Margin="5,0,0,0"
-                                           HorizontalAlignment="Left"
-                                           VerticalAlignment="Center"
-                                           Background="{telerik1:Office2019Resource ResourceKey=AccentBackgroundBrush}"
-                                           ClickMode="Press"
-                                           Command="{Binding GoToTicketCommand}"
-                                           Foreground="{telerik1:Office2019Resource ResourceKey=CheckedForegroundBrush}"
-                                           Style="{StaticResource GotoTicketButtonStyle}" />
-                        <CheckBox Grid.Row="2"
-                                  Margin="0,5,0,0"
-                                  Content="{x:Static props:Resources.ParentIssueIssueShowParentIssueMsg}"
-                                  IsChecked="{Binding ShowParentIssue.Value}" />
-                        <CheckBox Grid.Row="3"
-                                  Margin="0,5,0,0"
-                                  Content="{x:Static props:Resources.ParentIssueIssueRecoursiveMsg}"
-                                  IsChecked="{Binding Recoursive.Value}" />
-                    </Grid>
-                </GroupBox>
-
             </Grid>
         </GroupBox>
         <GroupBox Grid.Row="1"
@@ -110,7 +87,7 @@
                   HorizontalAlignment="Left"
                   Background="Honeydew"
                   Header="{x:Static props:Resources.FileSettingsDisplayFIelds}">
-            <controls:TwinListBox Height="200"
+            <controls:TwinListBox MaxHeight="300"
                                   Margin="5"
                                   VerticalAlignment="top"
                                   DataContext="{Binding VisibleProps}" />

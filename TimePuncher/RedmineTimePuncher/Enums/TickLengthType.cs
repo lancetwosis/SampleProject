@@ -40,7 +40,7 @@ namespace RedmineTimePuncher.Enums
                 case TickLengthType.TickLength30:
                     return new FixedTickProvider(new DateTimeInterval(30, 0, 0, 0, 0));
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -61,7 +61,7 @@ namespace RedmineTimePuncher.Enums
                 case TickLengthType.TickLength30:
                     return 1200;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -105,7 +105,7 @@ namespace RedmineTimePuncher.Enums
                 case TickLengthType.TickLength30:
                     return sliderValue <= 60;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -126,7 +126,7 @@ namespace RedmineTimePuncher.Enums
                 case TickLengthType.TickLength30:
                     return sliderValue <= 50;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
     }

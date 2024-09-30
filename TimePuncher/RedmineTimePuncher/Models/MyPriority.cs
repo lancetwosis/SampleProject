@@ -1,4 +1,5 @@
-﻿using Redmine.Net.Api.Types;
+﻿using LibRedminePower.Models;
+using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models.Managers;
 using System;
 using System.Collections.Generic;

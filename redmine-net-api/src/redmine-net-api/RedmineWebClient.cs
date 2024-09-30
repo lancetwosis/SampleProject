@@ -15,6 +15,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Net;
 using Redmine.Net.Api.Extensions;
 using Redmine.Net.Api.Serialization;
@@ -27,7 +28,7 @@ namespace Redmine.Net.Api
     public class RedmineWebClient : WebClient
     {
         private string redirectUrl = string.Empty;
-       
+
         /// <summary>
         /// 
         /// </summary>
@@ -91,6 +92,13 @@ namespace Redmine.Net.Api
         /// </summary>
         public RedirectType Redirect { get; set; }
 
+        // カスタマイズ(S):project_id などを複数指定して Issue を取得するための対応
+        /// <summary>
+        /// project_id などを複数指定して Issue を取得するためのクエリ
+        /// </summary>
+        public List<string> AdditionalQueries { get; set; }
+        // カスタマイズ(E):project_id などを複数指定して Issue を取得するための対応
+
         /// <summary>
         /// 
         /// </summary>
@@ -105,6 +113,15 @@ namespace Redmine.Net.Api
         /// </returns>
         protected override WebRequest GetWebRequest(Uri address)
         {
+            // カスタマイズ(S):project_id などを複数指定して Issue を取得するための対応
+            if (AdditionalQueries?.Count > 0)
+            {
+                var queries = string.IsNullOrEmpty(address.Query) ? "?" : address.Query;
+                AdditionalQueries.ForEach(q => queries += q);
+                address = new Uri(address, queries);
+            }
+            // カスタマイズ(E):project_id などを複数指定して Issue を取得するための対応
+
             var wr = base.GetWebRequest(address);
 
             if (!(wr is HttpWebRequest httpWebRequest))
@@ -128,7 +145,7 @@ namespace Redmine.Net.Api
             {
                 httpWebRequest.Timeout = (int)Timeout.Value.TotalMilliseconds;
             }
-            
+
             return httpWebRequest;
         }
 

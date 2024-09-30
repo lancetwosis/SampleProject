@@ -110,9 +110,11 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 dialog.FilterIndex = 0;
                 if (dialog.ShowDialog().Value == true)
                 {
+                    var clone = model.Clone();
+                    clone.Redmine.SetNullValueForExport();
                     try
                     {
-                        model.Export(dialog.FileName);
+                        clone.Export(dialog.FileName);
                     }
                     catch (Exception ex)
                     {

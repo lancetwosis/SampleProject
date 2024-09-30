@@ -29,6 +29,10 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
 
         public PopupCustomFieldViewModelBase(CustomField cf) : base(cf)
         {
+        }
+
+        protected override void setup(CustomField cf, MyIssue ticket)
+        {
             EditCommand = new ReactiveCommand().WithSubscribe(() => NowEditing = true).AddTo(disposables);
             SaveCommand = new ReactiveCommand().WithSubscribe(() => NowEditing = false).AddTo(disposables);
             DeleteCommand = new ReactiveCommand().WithSubscribe(() => deleteValue()).AddTo(disposables);

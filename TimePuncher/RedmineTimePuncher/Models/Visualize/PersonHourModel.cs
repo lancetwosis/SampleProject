@@ -109,7 +109,7 @@ namespace RedmineTimePuncher.Models.Visualize
                     CustomFields.Add(dummy);
                     return dummy;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type.ValueType が {type.ValueType} はサポート対象外です。");
             }
         }
     }

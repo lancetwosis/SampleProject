@@ -99,7 +99,7 @@ namespace RedmineTimePuncher.Models.Settings
                                         case Enums.AssignToType.NotMe:
                                             return issue.AssignedTo.Id != myUserId;
                                         default:
-                                            throw new InvalidOperationException();
+                                            throw new NotSupportedException($"rule.AssignTo が {rule.AssignTo} はサポート対象外です。");
                                     }
                                 }
                             }

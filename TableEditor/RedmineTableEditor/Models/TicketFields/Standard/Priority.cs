@@ -17,7 +17,7 @@ namespace RedmineTableEditor.Models.TicketFields.Standard
                 issue,
                 () => issue?.Priority?.Id,
                 (v) => issue.Priority = new IdentifiableName() { Id = v.Value},
-                (v) => redmine.Priorities.SingleOrDefault(a => a.Id == v),
+                (v) => redmine.Cache.Priorities.SingleOrDefault(a => a.Id == v),
                 (v) => v?.Name)
         {
         }

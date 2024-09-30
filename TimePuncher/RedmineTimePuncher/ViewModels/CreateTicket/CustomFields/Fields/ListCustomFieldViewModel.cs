@@ -24,6 +24,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Fields
         public List<string> Values { get; set; }
         public ObservableCollection<string> SelectedValues { get; set; }
 
+        private static string EMPTY_VALUE { get; } = "";
+
         public ListCustomFieldViewModel(CustomField cf) : base(cf)
         {
         }
@@ -44,7 +46,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Fields
                 var values = cf.PossibleValues.Select(v => v.Value).ToList();
                 if (!CustomField.IsRequired)
                 {
-                    values.Insert(0, "");
+                    values.Insert(0, EMPTY_VALUE);
                 }
                 Values = values;
             }
@@ -53,7 +55,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Fields
         public override void SetValue(string value)
         {
             if (string.IsNullOrEmpty(value))
-                return;
+                value = EMPTY_VALUE;
 
             if (CustomField.Multiple)
             {
@@ -67,9 +69,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Fields
             }
             else
             {
-                var pv = Values.FirstOrDefault(p => p == value);
-                if (pv != null)
-                    Value = pv;
+                Value = Values.FirstOrDefault(p => p == value);
             }
         }
     }

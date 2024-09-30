@@ -336,4 +336,22 @@ Please check the network status and Redmine connection settings.</value>
   <data name="enumIssuePropertyTypeUpdated" xml:space="preserve">
     <value>Updated</value>
   </data>
+  <data name="enumIssuePropertyTypeCreated" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="enumIssuePropertyTypeProject" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="enumIssuePropertyTypeUpdater" xml:space="preserve">
+    <value>Updater</value>
+  </data>
+  <data name="enumIssuePropertyTypeLastUpdater" xml:space="preserve">
+    <value>Last Updater</value>
+  </data>
+  <data name="enumIssuePropertyTypeDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="enumIssuePropertyTypeComment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
 </root>

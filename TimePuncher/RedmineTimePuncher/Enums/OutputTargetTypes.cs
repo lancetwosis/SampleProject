@@ -42,12 +42,12 @@ namespace RedmineTimePuncher.Enums
                     resName = "export_tool";
                     break;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
             resName += !string.IsNullOrEmpty(warningMsg) ? "_w" : "";
 
             object obj = Resources.ResourceManager.GetObject(resName);
-            if (obj == null) throw new InvalidOperationException();
+            if (obj == null) throw new NotSupportedException();
 
             return obj as System.Drawing.Bitmap;
         }

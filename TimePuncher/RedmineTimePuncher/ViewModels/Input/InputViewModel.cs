@@ -40,6 +40,7 @@ using RedmineTimePuncher.ViewModels.Input.Bases;
 using RedmineTimePuncher.ViewModels.Bases;
 using Newtonsoft.Json;
 using System.Reactive.Disposables;
+using LibRedminePower.Models;
 
 namespace RedmineTimePuncher.ViewModels.Input
 {

@@ -563,6 +563,21 @@ namespace Redmine.Net.Api
             return WebApiHelper.ExecuteDownloadList<T>(this, url, parameters);
         }
 
+        // カスタマイズ(S):project_id などを複数指定して Issue を取得するための対応
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="parameters"></param>
+        /// <param name="additionalQueries"></param>
+        /// <returns></returns>
+        public PagedResults<T> GetPaginatedObjects<T>(NameValueCollection parameters, List<string> additionalQueries) where T : class, new()
+        {
+            var url = UrlHelper.GetListUrl<T>(this, parameters);
+            return WebApiHelper.ExecuteDownloadList<T>(this, url, additionalQueries, parameters);
+        }
+        // カスタマイズ(E):project_id などを複数指定して Issue を取得するための対応
+
         /// <summary>
         /// 
         /// </summary>
@@ -636,15 +651,17 @@ namespace Redmine.Net.Api
             return GetObjects<T>(parameters);
         }
 
+        // カスタマイズ(S):project_id などを複数指定して Issue を取得するための対応
         /// <summary>
         ///     Returns the complete list of objects.
         /// </summary>
         /// <typeparam name="T">The type of objects to retrieve.</typeparam>
         /// <param name="parameters">Optional filters and/or optional fetched data.</param>
+        /// <param name="additionalQueries"></param>
         /// <returns>
         ///     Returns a complete list of objects.
         /// </returns>
-        public List<T> GetObjects<T>(NameValueCollection parameters) where T : class, new()
+        public List<T> GetObjects<T>(NameValueCollection parameters, List<string> additionalQueries = null) where T : class, new()
         {
             int pageSize = 0, offset = 0;
             var isLimitSet = false;
@@ -675,7 +692,7 @@ namespace Redmine.Net.Api
                     {
                         parameters.Set(RedmineKeys.OFFSET, offset.ToString(CultureInfo.InvariantCulture));
 
-                        var tempResult = GetPaginatedObjects<T>(parameters);
+                        var tempResult = GetPaginatedObjects<T>(parameters, additionalQueries);
 
                         totalCount = isLimitSet ? pageSize : tempResult.TotalItems;
 
@@ -697,7 +714,7 @@ namespace Redmine.Net.Api
                 }
                 else
                 {
-                    var result = GetPaginatedObjects<T>(parameters);
+                    var result = GetPaginatedObjects<T>(parameters, additionalQueries);
                     if (result?.Items != null)
                     {
                         return new List<T>(result.Items);

@@ -81,6 +81,33 @@ namespace LibRedminePower.Helpers
                     ddButton.DropDownContent = ddContent;
                 }
             }
+            else if (d is RadRibbonSplitButton sButton)
+            {
+                sButton.SetBinding(RadRibbonSplitButton.CommandProperty, new Binding(nameof(data.ICommand)) { Source = data });
+                sButton.SetBinding(RadRibbonSplitButton.ToolTipProperty, new Binding(nameof(data.TooltipMessage) + ".Value") { Source = data });
+                sButton.SetBinding(ToolTipService.IsEnabledProperty, new Binding(nameof(data.IsVisibleTooltip) + ".Value") { Source = data });
+                sButton.SetValue(ToolTipService.ShowOnDisabledProperty, true);
+                sButton.SetBinding(RadRibbonSplitButton.LargeImageProperty, new Binding(nameof(data.LargeImage)) { Source = data });
+
+                if (data.Text != null)
+                {
+                    sButton.SetBinding(RadRibbonSplitButton.TextProperty, new Binding(nameof(sButton.CurrentSize))
+                    {
+                        Converter = TEXT_CONV,
+                        ConverterParameter = data.Text,
+                        Source = sButton,
+                    });
+                }
+
+                // 画面のレイアウトのためダミーを表示する場合があるためチェックを行う
+                if (data.ChildCommands != null)
+                {
+                    var ddContent = new RadContextMenu();
+                    var menus = data.GetChildRadMenus();
+                    ddContent.SetBinding(RadContextMenu.ItemsSourceProperty, new Binding("Value") { Source = menus });
+                    sButton.DropDownContent = ddContent;
+                }
+            }
             else if (d is MenuItem menuItem)
             {
                 menuItem.SetBinding(MenuItem.CommandProperty, new Binding(nameof(data.ICommand)) { Source = data });
@@ -114,7 +141,7 @@ namespace LibRedminePower.Helpers
             }
             else
             {
-                throw new InvalidOperationException($"{d.GetType()} is not supported by ButtonSetupHelper");
+                throw new NotSupportedException($"{d.GetType()} is not supported by ButtonSetupHelper");
             }
         }
     }

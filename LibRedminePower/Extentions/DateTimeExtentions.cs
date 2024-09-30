@@ -92,5 +92,16 @@ namespace LibRedminePower.Extentions
         {
             return formatInfo != null ? date.ToString("yyyy/MM/dd (ddd)", formatInfo) : date.ToString("yyyy/MM/dd (ddd)");
         }
+
+        /// <summary>
+        /// 通常の Parse メソッドでは例外時のメッセージがわかりにくいためこちらを使用する
+        /// </summary>
+        public static DateTime Parse(string s)
+        {
+            if (DateTime.TryParse(s, out var dateTime))
+                return dateTime;
+            else
+                throw new FormatException($"Failed to parse '{s}' to DateTime.");
+        }
     }
 }

@@ -333,10 +333,149 @@
 
 表示されているチケットの内容を更新するには「内容更新」を実行してください。</value>
   </data>
+  <data name="enumIssueStatusCompareTypeOpen" xml:space="preserve">
+    <value>未完了</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeClosed" xml:space="preserve">
+    <value>完了</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeNone" xml:space="preserve">
+    <value>なし</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeContains" xml:space="preserve">
+    <value>含む</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDoesnotContain" xml:space="preserve">
+    <value>含まない</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeStartsWith" xml:space="preserve">
+    <value>前方一致</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeEndsWith" xml:space="preserve">
+    <value>後方一致</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateRange" xml:space="preserve">
+    <value>次の範囲内</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateLastNDays" xml:space="preserve">
+    <value>過去N日</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateToday" xml:space="preserve">
+    <value>今日</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateYesterday" xml:space="preserve">
+    <value>昨日</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateThisWeek" xml:space="preserve">
+    <value>今週</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateLastWeek" xml:space="preserve">
+    <value>先週</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateLast2Weeks" xml:space="preserve">
+    <value>直近2週間</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateThisMonth" xml:space="preserve">
+    <value>今月</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateLastMonth" xml:space="preserve">
+    <value>先月</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateThisYear" xml:space="preserve">
+    <value>今年</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateNextNDays" xml:space="preserve">
+    <value>今後N日</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateNextWeek" xml:space="preserve">
+    <value>来週</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateTomorrow" xml:space="preserve">
+    <value>明日</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateNextMonth" xml:space="preserve">
+    <value>来月</value>
+  </data>
   <data name="UserNoAssignee" xml:space="preserve">
     <value>(担当者なし)</value>
   </data>
   <data name="UserInvalid" xml:space="preserve">
     <value>(無効なユーザ)</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeAny" xml:space="preserve">
+    <value>すべて</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateAfter" xml:space="preserve">
+    <value>以降</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateBefore" xml:space="preserve">
+    <value>以前</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeNumGreaterEquals" xml:space="preserve">
+    <value>以上</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeNumLessEquals" xml:space="preserve">
+    <value>以下</value>
+  </data>
+  <data name="RibbonCmdShowRedmine" xml:space="preserve">
+    <value>Redmineで
+表示</value>
+  </data>
+  <data name="FilterUserMe" xml:space="preserve">
+    <value>&lt;&lt; 自分 &gt;&gt;</value>
+  </data>
+  <data name="FilterProjectMine" xml:space="preserve">
+    <value>&lt;&lt; マイプロジェクト &gt;&gt;</value>
+  </data>
+  <data name="FilterErrMsgInputDate" xml:space="preserve">
+    <value>日数を入力してください。</value>
+  </data>
+  <data name="FilterErrMsgInvalidRange" xml:space="preserve">
+    <value>範囲を正しく入力してください。</value>
+  </data>
+  <data name="FilterErrMsgSelectValue" xml:space="preserve">
+    <value>{0}の値を入力してください。</value>
+  </data>
+  <data name="FilterErrMsgInputIssueNo" xml:space="preserve">
+    <value>{0}のチケット番号を入力してください。</value>
+  </data>
+  <data name="FilterErrMsgInputNumber" xml:space="preserve">
+    <value>数値を入力してください。</value>
+  </data>
+  <data name="FilterErrMsgInputInteger" xml:space="preserve">
+    <value>整数を入力してください。</value>
+  </data>
+  <data name="FilterBoolYes" xml:space="preserve">
+    <value>はい</value>
+  </data>
+  <data name="FilterBoolNo" xml:space="preserve">
+    <value>いいえ</value>
+  </data>
+  <data name="FilterErrMsgSingleProjectForCategory" xml:space="preserve">
+    <value>カテゴリを設定するには単一のプロジェクトを選択してください。</value>
+  </data>
+  <data name="FilterErrMsgNoCategories" xml:space="preserve">
+    <value>プロジェクト「{0}」にはカテゴリが設定されていません。</value>
+  </data>
+  <data name="FilterMultiSelection" xml:space="preserve">
+    <value>複数選択</value>
+  </data>
+  <data name="FilterPostfixDays" xml:space="preserve">
+    <value> 日</value>
+  </data>
+  <data name="ParentIssueFilter" xml:space="preserve">
+    <value>フィルター</value>
+  </data>
+  <data name="ParentIssueFilterMsg" xml:space="preserve">
+    <value>親チケットを指定するためのフィルターを設定してください。</value>
+  </data>
+  <data name="FilterErrMsgSelectAnyFilter" xml:space="preserve">
+    <value>フィルターを選択してください。</value>
+  </data>
+  <data name="RibbonCmdApplyAll" xml:space="preserve">
+    <value>すべての情報を更新</value>
+  </data>
+  <data name="RibbonCmdSetFrozenColumn" xml:space="preserve">
+    <value>列を固定する</value>
   </data>
 </root>

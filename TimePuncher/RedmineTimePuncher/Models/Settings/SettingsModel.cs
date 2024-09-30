@@ -76,7 +76,13 @@ namespace RedmineTimePuncher.Models.Settings
             if (!string.IsNullOrEmpty(Properties.Settings.Default.Setting))
             {
                 result = CloneExtentions.ToObject<SettingsModel>(Properties.Settings.Default.Setting);
-                result.Redmine.LoadProperties();
+
+                // 以前は、いくつかの接続情報をSettings.Default配下で管理しており、それを設定クラスに読み込む処理が必要だったが、RedmineSettingクラスで関係するように移行した。
+                if (!Properties.Settings.Default.IsMigratedForRedmineSettingsModel)
+                {
+                    result.Redmine.LoadProperties();
+                    Properties.Settings.Default.IsMigratedForRedmineSettingsModel = true;
+                }
             }
             else
             {
@@ -104,7 +110,6 @@ namespace RedmineTimePuncher.Models.Settings
         public void Save()
         {
             Properties.Settings.Default.Setting = this.ToJson();
-            Redmine.SaveProperties();
             Properties.Settings.Default.Save();
         }
 

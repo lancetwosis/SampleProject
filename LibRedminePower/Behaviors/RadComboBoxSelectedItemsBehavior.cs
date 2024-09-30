@@ -1,4 +1,5 @@
-﻿using Reactive.Bindings.Notifiers;
+﻿using LibRedminePower.Models.Bases;
+using Reactive.Bindings.Notifiers;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -6,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Data;
 using Telerik.Windows.Controls;
 
 namespace LibRedminePower.Behaviors
@@ -24,6 +26,17 @@ namespace LibRedminePower.Behaviors
             typeof(RadComboBoxSelectedItemsBehavior),
             new PropertyMetadata(onSelectedItemsPropertyChanged));
 
+        public UpdateSourceTrigger UpdateSourceTrigger
+        {
+            get { return (UpdateSourceTrigger)GetValue(UpdateSourceTriggerProperty); }
+            set { SetValue(UpdateSourceTriggerProperty, value); }
+        }
+        public static readonly DependencyProperty UpdateSourceTriggerProperty = DependencyProperty.Register(
+            "UpdateSourceTrigger",
+            typeof(UpdateSourceTrigger),
+            typeof(RadComboBoxSelectedItemsBehavior),
+            new PropertyMetadata(UpdateSourceTrigger.PropertyChanged));
+
         private static void onSelectedItemsPropertyChanged(DependencyObject target, DependencyPropertyChangedEventArgs e)
         {
             var behavior = target as RadComboBoxSelectedItemsBehavior;
@@ -40,7 +53,10 @@ namespace LibRedminePower.Behaviors
 
             if (AssociatedObject != null)
             {
-                AssociatedObject.SelectionChanged += AssociatedObject_SelectionChanged;
+                if (UpdateSourceTrigger == UpdateSourceTrigger.LostFocus)
+                    AssociatedObject.DropDownClosed += AssociatedObject_DropDownClosed;
+                else
+                    AssociatedObject.SelectionChanged += AssociatedObject_SelectionChanged;
             }
 
             if (SelectedItems != null)
@@ -60,9 +76,17 @@ namespace LibRedminePower.Behaviors
             base.OnCleanup();
 
             if (AssociatedObject != null)
-                AssociatedObject.SelectionChanged -= AssociatedObject_SelectionChanged;
+                if (UpdateSourceTrigger == UpdateSourceTrigger.LostFocus)
+                    AssociatedObject.DropDownClosed -= AssociatedObject_DropDownClosed;
+                else
+                    AssociatedObject.SelectionChanged -= AssociatedObject_SelectionChanged;
+
             if (SelectedItems != null)
                 SelectedItems.CollectionChanged -= SelectedItems_CollectionChanged;
+        }
+        private void AssociatedObject_DropDownClosed(object sender, EventArgs e)
+        {
+            transfer(AssociatedObject.SelectedItems, SelectedItems as IList);
         }
 
         private void AssociatedObject_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)

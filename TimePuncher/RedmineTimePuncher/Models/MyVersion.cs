@@ -1,4 +1,5 @@
-﻿using Redmine.Net.Api.Types;
+﻿using LibRedminePower.Models;
+using Redmine.Net.Api.Types;
 using System;
 using System.Collections.Generic;
 using System.Linq;

@@ -14,7 +14,7 @@ namespace RedmineTimePuncher.Selectors
         public override Style SelectStyle(object item, DependencyObject container)
         {
             if (item is MyTimeIndicator) return App.Current.Resources["MyTimeIndicatorStyle"] as Style; 
-            throw new InvalidOperationException();
+            throw new NotSupportedException();
         }
     }
 }

@@ -286,6 +286,33 @@ namespace LibRedminePower.Properties {
         }
         
         /// <summary>
+        ///   Comment に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeComment {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Created に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeCreated {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Description に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeDescription {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Done Ratio に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumIssuePropertyTypeDoneRatio {
@@ -331,11 +358,29 @@ namespace LibRedminePower.Properties {
         }
         
         /// <summary>
+        ///   Last Updater に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeLastUpdater {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeLastUpdater", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Priority に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumIssuePropertyTypePriority {
             get {
                 return ResourceManager.GetString("enumIssuePropertyTypePriority", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Project に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeProject {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeProject", resourceCulture);
             }
         }
         
@@ -408,6 +453,15 @@ namespace LibRedminePower.Properties {
         public static string enumIssuePropertyTypeUpdated {
             get {
                 return ResourceManager.GetString("enumIssuePropertyTypeUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Updater に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssuePropertyTypeUpdater {
+            get {
+                return ResourceManager.GetString("enumIssuePropertyTypeUpdater", resourceCulture);
             }
         }
         

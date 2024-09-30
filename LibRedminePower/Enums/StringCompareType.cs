@@ -38,7 +38,7 @@ namespace LibRedminePower.Enums
                 case StringCompareType.Equals:
                     return target1 == target2;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"compare が {compare} は、サポート対象外です。");
             }
 
         }

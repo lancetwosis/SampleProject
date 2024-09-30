@@ -336,4 +336,22 @@
   <data name="enumIssuePropertyTypeUpdated" xml:space="preserve">
     <value>更新日</value>
   </data>
+  <data name="enumIssuePropertyTypeCreated" xml:space="preserve">
+    <value>作成日</value>
+  </data>
+  <data name="enumIssuePropertyTypeProject" xml:space="preserve">
+    <value>プロジェクト</value>
+  </data>
+  <data name="enumIssuePropertyTypeUpdater" xml:space="preserve">
+    <value>更新者</value>
+  </data>
+  <data name="enumIssuePropertyTypeLastUpdater" xml:space="preserve">
+    <value>最終更新者</value>
+  </data>
+  <data name="enumIssuePropertyTypeDescription" xml:space="preserve">
+    <value>説明</value>
+  </data>
+  <data name="enumIssuePropertyTypeComment" xml:space="preserve">
+    <value>コメント</value>
+  </data>
 </root>

@@ -5,9 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RedmineTimePuncher.Models
+namespace LibRedminePower.Models
 {
-    public class IdName : LibRedminePower.Models.Bases.ModelBaseSlim
+    public class IdName : Bases.ModelBaseSlim
     {
         public static int INVALID_ID = -1;
 

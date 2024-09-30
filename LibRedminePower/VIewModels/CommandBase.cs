@@ -192,12 +192,22 @@ namespace LibRedminePower.ViewModels
         private string text;
         private ReadOnlyReactivePropertySlim<string> canExecute;
         private Action action;
+        private Func<Task> func;
 
-        public ChildCommand(string text, IObservable<string> canExecute, Action action)
+        private ChildCommand(string text, IObservable<string> canExecute)
         {
             this.text = text;
             this.canExecute = canExecute.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+        }
+
+        public ChildCommand(string text, IObservable<string> canExecute, Action action) : this(text, canExecute)
+        {
             this.action = action;
+        }
+
+        public ChildCommand(string text, IObservable<string> canExecute, Func<Task> func) : this(text, canExecute)
+        {
+            this.func = func;
         }
 
         public MenuItem ToMenuItem()
@@ -214,6 +224,15 @@ namespace LibRedminePower.ViewModels
             var menu = new RadMenuItem();
             menu.Header = text;
             menu.Command = canExecute.Select(s => string.IsNullOrEmpty(s)).ToReactiveCommand().WithSubscribe(() => action.Invoke()).AddTo(disposables);
+
+            return menu;
+        }
+
+        public RadMenuItem ToAsyncRadMenuItem()
+        {
+            var menu = new RadMenuItem();
+            menu.Header = text;
+            menu.Command = canExecute.Select(s => string.IsNullOrEmpty(s)).ToAsyncReactiveCommand().WithSubscribe(async () => await func.Invoke()).AddTo(disposables);
 
             return menu;
         }

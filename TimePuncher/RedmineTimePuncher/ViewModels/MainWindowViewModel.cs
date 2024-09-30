@@ -59,7 +59,7 @@ namespace RedmineTimePuncher.ViewModels
         public ReactiveCommand RibbonMinimizeCommand { get; set; }
         public ReactiveCommand ShowVersionDialogCommand { get; set; }
         public ReactiveCommand ShowOnlienHelpCommand { get; set; }
-        public ReactiveCommand ShowSettingDialogCommand { get; set; }
+        public AsyncReactiveCommand ShowSettingDialogCommand { get; set; }
 
         public ReactiveCommand<RoutedEventArgs> WindowLoadedEventCommand { get; }
         public ReactiveCommand<CancelEventArgs> WindowClosingEventCommand { get; set; }
@@ -167,101 +167,96 @@ namespace RedmineTimePuncher.ViewModels
             ShowOnlienHelpCommand = new ReactiveCommand().WithSubscribe(() => Process.Start(ApplicationInfo.AppBaseUrl)).AddTo(disposables);
 
             // 設定ダイアログを開く
-            ShowSettingDialogCommand = IsBusy.Inverse().ToReactiveCommand().WithSubscribe(async () =>
+            ShowSettingDialogCommand = IsBusy.Inverse().ToAsyncReactiveCommand().WithSubscribe(async () =>
             {
                 TraceHelper.TrackAtomicFeature($"{nameof(ShowSettingDialogCommand)}.Executed@{Mode.Value}");
 
-                // 自動更新を止めておく
-                Input.Timers.Where(a => a != null).Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Stop());
-                if (Input.Redmine.QueryTimer != null && Input.Redmine.QueryTimer.Value != null)
-                    Input.Redmine.QueryTimer.Value.Stop();
-
-                var clone = Settings.Clone();
-                clone.Redmine.UserName = Settings.Redmine.UserName;
-                clone.Redmine.Password = Settings.Redmine.Password;
-                clone.Redmine.AdminApiKey = Settings.Redmine.AdminApiKey;
-                clone.Redmine.ApiKey = Settings.Redmine.ApiKey;
-                clone.Redmine.UserNameOfBasicAuth = Settings.Redmine.UserNameOfBasicAuth;
-                clone.Redmine.PasswordOfBasicAuth = Settings.Redmine.PasswordOfBasicAuth;
-                using (var vm = new SettingsViewModel(this, clone))
+                using (IsBusy.ProcessStart(""))
                 {
-                    await vm.SetupAsync();
+                    // 自動更新を止めておく
+                    Input.Timers.Where(a => a != null).Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Stop());
+                    if (Input.Redmine.QueryTimer != null && Input.Redmine.QueryTimer.Value != null)
+                        Input.Redmine.QueryTimer.Value.Stop();
 
-                    var dialog = new Views.Settings.SettingsDialog();
-                    dialog.DataContext = vm;
-                    dialog.Owner = App.Current.MainWindow;
-                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                    dialog.ShowDialog();
-                    if (dialog.DialogResult == true)
+                    var clone = Settings.Clone();
+                    using (var vm = new SettingsViewModel(this, clone))
                     {
-                        // [IgnoreDataMember] のプロパティがあるため Equals で同値判定を行う
-                        if (!Settings.Redmine.Equals(clone.Redmine))
-                        {
-                            Properties.Settings.Default.LastAuthorized = true;
-                            Settings.Redmine = clone.Redmine;
-                        }
-                        else
-                        {
-                            if (!Properties.Settings.Default.LastAuthorized)
-                                // 前回、接続に失敗していた場合、更新がなくても新規での接続を試みる
-                                await tryConnectAsync(Settings.Redmine);
-                            else
-                                using (IsBusy.ProcessStart(Resources.ProgressMsgConnectingRedmine))
-                                {
-                                    await Task.Run(() => CacheManager.Default.Update(Redmine.Value, Settings.Redmine));
-                                }
-                        }
+                        await vm.SetupAsync();
 
-                        if (Settings.Schedule.ToJson() != clone.Schedule.ToJson())
+                        var dialog = new Views.Settings.SettingsDialog();
+                        dialog.DataContext = vm;
+                        dialog.Owner = App.Current.MainWindow;
+                        dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                        dialog.ShowDialog();
+                        if (dialog.DialogResult == true)
                         {
-                            Settings.Schedule = clone.Schedule;
-                            Input.MinTimeRulerExtent.Value = Settings.Schedule.TickLength.GetDefaultMinTimeRulerExtent();
-                            Input.ScalingSliderValue.Value = 100;
-                        }
-                        if (Settings.Calendar.ToJson() != clone.Calendar.ToJson())
-                            Settings.Calendar = clone.Calendar;
-                        if (Settings.Category.ToJson() != clone.Category.ToJson())
-                            Settings.Category = clone.Category;
-                        if (Settings.Appointment.ToJson() != clone.Appointment.ToJson())
-                        {
-                            Settings.Appointment = clone.Appointment;
-                        }
-                        else
-                        {
-                            // 設定が更新されていなかったら、自動更新を再開させる。
-                            Input.Timers.Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Reset());
-                            Input.Timers.Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Start());
-                        }
-                        if (Settings.Query.ToJson() != clone.Query.ToJson())
-                        {
-                            Settings.Query = clone.Query;
-                        }
-                        else
-                        {
-                            // 設定が更新されていなかったら、自動更新を再開させる。
-                            if (Input.Redmine.QueryTimer != null && Input.Redmine.QueryTimer.Value != null)
+                            if (!Settings.Redmine.Equals(clone.Redmine))
                             {
-                                Input.Redmine.QueryTimer.Value.Reset();
-                                Input.Redmine.QueryTimer.Value.Start();
+                                Properties.Settings.Default.LastAuthorized = true;
+                                Settings.Redmine = clone.Redmine;
                             }
+                            else
+                            {
+                                if (!Properties.Settings.Default.LastAuthorized)
+                                    // 前回、接続に失敗していた場合、更新がなくても新規での接続を試みる
+                                    await tryConnectAsync(Settings.Redmine);
+                                else
+                                    using (IsBusy.ProcessStart(Resources.ProgressMsgConnectingRedmine))
+                                    {
+                                        await Task.Run(() => CacheManager.Default.Update(Redmine.Value, Settings.Redmine));
+                                    }
+                            }
+                            if (Settings.Schedule.ToJson() != clone.Schedule.ToJson())
+                            {
+                                Settings.Schedule = clone.Schedule;
+                                Input.MinTimeRulerExtent.Value = Settings.Schedule.TickLength.GetDefaultMinTimeRulerExtent();
+                                Input.ScalingSliderValue.Value = 100;
+                            }
+                            if (Settings.Calendar.ToJson() != clone.Calendar.ToJson())
+                                Settings.Calendar = clone.Calendar;
+                            if (Settings.Category.ToJson() != clone.Category.ToJson())
+                                Settings.Category = clone.Category;
+                            if (Settings.Appointment.ToJson() != clone.Appointment.ToJson())
+                            {
+                                Settings.Appointment = clone.Appointment;
+                            }
+                            else
+                            {
+                                // 設定が更新されていなかったら、自動更新を再開させる。
+                                Input.Timers.Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Reset());
+                                Input.Timers.Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Start());
+                            }
+                            if (Settings.Query.ToJson() != clone.Query.ToJson())
+                            {
+                                Settings.Query = clone.Query;
+                            }
+                            else
+                            {
+                                // 設定が更新されていなかったら、自動更新を再開させる。
+                                if (Input.Redmine.QueryTimer != null && Input.Redmine.QueryTimer.Value != null)
+                                {
+                                    Input.Redmine.QueryTimer.Value.Reset();
+                                    Input.Redmine.QueryTimer.Value.Start();
+                                }
+                            }
+                            if (Settings.User.ToJson() != clone.User.ToJson())
+                                Settings.User = clone.User;
+                            if (Settings.OutputData.ToJson() != clone.OutputData.ToJson())
+                                Settings.OutputData = clone.OutputData;
+                            if (Settings.CreateTicket.ToJson() != clone.CreateTicket.ToJson())
+                                Settings.CreateTicket = clone.CreateTicket;
+                            if (Settings.ReviewIssueList.ToJson() != clone.ReviewIssueList.ToJson())
+                                Settings.ReviewIssueList = clone.ReviewIssueList;
+                            if (Settings.ReviewCopyCustomFields.ToJson() != clone.ReviewCopyCustomFields.ToJson())
+                                Settings.ReviewCopyCustomFields = clone.ReviewCopyCustomFields;
+                            if (Settings.TranscribeSettings.ToJson() != clone.TranscribeSettings.ToJson())
+                                Settings.TranscribeSettings = clone.TranscribeSettings;
+                            if (Settings.RequestWork.ToJson() != clone.RequestWork.ToJson())
+                                Settings.RequestWork = clone.RequestWork;
+                            if (Settings.PersonHourReport.ToJson() != clone.PersonHourReport.ToJson())
+                                Settings.PersonHourReport = clone.PersonHourReport;
+                            Settings.Save();
                         }
-                        if (Settings.User.ToJson() != clone.User.ToJson())
-                            Settings.User = clone.User;
-                        if (Settings.OutputData.ToJson() != clone.OutputData.ToJson())
-                            Settings.OutputData = clone.OutputData;
-                        if (Settings.CreateTicket.ToJson() != clone.CreateTicket.ToJson())
-                            Settings.CreateTicket = clone.CreateTicket;
-                        if (Settings.ReviewIssueList.ToJson() != clone.ReviewIssueList.ToJson())
-                            Settings.ReviewIssueList = clone.ReviewIssueList;
-                        if (Settings.ReviewCopyCustomFields.ToJson() != clone.ReviewCopyCustomFields.ToJson())
-                            Settings.ReviewCopyCustomFields = clone.ReviewCopyCustomFields;
-                        if (Settings.TranscribeSettings.ToJson() != clone.TranscribeSettings.ToJson())
-                            Settings.TranscribeSettings = clone.TranscribeSettings;
-                        if (Settings.RequestWork.ToJson() != clone.RequestWork.ToJson())
-                            Settings.RequestWork = clone.RequestWork;
-                        if (Settings.PersonHourReport.ToJson() != clone.PersonHourReport.ToJson())
-                            Settings.PersonHourReport = clone.PersonHourReport;
-                        Settings.Save();
                     }
                 }
             }).AddTo(disposables);
@@ -334,8 +329,7 @@ namespace RedmineTimePuncher.ViewModels
                         var manager = new RedmineManager(settings);
                         ErrorMessage.Value = null;
 
-                        await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(
-                            manager, settings, Properties.Settings.Default.LastAuthorized));
+                        await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(manager, settings));
 
                         Properties.Settings.Default.LastAuthorized = true;
                         Redmine.Value = manager;

@@ -1,5 +1,6 @@
 ﻿using LibRedminePower.Extentions;
 using LibRedminePower.Logging;
+using LibRedminePower.Models;
 using LibRedminePower.ViewModels;
 using NetOffice.OutlookApi.Enums;
 using Reactive.Bindings;

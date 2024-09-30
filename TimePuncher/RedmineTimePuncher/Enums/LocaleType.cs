@@ -21,9 +21,9 @@ namespace RedmineTimePuncher.Enums
 
     public static class LocaleTypeEx
     {
-        public static CultureInfo ToCultureInfo(this LocaleType type)
+        public static CultureInfo ToCultureInfo(this LocaleType localeType)
         {
-            switch (type)
+            switch (localeType)
             {
                 case LocaleType.JP:
                     return new CultureInfo("ja-JP");
@@ -31,7 +31,7 @@ namespace RedmineTimePuncher.Enums
                     return new CultureInfo("en-US");
                 case LocaleType.Unselected:
                 default:
-                    throw new InvalidOperationException("LocaleType is not selected.");
+                    throw new NotSupportedException($"localeType が {localeType} は、サポート対象外です。");
             }
         }
 

@@ -15,6 +15,7 @@
 */
 
 using System;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Net;
@@ -124,6 +125,19 @@ namespace Redmine.Net.Api.Internals
                 return redmineManager.Serializer.DeserializeToPagedResults<T>(response);
             }
         }
+
+        // カスタマイズ(S):project_id などを複数指定して Issue を取得するための対応
+        public static PagedResults<T> ExecuteDownloadList<T>(RedmineManager redmineManager, string address,
+            List<string> additionalQueries, NameValueCollection parameters = null) where T : class, new()
+        {
+            using (var wc = redmineManager.CreateWebClient(parameters))
+            {
+                wc.AdditionalQueries = additionalQueries;
+                var response = wc.DownloadString(address);
+                return redmineManager.Serializer.DeserializeToPagedResults<T>(response);
+            }
+        }
+        // カスタマイズ(E):project_id などを複数指定して Issue を取得するための対応
 
         /// <summary>
         /// Executes the download file.

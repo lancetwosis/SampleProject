@@ -852,5 +852,23 @@ namespace Redmine.Net.Api
         public const string CF_ATTACHMENT = "attachment";
         // カスタマイズ(E):カスタムフィールドの FieldFormat の文字列を追加
 
+        // カスタマイズ(S):チケット一覧のフィルターのキーがなかったため追加
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string CHILD_ID = "child_id";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string AUTHOR_ID = "author_id";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string UPDATED_BY = "updated_by";
+        /// <summary>
+        /// 
+        /// </summary>
+        public const string LAST_UPDATED_BY = "last_updated_by";
+        // カスタマイズ(E):チケット一覧のフィルターのキーがなかったため追加
     }
 }

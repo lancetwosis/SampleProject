@@ -17,7 +17,7 @@ namespace RedmineTableEditor.Models.TicketFields.Standard
             issue,
             () => issue?.Status?.Id,
             (v) => issue.Status = new IdentifiableName() { Id = v.Value },
-            (v) => redmine.Statuses.SingleOrDefault(a => a.Id == v),
+            (v) => redmine.Cache.Statuss.SingleOrDefault(a => a.Id == v),
             (v) => v?.Name)
         {
         }

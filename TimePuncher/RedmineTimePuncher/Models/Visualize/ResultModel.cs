@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Models;
 using Reactive.Bindings.Extensions;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;

@@ -36,7 +36,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             IsEnabled = model.ToReactivePropertySlimAsSynchronized(a => a.IsEnabled).AddTo(disposables);
 
             Items = new ObservableCollection<StatusColorViewModel>(
-                redmine.Statuses.Select(s =>
+                redmine.Cache.Statuss.Select(s =>
                 {
                     var colorModel = model.Items.SingleOrDefault(a => a.Id == s.Id);
                     if (colorModel == null)

@@ -28,6 +28,14 @@ namespace LibRedminePower.Views
         public static readonly DependencyProperty ToItemTemplateProperty =
             DependencyProperty.Register("ToItemTemplate", typeof(DataTemplate), typeof(TwinListBox), new PropertyMetadata());
 
+        public string DisplayMemberPath
+        {
+            get { return (string)GetValue(DisplayMemberPathProperty); }
+            set { SetValue(DisplayMemberPathProperty, value); }
+        }
+        public static readonly DependencyProperty DisplayMemberPathProperty =
+            DependencyProperty.Register("DisplayMemberPath", typeof(string), typeof(TwinListBox), new PropertyMetadata());
+
         public TwinListBox()
         {
             InitializeComponent();

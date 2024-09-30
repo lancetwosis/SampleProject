@@ -25,6 +25,8 @@ namespace RedmineTimePuncher.Models.Settings
         public MyTracker Tracker { get; set; }
         public List<MyTracker> PossibleTrackers { get; set; }
         public string Title { get; set; }
+        public MyProject WikiProject { get; set; }
+        public List<MyProject> PossibleWikiProjects { get; set; }
         public MyWikiPageItem WikiPage { get; set; }
         public List<MyWikiPageItem> WikiPages { get; set; }
         public bool IncludesHeader { get; set; } = true;
@@ -45,8 +47,11 @@ namespace RedmineTimePuncher.Models.Settings
             PossibleProcesses = processes;
             Process = PossibleProcesses.First();
 
-            PossibleProjects = TranscribeSettingModel.PROJECTS_ONLY_WIKI_ENABLED;
+            PossibleProjects = TranscribeSettingModel.PROJECTS;
             Project = PossibleProjects.FirstOrDefault();
+
+            PossibleWikiProjects = TranscribeSettingModel.PROJECTS_ONLY_WIKI_ENABLED;
+            WikiProject = PossibleWikiProjects.FirstOrDefault(p => p.Id == Project.Id);
 
             WikiPages = new List<MyWikiPageItem>();
             Headers = new List<WikiLine>();
@@ -56,7 +61,7 @@ namespace RedmineTimePuncher.Models.Settings
 
         public bool IsValid()
         {
-            return Project != null && Process != null && WikiPage != null && Header != null;
+            return Project != null && Process != null && WikiProject != null && WikiPage != null && Header != null;
         }
 
         [JsonIgnore]
@@ -67,8 +72,16 @@ namespace RedmineTimePuncher.Models.Settings
             myDisposables?.Dispose();
             myDisposables = new CompositeDisposable().AddTo(disposables);
 
-            await updateWikiPagesAsync(Project, isBusy, () => WikiPages.FirstOrDefault(w => w.Title == WikiPage?.Title, WikiPages[0]));
-            this.ObserveProperty(a => a.Project).Skip(1).SubscribeWithErr(async p =>
+            PossibleProjects = TranscribeSettingModel.PROJECTS;
+            if (Project == null)
+                Project = PossibleProjects.FirstOrDefault();
+
+            PossibleWikiProjects = TranscribeSettingModel.PROJECTS_ONLY_WIKI_ENABLED;
+            if (WikiProject == null)
+                WikiProject = PossibleWikiProjects.FirstOrDefault(p => p.Id == Project.Id);
+
+            await updateWikiPagesAsync(WikiProject, isBusy, () => WikiPages.FirstOrDefault(w => w.Title == WikiPage?.Title, WikiPages[0]));
+            this.ObserveProperty(a => a.WikiProject).Skip(1).SubscribeWithErr(async p =>
             {
                 await updateWikiPagesAsync(p, isBusy, () => WikiPages.FirstOrDefault(w => w.IsTopWiki, WikiPages[0]));
             }).AddTo(myDisposables);

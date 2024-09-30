@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Logging;
 using LibRedminePower.ViewModels.Bases;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -20,6 +21,7 @@ namespace LibRedminePower.ViewModels
         public ObservableCollection<T> FromItems { get; set; }
         public ObservableCollection<T> ToItems { get; set; }
 
+        public Func<T, bool> DefaultFilter { get; set; }
         public string FromFilter { get; set; }
         public ReactiveCommand ClearFromFilterCommand { get; set; }
 
@@ -45,7 +47,7 @@ namespace LibRedminePower.ViewModels
         [Obsolete("Design Only", true)]
         public TwinListBoxViewModel(){}
 
-        public TwinListBoxViewModel(IEnumerable<T> allItems, ObservableCollection<T> selectedItems)
+        public TwinListBoxViewModel(IEnumerable<T> allItems, ObservableCollection<T> selectedItems, Func<T, bool> defaultFilter = null)
         {
             var indexed = allItems.Indexed().ToList();
 
@@ -65,7 +67,12 @@ namespace LibRedminePower.ViewModels
                 using (isBusy.ProcessStart())
                 {
                     // 初期の並び順と同じところに戻す
-                    var added =indexed.First(i => i.v.Equals(a));
+                    var added =indexed.FirstOrDefault(i => i.v.Equals(a));
+                    if (added.v == null)
+                    {
+                        Logger.Warn($"Allitems do not contain [{a}]. AllItems=[{string.Join(", ", indexed.Select(i => i.v.ToString()))}]");
+                        return;
+                    }
                     var fromItems = indexed.Where(i => FromItems.Contains(i.v)).ToList();
                     fromItems.Add(added);
 
@@ -95,14 +102,21 @@ namespace LibRedminePower.ViewModels
                 }
             }).AddTo(disposables);
 
+            DefaultFilter = defaultFilter;
             FromItemsCVS = new ListCollectionView(FromItems)
             {
                 Filter = (o) =>
                 {
-                    if (string.IsNullOrEmpty(FromFilter)) return true;
                     if (o is T target)
                     {
-                        if (target.ToString().Contains(FromFilter))
+                        if (DefaultFilter != null)
+                        {
+                            var r = DefaultFilter.Invoke(target);
+                            if (r == false)
+                                return false;
+                        }
+
+                        if (string.IsNullOrEmpty(FromFilter) || target.ToString().Contains(FromFilter))
                             return true;
                         else
                             return false;
@@ -184,6 +198,17 @@ namespace LibRedminePower.ViewModels
                 MoveDownToSelectedItems.Select(_ => true),
                 MoveBotomToSelectedItems.Select(_ => true),
             }.Merge().Select(_ => true).ToReactiveProperty().AddTo(disposables);
+        }
+
+        public void Refresh()
+        {
+            if (DefaultFilter == null)
+                return;
+
+            var removed = ToItems.Where(a => !DefaultFilter.Invoke(a)).ToList();
+            removed.ForEach(r => ToItems.Remove(r));
+
+            FromItemsCVS.Refresh();
         }
     }
 }

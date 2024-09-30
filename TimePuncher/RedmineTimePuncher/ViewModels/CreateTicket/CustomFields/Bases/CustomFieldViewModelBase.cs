@@ -41,7 +41,6 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
         {
             CustomField = cf;
 
-
             ErrorMessage = this.ObserveProperty(a => a.Value).Select(_ => Validate()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             HasError = ErrorMessage.Select(m => m != null).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
@@ -63,16 +62,11 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
         public void SetValue(IssueCustomField cf)
         {
             if (cf.Values == null)
-                return;
-
-            if (cf.Multiple)
-            {
+                SetValue("");
+            else if (cf.Multiple)
                 SetValue(string.Join(",", cf.Values.Select(a => a.Info)));
-            }
             else
-            {
                 SetValue(cf.Values[0].Info);
-            }
         }
 
         /// <summary>

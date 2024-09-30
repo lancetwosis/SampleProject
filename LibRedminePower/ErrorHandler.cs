@@ -41,12 +41,12 @@ namespace LibRedminePower
     {
         public void HandleError(Exception e)
         {
-            var r = handleError(e);
-            if (!r)
+            var needsContinue = handleError(e);
+            if (!needsContinue)
                 Environment.Exit(-1);
         }
 
-        private bool handleError(Exception e)
+        private bool handleError(Exception e, bool showMessage = true)
         {
             // MainWindowViewModelのコンストラクタで例外が発生すると、スプラッシュが残っている場合があるので、一旦クローズする。
             RadSplashScreenManager.Close();
@@ -58,15 +58,21 @@ namespace LibRedminePower
                 return true;
             else if (e is ApplicationExitException)
             {
-                MessageBoxHelper.ConfirmError(e.Message);
+                if (showMessage)
+                    MessageBoxHelper.ConfirmError(e.Message);
                 return false;
+            }
+            else if (e is ApplicationContinueException)
+            {
+                return handleError(e.InnerException, false);
             }
             else if (e is ApplicationException ||
                 e is IOException ||
                 e is Redmine.Net.Api.Exceptions.RedmineException ||
                 e is UnauthorizedAccessException)
             {
-                MessageBoxHelper.ConfirmError(e.Message);
+                if (showMessage)
+                    MessageBoxHelper.ConfirmError(e.Message);
                 return true;
             }
             else if (e is AggregateException ae)
@@ -74,7 +80,7 @@ namespace LibRedminePower
                 var result = true;
                 foreach (var ie in ae.InnerExceptions)
                 {
-                    var r = handleError(ie);
+                    var r = handleError(ie, showMessage);
                     if (!r)
                         result = false;
                 }
@@ -88,6 +94,8 @@ namespace LibRedminePower
             }
             else
             {
+                if (!showMessage) return true;
+
 #if DEBUG
                 var r = MessageBoxHelper.ConfirmError(string.Format(Properties.Resources.ExceptionMsgConfirm, e.ToString()), MessageBoxHelper.ButtonType.OkCancel);
                 return r != null ? r.Value : true;

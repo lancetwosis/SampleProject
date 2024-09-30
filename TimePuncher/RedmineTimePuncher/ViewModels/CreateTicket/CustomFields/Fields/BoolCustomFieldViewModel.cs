@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Models;
 using LibRedminePower.ViewModels.Bases;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;

@@ -42,14 +42,18 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
             parent.Parent.Redmine.CombineLatest(CacheManager.Default.Updated,
                 parent.Parent.Settings.ObserveProperty(a => a.CreateTicket),
                 parent.Parent.Settings.ObserveProperty(a => a.ReviewCopyCustomFields),
-                parent.ObserveProperty(a => a.Ticket).Pairwise().Where(p =>
+                parent.ObserveProperty(a => a.Ticket).Pairwise(),
+                (r, _1, _2, _3, p) => (Redmine: r, Pair: p)).SubscribeWithErr(p =>
                 {
-                    // チケットのプロジェクトが変わった場合だけ更新する
-                    return p.OldItem == null || p.NewItem == null || p.OldItem.Project.Id != p.NewItem.Project.Id;
-                }),
-                (r, _1, _2, _3, p) => (Redmine: r, Ticket: p?.NewItem)).SubscribeWithErr(p =>
-                {
-                    update(p.Redmine, p.Ticket, parent.Parent.Settings);
+                    if (p.Pair.OldItem == null || p.Pair.NewItem == null ||
+                        p.Pair.OldItem.Project.Id != p.Pair.NewItem.Project.Id)
+                    {
+                        // チケットのプロジェクトが変わった場合だけカスタムフィールド全体を更新する
+                        update(p.Redmine, p.Pair.NewItem, parent.Parent.Settings);
+                    }
+
+                    // カスタムフィールドに「前回値」もしくは「対象チケットの値」を設定する
+                    updateValues(p.Redmine, p.Pair.NewItem, parent.Parent.Settings);
                 }).AddTo(disposables);
         }
 
@@ -75,16 +79,26 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
                 return;
             }
 
-            var proj = redmine.GetProject(ticket.Project.Id.ToString());
+            var proj = CacheManager.Default.Projects.First(p => p.Id == ticket.Project.Id);
+            var myTracker = getTracker(settings);
+            if (myTracker.Equals(MyTracker.USE_PARENT_TRACKER))
+                myTracker = ticket.Tracker;
+
+            if (!proj.Trackers.Any(t => t.Id == myTracker.Id))
+            {
+                Fields.Clear();
+                throw new ApplicationException(string.Format(Resources.ReviewErrMsgInvalidTracker, TicketType, myTracker.Name, proj.Name));
+            }
+
             var settingFieldIds = settings.CreateTicket.GetSettingCustomFieldIds();
             var fields = CacheManager.Default.CustomFields
                 .Where(cf =>
-                     // レビューの設定で保存対象のカスタムフィールドに指定されていない
+                     // レビューの設定で保存対象のカスタムフィールドに指定されていない、かつ、
                      !settingFieldIds.Contains(cf.Id) &&
-                     // 選択されたチケットのプロジェクトで有効
+                     // 選択されたチケットのプロジェクトで有効、かつ、
                      (proj.CustomFields != null && proj.CustomFields.Any(a => a.Id == cf.Id)) &&
-                     // 開催チケットなどに割り当てられたトラッカーで有効
-                     (cf.Trackers != null && cf.Trackers.Any(t => t.Id == getTracker(settings).Id)))
+                     // 作成するチケットのトラッカーで有効
+                     (cf.Trackers != null && cf.Trackers.Any(t => t.Id == myTracker.Id)))
                 .Select(cf =>
                 {
                     // attachment （ファイル）以外の型に対応
@@ -121,6 +135,12 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
             {
                 Fields.Add(f);
             }
+        }
+
+        private void updateValues(Models.Managers.RedmineManager redmine, MyIssue ticket, SettingsModel settings)
+        {
+            if (redmine == null || ticket == null)
+                return;
 
             // 「カスタムフィールドのコピー」が設定されていたら値をチケットからコピーする
             foreach (var f in Fields)
@@ -130,9 +150,9 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
                 {
                     var srcCf = ticket.RawIssue.CustomFields.FirstOrDefault(a => a.Id == copied.Id);
                     if (srcCf != null)
-                    {
                         f.SetValue(srcCf);
-                    }
+                    else
+                        f.SetValue("");
                 }
             }
 

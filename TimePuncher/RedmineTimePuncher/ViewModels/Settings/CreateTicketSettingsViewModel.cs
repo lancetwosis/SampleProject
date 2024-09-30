@@ -1,6 +1,7 @@
 ﻿using LibRedminePower.Enums;
 using LibRedminePower.Extentions;
 using LibRedminePower.Helpers;
+using LibRedminePower.Models;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Helpers;

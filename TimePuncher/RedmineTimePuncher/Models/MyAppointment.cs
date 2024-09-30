@@ -594,7 +594,7 @@ namespace RedmineTimePuncher.Models
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException();
                 }
             }
             else if (target.Start > this.Start)
@@ -610,7 +610,7 @@ namespace RedmineTimePuncher.Models
                 }
                 else
                 {
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException();
                 }
             }
             return result;

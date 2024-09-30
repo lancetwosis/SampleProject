@@ -660,7 +660,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             MyWikiPage wiki = null;
             try
             {
-                wiki = await Task.Run(() => redmine.GetWikiPage(transSetting.Project.Id.ToString(), transSetting.WikiPage.Title));
+                wiki = await Task.Run(() => redmine.GetWikiPage(transSetting.WikiProject.Id.ToString(), transSetting.WikiPage.Title));
             }
             catch
             {

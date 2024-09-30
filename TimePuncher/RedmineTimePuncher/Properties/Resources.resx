@@ -1058,13 +1058,13 @@ Please reinstall.</value>
     <value>Transcribing Description</value>
   </data>
   <data name="SettingsReviColProject" xml:space="preserve">
-    <value>Project</value>
+    <value>Reviewed Project</value>
   </data>
   <data name="SettingsReviColProcess" xml:space="preserve">
     <value>Reviewed Process</value>
   </data>
   <data name="SettingsReviColWikiPage" xml:space="preserve">
-    <value>Wiki Page</value>
+    <value>Wiki Page Name</value>
   </data>
   <data name="SettingsReviColHeader" xml:space="preserve">
     <value>Header</value>
@@ -1072,7 +1072,7 @@ Please reinstall.</value>
   <data name="SettingsReviColIncludesHeader" xml:space="preserve">
     <value>Includes Header</value>
   </data>
-  <data name="SettingsReviColIncludesHeaderWrap" xml:space="preserve">
+  <data name="SettingsReviColSubIncludesHeader" xml:space="preserve">
     <value>Includes
 Header</value>
   </data>
@@ -1147,13 +1147,11 @@ Header</value>
   <data name="SettingsReviColTrackerMsg" xml:space="preserve">
     <value>: Select the traker of the reviewed issue. If you select "None", it will be added regardless of the tracker.</value>
   </data>
-  <data name="SettingsReviColTrackerWrap" xml:space="preserve">
-    <value>Reviewed
-Tracker</value>
+  <data name="SettingsReviColSubTracker" xml:space="preserve">
+    <value>Tracker</value>
   </data>
-  <data name="SettingsReviColProcessWrap" xml:space="preserve">
-    <value>Reviewed
-Process</value>
+  <data name="SettingsReviColSubProcess" xml:space="preserve">
+    <value>Process</value>
   </data>
   <data name="SettingsReviTranscribeRequest" xml:space="preserve">
     <value>Transcribe to a request issue</value>
@@ -1197,9 +1195,8 @@ Process</value>
   <data name="SettingsExpoFormat" xml:space="preserve">
     <value>Export Format</value>
   </data>
-  <data name="SettingsReviColTitleWrap" xml:space="preserve">
-    <value>Reviewed
-Issue Subject</value>
+  <data name="SettingsReviColSubTitle" xml:space="preserve">
+    <value>Subject</value>
   </data>
   <data name="SettingsReviColTitle" xml:space="preserve">
     <value>Reviewed Issue Subject</value>
@@ -2055,5 +2052,28 @@ Do you want to continue creating tickets?</value>
     <value>{0}
 
 Please review your account settings.</value>
+  </data>
+  <data name="ReviewErrMsgInvalidTracker" xml:space="preserve">
+    <value>The tracker “{1}” set in {0} is not valid for project “{2}”.
+
+Please review your settings if you wish to enable the custom field setting feature.</value>
+  </data>
+  <data name="SettingsReviColWikiProject" xml:space="preserve">
+    <value>Wiki Project</value>
+  </data>
+  <data name="SettingsReviColSubProject" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="SettingsReviColSubPageName" xml:space="preserve">
+    <value>Page Name</value>
+  </data>
+  <data name="SettingsReviColGroupTarget" xml:space="preserve">
+    <value>Target issue</value>
+  </data>
+  <data name="SettingsReviColGroupWiki" xml:space="preserve">
+    <value>Transcribed wiki page</value>
+  </data>
+  <data name="SettingsReviColWikiProjectMsg" xml:space="preserve">
+    <value></value>
   </data>
 </root>

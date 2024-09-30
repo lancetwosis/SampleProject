@@ -21,6 +21,8 @@ using System.Reactive.Disposables;
 using System.Text.RegularExpressions;
 using RedmineTableEditor.Properties;
 using LibRedminePower.Enums;
+using RedmineTableEditor.ViewModels.FileSettings.Filters;
+using System.Diagnostics;
 
 namespace RedmineTableEditor.ViewModels.FileSettings
 {
@@ -29,11 +31,9 @@ namespace RedmineTableEditor.ViewModels.FileSettings
         public ReactivePropertySlim<bool> UseQuery { get; set; }
         public static List<Query> Queries { get; set; }
         public ReactivePropertySlim<Query> SelectedQuery { get; set; }
-        public ReactiveCommand GoToQueryCommand { get; set; }
-        public ReactivePropertySlim<string> ParentIssueId { get; set; }
-        public ReactivePropertySlim<bool> ShowParentIssue { get; set; }
-        public ReactivePropertySlim<bool> Recoursive { get; set; }
-        public ReactiveCommand GoToTicketCommand { get; set; }
+
+        public FiltersViewModel Filters { get; set; }
+
         public ReadOnlyReactivePropertySlim<bool> HasProperties { get; set; }
         public ReadOnlyReactivePropertySlim<string> IsValid { get; set; }
         public ReactiveProperty<bool> IsEdited { get; set; }
@@ -41,71 +41,22 @@ namespace RedmineTableEditor.ViewModels.FileSettings
         [Obsolete("Design Only", true)]
         public ParentIssueSettingsViewModel() {}
 
+        private ParentIssueSettingsModel model { get; set; }
+        private RedmineManager redmine { get; set; }
+
         public ParentIssueSettingsViewModel(ParentIssueSettingsModel model, RedmineManager redmine) : base(model, redmine)
         {
+            this.model = model;
+            this.redmine = redmine;
+
             UseQuery = model.ToReactivePropertySlimAsSynchronized(a => a.UseQuery).AddTo(disposables);
 
-            Queries = redmine.Queries;
+            Queries = redmine.Cache.Queries;
             if (model.Query != null)
                 model.Query = Queries.FirstOrDefault(q => q.Id == model.Query.Id);
-
             SelectedQuery = model.ToReactivePropertySlimAsSynchronized(a => a.Query).AddTo(disposables);
-            UseQuery.CombineLatest(SelectedQuery, (u, q) => (u, q)).SubscribeWithErr(async p =>
-            {
-                if (p.u && p.q != null)
-                {
-                    await Task.Run(async () => await redmine.UpdateByQueryAsync(p.q));
-                }
-            }).AddTo(disposables);
 
-            GoToQueryCommand = SelectedQuery.Select(a => a != null).ToReactiveCommand().WithSubscribe(() =>
-            {
-                if (SelectedQuery.Value.ProjectId.HasValue)
-                {
-                    var proj = redmine.Projects.First(p => p.Id == SelectedQuery.Value.ProjectId.Value);
-                    System.Diagnostics.Process.Start($"{redmine.UrlBase}projects/{proj.Identifier}/issues?query_id={SelectedQuery.Value.Id}");
-                }
-                else
-                {
-                    System.Diagnostics.Process.Start($"{redmine.UrlBase}issues?query_id={SelectedQuery.Value.Id}");
-                }
-            }).AddTo(disposables);
-
-            ParentIssueId = model.ToReactivePropertySlimAsSynchronized(a => a.IssueId).AddTo(disposables);
-            ShowParentIssue = model.ToReactivePropertySlimAsSynchronized(a => a.ShowParentIssue).AddTo(disposables);
-            Recoursive = model.ToReactivePropertySlimAsSynchronized(a => a.Recoursive).AddTo(disposables);
-            var parentIssue = ParentIssueId.StartWithDefault().Where(id => !string.IsNullOrEmpty(id))
-                .Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher().Select(id =>
-                {
-                    var no = id.Trim().TrimStart('#');
-                    if (Regex.IsMatch(no, "^[0-9]+$"))
-                    {
-                        try
-                        {
-                            return redmine.GetIssue(int.Parse(no));
-                        }
-                        catch
-                        {
-                            return null;
-                        }
-                    }
-                    else
-                    {
-                        return null;
-                    }
-                }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            UseQuery.CombineLatest(parentIssue, (u, i) => (u, i)).SubscribeWithErr(async p =>
-            {
-                if (!p.u && p.i != null)
-                {
-                    await Task.Run(async () => await redmine.UpdateByParentIssueAsync(p.i));
-                }
-            }).AddTo(disposables);
-
-            GoToTicketCommand = parentIssue.Select(a => a != null).ToReactiveCommand().WithSubscribe(() =>
-            {
-                System.Diagnostics.Process.Start(redmine.GetIssueUrl(parentIssue.Value.Id));
-            }).AddTo(disposables);
+            Filters = new FiltersViewModel(model.Filters, redmine).AddTo(disposables);
 
             CompositeDisposable myDisposables = null;
             this.ObserveProperty(a => a.VisibleProps).Where(v => v != null).SubscribeWithErr(v =>
@@ -115,12 +66,12 @@ namespace RedmineTableEditor.ViewModels.FileSettings
 
                 HasProperties = v.ToItems.CollectionChangedAsObservable().StartWithDefault().Select(_ => v.ToItems.Any()).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
 
-                IsValid = UseQuery.CombineLatest(SelectedQuery, parentIssue, HasProperties, (_1, _2, _3, _4) => true).Select(_ =>
+                IsValid = UseQuery.CombineLatest(SelectedQuery, HasProperties, Filters.ErrorMessage, (_1, _2, _3, _4) => true).Select(_ =>
                 {
                     if (UseQuery.Value && SelectedQuery.Value == null)
                         return Resources.ErrMsgSelectCustomQuery;
-                    else if (!UseQuery.Value && parentIssue.Value == null)
-                        return Resources.ErrMsgSelectIssueId;
+                    if (!UseQuery.Value && Filters.ErrorMessage.Value != null)
+                        return Filters.ErrorMessage.Value;
 
                     return HasProperties.Value ? null : Resources.ErrMsgSelectFieldsToDisplay;
                 }).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
@@ -131,9 +82,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             {
                 UseQuery.Skip(1),
                 SelectedQuery.Skip(1).Select(_ => true),
-                ParentIssueId.Skip(1).Select(_ => true),
-                ShowParentIssue.Skip(1),
-                Recoursive.Skip(1),
+                Filters.IsEdited.Where(a => a),
                 this.ObserveProperty(a => a.VisibleProps.IsEdited.Value).Where(a => a),
             }.Merge().Select(_ => true).ToReactiveProperty().AddTo(disposables);
 
@@ -141,7 +90,9 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             {
                 if (VisibleProps != null)
                     VisibleProps.IsEdited.Value = false;
-            });
+
+                Filters.IsEdited.Value = false;
+            }).AddTo(disposables);
         }
 
         protected override List<FieldViewModel> getDefaultFields(ObservableCollectionSync<FieldViewModel, FieldModel> selectedFields, List<FieldViewModel> allFields)
@@ -158,6 +109,11 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 defaults.Add(subject);
 
             return defaults;
+        }
+
+        public void ShowIssuesOnRedmine()
+        {
+            Process.Start(model.CreateIssuesUrl(redmine));
         }
     }
 }

@@ -231,6 +231,9 @@
                                             </Grid.RowDefinitions>
                                             <telerik:RadCalendar AreWeekNumbersVisible="False"
                                                                  BorderBrush="{x:Null}"
+                                                                 DisplayDate="{Binding RelativeSource={RelativeSource Mode=Self},
+                                                                                       Path=SelectedDate}"
+                                                                 IsTodayHighlighted="False"
                                                                  SelectedDate="{Binding Date.Value,
                                                                                         Mode=TwoWay}" />
                                             <Grid Grid.Row="1"

@@ -29,7 +29,6 @@ namespace LibRedminePower.ViewModels
         public BitmapSource LargeImage { get; set; }
         public string GlyphKey { get; set; }
 
-        // 非同期の場合、使用しない
         public ReadOnlyReactivePropertySlim<List<ChildCommand>> ChildCommands { get; set; }
 
         /// <summary>
@@ -79,12 +78,25 @@ namespace LibRedminePower.ViewModels
             Mnemonic = mnemonic;
         }
 
-        /// 以下は、非同期のコマンドが子供となるコマンドを保持することはないので未定義
-        public ReadOnlyReactivePropertySlim<List<MenuItem>> GetChildMenus()
+        /// <summary>
+        /// ドロップダウンで子供のコマンドを保持するコマンド
+        /// </summary>
+        public AsyncCommandBase(string text, Bitmap largeImage, IObservable<string> canExecute, Func<Task> action,
+            ReadOnlyReactivePropertySlim<List<ChildCommand>> childCommands)
+            : this(text, canExecute, action)
         {
-            throw new NotImplementedException();
+            LargeImage = largeImage.ToBitmapSource();
+            ChildCommands = childCommands;
         }
+
         public ReadOnlyReactivePropertySlim<List<RadMenuItem>> GetChildRadMenus()
+        {
+            return ChildCommands.Select(cmds => cmds.Select(c => c.ToAsyncRadMenuItem()).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+        }
+
+
+        /// 以下は未使用
+        public ReadOnlyReactivePropertySlim<List<MenuItem>> GetChildMenus()
         {
             throw new NotImplementedException();
         }

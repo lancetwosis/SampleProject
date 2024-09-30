@@ -51,6 +51,7 @@
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -69,7 +70,8 @@
       <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.dll</HintPath>
     </Reference>
     <Reference Include="Telerik.Windows.Controls.Data, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
-      <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Data.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries\WPF45\Telerik.Windows.Controls.Data.dll</HintPath>
     </Reference>
     <Reference Include="Telerik.Windows.Controls.Docking, Version=2022.1.328.45, Culture=neutral, PublicKeyToken=5803cfa389c90ce7, processorArchitecture=MSIL">
       <HintPath>C:\Program Files (x86)\Progress\Telerik UI for WPF R1 2022\Binaries.NoXaml\WPF45\Telerik.Windows.Controls.Docking.dll</HintPath>
@@ -107,13 +109,49 @@
     <Compile Include="Behaviors\GridViewCurrentCellToMyIssueChildBehavior.cs" />
     <Compile Include="Enums\FieldFormat.cs" />
     <Compile Include="Enums\MyIssuePropertyType.cs" />
+    <Compile Include="Enums\IssueStatusCompareType.cs" />
     <Compile Include="Enums\StatusCompareType.cs" />
     <Compile Include="Extentions\CustomFieldExtentions.cs" />
     <Compile Include="Extentions\IssuePropertyTypeExtensions.cs" />
     <Compile Include="Models\Bases\MyIssueBase.cs" />
     <Compile Include="Models\FileSettings\FieldModel.cs" />
     <Compile Include="Models\FileSettings\FileSettingsModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Bases\DateFilterModelBase.cs" />
+    <Compile Include="Models\FileSettings\Filters\Bases\NumericFilterModelBase.cs" />
+    <Compile Include="Models\FileSettings\Filters\Bases\UsersFilterModelBase.cs" />
+    <Compile Include="Models\FileSettings\Filters\Custom\CfTextSearchFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Custom\CfFloatFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Custom\CfIntegerFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Custom\CfDateFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Custom\CfItemsFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Bases\TextIssueFilterModelBase.cs" />
+    <Compile Include="Models\FileSettings\Filters\Bases\TextFilterModelBase.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\PriorityFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\LastUpdaterFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\UpdaterFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\AuthorFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\CommentFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\CreatedOnFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\DueDateFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\ChildIssueFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\StartDateFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\UpdatedOnFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\ParentIssueFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\DescriptionFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\SubjectFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Bases\TextSearchFilterModelBase.cs" />
+    <Compile Include="Models\FileSettings\Filters\Bases\ItemsFilterModelBase.cs" />
+    <Compile Include="Models\FileSettings\Filters\CompareTypeModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\FilterItemModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\StatusFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\AssigneeFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\IssueCategoryFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\VersionFilterModel.cs" />
     <Compile Include="Models\FileSettings\IssueSettingsModelBase.cs" />
+    <Compile Include="Models\FileSettings\Filters\Bases\FilterModelBase.cs" />
+    <Compile Include="Models\FileSettings\Filters\FiltersModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\ProjectFilterModel.cs" />
+    <Compile Include="Models\FileSettings\Filters\Standard\TrackerFilterModel.cs" />
     <Compile Include="Models\MyIssuePivot.cs" />
     <Compile Include="Models\FileSettings\AssignedToColorModel.cs" />
     <Compile Include="Models\FileSettings\AssignedToColorsModel.cs" />
@@ -144,6 +182,39 @@
     <Compile Include="Models\TicketFields\Standard\StartDate.cs" />
     <Compile Include="Models\TicketFields\Standard\Status.cs" />
     <Compile Include="Models\TicketFields\Standard\Subject.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Bases\NumericFilterViewModelBase.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Bases\DateFilterViewModelBase.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Bases\VersionFilterViewModelBase.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Bases\UserFilterViewModelBase.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Bases\TextIssueFilterViewModelBase.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Bases\TextFilterViewModelBase.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Bases\ItemsFilterViewModelBase.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Custom\CfBoolFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Custom\CfTextSearchFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Custom\CfFloatFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Custom\CfIntegerFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Custom\CfDateFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Custom\CfVersionFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Custom\CfUserFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Custom\CfItemsFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\AuthorFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\LastUpdaterFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\IssueCategoryFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\PriorityFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\UpdaterFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\CreatedOnFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\DueDateFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\ChildIssueFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\StartDateFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\UpdatedOnFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\ParentIssueFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\DescriptionFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\StatusFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\AssigneeFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\CommentFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\SubjectFilterViewModel .cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\VersionFilterViewModel.cs" />
+    <Compile Include="Views\FileSettings\FilterTemplateSelector.cs" />
     <Compile Include="ViewModels\FileSettings\FieldViewModel.cs" />
     <Compile Include="ViewModels\FileSettings\FileSettingsViewModel.cs" />
     <Compile Include="ViewModels\FileSettings\AssignedToColorsViewModel.cs" />
@@ -152,12 +223,19 @@
     <Compile Include="ViewModels\FileSettings\IssueSettingsViewModelBase.cs" />
     <Compile Include="ViewModels\FileSettings\SubIssueSettingsViewModel.cs" />
     <Compile Include="ViewModels\FileSettings\ParentIssueSettingsViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Bases\FilterViewModelBase.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\FiltersViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\ProjectFilterViewModel.cs" />
+    <Compile Include="ViewModels\FileSettings\Filters\Standard\TrackerFilterViewModel.cs" />
     <Compile Include="ViewModels\IssuesViewModel.cs" />
     <Compile Include="ViewModels\MyIssueEditedListener.cs" />
     <Compile Include="ViewModels\FileSettings\SubIssueSettingViewModel.cs" />
     <Compile Include="ViewModels\FileSettings\StatusColorsViewModel.cs" />
     <Compile Include="ViewModels\FileSettings\StatusColorViewModel.cs" />
     <Compile Include="ViewModels\TableEditorViewModel.cs" />
+    <Compile Include="Views\FileSettings\FiltersView.xaml.cs">
+      <DependentUpon>FiltersView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\TableEditorView.xaml.cs">
       <DependentUpon>TableEditorView.xaml</DependentUpon>
     </Compile>
@@ -174,6 +252,10 @@
       <DependentUpon>AutoBackColorSettingsView.xaml</DependentUpon>
     </Compile>
     <Page Include="Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\FileSettings\FiltersView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -267,7 +349,9 @@
       <Version>4.7.1</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Images\icons8-show_on_redmine-48.png" />
+  </ItemGroup>
   <ItemGroup>
     <Resource Include="TableEditor.ico" />
   </ItemGroup>
@@ -294,6 +378,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\save_redmine_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-select-column-32.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

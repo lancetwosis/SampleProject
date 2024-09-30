@@ -23,11 +23,17 @@ namespace LibRedminePower.ViewModels
 
         public ReactiveCommand<T> RemoveCommand { get; set; }
 
-        public ExpandableTwinListBoxViewModel(IEnumerable<T> allItems, ObservableCollection<T> selectedItems)
-            : base(allItems, selectedItems)
+        public ExpandableTwinListBoxViewModel(IEnumerable<T> allItems, ObservableCollection<T> selectedItems, Func<T, bool> defaultFilter = null, bool collapseOnAdded = false)
+            : base(allItems, selectedItems, defaultFilter)
         {
             ExpandCommand = new ReactiveCommand().WithSubscribe(() => Expanded = !Expanded).AddTo(disposables);
             RemoveCommand = new ReactiveCommand<T>().WithSubscribe(t => ToItems.Remove(t)).AddTo(disposables);
+
+            if (collapseOnAdded)
+            {
+                AddAllItems.WithSubscribe(() => Expanded = false);
+                AddFromSelectedItems.WithSubscribe(() => Expanded = false);
+            }
         }
     }
 }

@@ -14,9 +14,9 @@ namespace RedmineTableEditor.Extentions
     public static class IssuePropertyTypeExtensions
     {
         /// <summary>
-        /// TableEditor で有効かどうかを返す。
+        /// TableEditor のプロパティのカラムとして有効かどうかを返す。
         /// </summary>
-        public static bool IsEnabledInTableEditor(this IssuePropertyType type)
+        public static bool IsPropertyColumn(this IssuePropertyType type)
         {
             switch (type)
             {
@@ -35,39 +35,45 @@ namespace RedmineTableEditor.Extentions
                 case IssuePropertyType.SpentHours:
                 case IssuePropertyType.TotalSpentHours:
                 case IssuePropertyType.TotalEstimatedHours:
+                case IssuePropertyType.Author:
+                case IssuePropertyType.Updated:
+                case IssuePropertyType.Created:
+                case IssuePropertyType.Project:
+                // IssuePropertyType.Updater はフィルターとしては有効だがカラムには表示しない
+                case IssuePropertyType.LastUpdater:
                     return true;
                 default:
                     return false;
             }
         }
 
-        /// <summary>
-        /// 取得するために GetObject<Issue> を実行する必要があるかを返す。
-        /// 戻り値が true になるプロパティは GetObjects<Issue> では取得できず null になる。
-        /// </summary>
-        public static bool IsDetail(this IssuePropertyType type)
+        public static int ToPropertyColumnOrder(this IssuePropertyType type)
         {
-            switch (type)
+            var types = new List<IssuePropertyType>()
             {
-                case IssuePropertyType.SpentHours:
-                case IssuePropertyType.TotalSpentHours:
-                case IssuePropertyType.TotalEstimatedHours:
-                    return true;
-                case IssuePropertyType.Id:
-                case IssuePropertyType.Subject:
-                case IssuePropertyType.Tracker:
-                case IssuePropertyType.Status:
-                case IssuePropertyType.AssignedTo:
-                case IssuePropertyType.FixedVersion:
-                case IssuePropertyType.Priority:
-                case IssuePropertyType.Category:
-                case IssuePropertyType.StartDate:
-                case IssuePropertyType.DueDate:
-                case IssuePropertyType.DoneRatio:
-                case IssuePropertyType.EstimatedHours:
-                default:
-                    return false;
-            }
+                IssuePropertyType.Id,
+                IssuePropertyType.Project,
+                IssuePropertyType.Status,
+                IssuePropertyType.Tracker,
+                IssuePropertyType.Priority,
+                IssuePropertyType.Author,
+                IssuePropertyType.AssignedTo,
+                IssuePropertyType.FixedVersion,
+                IssuePropertyType.Category,
+                IssuePropertyType.Subject,
+                IssuePropertyType.DoneRatio,
+                IssuePropertyType.Updater,
+                IssuePropertyType.LastUpdater,
+                IssuePropertyType.Created,
+                IssuePropertyType.Updated,
+                IssuePropertyType.StartDate,
+                IssuePropertyType.DueDate,
+                IssuePropertyType.EstimatedHours,
+                IssuePropertyType.SpentHours,
+                IssuePropertyType.TotalSpentHours,
+                IssuePropertyType.TotalEstimatedHours,
+            };
+            return types.IndexOf(type);
         }
 
         public static FieldFormat ToFieldFormat(this IssuePropertyType type)
@@ -75,10 +81,15 @@ namespace RedmineTableEditor.Extentions
             switch (type)
             {
                 case IssuePropertyType.StartDate:
-                case IssuePropertyType.DueDate:             return FieldFormat.date;
+                case IssuePropertyType.DueDate:
+                case IssuePropertyType.Updated:
+                case IssuePropertyType.Created:             return FieldFormat.date;
                 case IssuePropertyType.AssignedTo:          return FieldFormat.user;
                 case IssuePropertyType.FixedVersion:        return FieldFormat.version;
-                case IssuePropertyType.Subject:             return FieldFormat.@string;
+                case IssuePropertyType.Subject:
+                case IssuePropertyType.Project:
+                case IssuePropertyType.Author:
+                case IssuePropertyType.LastUpdater:         return FieldFormat.@string;
                 case IssuePropertyType.Id:                  return FieldFormat.@int;
                 case IssuePropertyType.Tracker:
                 case IssuePropertyType.Status:              return FieldFormat.list;
@@ -99,11 +110,11 @@ namespace RedmineTableEditor.Extentions
             switch (prop)
             {
                 case IssuePropertyType.Tracker:      return r.Trackers;
-                case IssuePropertyType.Status:       return r.Statuses;
+                case IssuePropertyType.Status:       return r.Cache.Statuss;
                 case IssuePropertyType.AssignedTo:   return r.Users;
                 case IssuePropertyType.FixedVersion: return r.Versions;
                 case IssuePropertyType.Category:     return r.Categories;
-                case IssuePropertyType.Priority:     return r.Priorities;
+                case IssuePropertyType.Priority:     return r.Cache.Priorities;
                 case IssuePropertyType.Id:
                 case IssuePropertyType.Subject:
                 case IssuePropertyType.StartDate:
@@ -114,7 +125,7 @@ namespace RedmineTableEditor.Extentions
                 case IssuePropertyType.TotalSpentHours:
                 case IssuePropertyType.TotalEstimatedHours:
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
             }
         }
     }

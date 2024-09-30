@@ -343,10 +343,154 @@ Please set them correctly in the settings screen.</value>
 
 To update the contents of the displayed issues, please execute "Update Contents".</value>
   </data>
+  <data name="enumIssueStatusCompareTypeOpen" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeClosed" xml:space="preserve">
+    <value>Closed</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeContains" xml:space="preserve">
+    <value>Contains</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDoesnotContain" xml:space="preserve">
+    <value>Doesn't contain</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeStartsWith" xml:space="preserve">
+    <value>Starts with</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeEndsWith" xml:space="preserve">
+    <value>Ends with</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateRange" xml:space="preserve">
+    <value>Between</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateLastNDays" xml:space="preserve">
+    <value>In the past</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateToday" xml:space="preserve">
+    <value>Today</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateYesterday" xml:space="preserve">
+    <value>Yesterday</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateThisWeek" xml:space="preserve">
+    <value>This week</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateLastWeek" xml:space="preserve">
+    <value>Last week</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateLast2Weeks" xml:space="preserve">
+    <value>Last 2 weeks</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateThisMonth" xml:space="preserve">
+    <value>This month</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateLastMonth" xml:space="preserve">
+    <value>Last month</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateThisYear" xml:space="preserve">
+    <value>This year</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateNextNDays" xml:space="preserve">
+    <value>In the next</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateNextWeek" xml:space="preserve">
+    <value>Next week</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateTomorrow" xml:space="preserve">
+    <value>Tomorrow</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateNextMonth" xml:space="preserve">
+    <value>Next month</value>
+  </data>
   <data name="UserNoAssignee" xml:space="preserve">
     <value>(No assignee)</value>
   </data>
   <data name="UserInvalid" xml:space="preserve">
     <value>(Invalid user)</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeAny" xml:space="preserve">
+    <value>Any</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateAfter" xml:space="preserve">
+    <value>After</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeDateBefore" xml:space="preserve">
+    <value>Before</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeNumGreaterEquals" xml:space="preserve">
+    <value>&gt;=</value>
+  </data>
+  <data name="enumIssueStatusCompareTypeNumLessEquals" xml:space="preserve">
+    <value>&lt;=</value>
+  </data>
+  <data name="RibbonCmdShowRedmine" xml:space="preserve">
+    <value>Show on Redmine</value>
+  </data>
+  <data name="icons8_show_on_redmine_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-show_on_redmine-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="FilterUserMe" xml:space="preserve">
+    <value>&lt;&lt; me &gt;&gt;</value>
+  </data>
+  <data name="FilterProjectMine" xml:space="preserve">
+    <value>&lt;&lt; my projects &gt;&gt;</value>
+  </data>
+  <data name="FilterErrMsgInputDate" xml:space="preserve">
+    <value>Please enter the number of days.</value>
+  </data>
+  <data name="FilterErrMsgInvalidRange" xml:space="preserve">
+    <value>Please enter the correct range.</value>
+  </data>
+  <data name="FilterErrMsgSelectValue" xml:space="preserve">
+    <value>Please enter a value of {0}.</value>
+  </data>
+  <data name="FilterErrMsgInputIssueNo" xml:space="preserve">
+    <value>Please enter a issue number of {0}.</value>
+  </data>
+  <data name="FilterErrMsgInputNumber" xml:space="preserve">
+    <value>Please enter a number.</value>
+  </data>
+  <data name="FilterErrMsgInputInteger" xml:space="preserve">
+    <value>Please enter a whole number.</value>
+  </data>
+  <data name="FilterBoolYes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="FilterBoolNo" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="FilterErrMsgSingleProjectForCategory" xml:space="preserve">
+    <value>Please select a single project to set a category.</value>
+  </data>
+  <data name="FilterErrMsgNoCategories" xml:space="preserve">
+    <value>Project “{0}” has no category.</value>
+  </data>
+  <data name="FilterMultiSelection" xml:space="preserve">
+    <value>Multiple selection</value>
+  </data>
+  <data name="FilterPostfixDays" xml:space="preserve">
+    <value> days</value>
+  </data>
+  <data name="ParentIssueFilter" xml:space="preserve">
+    <value>Filters</value>
+  </data>
+  <data name="ParentIssueFilterMsg" xml:space="preserve">
+    <value>Select filters to specify the parent ticket.</value>
+  </data>
+  <data name="FilterErrMsgSelectAnyFilter" xml:space="preserve">
+    <value>Please select a filter.</value>
+  </data>
+  <data name="RibbonCmdApplyAll" xml:space="preserve">
+    <value>Update all information</value>
+  </data>
+  <data name="RibbonCmdSetFrozenColumn" xml:space="preserve">
+    <value>Freeze Column</value>
+  </data>
+  <data name="icons8_select_column_32" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-select-column-32.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

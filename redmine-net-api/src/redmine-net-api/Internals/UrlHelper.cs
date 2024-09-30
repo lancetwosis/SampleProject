@@ -219,9 +219,9 @@ namespace Redmine.Net.Api.Internals
                 return string.Format(CultureInfo.InvariantCulture,FILE_URL_FORMAT, redmineManager.Host, projectId, redmineManager.Format);
             }
 
-            // カスタマイズ(S):クエリIDを指定して、チケット一覧を取得するために実施したカスタマイズ
             if (type == typeof(Issue))
             {
+                // カスタマイズ(S):クエリIDを指定して、チケット一覧を取得するために実施したカスタマイズ
                 var queryId = parameters.GetParameterValue(RedmineKeys.QUERY_ID);
                 if (!string.IsNullOrEmpty(queryId))
                 {
@@ -233,8 +233,21 @@ namespace Redmine.Net.Api.Internals
                         return string.Format(CultureInfo.InvariantCulture, ENTITY_WITH_PARENT_FORMAT,
                             redmineManager.Host, RedmineKeys.PROJECTS, projectId, RedmineManager.Suffixes[type], redmineManager.Format);
                 }
+                // カスタマイズ(E):クエリIDを指定して、チケット一覧を取得するために実施したカスタマイズ
+
+                // カスタマイズ(S):カテゴリIDを指定して、チケット一覧を取得するために実施したカスタマイズ
+                var cateId = parameters.GetParameterValue(RedmineKeys.CATEGORY_ID);
+                if (!string.IsNullOrEmpty(cateId))
+                {
+                    var projectId = parameters.GetParameterValue(RedmineKeys.PROJECT_ID);
+                    if (string.IsNullOrEmpty(projectId))
+                        throw new RedmineException("The project id is mandatory! \nCheck if you have included the parameter project_id to parameters.");
+
+                    return string.Format(CultureInfo.InvariantCulture, ENTITY_WITH_PARENT_FORMAT,
+                        redmineManager.Host, RedmineKeys.PROJECTS, projectId, RedmineManager.Suffixes[type], redmineManager.Format);
+                }
+                // カスタマイズ(E):カテゴリIDを指定して、チケット一覧を取得するために実施したカスタマイズ
             }
-            // カスタマイズ(E):クエリIDを指定して、チケット一覧を取得するために実施したカスタマイズ
 
             return string.Format(CultureInfo.InvariantCulture,FORMAT, redmineManager.Host, RedmineManager.Suffixes[type],
                 redmineManager.Format);

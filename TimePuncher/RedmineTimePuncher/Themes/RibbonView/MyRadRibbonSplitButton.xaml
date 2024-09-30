@@ -56,7 +56,7 @@
                 <TextBlock Name="textRow1"
                            Grid.Row="1"
                            Grid.ColumnSpan="2"
-                           Padding="3 0"
+                           Padding="3,0"
                            VerticalAlignment="Center"
                            Foreground="{TemplateBinding Foreground}"
                            IsHitTestVisible="False"
@@ -71,7 +71,7 @@
                             IsHitTestVisible="False"
                             Orientation="Horizontal">
                     <TextBlock Name="textRow2"
-                               Margin="0 -3 0 0"
+                               Margin="0,-3,0,0"
                                VerticalAlignment="Center"
                                Foreground="{TemplateBinding Foreground}"
                                IsHitTestVisible="False"
@@ -393,6 +393,8 @@
 
     <Style BasedOn="{StaticResource RadRibbonSplitButtonStyle}"
            TargetType="telerik:RadRibbonSplitButton">
+        <Setter Property="Size" Value="Large" />
+        <Setter Property="CollapseToSmall" Value="WhenGroupIsMedium" />
         <Setter Property="Template" Value="{StaticResource CustomRadRibbonSplitButtonTemplate}" />
     </Style>
 </ResourceDictionary>

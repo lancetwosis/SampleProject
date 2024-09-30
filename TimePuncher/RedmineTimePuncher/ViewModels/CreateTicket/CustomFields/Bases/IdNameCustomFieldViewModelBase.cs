@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Models;
 using LibRedminePower.ViewModels.Bases;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -49,9 +50,9 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
                 }
                 Values = values;
                 SelectedValue = new ReactivePropertySlim<T>().AddTo(disposables);
-                SelectedValue.Where(i => i != null).SubscribeWithErr(i =>
+                SelectedValue.SubscribeWithErr(v =>
                 {
-                    Value = i.Id == IdName.INVALID_ID ? "" : i.Id.ToString();
+                    Value = (v == null || v.Id == IdName.INVALID_ID) ? "" : v.Id.ToString();
                 }).AddTo(disposables);
             }
         }
@@ -69,7 +70,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
         public override void SetValue(string rawValue)
         {
             if (string.IsNullOrEmpty(rawValue))
-                return;
+                rawValue = IdName.INVALID_ID.ToString();
 
             if (CustomField.Multiple)
             {
@@ -83,9 +84,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
             }
             else
             {
-                var values = Values.FirstOrDefault(a => a.Id.ToString() == rawValue);
-                if (values != null)
-                    SelectedValue.Value = values;
+                SelectedValue.Value = Values.FirstOrDefault(a => a.Id.ToString() == rawValue);
             }
         }
     }

@@ -20,7 +20,7 @@ namespace LibRedminePower.Converters
                 else if (a is Visibility v)
                     return v == Visibility.Visible;
                 else
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException();
             }).Any(v => v) ? Visibility.Visible : Visibility.Collapsed;
         }
 

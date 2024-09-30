@@ -105,6 +105,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         private CompositeDisposable setupTreeDisposables;
         private void setupTicketTree(bool isNew = false)
         {
+            setupTreeDisposables?.Dispose();
+            setupTreeDisposables = new CompositeDisposable().AddTo(disposables);
+
             if (Model.TimeEntries.Count == 0)
             {
                 clear();
@@ -113,9 +116,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
             try
             {
-                setupTreeDisposables?.Dispose();
-                setupTreeDisposables = new CompositeDisposable().AddTo(disposables);
-
                 FactorTypes.SetCustomFields(Model);
 
                 var timesDic = Model.TimeEntries.Select(a => new MyTimeEntry(a)).GroupBy(t => (t.Entry.Issue, t.Entry.User, t.SpentOn, t.Entry.Activity, t.Type), t => t);

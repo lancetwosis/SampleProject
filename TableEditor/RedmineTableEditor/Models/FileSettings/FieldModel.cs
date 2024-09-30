@@ -51,9 +51,14 @@ namespace RedmineTableEditor.Models.FileSettings
             CustomFieldId = cfId;
         }
 
-        public bool IsDetail()
+        public bool IsType(IssuePropertyType field)
         {
-            return Field.HasValue ? Field.Value.IsDetail() : false;
+            return Field.HasValue && Field == field;
+        }
+
+        public bool IsType(MyIssuePropertyType myField)
+        {
+            return MyField.HasValue && MyField == myField;
         }
 
         public override bool Equals(object obj)
@@ -169,8 +174,25 @@ namespace RedmineTableEditor.Models.FileSettings
                             EditorStyle = newStyle,
                             IsFilterable = true,
                         };
+                    case IssuePropertyType.Project:
+                    case IssuePropertyType.Author:
+                    case IssuePropertyType.LastUpdater:
+                    case IssuePropertyType.Created:
+                    case IssuePropertyType.Updated:
+                        return new GridViewDataColumn()
+                        {
+                            Header = prop.GetDescription(),
+                            Tag = key,
+                            ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
+                            DataMemberBinding = new Binding(bindingBase + getPropertyName(prop)),
+                            IsReadOnly = true,
+                            TextAlignment = prop.ToFieldFormat().GetTextAlignment(),
+                            DataFormatString = prop.ToFieldFormat().GetDataFormatString(),
+                            CellStyle = getCellStyle(getAutoBackColorPropertyStatus(bindingBase)),
+                            IsCellMergingEnabled = prop == IssuePropertyType.Project,
+                        };
                     default:
-                        throw new InvalidOperationException($"This IssuePropertyType '{prop}' is not supported.");
+                        throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
                 }
             }
             else if (MyField.HasValue)
@@ -208,12 +230,12 @@ namespace RedmineTableEditor.Models.FileSettings
                             IsCellMergingEnabled = false,
                         };
                     default:
-                        throw new InvalidOperationException($"This MyIssuePropertyType '{prop}' is not supported.");
+                        throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
                 }
             }
             else
             {
-                var cf = redmine.CustomFields.SingleOrDefault(a => a.Id == CustomFieldId);
+                var cf = redmine.Cache.CustomFields.SingleOrDefault(a => a.IsEnabled() && a.Id == CustomFieldId);
                 if (cf == null) return null;
 
                 var fieldFormat = cf.ToFieldFormat();
@@ -242,7 +264,15 @@ namespace RedmineTableEditor.Models.FileSettings
                             IsCellMergingEnabled = false,
                         };
                     case FieldFormat.@bool:
-                        return new GridViewCheckBoxColumn
+                        var checkBox = new FrameworkElementFactory(typeof(CheckBox));
+                        checkBox.SetBinding(CheckBox.IsCheckedProperty, new Binding(bindingBase + prop + ".Value"));
+                        checkBox.SetValue(CheckBox.IsThreeStateProperty, !cf.IsRequired);
+                        checkBox.SetBinding(CheckBox.BorderBrushProperty,
+                            new Binding(bindingBase + prop + $".{nameof(FieldBase.IsEdited)}") { Converter = IS_EDITED_TO_RED });
+                        var template = new DataTemplate();
+                        template.VisualTree = checkBox;
+                        template.Seal();
+                        return new GridViewDataColumn
                         {
                             Header = cf.Name,
                             Tag = key,
@@ -251,9 +281,11 @@ namespace RedmineTableEditor.Models.FileSettings
                             TextAlignment = fieldFormat.GetTextAlignment(),
                             IsReadOnlyBinding = getIsReadOnlyBinding(bindingBase),
                             DataFormatString = fieldFormat.GetDataFormatString(),
+                            CellTemplate = template,
                             CellStyle = getCellStyle(
                                 getForegroundPropertyIsEdited(bindingBase + prop + $".{nameof(FieldBase.IsEdited)}"),
                                 getAutoBackColorPropertyStatus(bindingBase)),
+                            IsCellMergingEnabled = false,
                         };
                     case FieldFormat.user:
                     case FieldFormat.version:
@@ -305,14 +337,15 @@ namespace RedmineTableEditor.Models.FileSettings
                             };
                         }
                     default:
-                        throw new InvalidOperationException();
+                        throw new NotSupportedException($"fieldFormat が {fieldFormat} は、サポート対象外です。");
                 }
             }
         }
 
         private (IEnumerable Items, string DisplayPath, string SelectedPath) getCfItemSource(RedmineManager r, CustomField cf)
         {
-            switch (cf.ToFieldFormat())
+            var fieldFormat = cf.ToFieldFormat();
+            switch (fieldFormat)
             {
                 case FieldFormat.user:
                 case FieldFormat.user_multi:
@@ -326,7 +359,7 @@ namespace RedmineTableEditor.Models.FileSettings
                 case FieldFormat.enumeration_multi:
                     return (cf.PossibleValues, nameof(CustomFieldPossibleValue.Label), nameof(CustomFieldPossibleValue.Value));
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"fieldFormat が {fieldFormat} は、サポート対象外です。");
             }
         }
 
@@ -349,7 +382,7 @@ namespace RedmineTableEditor.Models.FileSettings
                 case IssuePropertyType.TotalSpentHours:
                 case IssuePropertyType.TotalEstimatedHours:
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
             }
         }
 
@@ -360,7 +393,7 @@ namespace RedmineTableEditor.Models.FileSettings
                 case MyIssuePropertyType.MySpentHours:       return nameof(MyIssueBase.MySpentHoursMax);
                 case MyIssuePropertyType.DiffEstimatedSpent: return nameof(MyIssueBase.DiffEstimatedSpentMax);
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
             }
         }
 
@@ -383,8 +416,13 @@ namespace RedmineTableEditor.Models.FileSettings
                 case IssuePropertyType.SpentHours:          return nameof(MyIssueBase.SpentHours);
                 case IssuePropertyType.TotalSpentHours:     return nameof(MyIssueBase.TotalSpentHours);
                 case IssuePropertyType.TotalEstimatedHours: return nameof(MyIssueBase.TotalEstimatedHours);
+                case IssuePropertyType.Author:              return nameof(MyIssueBase.Author);
+                case IssuePropertyType.Updated:             return nameof(MyIssueBase.Updated);
+                case IssuePropertyType.Created:             return nameof(MyIssueBase.Created);
+                case IssuePropertyType.Project:             return nameof(MyIssueBase.Project);
+                case IssuePropertyType.LastUpdater:         return nameof(MyIssueBase.LastUpdater);
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
             }
         }
 
@@ -396,7 +434,7 @@ namespace RedmineTableEditor.Models.FileSettings
                 case MyIssuePropertyType.DiffEstimatedSpent: return nameof(MyIssueBase.DiffEstimatedSpent);
                 case MyIssuePropertyType.ReplyCount:         return nameof(MyIssueBase.ReplyCount);
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
             }
         }
 
@@ -483,18 +521,6 @@ namespace RedmineTableEditor.Models.FileSettings
                 case IssuePropertyType.EstimatedHours:
                 case IssuePropertyType.SpentHours:
                     return createSpentHoursTemplate(bindingBase, getPropertyName(prop), getPropertyMax(prop), prop.ToFieldFormat().GetDataFormatString());
-                case IssuePropertyType.StartDate:
-                case IssuePropertyType.DueDate:
-                case IssuePropertyType.Id:
-                case IssuePropertyType.Subject:
-                case IssuePropertyType.Status:
-                case IssuePropertyType.AssignedTo:
-                case IssuePropertyType.FixedVersion:
-                case IssuePropertyType.Priority:
-                case IssuePropertyType.Category:
-                case IssuePropertyType.DoneRatio:
-                case IssuePropertyType.TotalSpentHours:
-                case IssuePropertyType.TotalEstimatedHours:
                 default:
                     return null;
             }

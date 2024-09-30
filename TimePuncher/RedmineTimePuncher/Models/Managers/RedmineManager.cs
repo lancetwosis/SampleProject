@@ -4,6 +4,7 @@ using LibRedminePower.Exceptions;
 using LibRedminePower.Extentions;
 using LibRedminePower.Helpers;
 using LibRedminePower.Logging;
+using LibRedminePower.Models;
 using LibRedminePower.Models.Manager;
 using LibRedminePower.Proxy;
 using Redmine.Net.Api;
@@ -181,25 +182,19 @@ namespace RedmineTimePuncher.Models.Managers
             return null;
         }
 
-        public Project GetProject(string id)
-        {
-            return CacheManager.Default.ProjectsShortCache.GetOrAdd(id, _ => Manager.GetObjectWithErrConv<Project>(id,
-                new NameValueCollection()
-                {
-                    { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES },
-                    { RedmineKeys.INCLUDE, RedmineKeys.ISSUE_CUSTOM_FIELDS }
-                }));
-        }
-
         public List<Project> GetProjects()
         {
-            var projs = Manager.GetObjectsWithErrConv<Project>(RedmineKeys.TIME_ENTRY_ACTIVITIES, RedmineKeys.TRACKERS, RedmineKeys.ENABLED_MODULES);
+            var projs = Manager.GetObjectsWithErrConv<Project>(
+                RedmineKeys.TIME_ENTRY_ACTIVITIES, RedmineKeys.TRACKERS,
+                RedmineKeys.ENABLED_MODULES, RedmineKeys.ISSUE_CUSTOM_FIELDS, RedmineKeys.ISSUE_CATEGORIES);
             var closed = Manager.GetObjectsWithErrConv<Project>(new NameValueCollection()
                 {
                     { RedmineKeys.STATUS, $"{(int)ProjectStatus.Closed}" },
                     { RedmineKeys.INCLUDE, RedmineKeys.TIME_ENTRY_ACTIVITIES },
                     { RedmineKeys.INCLUDE, RedmineKeys.TRACKERS },
                     { RedmineKeys.INCLUDE, RedmineKeys.ENABLED_MODULES },
+                    { RedmineKeys.INCLUDE, RedmineKeys.ISSUE_CUSTOM_FIELDS },
+                    { RedmineKeys.INCLUDE, RedmineKeys.ISSUE_CATEGORIES },
                 });
             return projs.Concat(closed).ToList();
         }
@@ -806,7 +801,7 @@ namespace RedmineTimePuncher.Models.Managers
 
         public string GetIssuesUrl(int projectId)
         {
-            var proj = GetProject(projectId.ToString());
+            var proj = CacheManager.Default.Projects.First(p => p.Id == projectId);
             return $"{settings.UrlBase}/projects/{proj.Identifier}/issues";
         }
 

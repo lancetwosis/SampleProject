@@ -61,6 +61,7 @@
                             <RowDefinition Height="AUTO" />
                             <RowDefinition Height="AUTO" />
                             <RowDefinition Height="AUTO" />
+                            <RowDefinition Height="AUTO" />
                         </Grid.RowDefinitions>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="AUTO" />
@@ -90,18 +91,23 @@
                                    Style="{StaticResource Column1HelpStyle}"
                                    Text="{x:Static props:Resources.SettingsReviColTitleMsg}" />
                         <TextBlock Grid.Row="4"
-                                   Text="{x:Static props:Resources.SettingsReviColWikiPage}" />
+                                   Text="{x:Static props:Resources.SettingsReviColWikiProject}" />
                         <TextBlock Grid.Row="4"
                                    Style="{StaticResource Column1HelpStyle}"
-                                   Text="{x:Static props:Resources.SettingsReviColWikiPageMsg}" />
+                                   Text="{x:Static props:Resources.SettingsReviColWikiProjectMsg}" />
                         <TextBlock Grid.Row="5"
-                                   Text="{x:Static props:Resources.SettingsReviColIncludesHeader}" />
+                                   Text="{x:Static props:Resources.SettingsReviColWikiPage}" />
                         <TextBlock Grid.Row="5"
                                    Style="{StaticResource Column1HelpStyle}"
+                                   Text="{x:Static props:Resources.SettingsReviColWikiPageMsg}" />
+                        <TextBlock Grid.Row="6"
+                                   Text="{x:Static props:Resources.SettingsReviColIncludesHeader}" />
+                        <TextBlock Grid.Row="6"
+                                   Style="{StaticResource Column1HelpStyle}"
                                    Text="{x:Static props:Resources.SettingsReviColIncludesHeaderMsg}" />
-                        <TextBlock Grid.Row="6"
+                        <TextBlock Grid.Row="7"
                                    Text="{x:Static props:Resources.SettingsReviColHeader}" />
-                        <TextBlock Grid.Row="6"
+                        <TextBlock Grid.Row="7"
                                    Style="{StaticResource Column1HelpStyle}"
                                    Text="{x:Static props:Resources.SettingsReviColHeaderMsg}" />
                     </Grid>
@@ -154,36 +160,63 @@
                                     </Style>
                                 </telerik:RadGridView.RowStyle>
 
+                                <telerik:RadGridView.ColumnGroups>
+                                    <telerik:GridViewColumnGroup Name="TargetGroup">
+                                        <!--  直接 Header に文字列を設定するとなぜか ToUpperCase されるので、以下のようにする  -->
+                                        <telerik:GridViewColumnGroup.Header>
+                                            <TextBlock Text="{x:Static props:Resources.SettingsReviColGroupTarget}" />
+                                        </telerik:GridViewColumnGroup.Header>
+                                    </telerik:GridViewColumnGroup>
+                                    <telerik:GridViewColumnGroup Name="WikiGroup">
+                                        <telerik:GridViewColumnGroup.Header>
+                                            <TextBlock Text="{x:Static props:Resources.SettingsReviColGroupWiki}" />
+                                        </telerik:GridViewColumnGroup.Header>
+                                    </telerik:GridViewColumnGroup>
+                                </telerik:RadGridView.ColumnGroups>
                                 <telerik:RadGridView.Columns>
-                                    <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding Project,
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
+                                                                    DataMemberBinding="{Binding Project,
                                                                                                 UpdateSourceTrigger=PropertyChanged}"
                                                                     DisplayMemberPath="Name"
-                                                                    Header="{x:Static props:Resources.SettingsReviColProject}"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubProject}"
                                                                     IsComboBoxEditable="True"
                                                                     IsSortable="false"
                                                                     ItemsSourceBinding="{Binding PossibleProjects}" />
-                                    <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding Process}"
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
+                                                                    DataMemberBinding="{Binding Process}"
                                                                     DisplayMemberPath="Label"
-                                                                    Header="{x:Static props:Resources.SettingsReviColProcessWrap}"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubProcess}"
                                                                     IsComboBoxEditable="True"
                                                                     IsSortable="False"
                                                                     IsVisible="{Binding ElementName=detectionProcessHelpText,
                                                                                         Path=Visibility,
                                                                                         Converter={StaticResource VisibilityToBooleanConverter}}"
                                                                     ItemsSourceBinding="{Binding PossibleProcesses}" />
-                                    <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding Tracker}"
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
+                                                                    DataMemberBinding="{Binding Tracker}"
                                                                     DisplayMemberPath="Name"
-                                                                    Header="{x:Static props:Resources.SettingsReviColTrackerWrap}"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubTracker}"
                                                                     IsComboBoxEditable="True"
                                                                     IsSortable="False"
                                                                     ItemsSourceBinding="{Binding PossibleTrackers}" />
-                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Title}"
-                                                                Header="{x:Static props:Resources.SettingsReviColTitleWrap}"
+                                    <telerik:GridViewDataColumn ColumnGroupName="TargetGroup"
+                                                                DataMemberBinding="{Binding Title}"
+                                                                Header="{x:Static props:Resources.SettingsReviColSubTitle}"
                                                                 IsSortable="False" />
-                                    <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding WikiPage,
+
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
+                                                                    DataMemberBinding="{Binding WikiProject,
+                                                                                                UpdateSourceTrigger=PropertyChanged}"
+                                                                    DisplayMemberPath="Name"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubProject}"
+                                                                    IsComboBoxEditable="True"
+                                                                    IsSortable="false"
+                                                                    ItemsSourceBinding="{Binding PossibleWikiProjects}" />
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
+                                                                    DataMemberBinding="{Binding WikiPage,
                                                                                                 UpdateSourceTrigger=PropertyChanged}"
                                                                     DisplayMemberPath="Title"
-                                                                    Header="{x:Static props:Resources.SettingsReviColWikiPage}"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubPageName}"
                                                                     IsComboBoxEditable="True"
                                                                     IsSortable="False"
                                                                     ItemsSourceBinding="{Binding WikiPages}">
@@ -199,9 +232,10 @@
                                             </DataTemplate>
                                         </telerik:GridViewComboBoxColumn.CellTemplate>
                                     </telerik:GridViewComboBoxColumn>
-                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding IncludesHeader}"
+                                    <telerik:GridViewDataColumn ColumnGroupName="WikiGroup"
+                                                                DataMemberBinding="{Binding IncludesHeader}"
                                                                 EditTriggers="CellClick"
-                                                                Header="{x:Static props:Resources.SettingsReviColIncludesHeaderWrap}"
+                                                                Header="{x:Static props:Resources.SettingsReviColSubIncludesHeader}"
                                                                 IsSortable="False">
                                         <telerik:GridViewDataColumn.CellTemplate>
                                             <DataTemplate>
@@ -211,7 +245,7 @@
                                             </DataTemplate>
                                         </telerik:GridViewDataColumn.CellTemplate>
                                     </telerik:GridViewDataColumn>
-                                    <telerik:GridViewComboBoxColumn Width="*"
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
                                                                     DataMemberBinding="{Binding Header}"
                                                                     Header="{x:Static props:Resources.SettingsReviColHeader}"
                                                                     IsComboBoxEditable="True"
@@ -276,36 +310,63 @@
                                     </Style>
                                 </telerik:RadGridView.RowStyle>
 
+                                <telerik:RadGridView.ColumnGroups>
+                                    <telerik:GridViewColumnGroup Name="TargetGroup">
+                                        <!--  直接 Header に文字列を設定するとなぜか ToUpperCase されるので、以下のようにする  -->
+                                        <telerik:GridViewColumnGroup.Header>
+                                            <TextBlock Text="{x:Static props:Resources.SettingsReviColGroupTarget}" />
+                                        </telerik:GridViewColumnGroup.Header>
+                                    </telerik:GridViewColumnGroup>
+                                    <telerik:GridViewColumnGroup Name="WikiGroup">
+                                        <telerik:GridViewColumnGroup.Header>
+                                            <TextBlock Text="{x:Static props:Resources.SettingsReviColGroupWiki}" />
+                                        </telerik:GridViewColumnGroup.Header>
+                                    </telerik:GridViewColumnGroup>
+                                </telerik:RadGridView.ColumnGroups>
                                 <telerik:RadGridView.Columns>
-                                    <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding Project,
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
+                                                                    DataMemberBinding="{Binding Project,
                                                                                                 UpdateSourceTrigger=PropertyChanged}"
                                                                     DisplayMemberPath="Name"
-                                                                    Header="{x:Static props:Resources.SettingsReviColProject}"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubProject}"
                                                                     IsComboBoxEditable="True"
                                                                     IsSortable="false"
                                                                     ItemsSourceBinding="{Binding PossibleProjects}" />
-                                    <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding Process}"
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
+                                                                    DataMemberBinding="{Binding Process}"
                                                                     DisplayMemberPath="Label"
-                                                                    Header="{x:Static props:Resources.SettingsReviColProcessWrap}"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubProcess}"
                                                                     IsComboBoxEditable="True"
                                                                     IsSortable="False"
                                                                     IsVisible="{Binding ElementName=detectionProcessHelpText,
                                                                                         Path=Visibility,
                                                                                         Converter={StaticResource VisibilityToBooleanConverter}}"
                                                                     ItemsSourceBinding="{Binding PossibleProcesses}" />
-                                    <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding Tracker}"
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
+                                                                    DataMemberBinding="{Binding Tracker}"
                                                                     DisplayMemberPath="Name"
-                                                                    Header="{x:Static props:Resources.SettingsReviColTrackerWrap}"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubTracker}"
                                                                     IsComboBoxEditable="True"
                                                                     IsSortable="False"
                                                                     ItemsSourceBinding="{Binding PossibleTrackers}" />
-                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Title}"
-                                                                Header="{x:Static props:Resources.SettingsReviColTitleWrap}"
+                                    <telerik:GridViewDataColumn ColumnGroupName="TargetGroup"
+                                                                DataMemberBinding="{Binding Title}"
+                                                                Header="{x:Static props:Resources.SettingsReviColSubTitle}"
                                                                 IsSortable="False" />
-                                    <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding WikiPage,
+
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
+                                                                    DataMemberBinding="{Binding WikiProject,
+                                                                                                UpdateSourceTrigger=PropertyChanged}"
+                                                                    DisplayMemberPath="Name"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubProject}"
+                                                                    IsComboBoxEditable="True"
+                                                                    IsSortable="false"
+                                                                    ItemsSourceBinding="{Binding PossibleWikiProjects}" />
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
+                                                                    DataMemberBinding="{Binding WikiPage,
                                                                                                 UpdateSourceTrigger=PropertyChanged}"
                                                                     DisplayMemberPath="Title"
-                                                                    Header="{x:Static props:Resources.SettingsReviColWikiPage}"
+                                                                    Header="{x:Static props:Resources.SettingsReviColSubPageName}"
                                                                     IsComboBoxEditable="True"
                                                                     IsSortable="False"
                                                                     ItemsSourceBinding="{Binding WikiPages}">
@@ -321,9 +382,10 @@
                                             </DataTemplate>
                                         </telerik:GridViewComboBoxColumn.CellTemplate>
                                     </telerik:GridViewComboBoxColumn>
-                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding IncludesHeader}"
+                                    <telerik:GridViewDataColumn ColumnGroupName="WikiGroup"
+                                                                DataMemberBinding="{Binding IncludesHeader}"
                                                                 EditTriggers="CellClick"
-                                                                Header="{x:Static props:Resources.SettingsReviColIncludesHeaderWrap}"
+                                                                Header="{x:Static props:Resources.SettingsReviColSubIncludesHeader}"
                                                                 IsSortable="False">
                                         <telerik:GridViewDataColumn.CellTemplate>
                                             <DataTemplate>
@@ -333,7 +395,7 @@
                                             </DataTemplate>
                                         </telerik:GridViewDataColumn.CellTemplate>
                                     </telerik:GridViewDataColumn>
-                                    <telerik:GridViewComboBoxColumn Width="*"
+                                    <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
                                                                     DataMemberBinding="{Binding Header}"
                                                                     Header="{x:Static props:Resources.SettingsReviColHeader}"
                                                                     IsComboBoxEditable="True"

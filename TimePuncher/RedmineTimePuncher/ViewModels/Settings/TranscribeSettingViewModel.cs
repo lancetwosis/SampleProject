@@ -71,7 +71,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 try
                 {
                     isBusy.Value = Resources.SettingsMsgNowGettingData;
-                    wiki = TranscribeSettingModel.REDMINE.GetWikiPage(selectedItem.Project.Id.ToString(), selectedItem.WikiPage.Title);
+                    wiki = TranscribeSettingModel.REDMINE.GetWikiPage(selectedItem.WikiProject.Id.ToString(), selectedItem.WikiPage.Title);
                 }
                 catch
                 {

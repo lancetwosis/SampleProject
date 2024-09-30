@@ -21,9 +21,12 @@ namespace LibRedminePower.Extentions
         /// <summary>
         /// 文字列を指定された行数まで短くして返す。オーバーする場合、末尾に「...」を追加する。
         /// </summary>
-        public static string LimitRows(this string str, int rowMax)
+        public static string LimitRows(this string str, int rowMax, bool needsDeleteEmptyLine = false)
         {
-            var lines = str.SplitLines().ToList();
+            var lines = needsDeleteEmptyLine ?
+                str.SplitLines().Where(l => !string.IsNullOrWhiteSpace(l)).ToList() :
+                str.SplitLines().ToList();
+
             if (lines.Count() > rowMax)
             {
                 lines = lines.Take(rowMax).ToList();
@@ -44,6 +47,8 @@ namespace LibRedminePower.Extentions
         private const string key = "MAKV2SPBNI99212";
         public static string Encrypt(this string clearText)
         {
+            if (clearText == null) return null;
+
             byte[] clearBytes = Encoding.Unicode.GetBytes(clearText);
             using (var encryptor = Aes.Create())
             {

@@ -49,7 +49,7 @@ namespace RedmineTimePuncher.Enums
                 case InputPeriodType.WorkingDays:
                     return calendar.GetFirstWorkingDayOfWeek(currentDate);
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -69,7 +69,7 @@ namespace RedmineTimePuncher.Enums
                 case InputPeriodType.WorkingDays:
                     return calendar.GetLastWorkingDayOfWeek(currentDate).AddDays(1);
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -86,7 +86,7 @@ namespace RedmineTimePuncher.Enums
                 case InputPeriodType.Last7Days:
                     return 7;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -128,7 +128,7 @@ namespace RedmineTimePuncher.Enums
                         return start <= targetDate && targetDate < end;
                     }
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
     }

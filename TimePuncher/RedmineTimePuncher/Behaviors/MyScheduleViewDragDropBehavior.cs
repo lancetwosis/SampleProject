@@ -126,7 +126,7 @@ namespace RedmineTimePuncher.Behaviors
                             }
                         }
                     default:
-                        throw new InvalidOperationException();
+                        throw new NotSupportedException($"apo.From が {apo.From} はサポート対象外です。");
                 }
             }
             // ScheduleView 内でのドラッグ
@@ -204,7 +204,7 @@ namespace RedmineTimePuncher.Behaviors
 
                             return;
                         default:
-                            throw new InvalidOperationException();
+                            throw new NotSupportedException($"apo.From が {apo.From} はサポート対象外です。");
                     }
                 }
                 else
@@ -215,10 +215,9 @@ namespace RedmineTimePuncher.Behaviors
                             base.Drop(state);
                             return;
                         case DraggedAppointment.DraggedType.MyCategory:
-                            // CanDropを制御しているので、ここに来ることはない。
-                            throw new InvalidOperationException();
+                            throw new NotSupportedException($"CanDropを制御しているので、ここに来ることはない。");
                         default:
-                            throw new InvalidOperationException();
+                            throw new NotSupportedException($"apo.From が {apo.From} はサポート対象外です。");
                     }
                 }
             }

@@ -143,6 +143,240 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   Any に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeAny {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeAny", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Closed に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeClosed {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Contains に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeContains {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeContains", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   After に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateAfter {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateAfter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Before に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateBefore {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateBefore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last 2 weeks に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateLast2Weeks {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateLast2Weeks", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last month に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateLastMonth {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateLastMonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   In the past に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateLastNDays {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateLastNDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Last week に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateLastWeek {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateLastWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Next month に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateNextMonth {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateNextMonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   In the next に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateNextNDays {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateNextNDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Next week に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateNextWeek {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateNextWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Between に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateRange {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   This month に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateThisMonth {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateThisMonth", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   This week に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateThisWeek {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateThisWeek", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   This year に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateThisYear {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateThisYear", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Today に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateToday {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateToday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Tomorrow に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateTomorrow {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateTomorrow", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Yesterday に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDateYesterday {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDateYesterday", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Doesn&apos;t contain に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeDoesnotContain {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeDoesnotContain", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Ends with に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeEndsWith {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeEndsWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   None に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeNone {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeNone", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   &gt;= に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeNumGreaterEquals {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeNumGreaterEquals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   &lt;= に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeNumLessEquals {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeNumLessEquals", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Open に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeOpen {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeOpen", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Starts with に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumIssueStatusCompareTypeStartsWith {
+            get {
+                return ResourceManager.GetString("enumIssueStatusCompareTypeStartsWith", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Remain Hours に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumMyIssuePropertyTypeDiffEstimatedSpent {
@@ -359,6 +593,161 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   No に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterBoolNo {
+            get {
+                return ResourceManager.GetString("FilterBoolNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Yes に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterBoolYes {
+            get {
+                return ResourceManager.GetString("FilterBoolYes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please enter the number of days. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterErrMsgInputDate {
+            get {
+                return ResourceManager.GetString("FilterErrMsgInputDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please enter a whole number. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterErrMsgInputInteger {
+            get {
+                return ResourceManager.GetString("FilterErrMsgInputInteger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please enter a issue number of {0}. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterErrMsgInputIssueNo {
+            get {
+                return ResourceManager.GetString("FilterErrMsgInputIssueNo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please enter a number. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterErrMsgInputNumber {
+            get {
+                return ResourceManager.GetString("FilterErrMsgInputNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please enter the correct range. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterErrMsgInvalidRange {
+            get {
+                return ResourceManager.GetString("FilterErrMsgInvalidRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Project “{0}” has no category. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterErrMsgNoCategories {
+            get {
+                return ResourceManager.GetString("FilterErrMsgNoCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select a filter. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterErrMsgSelectAnyFilter {
+            get {
+                return ResourceManager.GetString("FilterErrMsgSelectAnyFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please enter a value of {0}. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterErrMsgSelectValue {
+            get {
+                return ResourceManager.GetString("FilterErrMsgSelectValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select a single project to set a category. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterErrMsgSingleProjectForCategory {
+            get {
+                return ResourceManager.GetString("FilterErrMsgSingleProjectForCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Multiple selection に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterMultiSelection {
+            get {
+                return ResourceManager.GetString("FilterMultiSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    days に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterPostfixDays {
+            get {
+                return ResourceManager.GetString("FilterPostfixDays", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   &lt;&lt; my projects &gt;&gt; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterProjectMine {
+            get {
+                return ResourceManager.GetString("FilterProjectMine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   &lt;&lt; me &gt;&gt; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string FilterUserMe {
+            get {
+                return ResourceManager.GetString("FilterUserMe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap icons8_select_column_32 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_select_column_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap icons8_show_on_redmine_48 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_show_on_redmine_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Open issue に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string IssuesCmdGoToTicket {
@@ -445,6 +834,24 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   Filters に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ParentIssueFilter {
+            get {
+                return ResourceManager.GetString("ParentIssueFilter", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Select filters to specify the parent ticket. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ParentIssueFilterMsg {
+            get {
+                return ResourceManager.GetString("ParentIssueFilterMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   How to specify に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ParentIssueHowToSpecify {
@@ -518,6 +925,15 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   Update all information に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdApplyAll {
+            get {
+                return ResourceManager.GetString("RibbonCmdApplyAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   New file に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RibbonCmdNew {
@@ -559,6 +975,24 @@ namespace RedmineTableEditor.Properties {
         public static string RibbonCmdSaveRedmine {
             get {
                 return ResourceManager.GetString("RibbonCmdSaveRedmine", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Freeze Column に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdSetFrozenColumn {
+            get {
+                return ResourceManager.GetString("RibbonCmdSetFrozenColumn", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Show on Redmine に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdShowRedmine {
+            get {
+                return ResourceManager.GetString("RibbonCmdShowRedmine", resourceCulture);
             }
         }
         

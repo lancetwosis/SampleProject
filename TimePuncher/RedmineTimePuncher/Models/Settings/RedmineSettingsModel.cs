@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using LibRedminePower.Extentions;
+using LibRedminePower.Helpers;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Enums;
@@ -25,35 +26,75 @@ namespace RedmineTimePuncher.Models.Settings
 
         public string UrlBase { get; set; }
 
+        #region "UserName"
         [JsonIgnore]
-        public string UserName { get; set; }
+        public string UserName
+        {
+            get => UserNameEncrypt.Decrypt();
+            set => UserNameEncrypt = value.Encrypt();
+        }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] // Nullだったら項目自体を出力しない
+        public string UserNameEncrypt { get; set; }
+        #endregion
+
+        #region "Password"
         [JsonIgnore]
         public string Password 
-        { 
+        {
             get => PasswordEncrypt.Decrypt();
             set => PasswordEncrypt = value.Encrypt();
         }
-        [JsonIgnore]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] // Nullだったら項目自体を出力しない
         public string PasswordEncrypt { get; set; }
+        #endregion
+
+        #region "AdminApiKey"
         [JsonIgnore]
-        public string AdminApiKey { get; set; }
+        public string AdminApiKey
+        {
+            get => AdminApiKeyEncrypt.Decrypt();
+            set => AdminApiKeyEncrypt = value.Encrypt();
+        }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] // Nullだったら項目自体を出力しない
+        public string AdminApiKeyEncrypt { get; set; }
+        #endregion
 
         public int ConcurrencyMax { get; set; } = 5;
 
         // Basic 認証用の設定
         public bool UseBasicAuth { get; set; }
+        #region "ApiKey"
         [JsonIgnore]
-        public string ApiKey { get; set; }
+        public string ApiKey
+        {
+            get => ApiKeyEncrypt.Decrypt();
+            set => ApiKeyEncrypt = value.Encrypt();
+        }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] // Nullだったら項目自体を出力しない
+        public string ApiKeyEncrypt { get; set; }
+        #endregion
+
+        #region "UserNameOfBasicAuth"
         [JsonIgnore]
-        public string UserNameOfBasicAuth { get; set; }
+        public string UserNameOfBasicAuth
+        {
+            get => UserNameOfBasicAuthEncrypt.Decrypt();
+            set => UserNameOfBasicAuthEncrypt = value.Encrypt();
+        }
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] // Nullだったら項目自体を出力しない
+        public string UserNameOfBasicAuthEncrypt { get; set; }
+        #endregion
+
+        #region "PasswordOfBasicAuth"
         [JsonIgnore]
         public string PasswordOfBasicAuth
         {
             get => PasswordEncryptOfBasicAuth.Decrypt();
             set => PasswordEncryptOfBasicAuth = value.Encrypt();
         }
-        [JsonIgnore]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] // Nullだったら項目自体を出力しない
         public string PasswordEncryptOfBasicAuth { get; set; }
+        #endregion
 
         [JsonIgnore]
         public ReadOnlyReactivePropertySlim<bool> IsValid { get; }
@@ -81,16 +122,38 @@ namespace RedmineTimePuncher.Models.Settings
                              .AddTo(disposables);
         }
 
-        // [IgnoreDataMember] のプロパティがあるため ToJson で同値判定ができない。よって Equals を override する。
+        public override void Export(string fileName)
+        {
+            // ユーザーの接続情報は、エクスポートしない
+            var temp = this.Clone();
+            temp.SetNullValueForExport();
+
+            // Nullは、出力しないようにすることで、エクスポート情報から項目自体を外す。
+            // また、本ファイルをインポートしたとしても、Nullの値は上書きされない。
+            FileHelper.WriteAllText(fileName, temp.ToJson());
+        }
+
+        /// <summary>
+        /// エクスポートを行う際に、接続情報が含まれないようにNullクリアを行う。
+        /// </summary>
+        public void SetNullValueForExport()
+        {
+            UserName = null;
+            PasswordEncrypt = null;
+            AdminApiKey = null;
+            ApiKey = null;
+            UserNameOfBasicAuth = null;
+            PasswordEncryptOfBasicAuth = null;
+        }
+
         public override bool Equals(object obj)
         {
-            if(obj is RedmineSettingsModel model)
+            if (obj is RedmineSettingsModel model)
             {
                 return Locale == model.Locale &&
                        UrlBase == model.UrlBase &&
                        UserName == model.UserName &&
                        Password == model.Password &&
-                       PasswordEncrypt == model.PasswordEncrypt &&
                        AdminApiKey == model.AdminApiKey &&
                        ConcurrencyMax == model.ConcurrencyMax &&
                        UseBasicAuth == model.UseBasicAuth &&
@@ -98,7 +161,7 @@ namespace RedmineTimePuncher.Models.Settings
                        UserNameOfBasicAuth == model.UserNameOfBasicAuth &&
                        PasswordOfBasicAuth == model.PasswordOfBasicAuth &&
                        (
-                           string.IsNullOrEmpty(PasswordEncryptOfBasicAuth) == string.IsNullOrEmpty(model.PasswordEncryptOfBasicAuth) || 
+                           string.IsNullOrEmpty(PasswordEncryptOfBasicAuth) == string.IsNullOrEmpty(model.PasswordEncryptOfBasicAuth) ||
                            PasswordEncryptOfBasicAuth == model.PasswordEncryptOfBasicAuth
                        );
             }
@@ -107,7 +170,6 @@ namespace RedmineTimePuncher.Models.Settings
                 return false;
             }
         }
-
         public override int GetHashCode()
         {
             int hashCode = 877536718;
@@ -115,7 +177,6 @@ namespace RedmineTimePuncher.Models.Settings
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(UrlBase);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(UserName);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Password);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(PasswordEncrypt);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(AdminApiKey);
             hashCode = hashCode * -1521134295 + ConcurrencyMax.GetHashCode();
             hashCode = hashCode * -1521134295 + UseBasicAuth.GetHashCode();
@@ -126,20 +187,7 @@ namespace RedmineTimePuncher.Models.Settings
             return hashCode;
         }
 
-        /// <summary>
-        /// ユーザ名などはエクスポートの対象外とするため [JsonIgnore] に設定している。よって個別に Save する。
-        /// </summary>
-        public void SaveProperties()
-        {
-            Properties.Settings.Default.UserName                   = UserName;
-            Properties.Settings.Default.Password                   = PasswordEncrypt;
-            Properties.Settings.Default.AdminApiKey                = AdminApiKey;
-            Properties.Settings.Default.ApiKey                     = ApiKey;
-            Properties.Settings.Default.UserNameOfBasicAuth        = UserNameOfBasicAuth;
-            Properties.Settings.Default.PasswordEncryptOfBasicAuth = PasswordEncryptOfBasicAuth;
-            Properties.Settings.Default.CurrentLocale              = Locale.ToString();
-        }
-
+        [Obsolete("V8.2.2からは、Properties.Settings.Defaultからの読み込みは不要となる。(#1658)", false)]
         /// <summary>
         /// ユーザ名などはエクスポートの対象外とするため [JsonIgnore] に設定している。よって個別に Load する。
         /// </summary>

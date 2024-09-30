@@ -1,4 +1,5 @@
-﻿using RedmineTimePuncher.Enums;
+﻿using NetOffice.OfficeApi;
+using RedmineTimePuncher.Enums;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -26,7 +27,7 @@ namespace RedmineTimePuncher.Converters
                 case AppointmentType.RedmineTimeEntryMember:
                     return 0.6;
                 default:
-                    throw new InvalidOperationException($"{value} is not found.");
+                    throw new NotSupportedException($"value が {value} は、サポート対象外です。");
             }
         }
 

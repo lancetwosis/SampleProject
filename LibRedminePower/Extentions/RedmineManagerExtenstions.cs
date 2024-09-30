@@ -34,6 +34,12 @@ namespace LibRedminePower.Extentions
         {
             return getObjects(() => manager.GetObjects<T>(parameters), HttpVerbs.GET);
         }
+
+        public static List<T> GetObjectsWithErrConv<T>(this IRedmineManager manager, NameValueCollection parameters, List<string> additionalQueries) where T : class, new()
+        {
+            return getObjects(() => manager.GetObjects<T>(parameters, additionalQueries), HttpVerbs.GET);
+        }
+
         public static List<T> GetObjectsWithErrConv<T>(this IRedmineManager manager, int projectId) where T : class, new()
         {
             return getObjects(() => manager.GetObjects<T>(new NameValueCollection { { RedmineKeys.PROJECT_ID, projectId.ToString() } }), HttpVerbs.GET);

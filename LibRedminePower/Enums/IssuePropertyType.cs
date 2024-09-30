@@ -47,5 +47,13 @@ namespace LibRedminePower.Enums
         Author,
         [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeUpdated), typeof(Resources))]
         Updated,
+        [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeCreated), typeof(Resources))]
+        Created,
+        [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeProject), typeof(Resources))]
+        Project,
+        [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeUpdater), typeof(Resources))]
+        Updater,
+        [LocalizedDescription(nameof(Resources.enumIssuePropertyTypeLastUpdater), typeof(Resources))]
+        LastUpdater,
     }
 }

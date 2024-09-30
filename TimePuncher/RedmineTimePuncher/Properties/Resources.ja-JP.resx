@@ -974,13 +974,13 @@ APIアクセスキー</value>
     <value>レビューの説明</value>
   </data>
   <data name="SettingsReviColProject" xml:space="preserve">
-    <value>プロジェクト</value>
+    <value>レビュー対象のプロジェクト</value>
   </data>
   <data name="SettingsReviColProcess" xml:space="preserve">
     <value>レビュー対象の工程</value>
   </data>
   <data name="SettingsReviColWikiPage" xml:space="preserve">
-    <value>Wiki ページ</value>
+    <value>Wiki ページ名</value>
   </data>
   <data name="SettingsReviColHeader" xml:space="preserve">
     <value>ヘッダー</value>
@@ -988,7 +988,7 @@ APIアクセスキー</value>
   <data name="SettingsReviColIncludesHeader" xml:space="preserve">
     <value>ヘッダーを含める</value>
   </data>
-  <data name="SettingsReviColIncludesHeaderWrap" xml:space="preserve">
+  <data name="SettingsReviColSubIncludesHeader" xml:space="preserve">
     <value>ヘッダー
 を含める</value>
   </data>
@@ -1063,13 +1063,11 @@ APIアクセスキー</value>
   <data name="SettingsReviColTrackerMsg" xml:space="preserve">
     <value>: レビュー対象のチケットのトラッカーを選択してください。「指定なし」を選択するとトラッカーに関係なく設定されます。</value>
   </data>
-  <data name="SettingsReviColTrackerWrap" xml:space="preserve">
-    <value>レビュー対象の
-トラッカー</value>
+  <data name="SettingsReviColSubTracker" xml:space="preserve">
+    <value>トラッカー</value>
   </data>
-  <data name="SettingsReviColProcessWrap" xml:space="preserve">
-    <value>レビュー対象の
-工程</value>
+  <data name="SettingsReviColSubProcess" xml:space="preserve">
+    <value>工程</value>
   </data>
   <data name="SettingsReviTranscribeRequest" xml:space="preserve">
     <value>依頼チケットへの転記</value>
@@ -1110,9 +1108,8 @@ APIアクセスキー</value>
   <data name="enumExportItemsWorkCategory" xml:space="preserve">
     <value>作業分類</value>
   </data>
-  <data name="SettingsReviColTitleWrap" xml:space="preserve">
-    <value>レビュー対象の
-タイトル</value>
+  <data name="SettingsReviColSubTitle" xml:space="preserve">
+    <value>題名</value>
   </data>
   <data name="SettingsReviColTitle" xml:space="preserve">
     <value>レビュー対象のタイトル</value>
@@ -1922,5 +1919,28 @@ Redmine の設定を見直してください。</value>
     <value>{0}
 
 お使いのアカウントの設定を見直してください。</value>
+  </data>
+  <data name="ReviewErrMsgInvalidTracker" xml:space="preserve">
+    <value>{0}に設定されたトラッカー「{1}」はプロジェクト「{2}」で有効ではありません。
+
+カスタムフィールドの設定機能を有効にする場合、設定を見直してください。</value>
+  </data>
+  <data name="SettingsReviColWikiProject" xml:space="preserve">
+    <value>Wiki プロジェクト</value>
+  </data>
+  <data name="SettingsReviColSubProject" xml:space="preserve">
+    <value>プロジェクト</value>
+  </data>
+  <data name="SettingsReviColSubPageName" xml:space="preserve">
+    <value>ページ名</value>
+  </data>
+  <data name="SettingsReviColGroupTarget" xml:space="preserve">
+    <value>対象のチケット</value>
+  </data>
+  <data name="SettingsReviColGroupWiki" xml:space="preserve">
+    <value>転記する Wiki ページ</value>
+  </data>
+  <data name="SettingsReviColWikiProjectMsg" xml:space="preserve">
+    <value>: 転記したい説明が記述されているWikiを含むプロジェクトを選択してください。</value>
   </data>
 </root>

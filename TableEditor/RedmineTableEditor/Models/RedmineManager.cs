@@ -19,31 +19,20 @@ namespace RedmineTableEditor.Models
 
         // クエリの選択が変更された時に更新
         public List<Tracker> Trackers { get; set; }
-        public List<CustomField> CustomFields { get; set; }
         public List<IdentifiableName> Users { get; set; }
         public List<Redmine.Net.Api.Types.Version> Versions { get; set; }
         public List<IssueCategory> Categories { get; set; }
 
-        // Redmine の設定更新時に更新
-        public List<IssueStatus> Statuses { get; set; }
-        public List<IssuePriority> Priorities { get; set; }
-        public List<Query> Queries { get; set; }
-        public List<Project> Projects { get; set; }
-        private List<Tracker> allTrackers { get; set; }
-        private List<CustomField> allCustomFields { get; set; }
-
         private IRedmineManager manager { get; set; }
         private IRedmineManager masterManager { get; set; }
-        private ICacheManager cacheManager { get; set; }
+        public ICacheManager Cache { get; set; }
 
         public RedmineManager((IRedmineManager Manager, IRedmineManager MasterManager, ICacheManager CacheManager) redmine)
         {
             this.manager = redmine.Manager;
             this.masterManager = redmine.MasterManager;
-            this.cacheManager = redmine.CacheManager;
 
-            // インスタンス生成時は外部から実行するので初回はスキップする
-            this.cacheManager.Updated.Skip(1).SubscribeWithErr(_ => Update());
+            this.Cache = redmine.CacheManager;
         }
 
         public string IsValid()
@@ -56,100 +45,38 @@ namespace RedmineTableEditor.Models
                 return null;
         }
 
-        public void Update()
+        public async Task UpdateAsync(List<Issue> issues, bool updateCache)
         {
-            allTrackers = cacheManager.Trackers;
-            allCustomFields = cacheManager.CustomFields
-                .Where(c => c.Trackers != null && c.Trackers.Any() && c.CustomizedType == "issue").ToList();
-
-            Statuses = cacheManager.Statuss;
-            Priorities = cacheManager.Priorities;
-            Queries = cacheManager.Queries;
-            Projects = cacheManager.Projects;
-        }
-
-        public async Task UpdateByQueryAsync(Query query)
-        {
-            await Task.Run(async () =>
+            if (issues == null || issues.Count == 0)
             {
-                if (query.ProjectId.HasValue)
-                {
-                    await updateByProjectIdAsync(query.ProjectId.Value);
-                }
-                else
-                {
-                    // 全プロジェクト向けのクエリだった場合、そのクエリで取得した Issue に紐づくすべてのプロジェクトを対象とする
-                    var issues = GetIssues(query);
-                    if (issues == null || issues.Count == 0)
-                    {
-                        Trackers = new List<Tracker>();
-                        CustomFields = new List<CustomField>();
-                        Users = new List<IdentifiableName>();
-                        Versions = new List<Redmine.Net.Api.Types.Version>();
-                        Categories = new List<IssueCategory>();
-                        return;
-                    }
+                Trackers = new List<Tracker>();
+                Users = new List<IdentifiableName>();
+                Versions = new List<Redmine.Net.Api.Types.Version>();
+                Categories = new List<IssueCategory>();
+                return;
+            }
 
-                    var projIds = issues.Select(i => i.Project.Id).Distinct().ToList();
-                    var projs = Projects.Where(p => projIds.Contains(p.Id)).ToList();
-                    var trackerIds = projs.SelectMany(p => p.Trackers.Select(t => t.Id)).Distinct().ToList();
+            if (updateCache)
+                await Task.Run(() => Cache.ForceUpdate());
 
-                    Trackers = allTrackers.Where(t => trackerIds.Contains(t.Id)).ToList();
-                    CustomFields = allCustomFields.Where(c => c.Trackers.Any(t => Trackers.Any(t2 => t.Id == t2.Id))).ToList();
+            var projIds = issues.Select(i => i.Project.Id).Distinct().ToList();
+            var projs = Cache.Projects.Where(p => projIds.Contains(p.Id)).ToList();
+            var trackerIds = projs.SelectMany(p => p.Trackers.Select(t => t.Id)).Distinct().ToList();
 
-                    await Task.WhenAll(
-                        Task.Run(async () =>
-                        {
-                            var memberships = await getItemsAsync<ProjectMembership>(projs, (i1, i2) => i1.Id == i2.Id);
-                            Users = memberships != null && memberships.Any() ?
-                                memberships.Select(m => m.User).Where(m => m != null).Distinct((u1, u2) => u1.Id == u2.Id).OrderBy(u => u.Id).ToList():
-                                new List<IdentifiableName>();
-                        }),
-                        Task.Run(async () => Versions = await getItemsAsync<Redmine.Net.Api.Types.Version>(projs, (i1, i2) => i1.Id == i2.Id)),
-                        Task.Run(async () => Categories = await getItemsAsync<IssueCategory>(projs, (i1, i2) => i1.Id == i2.Id)));
-                }
-            });
-        }
-
-        private async Task updateByProjectIdAsync(int projectId)
-        {
-            var proj = Projects.First(a => a.Id == projectId);
-
-            Trackers = allTrackers.Where(t => proj.Trackers.Any(t2 => t2.Id == t.Id)).ToList();
-
-            // Project の issue_custom_fields で判定したかったが、
-            // 「全プロジェクト向け」に設定されているものが含まれないバグ（？）があるため、
-            // プロジェクトで有効なトラッカーに紐づいているカスタムフィールドを使用する。
-            // プロジェクトの設定でトラッカーが有効でも特定のカスタムフィールドが無効だった場合、
-            // その無効なカスタムフィールドも表示されてしまう問題がある。
-            // しかし、必要なカスタムフィールドが含まれないよりはマシだと判断し、この処理とする。
-            // https://www.redmine.org/issues/38668
-            CustomFields = allCustomFields.Where(c => c.Trackers.Any(t => Trackers.Any(t2 => t.Id == t2.Id))).ToList();
-
-            await Task.WhenAll(
-                Task.Run(() =>
-                {
-                    var memberships = manager.GetObjectsWithErrConv<ProjectMembership>(projectId);
-                    Users = memberships != null && memberships.Any() ?
-                        memberships.Select(m => m.User).Where(m => m != null).OrderBy(u => u.Id).ToList() :
-                        new List<IdentifiableName>();
-                }),
-                Task.Run(() => Versions = manager.GetObjectsWithErrConv<Redmine.Net.Api.Types.Version>(projectId)),
-                Task.Run(() => Categories = masterManager.GetObjectsWithErrConv<IssueCategory>(projectId)));
+            Trackers = Cache.Trackers.Where(t => trackerIds.Contains(t.Id)).ToList();
+            Versions = projIds.Where(id => Cache.ProjectVersions.ContainsKey(id))
+                .SelectMany(id => Cache.ProjectVersions[id])
+                .ToList();
+            Users = projIds.Where(id => Cache.ProjectMemberships.ContainsKey(id))
+                .SelectMany(id => Cache.ProjectMemberships[id].Select(m => m.User).Where(a => a != null))
+                .Distinct((u1, u2) => u1.Id == u2.Id).OrderBy(u => u.Id).ToList();
+            await Task.Run(async () => Categories = await getItemsAsync<IssueCategory>(projs, (i1, i2) => i1.Id == i2.Id));
         }
 
         private async Task<List<T>> getItemsAsync<T>(List<Project> projs, Func<T, T, bool> isSame) where T : class, new()
         {
             var itemsLists = await Task.WhenAll(projs.Select(p => Task.Run(() => manager.GetObjectsWithErrConv<T>(p.Id))));
             return itemsLists.Where(l => l != null).SelectMany(l => l).Distinct(isSame).ToList();
-        }
-
-        public async Task UpdateByParentIssueAsync(Issue issue)
-        {
-            await Task.Run(async () =>
-            {
-                await updateByProjectIdAsync(issue.Project.Id);
-            });
         }
 
         /// <summary>
@@ -174,6 +101,11 @@ namespace RedmineTableEditor.Models
                     { RedmineKeys.ISSUE_ID, string.Join(",", ids) },
                     { RedmineKeys.STATUS_ID, "*" },
                 });
+        }
+
+        public List<Issue> GetIssues(NameValueCollection parameters, List<string> additionalQueries)
+        {
+            return manager.GetObjectsWithErrConv<Issue>(parameters, additionalQueries);
         }
 
         public List<Issue> GetIssues(Query query)

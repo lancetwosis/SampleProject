@@ -40,7 +40,7 @@ namespace RedmineTimePuncher.Enums
                     // https://www.colordic.org/colorscheme/ffcce7
                     return ColorEx.ToBrush("#ffcce7");
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
     }

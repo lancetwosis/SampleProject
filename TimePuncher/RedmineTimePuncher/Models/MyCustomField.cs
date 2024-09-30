@@ -1,6 +1,7 @@
 ﻿using LibRedminePower.Attributes;
 using LibRedminePower.Converters;
 using LibRedminePower.Extentions;
+using LibRedminePower.Models;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;

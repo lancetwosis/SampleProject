@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Models;
 using Reactive.Bindings.Extensions;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
@@ -109,7 +110,7 @@ namespace RedmineTimePuncher.Models.Visualize.Filters
                 case PeriodType.SpecifyPeriod:
                     return Start.Date;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"PeriodMode が {PeriodMode} はサポート対象外です。");
             }
         }
 
@@ -123,7 +124,7 @@ namespace RedmineTimePuncher.Models.Visualize.Filters
                 case PeriodType.SpecifyPeriod:
                     return End.Date;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"PeriodMode が {PeriodMode} はサポート対象外です。");
             }
         }
 

@@ -32,23 +32,30 @@ namespace RedmineTableEditor.ViewModels.FileSettings
 
         public IssueSettingsViewModelBase(IssueSettingsModelBase model, RedmineManager redmine, bool isSubIssues = false)
         {
-            var allFields = redmine.ObserveProperty(r => r.CustomFields).Select(cs =>
+            var allFields = redmine.Cache.Updated.Select(_ =>
             {
                 var fields = Enum.GetValues(typeof(IssuePropertyType)).Cast<IssuePropertyType>()
-                    .Where(a => a.IsEnabledInTableEditor())
+                    .Where(a => a.IsPropertyColumn())
+                    .OrderBy(a => a.ToPropertyColumnOrder())
                     .Select(a => new FieldViewModel(new FieldModel(a), null)).ToList();
 
-                fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.ReplyCount), null));
-                if (isSubIssues)
+                // 親チケットには Id と Subject を必ず入れたいので選択肢からは削除する
+                if (!isSubIssues)
                 {
-                    fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.DiffEstimatedSpent), null));
-                    fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.MySpentHours), null));
+                    fields = fields.Where(f => !f.Model.IsType(IssuePropertyType.Id) &&
+                                               !f.Model.IsType(IssuePropertyType.Subject)).ToList();
                 }
 
-                if (cs != null && cs.Any())
-                {
-                    fields.AddRange(cs.Where(a => a.Visible).Select(a => new FieldViewModel(new FieldModel(a.Id), a)));
-                }
+                fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.DiffEstimatedSpent), null));
+                fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.MySpentHours), null));
+                fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.ReplyCount), null));
+
+                // いずれかのプロジェクトで有効なカスタムフィールドをすべて表示する
+                // http://133.242.159.37/issues/1588#note-6
+                var cfFields = redmine.Cache.CustomFields.Where(cf => cf.IsEnabled() && cf.ToFieldFormat().IsSupported())
+                                                         .Select(cf => new FieldViewModel(new FieldModel(cf.Id), cf))
+                                                         .ToList();
+                fields.AddRange(cfFields);
 
                 return fields;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);

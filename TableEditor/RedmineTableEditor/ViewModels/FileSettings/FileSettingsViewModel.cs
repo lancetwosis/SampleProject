@@ -131,7 +131,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             }
         }
 
-        public async Task ReadAsync(string fileName)
+        public void Read(string fileName)
         {
             if (!string.IsNullOrEmpty(parent.Redmine.Value.IsValid()))
                 return;
@@ -140,19 +140,6 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             try
             {
                 deserialized = CloneExtentions.ToObject<FileSettingsModel>(System.IO.File.ReadAllText(fileName));
-
-                if (deserialized.ParentIssues.Clone() != Model.Value.ParentIssues.Clone())
-                {
-                    if (deserialized.ParentIssues.UseQuery)
-                    {
-                        await parent.Redmine.Value.UpdateByQueryAsync(deserialized.ParentIssues.Query);
-                    }
-                    else
-                    {
-                        var issue = parent.Redmine.Value.GetIssue(int.Parse(deserialized.ParentIssues.IssueId));
-                        await parent.Redmine.Value.UpdateByParentIssueAsync(issue);
-                    }
-                }
             }
             catch (Exception e)
             {
@@ -163,7 +150,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             FileName = fileName;
         }
 
-        public async Task<bool> LoadFirstSettingAsync(string selectedFileName = null)
+        public bool LoadFirstSetting(string selectedFileName = null)
         {
             var fileName = selectedFileName != null ? selectedFileName : Settings.Default.LastFileName;
             if (string.IsNullOrEmpty(fileName))
@@ -171,7 +158,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
 
             if (System.IO.File.Exists(fileName))
             {
-                await ReadAsync(fileName);
+                Read(fileName);
                 return true;
             }
             else

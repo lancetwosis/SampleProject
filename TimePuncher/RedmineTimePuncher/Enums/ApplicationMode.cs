@@ -47,7 +47,7 @@ namespace RedmineTimePuncher.Enums
                     return Resources.icons8_analytics_48.ToBitmapSource();
                 case ApplicationMode.Unselected:
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"mode が {mode} はサポート対象外です。");
             }
         }
     }

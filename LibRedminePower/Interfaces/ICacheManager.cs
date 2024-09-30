@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Enums;
+using LibRedminePower.Models;
 using Reactive.Bindings;
 using Redmine.Net.Api.Types;
 using System;
@@ -20,6 +21,12 @@ namespace LibRedminePower.Interfaces
         List<TimeEntryActivity> TimeEntryActivities { get; set; }
         List<Query> Queries { get; set; }
         List<CustomField> CustomFields { get; set; }
+        Dictionary<int, List<Redmine.Net.Api.Types.Version>> ProjectVersions { get; set; }
+        Dictionary<int, List<ProjectMembership>> ProjectMemberships { get; set; }
         MarkupLangType MarkupLang { get; set; }
+        MyUser MyUser { get; set; }
+        List<MyUser> Users { get; set; }
+
+        void ForceUpdate();
     }
 }

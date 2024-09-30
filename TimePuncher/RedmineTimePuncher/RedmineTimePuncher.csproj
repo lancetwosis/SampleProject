@@ -179,7 +179,6 @@
     <Compile Include="Interfaces\IAutoUpdateSetting.cs" />
     <Compile Include="Interfaces\IPeriod.cs" />
     <Compile Include="Interfaces\ISettingsModel.cs" />
-    <Compile Include="Models\IdName.cs" />
     <Compile Include="Models\Managers\DebugDataManager.cs" />
     <Compile Include="Models\Managers\TeamsManager.cs" />
     <Compile Include="Models\MyCustomFieldPossibleValue.cs" />
@@ -188,7 +187,6 @@
     <Compile Include="Models\MyTracker.cs" />
     <Compile Include="Models\MyPriority.cs" />
     <Compile Include="Models\MyTimeEntry.cs" />
-    <Compile Include="Models\MyUser.cs" />
     <Compile Include="Models\MyWikiHistorySummary.cs" />
     <Compile Include="Models\MyWikiPage.cs" />
     <Compile Include="Models\MyWikiPageItem.cs" />

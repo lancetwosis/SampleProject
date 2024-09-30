@@ -47,6 +47,9 @@
                                 MinWidth="160"
                                 telerik:ListBoxSelectedItemsBehavior.SelectedItemsSource="{Binding FromSelectedItems,
                                                                                                    Mode=TwoWay}"
+                                DisplayMemberPath="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                           AncestorType=UserControl},
+                                                            Path=DisplayMemberPath}"
                                 ItemsSource="{Binding FromItemsCVS}"
                                 SelectionMode="Extended">
                 <telerik:EventToCommandBehavior.EventBindings>
@@ -69,6 +72,9 @@
             <telerik:RadListBox Grid.Row="1"
                                 telerik:ListBoxSelectedItemsBehavior.SelectedItemsSource="{Binding ToSelectedItems,
                                                                                                    Mode=TwoWay}"
+                                DisplayMemberPath="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
+                                                                                           AncestorType=UserControl},
+                                                            Path=DisplayMemberPath}"
                                 ItemTemplate="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
                                                                                       AncestorType=UserControl},
                                                        Path=ToItemTemplate}"

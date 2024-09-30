@@ -41,7 +41,7 @@ namespace LibRedminePower.Extentions
         public override object ProvideValue(IServiceProvider serviceProvider)
         {
             if (null == this._enumType)
-                throw new InvalidOperationException("The EnumType must be specified.");
+                throw new NotSupportedException("The EnumType must be specified.");
 
 
             Type actualEnumType = Nullable.GetUnderlyingType(this._enumType) ?? this._enumType;

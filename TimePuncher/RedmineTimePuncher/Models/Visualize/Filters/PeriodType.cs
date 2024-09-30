@@ -33,7 +33,7 @@ namespace RedmineTimePuncher.Models.Visualize.Filters
                 case PeriodType.SpecifyPeriod:
                     return false;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
     }

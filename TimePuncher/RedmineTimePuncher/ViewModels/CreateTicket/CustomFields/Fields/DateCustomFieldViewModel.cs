@@ -28,7 +28,15 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Fields
 
         public DateCustomFieldViewModel(CustomField cf) : base(cf)
         {
+        }
+
+        protected override void setup(CustomField cf, MyIssue ticket)
+        {
+            base.setup(cf, ticket);
+
             DisplayDate = new ReactivePropertySlim<string>().AddTo(disposables);
+            Date = new ReactivePropertySlim<DateTime>(DateTime.Today).AddTo(disposables);
+
             DisplayDate.SubscribeWithErr(d =>
             {
                 if (d == Resources.ReviewCfDateWatermark)
@@ -46,22 +54,21 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Fields
                     DisplayDate.Value = date.ToString("yyyy/MM/dd");
             }).AddTo(disposables);
 
-            Date = new ReactivePropertySlim<DateTime>(DateTime.Today).AddTo(disposables);
             Date.SubscribeWithErr(d =>
             {
                 // 日付が新たに選択されたらポップアップを閉じる
-                if (isEnabled) NowEditing = false;
+                if (needsSet) NowEditing = false;
             }).AddTo(disposables);
 
             this.ObserveProperty(a => a.NowEditing).SubscribeWithErr(nowEditing =>
             {
                 if (nowEditing)
                 {
-                    isEnabled = true;
+                    needsSet = true;
                 }
                 else
                 {
-                    if (isEnabled)
+                    if (needsSet)
                         setValue(Date.Value);
                     else
                         clearValue();
@@ -72,19 +79,29 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Fields
         private void setValue(DateTime date)
         {
             Value = date.ToString("yyyy-MM-dd");
+            Date.Value = date;
         }
 
         private void clearValue()
         {
             DisplayDate.Value = Resources.ReviewCfDateWatermark;
             Value = null;
+            Date.Value = DateTime.Today;
         }
 
-        private bool isEnabled = true;
+        private bool needsSet = true;
         protected override void deleteValue()
         {
-            isEnabled = false;
+            needsSet = false;
             NowEditing = false;
+        }
+
+        public override void SetValue(string value)
+        {
+            if (DateTime.TryParse(value, out var date))
+                setValue(date);
+            else
+                clearValue();
         }
     }
 }

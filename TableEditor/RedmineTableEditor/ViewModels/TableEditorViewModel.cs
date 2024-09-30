@@ -43,9 +43,12 @@ namespace RedmineTableEditor.ViewModels
         public CommandBase NewCommand { get; set; }
         public CommandBase SaveCommand { get; set; }
         public CommandBase SaveAsCommand { get; set; }
+
         public AsyncCommandBase ApplyCommand { get; set; }
         public AsyncCommandBase UpdateContentCommand { get; set; }
+        public CommandBase ShowOnRedmineCommand { get; set; }
         public AsyncCommandBase SaveToRedmineCommand { get; set; }
+        public CommandBase SetFrozenColumnCommand { get; set; }
 
         public TableEditorViewModel(ReadOnlyReactivePropertySlim<(IRedmineManager Manager,
                                                                   IRedmineManager MasterManager,
@@ -83,15 +86,14 @@ namespace RedmineTableEditor.ViewModels
                 Issues?.Clear();
                 Issues?.Dispose();
 
-                r.Update();
-
                 Redmine.Value = r;
 
                 FileSettings = new FileSettingsViewModel(this).AddTo(disposables);
                 Issues = new IssuesViewModel(this).AddTo(disposables);
             }).AddTo(disposables);
 
-            TitlePrefix = this.ObserveProperty(a => a.FileSettings.FileName).CombineLatest(this.ObserveProperty(a => a.FileSettings.IsEdited.Value),
+            TitlePrefix = this.ObserveProperty(a => a.FileSettings.FileName).CombineLatest(
+                this.ObserveProperty(a => a.FileSettings.IsEdited.Value),
                 (f, ie) =>
                 {
                     if (string.IsNullOrEmpty(f))
@@ -121,8 +123,8 @@ namespace RedmineTableEditor.ViewModels
                     dialog.Filter = Resources.RedmineTableEditorFileFormat;
                     if (dialog.ShowDialog().Value)
                     {
-                        await FileSettings.ReadAsync(dialog.FileName);
-                        await Issues.ApplyAsync(FileSettings.Model.Value);
+                        FileSettings.Read(dialog.FileName);
+                        await Issues.ApplyAsync(FileSettings.Model.Value, false);
                     }
                 }).AddTo(disposables);
 
@@ -132,7 +134,9 @@ namespace RedmineTableEditor.ViewModels
             SaveAsCommand = new CommandBase(Resources.RibbonCmdSaveAs, Resources.saveas_icon).AddTo(disposables);
             ApplyCommand = new AsyncCommandBase(Resources.RibbonCmdApply, Resources.apply_icon).AddTo(disposables);
             UpdateContentCommand = new AsyncCommandBase(Resources.RibbonCmdUpdate, Resources.reload_icon).AddTo(disposables);
+            ShowOnRedmineCommand = new CommandBase(Resources.RibbonCmdShowRedmine, Resources.icons8_show_on_redmine_48).AddTo(disposables);
             SaveToRedmineCommand = new AsyncCommandBase(Resources.RibbonCmdSaveRedmine, Resources.save_redmine_icon).AddTo(disposables);
+            SetFrozenColumnCommand = new CommandBase(Resources.RibbonCmdSetFrozenColumn, Resources.icons8_select_column_32).AddTo(disposables);
         }
 
         private bool first = true;
@@ -145,9 +149,9 @@ namespace RedmineTableEditor.ViewModels
                 this.ObserveProperty(a => a.FileSettings).CombineLatest(this.ObserveProperty(a => a.Issues), (f, i) => (f, i))
                     .Where(p => p.f != null && p.i != null).Take(1).ObserveOnUIDispatcher().SubscribeWithErr(async _ =>
                     {
-                        if (await FileSettings.LoadFirstSettingAsync(fileName))
+                        if (FileSettings.LoadFirstSetting(fileName))
                         {
-                            await Issues.ApplyAsync(FileSettings.Model.Value);
+                            await Issues.ApplyAsync(FileSettings.Model.Value, false);
                         }
                     }).AddTo(disposables);
             }

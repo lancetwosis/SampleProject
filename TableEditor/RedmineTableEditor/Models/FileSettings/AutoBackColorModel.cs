@@ -38,7 +38,7 @@ namespace RedmineTableEditor.Models.FileSettings
             if (!string.IsNullOrEmpty(r.IsValid()))
                 return TRANSPARENT;
 
-            var status = r.Statuses.FirstOrDefault(a => a.Id == statusId);
+            var status = r.Cache.Statuss.FirstOrDefault(a => a.Id == statusId);
             if (status != null && status.IsClosed && AssignedToColors.IsEnabledClosed)
             {
                 return getStatusColor(statusId);

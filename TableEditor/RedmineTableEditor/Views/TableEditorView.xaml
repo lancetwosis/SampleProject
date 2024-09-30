@@ -96,9 +96,11 @@
                         <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding SaveAsCommand}" />
                     </telerik:RadRibbonGroup>
                     <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupTickets}">
-                        <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding ApplyCommand}" />
+                        <telerik:RadRibbonSplitButton helpers:ButtonSetupHelper.Data="{Binding ApplyCommand}" />
                         <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding UpdateContentCommand}" />
                         <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding SaveToRedmineCommand}" />
+                        <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding ShowOnRedmineCommand}" />
+                        <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding SetFrozenColumnCommand}" />
                     </telerik:RadRibbonGroup>
                 </telerik:RadRibbonTab>
             </telerik:RadRibbonView.Items>
@@ -113,10 +115,8 @@
                                    IsIndeterminate="True">
             <Grid x:Name="grid">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="AUTO" />
                     <RowDefinition Height="*" />
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Expander Grid.Row="0"
                           Background="AliceBlue"
@@ -125,95 +125,106 @@
                           Style="{StaticResource ExpanderStyle}">
                     <local:FileSettingsView DataContext="{Binding FileSettings}" />
                 </Expander>
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
 
-                <telerik:RadGridView Grid.Row="1"
-                                     AutoGenerateColumns="False"
-                                     CanUserFreezeColumns="False"
-                                     ClipboardCopyMode="Cells"
-                                     EnableColumnVirtualization="True"
-                                     EnableRowVirtualization="True"
-                                     GroupRenderMode="Flat"
-                                     IsFilteringAllowed="False"
-                                     IsPropertyChangedAggregationEnabled="False"
-                                     ItemsSource="{Binding Issues.IssuesView}"
-                                     LeftFrozenColumnCount="{Binding Issues.LeftFrozenColumnCount,
-                                                                     Mode=TwoWay}"
-                                     MergedCellsDirection="Vertical"
-                                     MouseRightButtonUp="RadGridView_MouseRightButtonUp"
-                                     RowIndicatorVisibility="Collapsed"
-                                     SelectionMode="Extended"
-                                     SelectionUnit="Cell"
-                                     ShowGroupPanel="False"
-                                     ShowSearchPanel="False">
-                    <telerik:RadGridView.ContextMenu>
-                        <ContextMenu>
-                            <MenuItem Command="{Binding Issues.GotoTicketCommand}"
-                                      Header="{x:Static props:Resources.IssuesCmdGoToTicket}">
-                                <MenuItem.Icon>
-                                    <telerik:RadGlyph Glyph="&#xe135;" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                            <MenuItem Command="{Binding Issues.ReadTicketCommand}"
-                                      Header="{x:Static props:Resources.IssuesCmdUpdateTicket}">
-                                <MenuItem.Icon>
-                                    <telerik:RadGlyph Glyph="&#xe103;" />
-                                </MenuItem.Icon>
-                            </MenuItem>
-                        </ContextMenu>
-                    </telerik:RadGridView.ContextMenu>
+                    <telerik:RadGridView Grid.Row="0"
+                                         AutoGenerateColumns="False"
+                                         CanUserFreezeColumns="False"
+                                         CanUserReorderColumns="False"
+                                         ClipboardCopyMode="Cells"
+                                         CurrentColumn="{Binding Issues.CurrentColumn.Value,
+                                                                 Mode=TwoWay}"
+                                         EnableColumnVirtualization="True"
+                                         EnableRowVirtualization="True"
+                                         GroupRenderMode="Flat"
+                                         IsFilteringAllowed="False"
+                                         IsPropertyChangedAggregationEnabled="False"
+                                         ItemsSource="{Binding Issues.IssuesView}"
+                                         LeftFrozenColumnCount="{Binding Issues.LeftFrozenColumnCount,
+                                                                         Mode=TwoWay}"
+                                         MergedCellsDirection="Vertical"
+                                         MouseRightButtonUp="RadGridView_MouseRightButtonUp"
+                                         RowIndicatorVisibility="Collapsed"
+                                         SelectionMode="Extended"
+                                         SelectionUnit="Cell"
+                                         ShowGroupPanel="False"
+                                         ShowSearchPanel="False">
+                        <telerik:RadGridView.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Command="{Binding Issues.GotoTicketCommand}"
+                                          Header="{x:Static props:Resources.IssuesCmdGoToTicket}">
+                                    <MenuItem.Icon>
+                                        <telerik:RadGlyph Glyph="&#xe135;" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                                <MenuItem Command="{Binding Issues.ReadTicketCommand}"
+                                          Header="{x:Static props:Resources.IssuesCmdUpdateTicket}">
+                                    <MenuItem.Icon>
+                                        <telerik:RadGlyph Glyph="&#xe103;" />
+                                    </MenuItem.Icon>
+                                </MenuItem>
+                            </ContextMenu>
+                        </telerik:RadGridView.ContextMenu>
 
-                    <b:Interaction.Behaviors>
-                        <behaviors:GirdViewColumnGroupsBehavior Items="{Binding Issues.ColumnGroups, Mode=OneWay}" />
-                        <behaviors:GirdViewColumnsBehavior Items="{Binding Issues.Columns, Mode=OneWay}" />
-                        <behaviors:GridViewCurrentCellToMyIssueChildBehavior Item="{Binding Issues.CurrentIssue,
-                                                                                            Mode=TwoWay}"
-                                                                             Items="{Binding Issues.SelectedIsuues,
-                                                                                             Mode=TwoWay}" />
-                    </b:Interaction.Behaviors>
-                </telerik:RadGridView>
+                        <b:Interaction.Behaviors>
+                            <behaviors:GirdViewColumnGroupsBehavior Items="{Binding Issues.ColumnGroups, Mode=OneWay}" />
+                            <behaviors:GirdViewColumnsBehavior Items="{Binding Issues.Columns, Mode=OneWay}" />
+                            <behaviors:GridViewCurrentCellToMyIssueChildBehavior Item="{Binding Issues.CurrentIssue,
+                                                                                                Mode=TwoWay}"
+                                                                                 Items="{Binding Issues.SelectedIsuues,
+                                                                                                 Mode=TwoWay}" />
+                        </b:Interaction.Behaviors>
+                    </telerik:RadGridView>
 
-                <GridSplitter Grid.Row="2"
-                              HorizontalAlignment="Stretch"
-                              PreviewMouseDown="GridSplitter_PreviewMouseDown"
-                              PreviewMouseMove="GridSplitter_PreviewMouseMove"
-                              ShowsPreview="True" />
+                    <GridSplitter Grid.Row="1"
+                                  HorizontalAlignment="Stretch"
+                                  PreviewMouseDown="GridSplitter_PreviewMouseDown"
+                                  PreviewMouseMove="GridSplitter_PreviewMouseMove"
+                                  ShowsPreview="True" />
 
-                <Expander Grid.Row="3"
-                          attachments:ExpanderAttachment.GridSnap="Auto"
-                          Background="AliceBlue"
-                          Header="{x:Static props:Resources.ExpanderPivotTable}"
-                          IsExpanded="False"
-                          Style="{StaticResource ExpanderStyle}">
-                    <Grid Margin="5">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition />
-                        </Grid.ColumnDefinitions>
-                        <pivot:RadPivotFieldList Name="radPivotFieldList1"
-                                                 Width="270"
-                                                 Margin="0,0,5,0"
-                                                 BorderThickness="0"
-                                                 DataProvider="{Binding Issues.LocalData}" />
+                    <Expander Grid.Row="2"
+                              attachments:ExpanderAttachment.GridSnap="Auto"
+                              Background="AliceBlue"
+                              Header="{x:Static props:Resources.ExpanderPivotTable}"
+                              IsExpanded="False"
+                              Style="{StaticResource ExpanderStyle}">
+                        <Grid Margin="5">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition />
+                            </Grid.ColumnDefinitions>
+                            <pivot:RadPivotFieldList Name="radPivotFieldList1"
+                                                     Width="270"
+                                                     Margin="0,0,5,0"
+                                                     BorderThickness="0"
+                                                     DataProvider="{Binding Issues.LocalData}" />
 
-                        <pivot:RadPivotGrid Name="radPivotGrid1"
-                                            Grid.Column="1"
-                                            AllowSelection="True"
-                                            CanUserResizeColumns="True"
-                                            DataProvider="{Binding Issues.LocalData}">
-                            <pivot:RadPivotGrid.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem Command="{x:Static pivot:PivotGridCommands.CopySelection}"
-                                              CommandTarget="{Binding ElementName=radPivotGrid1}"
-                                              Header="Copy">
-                                        <MenuItem.Icon>
-                                            <telerik:RadGlyph Glyph="&#xe65d;" />
-                                        </MenuItem.Icon>
-                                    </MenuItem>
-                                </ContextMenu>
-                            </pivot:RadPivotGrid.ContextMenu>
-                        </pivot:RadPivotGrid>
-                    </Grid>
-                </Expander>
+                            <pivot:RadPivotGrid Name="radPivotGrid1"
+                                                Grid.Column="1"
+                                                AllowSelection="True"
+                                                CanUserResizeColumns="True"
+                                                DataProvider="{Binding Issues.LocalData}">
+                                <pivot:RadPivotGrid.ContextMenu>
+                                    <ContextMenu>
+                                        <MenuItem Command="{x:Static pivot:PivotGridCommands.CopySelection}"
+                                                  CommandTarget="{Binding ElementName=radPivotGrid1}"
+                                                  Header="Copy">
+                                            <MenuItem.Icon>
+                                                <telerik:RadGlyph Glyph="&#xe65d;" />
+                                            </MenuItem.Icon>
+                                        </MenuItem>
+                                    </ContextMenu>
+                                </pivot:RadPivotGrid.ContextMenu>
+                            </pivot:RadPivotGrid>
+                        </Grid>
+                    </Expander>
+                </Grid>
+
             </Grid>
         </telerik1:RadBusyIndicator>
     </Grid>

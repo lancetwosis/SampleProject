@@ -1,6 +1,7 @@
 ﻿using LibRedminePower.Extentions;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Properties;
@@ -26,11 +27,15 @@ namespace RedmineTimePuncher.Models.Settings
         /// <summary>
         /// ReviewTranscribeSettingModel に引数なしのコンストラクタを定義するため static で保持
         /// </summary>
+        public static List<MyProject> PROJECTS { get; set; } = new List<MyProject>();
+        /// <summary>
+        /// ReviewTranscribeSettingModel に引数なしのコンストラクタを定義するため static で保持
+        /// </summary>
         public static List<MyProject> PROJECTS_ONLY_WIKI_ENABLED { get; set; } = new List<MyProject>();
         /// <summary>
         /// ReviewTranscribeSettingModel に引数なしのコンストラクタを定義するため static で保持
         /// </summary>
-        public static RedmineManager REDMINE { get; set; }
+        public static Managers.RedmineManager REDMINE { get; set; }
 
         public static MyCustomFieldPossibleValue NOT_SPECIFIED_PROCESS = new MyCustomFieldPossibleValue()
         {
@@ -58,7 +63,7 @@ namespace RedmineTimePuncher.Models.Settings
 
         [JsonIgnore]
         protected CompositeDisposable myDisposables;
-        public async Task<List<string>> SetupAsync(RedmineManager r, CreateTicketSettingsModel createTicket, ReactivePropertySlim<string> isBusy)
+        public async Task<List<string>> SetupAsync(Managers.RedmineManager r, CreateTicketSettingsModel createTicket, ReactivePropertySlim<string> isBusy)
         {
             myDisposables?.Dispose();
             myDisposables = new CompositeDisposable().AddTo(disposables);
@@ -67,7 +72,10 @@ namespace RedmineTimePuncher.Models.Settings
                 isBusy.Value = Resources.SettingsMsgNowGettingData;
 
                 REDMINE = r;
-                PROJECTS_ONLY_WIKI_ENABLED = await Task.Run(() => r.GetMyProjectsOnlyWikiEnabled()); ;
+
+                var myProjects = CacheManager.Default.TmpProjects.Where(p => CacheManager.Default.TmpMyUser.Memberships.Any(m => p.Name == m.Project.Name)).ToList();
+                PROJECTS = myProjects.Select(p => new MyProject(p)).ToList();
+                PROJECTS_ONLY_WIKI_ENABLED = myProjects.Where(p => p.EnabledModules.Any(m => m.Name == RedmineKeys.WIKI)).Select(p => new MyProject(p)).ToList();
 
                 var errors = updateProcesses(createTicket.DetectionProcess);
 
@@ -121,14 +129,17 @@ namespace RedmineTimePuncher.Models.Settings
             return errors;
         }
 
-        public async Task SetupAsync(RedmineManager r, ReactivePropertySlim<string> isBusy)
+        public async Task SetupAsync(Managers.RedmineManager r, ReactivePropertySlim<string> isBusy)
         {
             try
             {
                 isBusy.Value = Resources.SettingsMsgNowGettingData;
 
                 REDMINE = r;
-                PROJECTS_ONLY_WIKI_ENABLED = await Task.Run(() => r.GetMyProjectsOnlyWikiEnabled()); ;
+
+                var myProjects = CacheManager.Default.TmpProjects.Where(p => CacheManager.Default.TmpMyUser.Memberships.Any(m => p.Name == m.Project.Name)).ToList();
+                PROJECTS = myProjects.Select(p => new MyProject(p)).ToList();
+                PROJECTS_ONLY_WIKI_ENABLED = myProjects.Where(p => p.EnabledModules.Any(m => m.Name == RedmineKeys.WIKI)).Select(p => new MyProject(p)).ToList();
 
                 foreach (var i in Items)
                 {

@@ -1,4 +1,5 @@
-﻿using LibRedminePower.Extentions;
+﻿using LibRedminePower.Enums;
+using LibRedminePower.Extentions;
 using LibRedminePower.Views.Controls;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -100,9 +101,15 @@ namespace RedmineTableEditor.Models.Bases
         public DueDate DueDate { get; set; }
         public DoneRatio DoneRatio { get; set; }
         public EstimatedHours EstimatedHours { get; set; }
-        public float? SpentHours => Issue?.SpentHours;
-        public float? TotalSpentHours => Issue?.TotalSpentHours;
-        public float? TotalEstimatedHours => Issue?.TotalEstimatedHours;
+        public float? SpentHours { get; set; }
+        public float? TotalSpentHours { get; set; }
+        public float? TotalEstimatedHours { get; set; }
+
+        public string Project { get; set; }
+        public string Author { get; set; }
+        public string LastUpdater { get; set; }
+        public DateTime? Created { get; set; }
+        public DateTime? Updated { get; set; }
 
         protected List<TimeEntry> timeEntries { get; set; }
         public double? MySpentHours
@@ -185,20 +192,24 @@ namespace RedmineTableEditor.Models.Bases
         public Dictionary<int, CfInts> DicCustomFieldInts { get; set; }
         public Dictionary<int, CfStrings> DicCustomFieldStrings { get; set; }
 
-        protected FileSettingsModel settings { get; }
         protected RedmineManager redmine { get; }
+        private ObservableCollection<FieldModel> properties { get; set; }
 
-        public MyIssueBase(Issue issue, RedmineManager redmine, FileSettingsModel settings)
+        public MyIssueBase(Issue issue, RedmineManager redmine, ObservableCollection<FieldModel> properties)
         {
             this.redmine = redmine;
-            this.settings = settings;
+            this.properties = properties;
             SetIssue(issue);
         }
 
-        public virtual void SetIssue(Issue issue)
+        public void SetIssue(Issue issue)
         {
             this.Issue = issue;
             this.Url = issue != null ? redmine.GetIssueUrl(issue.Id) : "";
+            this.Project = issue != null ? issue.Project?.Name : "";
+            this.Author = issue != null ? issue.Author?.Name : "";
+            this.Created = issue != null ? issue.CreatedOn : null;
+            this.Updated = issue != null ? issue.UpdatedOn : null;
 
             DicCustomFieldString = new Dictionary<int, CfString>();
             DicCustomFieldFloat = new Dictionary<int, CfFloat>();
@@ -223,7 +234,7 @@ namespace RedmineTableEditor.Models.Bases
 
             if (issue != null && issue.CustomFields != null && issue.CustomFields.Any())
             {
-                var fields =issue.CustomFields.Select(a => a.ToFieldBase(redmine.CustomFields.Single(b => b.Id == a.Id))).Where(a => a != null).ToList();
+                var fields =issue.CustomFields.Select(a => a.ToFieldBase(redmine.Cache.CustomFields.Single(b => b.Id == a.Id))).Where(a => a != null).ToList();
                 foreach (var cf in fields)
                 {
                     editableProps.Add(cf);
@@ -276,19 +287,67 @@ namespace RedmineTableEditor.Models.Bases
 
             IsEdited = editableProps.Select(a => a.ObserveProperty(b => b.IsEdited)).CombineLatestValuesAreAllFalse().Inverse().ToReactiveProperty().AddTo(disposables);
             IsEdited.Where(a => !a).SubscribeWithErr(_ => editableProps.ToList().ForEach(a => a.IsEdited = false));
-        }
 
-        protected void getReplyCount()
-        {
-            var _ = Task.Run(() =>
+            if (Issue == null)
+                return;
+
+            // 追加の情報が必要な場合、非同期で取得を行う
+            if (properties.Any(p => p.IsType(MyIssuePropertyType.MySpentHours) ||
+                                    p.IsType(MyIssuePropertyType.DiffEstimatedSpent)))
             {
-                var i = redmine.GetIssueIncludeJournals(Issue.Id);
-                this.assignJournals = i.Journals == null ? new List<Detail>() :
-                    i.Journals.Select(j => j.Details?.FirstOrDefault(d => d.Name == "assigned_to_id"))
-                              .Where(a => a != null).ToList();
-                RaisePropertyChanged(nameof(ReplyCount));
-                RaisePropertyChanged(nameof(ReplyCountToolTip));
-            });
+                var _ = Task.Run(() =>
+                {
+                    timeEntries = redmine.GetTimeEntries(Issue.Id);
+                    RaisePropertyChanged(nameof(MySpentHours));
+                    RaisePropertyChanged(nameof(DiffEstimatedSpent));
+                });
+
+                // アサインが変更された場合は、合計時間の変更通知を行う。
+                this.ObserveProperty(a => a.AssignedTo.Value).SubscribeWithErr(__ => RaisePropertyChanged(nameof(MySpentHours))).AddTo(disposables);
+                this.ObserveProperty(a => a.EstimatedHours.Value).SubscribeWithErr(__ => RaisePropertyChanged(nameof(DiffEstimatedSpent))).AddTo(disposables);
+            }
+
+            var needsJournal = properties.Any(p => p.IsType(MyIssuePropertyType.ReplyCount) ||
+                                                   p.IsType(IssuePropertyType.LastUpdater));
+            var needsDetail = properties.Any(p => p.IsType(IssuePropertyType.SpentHours) ||
+                                                  p.IsType(IssuePropertyType.TotalSpentHours) ||
+                                                  p.IsType(IssuePropertyType.TotalEstimatedHours));
+            if (needsJournal)
+            {
+                var _ = Task.Run(() =>
+                {
+                    var i = redmine.GetIssueIncludeJournals(Issue.Id);
+                    if (i.Journals == null)
+                    {
+                        this.assignJournals = new List<Detail>();
+                        LastUpdater = null;
+                    }
+                    else
+                    {
+                        this.assignJournals = i.Journals.Select(j => j.Details?.FirstOrDefault(d => d.Name == "assigned_to_id"))
+                                                        .Where(a => a != null).ToList();
+                        var last = i.Journals.LastOrDefault(j => j.User != null);
+                        if (last != null)
+                            LastUpdater = last.User.Name;
+                    }
+                    RaisePropertyChanged(nameof(ReplyCount));
+                    RaisePropertyChanged(nameof(ReplyCountToolTip));
+
+                    SpentHours = i.SpentHours;
+                    TotalSpentHours = i.TotalSpentHours;
+                    TotalEstimatedHours = i.TotalEstimatedHours;
+                });
+            }
+            else if (needsDetail)
+            {
+                var _ = Task.Run(() =>
+                {
+                    var i = redmine.GetIssue(Issue.Id);
+                    SpentHours = i.SpentHours;
+                    TotalSpentHours = i.TotalSpentHours;
+                    TotalEstimatedHours = i.TotalEstimatedHours;
+                });
+            }
         }
 
         public virtual void Read()

@@ -71,5 +71,9 @@ namespace RedmineTableEditor.Extentions
             }
         }
 
+        public static bool IsEnabled(this CustomField cf)
+        {
+            return cf.CustomizedType == "issue" && cf.Trackers != null && cf.Trackers.Count > 0;
+        }
     }
 }

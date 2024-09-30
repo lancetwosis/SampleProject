@@ -57,7 +57,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 ts.Insert(0, Models.TicketFields.Standard.Tracker.NOT_SPECIFIED);
                 return ts;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Statuses = redmine.ObserveProperty(a => a.Statuses).Where(a => a != null)
+            Statuses = redmine.ObserveProperty(a => a.Cache.Statuss).Where(a => a != null)
                 .Select(a => new ObservableCollection<IssueStatus>(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             // 変更を刈り取る。

@@ -78,7 +78,7 @@ namespace RedmineTimePuncher.Models.Settings
         public ReviewMethodCustomField(MyCustomField customField, ReviewMethodCustomField prev)
         {
             if (customField.Format != CustomFieldFormat.List)
-                throw new InvalidOperationException();
+                throw new NotSupportedException();
 
             Id = customField.Id;
             Name = customField.Name;

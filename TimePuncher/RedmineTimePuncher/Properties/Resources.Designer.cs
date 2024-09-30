@@ -2201,6 +2201,17 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   The tracker “{1}” set in {0} is not valid for project “{2}”.
+        ///
+        ///Please review your settings if you wish to enable the custom field setting feature. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewErrMsgInvalidTracker {
+            get {
+                return ResourceManager.GetString("ReviewErrMsgInvalidTracker", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   This function requires the setting of an administrator&apos;s API key. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewErrMsgNeedAdminAPIKey {
@@ -4132,6 +4143,24 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Target issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColGroupTarget {
+            get {
+                return ResourceManager.GetString("SettingsReviColGroupTarget", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Transcribed wiki page に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColGroupWiki {
+            get {
+                return ResourceManager.GetString("SettingsReviColGroupWiki", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Header に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviColHeader {
@@ -4168,16 +4197,6 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Includes
-        ///Header に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string SettingsReviColIncludesHeaderWrap {
-            get {
-                return ResourceManager.GetString("SettingsReviColIncludesHeaderWrap", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Reviewed Process に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviColProcess {
@@ -4196,17 +4215,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Reviewed
-        ///Process に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string SettingsReviColProcessWrap {
-            get {
-                return ResourceManager.GetString("SettingsReviColProcessWrap", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Project に類似しているローカライズされた文字列を検索します。
+        ///   Reviewed Project に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviColProject {
             get {
@@ -4220,6 +4229,61 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsReviColProjectMsg {
             get {
                 return ResourceManager.GetString("SettingsReviColProjectMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Includes
+        ///Header に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColSubIncludesHeader {
+            get {
+                return ResourceManager.GetString("SettingsReviColSubIncludesHeader", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Page Name に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColSubPageName {
+            get {
+                return ResourceManager.GetString("SettingsReviColSubPageName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Process に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColSubProcess {
+            get {
+                return ResourceManager.GetString("SettingsReviColSubProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Project に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColSubProject {
+            get {
+                return ResourceManager.GetString("SettingsReviColSubProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Subject に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColSubTitle {
+            get {
+                return ResourceManager.GetString("SettingsReviColSubTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Tracker に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColSubTracker {
+            get {
+                return ResourceManager.GetString("SettingsReviColSubTracker", resourceCulture);
             }
         }
         
@@ -4242,16 +4306,6 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Reviewed
-        ///Issue Subject に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string SettingsReviColTitleWrap {
-            get {
-                return ResourceManager.GetString("SettingsReviColTitleWrap", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Reviewed Tracker に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviColTracker {
@@ -4270,17 +4324,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Reviewed
-        ///Tracker に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string SettingsReviColTrackerWrap {
-            get {
-                return ResourceManager.GetString("SettingsReviColTrackerWrap", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Wiki Page に類似しているローカライズされた文字列を検索します。
+        ///   Wiki Page Name に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviColWikiPage {
             get {
@@ -4294,6 +4338,24 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsReviColWikiPageMsg {
             get {
                 return ResourceManager.GetString("SettingsReviColWikiPageMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Wiki Project に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColWikiProject {
+            get {
+                return ResourceManager.GetString("SettingsReviColWikiProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///    に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColWikiProjectMsg {
+            get {
+                return ResourceManager.GetString("SettingsReviColWikiProjectMsg", resourceCulture);
             }
         }
         

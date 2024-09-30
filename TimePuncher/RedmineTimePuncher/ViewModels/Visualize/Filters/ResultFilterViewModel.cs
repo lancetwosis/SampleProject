@@ -102,7 +102,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                 case FactorValueType.IssueCustomField:
                     return new ObservableCollection<FactorModel>(parent.CustomFields[type]);
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type.ValueType が {type.ValueType} はサポート対象外です。");
             }
         }
     }

@@ -52,7 +52,7 @@ namespace RedmineTableEditor.ViewModels.FileSettings
             Title = Model.ToReactivePropertySlimAsSynchronized(a => a.Title).AddTo(disposables);
             Subject = Model.ToReactivePropertySlimAsSynchronized(a => a.Subject).AddTo(disposables);
             SubjectCompare = Model.ToReactivePropertySlimAsSynchronized(a => a.SubjectCompare).AddTo(disposables);
-            SelectedStatuses = new ObservableCollectionSync<IssueStatus, int>(Model.StatusIds, i => SubIssueSettingsViewModel.Redmine.Statuses.SingleOrDefault(b => b.Id == i), i => i.Id).AddTo(disposables);
+            SelectedStatuses = new ObservableCollectionSync<IssueStatus, int>(Model.StatusIds, i => SubIssueSettingsViewModel.Redmine.Cache.Statuss.SingleOrDefault(b => b.Id == i), i => i.Id).AddTo(disposables);
             StatusCompare = Model.ToReactivePropertySlimAsSynchronized(a => a.StatusCompare).AddTo(disposables);
 
             IsEdited = new[]

@@ -38,7 +38,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     case FactorValueType.BottomRight:
                         return Visibility.Visible;
                     default:
-                        throw new InvalidOperationException();
+                        throw new NotSupportedException($"t.ValueType が {t.ValueType} はサポート対象外です。");
                 }
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
@@ -56,7 +56,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     case FactorValueType.BottomRight:
                         return HorizontalAlignment.Right;
                     default:
-                        throw new InvalidOperationException();
+                        throw new NotSupportedException($"t.ValueType が {t.ValueType} はサポート対象外です。");
                 }
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
@@ -74,7 +74,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     case FactorValueType.BottomRight:
                         return VerticalAlignment.Bottom;
                     default:
-                        throw new InvalidOperationException();
+                        throw new NotSupportedException($"t.ValueType が {t.ValueType} はサポート対象外です。");
                 }
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }

@@ -197,13 +197,16 @@ namespace Redmine.Net.Api.Types
         /// <returns></returns>
         List<T> GetObjects<T>(params string[] include) where T : class, new();
 
+        // カスタマイズ(S):project_id などを複数指定して Issue を取得するための対応
         /// <summary>
         /// 
         /// </summary>
         /// <param name="parameters"></param>
+        /// <param name="additionalQueries"></param>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        List<T> GetObjects<T>(NameValueCollection parameters) where T : class, new();
+        List<T> GetObjects<T>(NameValueCollection parameters, List<string> additionalQueries = null) where T : class, new();
+        // カスタマイズ(E):project_id などを複数指定して Issue を取得するための対応
 
         /// <summary>
         /// 

@@ -29,9 +29,13 @@ namespace RedmineTableEditor.Models
         public Dictionary<int, List<MySubIssue>> ChildrenListDic { get; set; }
         public Dictionary<int, MySubIssue> ChildrenDic { get; set; }
 
+        private FileSettingsModel settings { get; }
+
         public MyIssue(RedmineManager redmine, FileSettingsModel settings, Issue issue)
-            : base(issue, redmine, settings)
+            : base(issue, redmine, settings.ParentIssues.Properties)
         {
+            this.settings = settings;
+
             ChildrenDic = new Dictionary<int, MySubIssue>();
             ChildrenListDic = new Dictionary<int, List<MySubIssue>>();
             foreach (var sub in settings.SubIssues.Items)
@@ -41,33 +45,12 @@ namespace RedmineTableEditor.Models
             }
         }
 
-        public override void SetIssue(Issue issue)
-        {
-            base.SetIssue(issue);
-
-            if (issue == null)
-                return;
-
-            if (settings.ParentIssues.Properties.Any(p => p.MyField.HasValue &&
-                p.MyField.Value == Enums.MyIssuePropertyType.ReplyCount))
-            {
-                getReplyCount();
-            }
-        }
-
-        public async Task UpdateChildrenAsync(CancellationToken token, bool isDetail)
+        public async Task UpdateChildrenAsync(CancellationToken token)
         {
             if (settings.SubIssues.Items.Any())
             {
                 // 子チケットを再帰的にすべて取得する。
                 var rawIssues = await Task.Run(() => redmine.GetChildIssues(Issue.Id)?.ToArray()).WithCancel(token);
-
-                if (rawIssues != null && isDetail)
-                {
-                    var getDetailTasks = rawIssues.Select(a => Task.Run(() => redmine.GetIssue(a.Id)));
-                    rawIssues = await Task.WhenAll(getDetailTasks).WithCancel(token);
-                }
-
                 foreach (var sub in settings.SubIssues.Items)
                 {
                     ChildrenListDic[sub.Order] = rawIssues?.Where(a => sub.IsMatch(a))

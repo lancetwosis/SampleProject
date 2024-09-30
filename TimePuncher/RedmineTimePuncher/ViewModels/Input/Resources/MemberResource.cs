@@ -1,4 +1,5 @@
-﻿using Reactive.Bindings;
+﻿using LibRedminePower.Models;
+using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;

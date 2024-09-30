@@ -17,16 +17,22 @@ namespace RedmineTableEditor.Models.TicketFields.Custom
                   {
                       if (cf.Values == null)
                           cf.Values = new List<CustomFieldValue>() { new CustomFieldValue() };
-                      if (bool.TryParse(cf.Values[0].Info, out var result))
-                          return result;
-                      return null;
+                      switch(cf.Values[0].Info)
+                      {
+                          case "0": return false;
+                          case "1": return true;
+                          default:  return null;
+                      }
                   },
                   (v) =>
                   {
                       meta.Validate(v.ToString());
                       if (cf.Values == null)
                           cf.Values = new List<CustomFieldValue>() { new CustomFieldValue() };
-                      cf.Values[0].Info = v.ToString();
+                      if (v.HasValue)
+                          cf.Values[0].Info = v.Value ? "1" : "0";
+                      else
+                          cf.Values[0].Info = null;
                   })
         {
         }

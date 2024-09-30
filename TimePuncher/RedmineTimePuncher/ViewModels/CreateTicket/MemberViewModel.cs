@@ -1,4 +1,5 @@
 ﻿using LibRedminePower.Extentions;
+using LibRedminePower.Models;
 using NetOffice.OutlookApi.Enums;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;

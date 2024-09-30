@@ -55,36 +55,46 @@ namespace LibRedminePower.Models.Manager
 
         public async Task<List<ActivityModel>> GetActivitiesAsync(CancellationToken token, int userId, DateTime start, DateTime end)
         {
-            using (var log = Logger.CreateProcess<RedmineWebManager>($"GetActivities {start.ToShortDateString()} - {end.ToShortDateString()}"))
+            using (var log = Logger.CreateProcess<RedmineWebManager>($"GetActivities userId={userId}, start={start}, end={end}"))
             {
-                await loginAsync(token);
-
-                DateRange range = null;
-                var result = new List<ActivityModel>();
-                var days = start.GetDays(end).Where(a => DateTime.Today >= a).ToList();
-                foreach (var day in days.OrderByDescending(a => a))
+                try
                 {
-                    if (range == null || !range.Includes(day))
+                    await loginAsync(token);
+
+                    DateRange range = null;
+                    var result = new List<ActivityModel>();
+                    var days = start.GetDays(end).Where(a => DateTime.Today >= a).ToList();
+
+                    foreach (var day in days.OrderByDescending(a => a))
                     {
-                        var doc = await getWebActivityAsync(token, userId, day);
-                        var subTitle = doc.QuerySelector(".subtitle");
-
-                        // doc.Title は以下のように日本語の場合 "活動" から始まる。よってそこで Redmine の言語設定を判断する。
-                        // 英語：　"Activity - User Name - Redmine"
-                        // 日本語："活動 - User Name - Redmine"
-                        var isJp = doc.Title.StartsWith("活動");
-                        range = updateRange(range, subTitle.TextContent, isJp);
-
-                        var dayActivities = doc.QuerySelector("#activity").Children.Chunk(2).ToList();
-                        foreach (var dayActivity in dayActivities)
+                        if (range == null || !range.Includes(day))
                         {
-                            var webDateStr = dayActivity.First().TextContent;
-                            var webDate = webDateStr == (isJp ? "今日" : "Today") ? DateTime.Today : DateTime.Parse(webDateStr);
-                            result.AddRange(getActivities(token, dayActivity.Last(), webDate));
+                            var doc = await getWebActivityAsync(token, userId, day);
+                            var subTitle = doc.QuerySelectorWithNullCheck(".subtitle");
+
+                            var isJp = getLocation(doc);
+                            range = updateRange(range, subTitle.TextContent, isJp);
+
+                            var children = doc.QuerySelectorWithNullCheck("#activity").Children;
+                            if (children == null) continue;
+
+                            var dayActivities = children.Chunk(2).ToList();
+                            foreach (var dayActivity in dayActivities)
+                            {
+                                var webDateStr = dayActivity.First().TextContent;
+                                var webDate = webDateStr == (isJp ? "今日" : "Today") ? DateTime.Today : DateTimeExtentions.Parse(webDateStr);
+                                var activities = getActivities(token, dayActivity.Last(), webDate);
+                                result.AddRange(activities);
+                            }
                         }
                     }
+
+                    return result.Where(a => start <= a.Date && a.Date <= end).ToList();
                 }
-                return result.Where(a => start <= a.Date && a.Date <= end).ToList();
+                catch (Exception e)
+                {
+                    throw new ApplicationContinueException($"Failed to GetActivitiesAsync. userId={userId}, start={start}, end={end}", e);
+                }
             }
         }
 
@@ -143,30 +153,41 @@ namespace LibRedminePower.Models.Manager
             }
         }
 
+        public bool getLocation(IHtmlDocument activityPage)
+        {
+            // doc.Title は以下のように日本語の場合 "活動" から始まる。よってそこで Redmine の言語設定を判断する。
+            // 英語：　"Activity - User Name - Redmine"
+            // 日本語："活動 - User Name - Redmine"
+            if (activityPage.Title.StartsWith("活動"))
+                return true;
+            else if (activityPage.Title.StartsWith("Activity"))
+                return false;
+            else
+                throw new ApplicationException($"Failed to getLocation. activityPage.Children={activityPage.GetChildrenSummary()}");
+        }
+
         private DateRange updateRange(DateRange pre, string subTitle, bool isJp)
         {
             var spliters = isJp ? new[] { "から", "まで" } : new[] { "From", "to" };
             var fromTo = subTitle.Split(spliters, StringSplitOptions.RemoveEmptyEntries);
-            var from = DateTime.Parse(fromTo.First());
+            var from = DateTimeExtentions.Parse(fromTo.First());
             if (pre == null)
-                return new DateRange(from, DateTime.Parse(fromTo.Last()));
+                return new DateRange(from, DateTimeExtentions.Parse(fromTo.Last()));
             else
                 return new DateRange(from, pre.End);
         }
 
         private async Task<IHtmlDocument> getWebActivityAsync(CancellationToken token, int userId, DateTime targetDate)
         {
-            using (var log = Logger.CreateProcess<RedmineWebManager>($"getWebActivityAsync {targetDate.ToShortDateString()}"))
+            var activityUrl = urlBase + $"activity?&from={targetDate.ToString("yyyy-MM-dd")}&user_id={userId}";
+            using (var log = Logger.CreateProcess<RedmineWebManager>($"getWebActivityAsync Url={activityUrl}"))
             {
-                // 活動ページへ移動する。
-                var fromStr = $"from={targetDate.ToString("yyyy-MM-dd")}";
-                var userIdStr = $"user_id={userId}";
-                var activityUrl = urlBase + "activity?" + string.Join("&", new[] { fromStr, userIdStr });
-
+                // 活動ページの内容を取得する。
                 var doc = await getHtmlDocAsync(token, activityUrl);
-
                 if (doc.StatusCode != HttpStatusCode.OK)
                     throw new RedmineConnectionException(Properties.Resources.errGetWebActivity, doc.StatusCode, activityUrl);
+                else if (doc.Document == null)
+                    throw new ApplicationException("Failed to getHtmlDoc. doc.Document=null");
 
                 return doc.Document;
             }
@@ -193,6 +214,9 @@ namespace LibRedminePower.Models.Manager
 
         private List<ActivityModel> getActivities(CancellationToken token, IElement dl, DateTime webDate)
         {
+            if (dl.Children == null)
+                return new List<ActivityModel>();
+
             return dl.Children.Chunk(2).Select(pair =>
             {
                 token.ThrowIfCancellationRequested();
@@ -200,32 +224,40 @@ namespace LibRedminePower.Models.Manager
                 var itemDt = pair.First();
                 if (itemDt.ClassName.Contains("time-entry")) return null;
                 var itemDd = pair.Last();
-                var message = string.Join(Environment.NewLine, itemDd.Children.Where(a => a.ClassName != "author").Select(a => a.TextContent));
-                var time = DateTime.Parse(itemDt.Children.Single(a => a.ClassName == "time").TextContent);
-                var myEnd = time.SetDay(webDate);
-                var project = itemDt.Children.Single(a => a.ClassName == "project").TextContent;
-                var content = itemDt.Children.Single(a => a.LocalName == "a").TextContent;
-                var ticketUrl = itemDt.Children.Single(a => a.LocalName == "a").GetAttribute("href");
-                string ticketNo = null;
-                string changeNo = null;
-                string url = null;
-                if (ticketUrl.Contains(cUrlIssuePrefix))
+                try
                 {
-                    var startIndex = ticketUrl.IndexOf(cUrlIssuePrefix) + cUrlIssuePrefix.Length;
-                    var endIndex = ticketUrl.IndexOf(cUrlChange);
-                    ticketNo = (endIndex == -1) ?
-                        ticketUrl.Substring(startIndex) :
-                        ticketUrl.Substring(startIndex, endIndex - startIndex);
-                    changeNo = endIndex > 0 ? ticketUrl.Substring(endIndex + cUrlChange.Length) : null;
-                    url = new Uri(new Uri(urlBase), ticketUrl).AbsoluteUri;
+                    var message = string.Join(Environment.NewLine, itemDd.Children.Where(a => a.ClassName != "author").Select(a => a.TextContent));
+                    var time = DateTimeExtentions.Parse(itemDt.Children.Single(a => a.ClassName == "time").TextContent);
+                    var myEnd = time.SetDay(webDate);
+                    var project = itemDt.Children.Single(a => a.ClassName == "project").TextContent;
+                    var content = itemDt.Children.Single(a => a.LocalName == "a").TextContent;
+                    var ticketUrl = itemDt.Children.Single(a => a.LocalName == "a").GetAttribute("href");
+                    string ticketNo = null;
+                    string changeNo = null;
+                    string url = null;
+                    if (ticketUrl.Contains(cUrlIssuePrefix))
+                    {
+                        var startIndex = ticketUrl.IndexOf(cUrlIssuePrefix) + cUrlIssuePrefix.Length;
+                        var endIndex = ticketUrl.IndexOf(cUrlChange);
+                        ticketNo = (endIndex == -1) ?
+                            ticketUrl.Substring(startIndex) :
+                            ticketUrl.Substring(startIndex, endIndex - startIndex);
+                        changeNo = endIndex > 0 ? ticketUrl.Substring(endIndex + cUrlChange.Length) : null;
+                        url = new Uri(new Uri(urlBase), ticketUrl).AbsoluteUri;
+                    }
+                    else if (content.Contains("#"))
+                    {
+                        ticketNo = regRefsIssuePattern.Matches(content).Cast<Match>().FirstOrDefault()?.Value;
+                        if (!string.IsNullOrEmpty(ticketNo))
+                            ticketNo = ticketNo.Substring(ticketNo.IndexOf('#') + 1);
+                    }
+                    return new ActivityModel() { ProjectName = project, Subject = content, Description = message, Date = myEnd, IssueId = ticketNo, ChangeNo = changeNo, Url = url };
                 }
-                else if (content.Contains("#"))
+                catch (Exception e)
                 {
-                    ticketNo = regRefsIssuePattern.Matches(content).Cast<Match>().FirstOrDefault()?.Value;
-                    if (!string.IsNullOrEmpty(ticketNo))
-                        ticketNo = ticketNo.Substring(ticketNo.IndexOf('#') + 1);
+                    var msg = $"Failed to create ActivityModel. itemDt=[{itemDt?.TextContent}], itemDd=[{itemDd?.TextContent}], dl.Children={dl.GetChildrenSummary()}";
+                    throw new ApplicationException(msg, e);
                 }
-                return new ActivityModel() { ProjectName = project, Subject = content, Description = message, Date = myEnd, IssueId = ticketNo, ChangeNo = changeNo, Url = url };
             }).Where(a => a != null).ToList();
         }
 

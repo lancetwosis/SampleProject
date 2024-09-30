@@ -68,7 +68,7 @@ namespace RedmineTimePuncher.Extentions
                 case MarkupLangType.None:
                     return issue.Url;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -83,7 +83,7 @@ namespace RedmineTimePuncher.Extentions
                 case MarkupLangType.None:
                     return linkedUrl;
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -97,7 +97,7 @@ namespace RedmineTimePuncher.Extentions
                     return HeaderLevelEx.MARKDOWN_PATTERN;
                 case MarkupLangType.None:
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -111,7 +111,7 @@ namespace RedmineTimePuncher.Extentions
                     return HeaderLevelEx.FromMarkdownHeader(str);
                 case MarkupLangType.None:
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
 
@@ -132,7 +132,7 @@ namespace RedmineTimePuncher.Extentions
                     sb.AppendLine(msg);
                     return sb.ToString();
                 default:
-                    throw new InvalidOperationException();
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
     }

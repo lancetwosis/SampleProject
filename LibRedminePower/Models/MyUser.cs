@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace RedmineTimePuncher.Models
+namespace LibRedminePower.Models
 {
     public class MyUser : IdName
     {
@@ -39,7 +39,14 @@ namespace RedmineTimePuncher.Models
                    Id == user.Id &&
                    Name == user.Name &&
                    Email == user.Email &&
-                   Memberships?.ToJson() == user.Memberships?.ToJson();
+                   (
+                       // TODO 以下のチケットで恒久対応を実施する
+                       // http://133.242.159.37/issues/1663
+                       (Memberships == null && user.Memberships == null) ||
+                       (Memberships == null && user.Memberships?.Count == 0) ||
+                       (Memberships?.Count == 0 && user.Memberships == null) ||
+                        Memberships?.ToJson() == user.Memberships?.ToJson()
+                    );
         }
 
         public override int GetHashCode()

@@ -12,7 +12,7 @@ namespace RedmineTimePuncher.Models.Settings.Bases
 {
     public abstract class SettingsModelBase<T> : LibRedminePower.Models.Bases.ModelBase, ISettingsModel where T : class, new()
     {
-        public void Export(string fileName)
+        public virtual void Export(string fileName)
         {
             FileHelper.WriteAllText(fileName, this.ToJson());
         }

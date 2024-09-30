@@ -67,7 +67,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                         case PeriodType.SpecifyPeriod:
                             return $"{start} - {end}";
                         default:
-                            throw new InvalidOperationException();
+                            throw new NotSupportedException($"PeriodMode.Value が {PeriodMode.Value} はサポート対象外です。");
                     }
                 }
                 else
@@ -83,7 +83,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                             var end = model.GetEnd(DateTime.Today).ToString("yy/MM/dd");
                             return $"{start} - {end}";
                         default:
-                            throw new InvalidOperationException();
+                            throw new NotSupportedException($"PeriodMode.Value が {PeriodMode.Value} はサポート対象外です。");
                     }
                 }
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
