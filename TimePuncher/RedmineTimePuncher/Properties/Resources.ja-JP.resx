@@ -1045,9 +1045,6 @@ APIアクセスキー</value>
   <data name="SettingsReviErrMsgCannotUseTranscribe" xml:space="preserve">
     <value>本機能を使用するにはRedmineのテキスト書式設定に「なし」以外を設定してください。</value>
   </data>
-  <data name="SettingsReviErrMsgFailedSetProcess" xml:space="preserve">
-    <value>レビュー対象の工程「{0}」は設定できませんでした。</value>
-  </data>
   <data name="CustomFieldFormatUser" xml:space="preserve">
     <value>ユーザー</value>
   </data>
@@ -1878,7 +1875,9 @@ Outlookの状態を確認してください。</value>
 Redmine の設定を見直してください。</value>
   </data>
   <data name="msgConfReconnectRedmine" xml:space="preserve">
-    <value>前回の起動時にRedmineとの接続に失敗しました。現在の設定のまま再接続を試みますか？</value>
+    <value>アカウント {0} は、Redmineサーバーへ {1} 回の接続を失敗しています。
+一定回数以上の接続エラーになると、アカウントがロックされてしまう場合があります。
+このアカウントで、再び接続を試みますか？</value>
   </data>
   <data name="ReviewCfErrMsgIsRequired" xml:space="preserve">
     <value>入力が必須の項目です</value>

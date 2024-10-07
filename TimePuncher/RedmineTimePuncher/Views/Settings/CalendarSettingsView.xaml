@@ -97,7 +97,7 @@
                                      Margin="0,5,0,0"
                                      HorizontalAlignment="Left"
                                      VerticalAlignment="Top"
-                                     exHelpers:CalendarSelectionUtilities.SelectedDates="{Binding SpecialDates}"
+                                     exHelpers:CalendarSelectionUtilities.SelectedDates="{Binding SpecialDates.Value}"
                                      AreWeekNamesVisible="False"
                                      AreWeekNumbersVisible="False"
                                      Columns="3"
@@ -113,7 +113,7 @@
                               Grid.Row="3"
                               Margin="0,10,0,0"
                               Content="{x:Static props:Resources.SettingsCalPersonaHolidaySubject}"
-                              IsChecked="{Binding UseSubject.IsEnabled.Value}" />
+                              IsChecked="{Binding UseSubject.Value.IsEnabled.Value}" />
                 </GroupBox.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -136,7 +136,7 @@
                              Margin="0,10,0,0"
                              IsEnabled="{Binding ElementName=useSubjectToHolidayCheckBox,
                                                  Path=IsChecked}"
-                             Text="{Binding UseSubject.Pattern.Value}"
+                             Text="{Binding UseSubject.Value.Pattern.Value}"
                              ToolTip="{x:Static props:Resources.SettingsCalMsgCanUseRegex}" />
                 </Grid>
             </GroupBox>
@@ -146,7 +146,7 @@
                               Grid.Row="3"
                               Margin="0,10,0,0"
                               Content="{x:Static props:Resources.SettingsCalPersonaHolidayCategory}"
-                              IsChecked="{Binding UseCategory.IsEnabled.Value}" />
+                              IsChecked="{Binding UseCategory.Value.IsEnabled.Value}" />
                 </GroupBox.Header>
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -169,7 +169,7 @@
                              Margin="0,10,0,0"
                              IsEnabled="{Binding ElementName=useCategoryToHolidayCheckBox,
                                                  Path=IsChecked}"
-                             Text="{Binding UseCategory.Pattern.Value}"
+                             Text="{Binding UseCategory.Value.Pattern.Value}"
                              ToolTip="{x:Static props:Resources.SettingsCalMsgCanUseRegex}" />
                 </Grid>
             </GroupBox>

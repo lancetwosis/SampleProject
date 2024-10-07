@@ -96,17 +96,8 @@ namespace RedmineTableEditor.ViewModels
                 async () =>
                 {
                     TraceHelper.TrackCommand(nameof(parent.ApplyCommand));
-                    await ApplyAsync(parent.FileSettings.Model.Value, false);
-                },
-                new ReactivePropertySlim<List<ChildCommand>>(new List<ChildCommand>()
-                {
-                    new ChildCommand(Resources.RibbonCmdApplyAll, canApply,
-                    async () =>
-                    {
-                        TraceHelper.TrackCommand("ApplyAndUpdateCacheCommand");
-                        await ApplyAsync(parent.FileSettings.Model.Value, true);
-                    }),
-                }).ToReadOnlyReactivePropertySlim().AddTo(disposables)).AddTo(disposables);
+                    await ApplyAsync(parent.FileSettings.Model.Value);
+                }).AddTo(disposables);
 
             //----------------------------
             // チケットの内容の読み込み
@@ -248,7 +239,7 @@ namespace RedmineTableEditor.ViewModels
             Columns = columns;
         }
 
-        public async Task ApplyAsync(FileSettingsModel fileSettings, bool updateCache)
+        public async Task ApplyAsync(FileSettingsModel fileSettings)
         {
             parent.CTS = new CancellationTokenSource();
             using (parent.IsBusy.ProcessStart())
@@ -258,7 +249,7 @@ namespace RedmineTableEditor.ViewModels
                 // 親チケットを取得する。
                 var rawIssues = await fileSettings.ParentIssues.GetIssuesAsync(Redmine.Value, parent.CTS.Token);
                 if (rawIssues != null && rawIssues.Any())
-                    await Task.Run(() => Redmine.Value.UpdateAsync(rawIssues, updateCache));
+                    await Task.Run(() => Redmine.Value.UpdateAsync(rawIssues));
                 else
                     return;
 

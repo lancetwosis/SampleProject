@@ -1,4 +1,5 @@
-﻿using LibRedminePower.Enums;
+﻿using AutoMapper;
+using LibRedminePower.Enums;
 using LibRedminePower.Extentions;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
@@ -20,97 +21,17 @@ namespace RedmineTimePuncher.Models.Settings
 {
     public class ReviewIssueListSettingModel : Bases.SettingsModelBase<ReviewIssueListSettingModel>
     {
-        [JsonIgnore]
-        public ReactivePropertySlim<string> IsBusy { get; set; }
-
         public bool ShowDescription { get; set; } = true;
         public bool ShowLastNote { get; set; } = true;
-        public ObservableCollection<IssueProperty> SelectedProperties { get; set; }
-        public List<IssueProperty> AllProperties { get; set; }
+        public ObservableCollection<IssueProperty> SelectedProperties { get; set; } = new ObservableCollection<IssueProperty>();
 
         public IssueProperty SortBy { get; set; } = IssueProperty.NOT_SPECIFIED;
-        public ObservableCollection<IssueProperty> CanSortByProperties { get; set; }
         public bool IsDESC { get; set; }
 
         public IssueProperty GroupBy { get; set; } = IssueProperty.NOT_SPECIFIED;
-        public List<IssueProperty> CanGroupByProperties { get; set; }
 
         public ReviewIssueListSettingModel()
-        {
-            IsBusy = new ReactivePropertySlim<string>().AddTo(disposables);
-            SelectedProperties = new ObservableCollection<IssueProperty>();
-            AllProperties = new List<IssueProperty>();
-            CanSortByProperties = new ObservableCollection<IssueProperty>();
-            CanGroupByProperties = new List<IssueProperty>();
-        }
-
-        private CompositeDisposable myDisposables;
-
-        public void Setup()
-        {
-            try
-            {
-                IsBusy.Value = Resources.SettingsMsgNowGettingData;
-
-                myDisposables?.Dispose();
-                myDisposables = new CompositeDisposable().AddTo(disposables);
-
-                AllProperties.Clear();
-                AllProperties.Add(new IssueProperty(IssuePropertyType.Status));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.Priority));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.Subject));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.AssignedTo));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.FixedVersion));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.Updated));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.Author));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.Category));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.StartDate));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.DueDate));
-                AllProperties.Add(new IssueProperty(IssuePropertyType.DoneRatio));
-                AllProperties.AddRange(CacheManager.Default.TmpMyCustomFields.Select(a => new IssueProperty(a)));
-
-                var notExists = SelectedProperties.Where(p => !AllProperties.Contains(p)).ToList();
-                foreach (var i in notExists)
-                {
-                    SelectedProperties.Remove(i);
-                }
-
-                // 現在選択されている項目のみを並び替えの選択肢として表示する
-                SelectedProperties.CollectionChangedAsObservable().StartWithDefault().SubscribeWithErr(_ =>
-                {
-                    // CanSortByProperties を Clear すると SortBy が null になるため現在値を保持しておく
-                    var previous = SortBy;
-                    CanSortByProperties.Clear();
-                    CanSortByProperties.Add(IssueProperty.NOT_SPECIFIED);
-                    foreach (var p in SelectedProperties)
-                    {
-                        CanSortByProperties.Add(p);
-                    }
-                    SortBy = CanSortByProperties.Contains(previous) ? previous : IssueProperty.NOT_SPECIFIED;
-                }).AddTo(myDisposables);
-
-                // グループ条件に設定できる項目は限られているため別途設定する
-                CanGroupByProperties.Clear();
-                CanGroupByProperties.Add(IssueProperty.NOT_SPECIFIED);
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.Status));
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.Priority));
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.AssignedTo));
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.FixedVersion));
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.Updated));
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.Author));
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.Category));
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.StartDate));
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.DueDate));
-                CanGroupByProperties.Add(new IssueProperty(IssuePropertyType.DoneRatio));
-                CanGroupByProperties.AddRange(CacheManager.Default.TmpMyCustomFields.Where(c => c.CanGroupBy()).Select(a => new IssueProperty(a)));
-                if (!CanGroupByProperties.Contains(GroupBy))
-                    GroupBy = IssueProperty.NOT_SPECIFIED;
-            }
-            finally
-            {
-                IsBusy.Value = null;
-            }
-        }
+        { }
 
         public string CreateShowAllPointIssuesUrl(Managers.RedmineManager redmine, Issue parent, int trackerId)
         {
@@ -163,6 +84,18 @@ namespace RedmineTimePuncher.Models.Settings
                 sb.Append($"&c[]=last_notes");
 
             return sb.ToString();
+        }
+
+        public override void SetupConfigure(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<ReviewIssueListSettingModel, ReviewIssueListSettingModel>()
+                .AfterMap((src, dest) =>
+                {
+                    // AutoMapperは、コレクション型プロパティでは、既存のインスタンスをそのまま利用して上書きコピーを行うため、
+                    // プロパティの参照が変わらない限り PropertyChanged イベントは発行されない。
+                    // 新しいインスタンスに置き換えることで、PropertyChanged イベントを発行させる
+                    dest.SelectedProperties = new ObservableCollection<IssueProperty>(src.SelectedProperties);
+                });
         }
     }
 }

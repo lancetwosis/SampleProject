@@ -308,8 +308,8 @@ Please set them correctly in the settings screen.</value>
   <data name="ErrMsgSelectCustomQuery" xml:space="preserve">
     <value>Please select a custom query.</value>
   </data>
-  <data name="ErrMsgSelectFieldsToDisplay" xml:space="preserve">
-    <value>Please select fields of parent issues to display .</value>
+  <data name="MsgSelectParentFields" xml:space="preserve">
+    <value>The issue id and subject are always displayed.</value>
   </data>
   <data name="ParentIssueIssueIdMsg" xml:space="preserve">
     <value>Input the issue id of the parent issue.</value>
@@ -483,9 +483,6 @@ To update the contents of the displayed issues, please execute "Update Contents"
   </data>
   <data name="FilterErrMsgSelectAnyFilter" xml:space="preserve">
     <value>Please select a filter.</value>
-  </data>
-  <data name="RibbonCmdApplyAll" xml:space="preserve">
-    <value>Update all information</value>
   </data>
   <data name="RibbonCmdSetFrozenColumn" xml:space="preserve">
     <value>Freeze Column</value>

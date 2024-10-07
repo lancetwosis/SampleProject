@@ -298,8 +298,8 @@
   <data name="ErrMsgSelectCustomQuery" xml:space="preserve">
     <value>カスタムクエリを選択してください。</value>
   </data>
-  <data name="ErrMsgSelectFieldsToDisplay" xml:space="preserve">
-    <value>親チケットの表示するフィールドを選択してください。</value>
+  <data name="MsgSelectParentFields" xml:space="preserve">
+    <value>チケット番号と題名は必ず表示されます。</value>
   </data>
   <data name="ParentIssueIssueIdMsg" xml:space="preserve">
     <value>親チケットのチケット番号を指定してください。</value>
@@ -471,9 +471,6 @@
   </data>
   <data name="FilterErrMsgSelectAnyFilter" xml:space="preserve">
     <value>フィルターを選択してください。</value>
-  </data>
-  <data name="RibbonCmdApplyAll" xml:space="preserve">
-    <value>すべての情報を更新</value>
   </data>
   <data name="RibbonCmdSetFrozenColumn" xml:space="preserve">
     <value>列を固定する</value>

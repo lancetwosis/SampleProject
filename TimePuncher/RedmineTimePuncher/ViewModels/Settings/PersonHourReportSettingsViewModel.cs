@@ -27,11 +27,11 @@ namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class PersonHourReportSettingsViewModel : Bases.SettingsViewModelBase<PersonHourReportSettingsModel>
     {
-        public EditableGridViewModel<PersonHourReportSettingModel> Items { get; set; }
+        public ReadOnlyReactivePropertySlim<EditableGridViewModel<PersonHourReportSettingModel>> Items { get; set; }
 
         public PersonHourReportSettingsViewModel(PersonHourReportSettingsModel model) : base(model)
         {
-            Items = new EditableGridViewModel<PersonHourReportSettingModel>(model.Items).AddTo(disposables);
+            Items = model.ToReadOnlyViewModel(a => a.Items, a => new EditableGridViewModel<PersonHourReportSettingModel>(a)).AddTo(disposables);
         }
     }
 }

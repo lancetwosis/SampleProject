@@ -25,51 +25,38 @@ namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class CategorySettingsViewModel : Bases.SettingsViewModelBase<CategorySettingsModel>
     {
-        public EditableGridViewModel<CategorySettingViewModel> Items { get; set; }
-
-        public ReactivePropertySlim<bool> IsAutoSameName { get; set; }
         public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
 
-        public CategorySettingsViewModel(CategorySettingsModel model, ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) :base(model)
+        public ReadOnlyReactivePropertySlim<List<MyTracker>> MyTrackers { get; set; }
+        public ReadOnlyReactivePropertySlim<List<Project>> Projects { get; set; }
+        public ReadOnlyReactivePropertySlim<List<Tracker>> Trackers { get; set; }
+        public ReadOnlyReactivePropertySlim<List<IssueStatus>> Statuss { get; set; }
+        public ReadOnlyReactivePropertySlim<EditableGridViewModel<CategorySettingViewModel>> Items { get; set; }
+        public ReactivePropertySlim<bool> IsAutoSameName { get; set; }
+
+        public CategorySettingsViewModel(CategorySettingsModel model) :base(model)
         {
-            var error1 = errorMessage.ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var error2 = new ReactivePropertySlim<string>().AddTo(disposables);
-            ErrorMessage = new IObservable<string>[] { error1, error2 }.CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a))
-                .ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            ErrorMessage = CacheTempManager.Default.Message.ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            redmine.Where(a => a != null).SubscribeWithErr(async r =>
-            {
-                try
-                {
-                    error2.Value = Resources.SettingsMsgNowGettingData;
-
-                    var trackers = CacheManager.Default.TmpTrackers;
-                    CategorySettingViewModel.Trackers = trackers.Select(t => new MyTracker(t)).ToList();
-                    AssignRuleViewModel.Projects = CacheManager.Default.TmpProjects;
-                    AssignRuleViewModel.Trackers = trackers;
-                    AssignRuleViewModel.Statuss = CacheManager.Default.TmpStatuss;
-
-                    setUpItemsSource(model);
-
-                    error2.Value = null;
-                }
-                catch(Exception ex)
-                {
-                    error2.Value = ex.Message;
-                }
-            }).AddTo(disposables);
-
+            MyTrackers = CacheTempManager.Default.MyTrackers.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Projects = CacheTempManager.Default.Projects.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Trackers = CacheTempManager.Default.Trackers.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Statuss = CacheTempManager.Default.Statuss.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Items =
+                // ModelのItemsが更新されたら（インポートなどでも）
+                model.ObserveProperty(a => a.Items).CombineLatest(
+                    // かつ、Cacheが更新されたら
+                    CacheTempManager.Default.Updated.Where(a => a != DateTime.MinValue), 
+                    (items, _) => {
+                        // まずは、Redmineの作業分類に基づいて、ModelのItemsを追加／削除する。
+                        model.UpdateItems(CacheTempManager.Default.TimeEntryActivities.Value);
+                        // 次に、更新したModelのItemsから、編集可能グリッドを生成する。
+                        return new EditableGridViewModel<CategorySettingViewModel>(
+                            items.OrderBy(b => b.Order).Select(
+                                // グリッド生成時の各ViewModelは親のDisposeに合わせる
+                                a => new CategorySettingViewModel(a).AddTo(this.disposables)).ToList());
+                    }).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
             IsAutoSameName = model.ToReactivePropertySlimAsSynchronized(a => a.IsAutoSameName).AddTo(disposables);
-
-            // インポートしたら、Viewを読み込み直す
-            ImportCommand = ImportCommand.WithSubscribe(() => setUpItemsSource(model)).AddTo(disposables);
-        }
-
-        private void setUpItemsSource(CategorySettingsModel model)
-        {
-            // Redmineの情報とModelを同期する。
-            model.UpdateItems(CacheManager.Default.TmpTimeEntryActivities);
-            Items = new EditableGridViewModel<CategorySettingViewModel>(model.Items.OrderBy(a => a.Order).Select(a => new CategorySettingViewModel(a)).ToList());
         }
 
         /// <summary>
@@ -77,7 +64,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
         /// </summary>
         public void ApplyOrders()
         {
-            Items?.Indexed().ToList().ForEach(a => a.v.SetOrder(a.i));
+            Items.Value?.Indexed().ToList().ForEach(a => a.v.SetOrder(a.i));
         }
     }
 }

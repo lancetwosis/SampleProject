@@ -8,13 +8,23 @@ using System.Threading.Tasks;
 
 namespace LibRedminePower.Models
 {
+    [Equals]
     public class MyUser : IdName
     {
+        #region "Equalsメソッド" 
+        public static bool operator ==(MyUser left, MyUser right) => Operator.Weave(left, right);
+        public static bool operator !=(MyUser left, MyUser right) => Operator.Weave(left, right);
+        #endregion
+        
         public static MyUser NOT_SPECIFIED = new MyUser() { Name = "", Id = INVALID_ID };
 
         public static string UrlBase;
         public string Email { get; set; }
+
+        [IgnoreDuringEquals]
         public List<Membership> Memberships { get; set; }
+        [CustomEqualsInternal]
+        bool compareMemberships(MyUser other) => EqualsComparer.AreListsEqual(Memberships, other.Memberships);
 
         public MyUser() { }
 
@@ -32,30 +42,5 @@ namespace LibRedminePower.Models
         }
 
         public override string ToString() => Name;
-
-        public override bool Equals(object obj)
-        {
-            return obj is MyUser user &&
-                   Id == user.Id &&
-                   Name == user.Name &&
-                   Email == user.Email &&
-                   (
-                       // TODO 以下のチケットで恒久対応を実施する
-                       // http://133.242.159.37/issues/1663
-                       (Memberships == null && user.Memberships == null) ||
-                       (Memberships == null && user.Memberships?.Count == 0) ||
-                       (Memberships?.Count == 0 && user.Memberships == null) ||
-                        Memberships?.ToJson() == user.Memberships?.ToJson()
-                    );
-        }
-
-        public override int GetHashCode()
-        {
-            int hashCode = -351216349;
-            hashCode = hashCode * -1521134295 + Id.GetHashCode();
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Name);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(Email);
-            return hashCode;
-        }
     }
 }

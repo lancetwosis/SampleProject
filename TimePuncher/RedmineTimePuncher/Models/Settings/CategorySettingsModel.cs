@@ -1,4 +1,5 @@
-﻿using Reactive.Bindings.Extensions;
+﻿using AutoMapper;
+using Reactive.Bindings.Extensions;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models.Managers;
 using System;
@@ -43,6 +44,18 @@ namespace RedmineTimePuncher.Models.Settings
         {
             var item = Items.FirstOrDefault(i => i.Id == entry.Activity.Id);
             return item != null ? item.IsWorkingTime : true;
+        }
+
+        public override void SetupConfigure(IMapperConfigurationExpression cfg)
+        {
+            cfg.CreateMap<CategorySettingsModel, CategorySettingsModel>()
+                .AfterMap((src, dest) =>
+                {
+                    // AutoMapperは、コレクション型プロパティでは、既存のインスタンスをそのまま利用して上書きコピーを行うため、
+                    // プロパティの参照が変わらない限り PropertyChanged イベントは発行されない。
+                    // 新しいインスタンスに置き換えることで、PropertyChanged イベントを発行させる
+                    dest.Items = new ObservableCollection<CategorySettingModel>(src.Items);
+                });
         }
     }
 }

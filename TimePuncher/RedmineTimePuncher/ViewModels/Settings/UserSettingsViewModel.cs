@@ -20,55 +20,29 @@ namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class UserSettingsViewModel : Bases.SettingsViewModelBase<UserSettingsModel>
     {
-        public TwinListBoxViewModel<MyUser> TwinListBoxViewModel { get; set; }
         public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
 
-        private CompositeDisposable myDisposables;
+        public ReadOnlyReactivePropertySlim<TwinListBoxViewModel<MyUser>> TwinListBoxViewModel { get; set; }
 
-        public UserSettingsViewModel(UserSettingsModel model, ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) :base(model)
+        public UserSettingsViewModel(UserSettingsModel model) :base(model)
         {
-            var error1 = errorMessage.ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var error2 = new ReactivePropertySlim<string>().AddTo(disposables);
-            ErrorMessage = new IObservable<string>[] { error1, error2 }.CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a))
-                .ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            ErrorMessage =
+                CacheTempManager.Default.Message.CombineLatest(
+                    CacheTempManager.Default.CanUseAdminApiKey, (e, c) => 
+                    !string.IsNullOrEmpty(e) ? e : (!c ? Resources.RedmineMngMsgAdminAPIKeyNotSet : null)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            var users = new ReactivePropertySlim<List<MyUser>>().AddTo(disposables);
-
-            redmine.Where(a => a != null).SubscribeWithErr(async r =>
-            {
-                if (r.CanUseAdminApiKey())
-                {
-                    try
-                    {
-                        error2.Value = Resources.SettingsMsgNowGettingData;
-
-                        // ユーザの選択肢から自分自身は除外する
-                        users.Value = CacheManager.Default.TmpUsers.Where(u => u.Id != CacheManager.Default.TmpMyUser.Id).ToList();
-
-                        error2.Value = null;
-                    }
-                    catch (Exception ex)
-                    {
-                        error2.Value = ex.Message;
-                    }
-                }
-                else
-                {
-                    error2.Value = Resources.RedmineMngMsgAdminAPIKeyNotSet;
-                }
-            }).AddTo(disposables);
-
-            users.Where(a => a != null).Merge(ImportCommand).SubscribeWithErr(_ => setUpItemsSource(model, users.Value)).AddTo(disposables);
+            TwinListBoxViewModel =
+                // ModelのItemsが更新されたら（インポートなどでも）
+                model.ObserveProperty(a => a.Items).CombineLatest(
+                    // かつ、Cacheが更新されたら
+                    CacheTempManager.Default.MyOtherUsers.Where(a => a != null),
+                    (items, users) => {
+                        // まずは、RedmineのUsersで削除された物は、ModelのItemsから削除する。
+                        model.UpdateItems(users);
+                        // 次に、更新したModelのItemsから、TiwnListBoxのViewModelを作る。
+                        return new TwinListBoxViewModel<MyUser>(users, model.Items);
+                    }).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
-        private void setUpItemsSource(UserSettingsModel model, List<MyUser> users)
-        {
-            myDisposables?.Dispose();
-            myDisposables = new CompositeDisposable().AddTo(disposables);
-
-            // 元の設定に新たな「ユーザの選択肢」に含まれないユーザがあった場合、除外する
-            model.Items = new ObservableCollection<MyUser>(model.Items.Select(a => users.FirstOrDefault(b => a.Id == b.Id)).Where(a => a != null));
-            TwinListBoxViewModel = new TwinListBoxViewModel<MyUser>(users, model.Items).AddTo(myDisposables);
-        }
     }
 }

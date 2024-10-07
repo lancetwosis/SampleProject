@@ -12,24 +12,10 @@ namespace RedmineTimePuncher.Models.Settings
 {
     public class TranscribeSettingsModel : Bases.SettingsModelBase<TranscribeSettingsModel>
     {
-        [JsonIgnore]
-        public ReactivePropertySlim<string> IsBusy { get; set; }
-
-        public TranscribeSettingModel OpenTranscribe { get; set; }
-        public TranscribeSettingModel RequestTranscribe { get; set; }
+        public TranscribeSettingModel OpenTranscribe { get; set; } = new TranscribeSettingModel();
+        public TranscribeSettingModel RequestTranscribe { get; set; } = new TranscribeSettingModel();
 
         public TranscribeSettingsModel()
-        {
-            IsBusy = new ReactivePropertySlim<string>().AddTo(disposables);
-            OpenTranscribe = new TranscribeSettingModel().AddTo(disposables);
-            RequestTranscribe = new TranscribeSettingModel().AddTo(disposables);
-        }
-
-        public async Task<List<string>> SetupAsync(RedmineManager r, CreateTicketSettingsModel createTicket)
-        {
-            var error1 = await OpenTranscribe.SetupAsync(r, createTicket, IsBusy);
-            var error2 = await RequestTranscribe.SetupAsync(r, createTicket, IsBusy);
-            return error1.Concat(error2).ToList();
-        }
+        { }
     }
 }

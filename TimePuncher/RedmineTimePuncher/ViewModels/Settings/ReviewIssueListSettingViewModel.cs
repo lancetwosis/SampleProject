@@ -27,54 +27,89 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReactivePropertySlim<bool> ShowDescription { get; set; }
         public ReactivePropertySlim<bool> ShowLastNote { get; set; }
 
-        public TwinListBoxViewModel<IssueProperty> Properties { get; set; }
+        public ReadOnlyReactivePropertySlim<TwinListBoxViewModel<IssueProperty>> Properties { get; set; }
 
         public ReactivePropertySlim<IssueProperty> SortBy { get; set; }
-        public ObservableCollection<IssueProperty> CanSortByProperties { get; set; }
         public ReadOnlyReactivePropertySlim<bool> IsEnabledSorting { get; set; }
         public ReactivePropertySlim<bool> IsDESC { get; set; }
         public ReactivePropertySlim<IssueProperty> GroupBy { get; set; }
-        public List<IssueProperty> CanGroupByProperties { get; set; }
 
-        public ReviewIssueListSettingViewModel(ReviewIssueListSettingModel issueList,
-            ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(issueList)
+        public ReadOnlyReactivePropertySlim<List<IssueProperty>> AllProperties { get; set; }
+        public ReadOnlyReactivePropertySlim<List<IssueProperty>> CanGroupByProperties { get; set; }
+        public ReadOnlyReactivePropertySlim<List<IssueProperty>> CanSortByProperties { get; set; }
+
+        public ReviewIssueListSettingViewModel(ReviewIssueListSettingModel model) : base(model)
         {
-            ErrorMessage = new IObservable<string>[] { errorMessage, issueList.IsBusy }
-                .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            ErrorMessage = CacheTempManager.Default.Message.ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            redmine.Where(a => a != null).SubscribeWithErr(_ => setup(issueList)).AddTo(disposables);
-
-            // インポートしたら、Viewを読み込み直す
-            ImportCommand = ImportCommand.WithSubscribe(() => setup(issueList)).AddTo(disposables);
-        }
-
-        [JsonIgnore]
-        protected CompositeDisposable myDisposables;
-        private void setup(ReviewIssueListSettingModel issueList)
-        {
-            try
+            AllProperties = CacheTempManager.Default.MyCustomFields.Where(a => a != null).Select(a => {
+                return new[] {
+                    new IssueProperty(IssuePropertyType.Status),
+                    new IssueProperty(IssuePropertyType.Priority),
+                    new IssueProperty(IssuePropertyType.Subject),
+                    new IssueProperty(IssuePropertyType.AssignedTo),
+                    new IssueProperty(IssuePropertyType.FixedVersion),
+                    new IssueProperty(IssuePropertyType.Updated),
+                    new IssueProperty(IssuePropertyType.Author),
+                    new IssueProperty(IssuePropertyType.Category),
+                    new IssueProperty(IssuePropertyType.StartDate),
+                    new IssueProperty(IssuePropertyType.DueDate),
+                    new IssueProperty(IssuePropertyType.DoneRatio),
+                }.Concat(a.Select(b => new IssueProperty(b))).ToList();
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            AllProperties.Where(a => a != null).Subscribe(a =>
             {
-                myDisposables?.Dispose();
-                myDisposables = new CompositeDisposable().AddTo(disposables);
+                var notExists = model.SelectedProperties.Where(p => !a.Contains(p)).ToList();
+                foreach (var i in notExists)
+                {
+                    model.SelectedProperties.Remove(i);
+                }
+            }).AddTo(disposables);
 
-                issueList.Setup();
-
-                ShowDescription = issueList.ToReactivePropertySlimAsSynchronized(m => m.ShowDescription).AddTo(myDisposables);
-                ShowLastNote = issueList.ToReactivePropertySlimAsSynchronized(m => m.ShowLastNote).AddTo(myDisposables);
-                Properties = new TwinListBoxViewModel<IssueProperty>(issueList.AllProperties, issueList.SelectedProperties).AddTo(myDisposables);
-
-                SortBy = issueList.ToReactivePropertySlimAsSynchronized(m => m.SortBy).AddTo(myDisposables);
-                CanSortByProperties = issueList.CanSortByProperties;
-                IsEnabledSorting = SortBy.Select(a => a != null && !a.Equals(IssueProperty.NOT_SPECIFIED)).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
-                IsDESC = issueList.ToReactivePropertySlimAsSynchronized(m => m.IsDESC).AddTo(myDisposables);
-
-                GroupBy = issueList.ToReactivePropertySlimAsSynchronized(m => m.GroupBy).AddTo(myDisposables);
-                CanGroupByProperties = issueList.CanGroupByProperties;
-            }
-            catch (Exception ex)
+            CanGroupByProperties = CacheTempManager.Default.MyCustomFields.Where(a => a != null).Select(a => {
+                return new[] {
+                    IssueProperty.NOT_SPECIFIED,
+                    new IssueProperty(IssuePropertyType.Status),
+                    new IssueProperty(IssuePropertyType.Priority),
+                    new IssueProperty(IssuePropertyType.AssignedTo),
+                    new IssueProperty(IssuePropertyType.FixedVersion),
+                    new IssueProperty(IssuePropertyType.Updated),
+                    new IssueProperty(IssuePropertyType.Author),
+                    new IssueProperty(IssuePropertyType.Category),
+                    new IssueProperty(IssuePropertyType.StartDate),
+                    new IssueProperty(IssuePropertyType.DueDate),
+                    new IssueProperty(IssuePropertyType.DoneRatio),
+                }.Concat(a.Where(b => b.CanGroupBy()).Select(c => new IssueProperty(c))).ToList();
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            CanGroupByProperties.Where(a => a != null).Subscribe(a =>
             {
-                issueList.IsBusy.Value = ex.Message;
-            }
+                if (!a.Contains(model.GroupBy))
+                    model.GroupBy = IssueProperty.NOT_SPECIFIED;
+            }).AddTo(disposables);
+
+            CanSortByProperties = model.SelectedProperties.CollectionChangedAsObservable().StartWithDefault().Select(_ =>
+            {
+                return new[] {
+                    IssueProperty.NOT_SPECIFIED
+                }.Concat(model.SelectedProperties).ToList();
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            CanSortByProperties.Where(a => a != null).Subscribe(a =>
+            {
+                if (!a.Contains(model.SortBy))
+                    model.SortBy = IssueProperty.NOT_SPECIFIED;
+            }).AddTo(disposables);
+
+            ShowDescription = model.ToReactivePropertySlimAsSynchronized(m => m.ShowDescription).AddTo(disposables);
+            ShowLastNote = model.ToReactivePropertySlimAsSynchronized(m => m.ShowLastNote).AddTo(disposables);
+            Properties = 
+                AllProperties.Where(a => a != null)
+                .CombineLatest(model.ObserveProperty(a => a.SelectedProperties), 
+                (all, sel) => new TwinListBoxViewModel<IssueProperty>(all, sel)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
+
+            SortBy = model.ToReactivePropertySlimAsSynchronized(m => m.SortBy).AddTo(disposables);
+            IsEnabledSorting = SortBy.Select(a => a != null && !a.Equals(IssueProperty.NOT_SPECIFIED)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            IsDESC = model.ToReactivePropertySlimAsSynchronized(m => m.IsDESC).AddTo(disposables);
+            GroupBy = model.ToReactivePropertySlimAsSynchronized(m => m.GroupBy).AddTo(disposables);
         }
     }
 }

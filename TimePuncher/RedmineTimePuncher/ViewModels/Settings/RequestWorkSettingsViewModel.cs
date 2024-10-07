@@ -21,54 +21,39 @@ namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class RequestWorkSettingsViewModel : Bases.SettingsViewModelBase<RequestWorkSettingsModel>
     {
-        public ReactivePropertySlim<MyTracker> RequestTracker { get; set; }
-        public ObservableCollection<MyTracker> Trackers { get; set; }
-        public CustomFieldSettingViewModel IsRequired { get; set; }
-        public TranscribeSettingViewModel RequestTranscribe { get; set; }
         public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
+        public ReadOnlyReactivePropertySlim<List<MyProject>> PossibleProjects { get; set; }
+        public ReadOnlyReactivePropertySlim<List<MyTracker>> PossibleTrackers { get; set; }
 
-        public RequestWorkSettingsViewModel(RequestWorkSettingsModel model,
-            ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(model)
+        public ReactivePropertySlim<MyTracker> RequestTracker { get; set; }
+        public ReadOnlyReactivePropertySlim<CustomFieldSettingViewModel> IsRequired { get; set; }
+        public ReadOnlyReactivePropertySlim<TranscribeSettingViewModel> RequestTranscribe { get; set; }
+
+        public RequestWorkSettingsViewModel(RequestWorkSettingsModel model) : base(model)
         {
-            RequestTranscribe = new TranscribeSettingViewModel(redmine, model.IsBusy).AddTo(disposables);
+            ErrorMessage = CacheTempManager.Default.Message.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            PossibleProjects = CacheTempManager.Default.MyProjectsWiki.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            PossibleTrackers = CacheTempManager.Default.MyTrackers.Where(a => a != null).Select(a =>
+            new List<MyTracker>(new[] { MyTracker.NOT_SPECIFIED }).Concat(a).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            redmine.Where(a => a != null).SubscribeWithErr(async r =>
-            {
-                try
-                {
-                    await SetupAsync(r, model);
-                }
-                catch (Exception ex)
-                {
-                    model.IsBusy.Value = ex.Message;
-                }
+            RequestTracker = model.ToReactivePropertySlimAsSynchronized(m => m.RequestTracker).AddTo(disposables);
+            IsRequired = model.ToReadOnlyViewModel(a => a.IsRequired, a => new CustomFieldSettingViewModel(a)).AddTo(disposables);
+            RequestTranscribe = model.ToReadOnlyViewModel(a => a.RequestTranscribe,
+                a => new TranscribeSettingViewModel(a)).AddTo(disposables);
+
+            PossibleTrackers.Where(a => a != null).Subscribe(trackers => { 
+                RequestTracker.Value = trackers.FirstOrFirst(a => a == RequestTracker.Value);
             }).AddTo(disposables);
 
-            ErrorMessage = new IObservable<string>[] { errorMessage, model.IsBusy }
-                .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-
-            // インポートしたら、Viewを読み込み直す
-            ImportCommand = ImportCommand.WithSubscribe(async () =>
-            {
-                await SetupAsync(redmine.Value, model);
-            }).AddTo(disposables);
-        }
-
-        [JsonIgnore]
-        protected CompositeDisposable myDisposables;
-        public async Task SetupAsync(RedmineManager r, RequestWorkSettingsModel model)
-        {
-            myDisposables?.Dispose();
-            myDisposables = new CompositeDisposable().AddTo(disposables);
-
-            await model.SetupAsync(r);
-
-            Trackers = new ObservableCollection<MyTracker>(model.Trackers);
-            RequestTracker = model.ToReactivePropertySlimAsSynchronized(m => m.RequestTracker).AddTo(myDisposables);
-
-            IsRequired = new CustomFieldSettingViewModel(model.IsRequired).AddTo(myDisposables);
-
-            RequestTranscribe.Setup(model.RequestTranscribe, model.IsBusy);
+            // ModelのIsRequiredが更新されたら（インポートなどでも）
+            model.ObserveProperty(a => a.IsRequired).CombineLatest(
+                // かつ、Cacheが更新されたら
+                CacheTempManager.Default.CustomFields.Where(a => a != null), 
+                (ir, cfs) => (ir, cfs)).SubscribeWithErr(a =>  { 
+                    // Modelを更新する
+                    var boolCustomFields = a.cfs.Where(c => c.IsIssueType() && c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
+                    model.IsRequired.Update(boolCustomFields);
+                }).AddTo(disposables);
         }
     }
 }

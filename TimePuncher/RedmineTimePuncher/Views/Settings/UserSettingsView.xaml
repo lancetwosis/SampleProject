@@ -32,7 +32,7 @@
                                    Height="200"
                                    Margin="5,10,5,5"
                                    VerticalAlignment="top"
-                                   DataContext="{Binding TwinListBoxViewModel}" />
+                                   DataContext="{Binding TwinListBoxViewModel.Value}" />
             </Grid>
             <local:SettingsButtonsPanel Grid.Row="1"
                                         DataContext="{Binding}" />

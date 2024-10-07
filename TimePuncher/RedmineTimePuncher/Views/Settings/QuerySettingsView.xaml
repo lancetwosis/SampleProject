@@ -68,7 +68,7 @@
                         <views:TwinListBox Height="200"
                                            Margin="5,5,0,0"
                                            VerticalAlignment="top"
-                                           DataContext="{Binding TwinListBoxViewModel}" />
+                                           DataContext="{Binding TwinListBoxViewModel.Value}" />
                     </StackPanel>
                 </GroupBox>
             </Grid>

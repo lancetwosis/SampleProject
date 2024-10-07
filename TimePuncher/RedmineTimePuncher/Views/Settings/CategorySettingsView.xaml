@@ -28,8 +28,6 @@
         <converters:BooleanToInvertBooleanConverter x:Key="BooleanToInvertBooleanConverter" />
         <Style BasedOn="{StaticResource MyGridViewSearchPanelStyle}"
                TargetType="grid:GridViewSearchPanel" />
-        <vm:AssignRuleViewModel x:Key="AssignRuleViewModel" />
-        <vm:CategorySettingViewModel x:Key="CategorySettingViewModel" />
     </UserControl.Resources>
     <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
         <Grid>
@@ -57,10 +55,10 @@
                                          AutoGenerateColumns="False"
                                          CanUserFreezeColumns="False"
                                          IsFilteringAllowed="False"
-                                         ItemsSource="{Binding Items}"
+                                         ItemsSource="{Binding Items.Value}"
                                          RowIndicatorVisibility="Collapsed"
                                          SearchPanelCloseButtonVisibility="Collapsed"
-                                         SelectedItem="{Binding Items.SelectedItem.Value}"
+                                         SelectedItem="{Binding Items.Value.SelectedItem.Value}"
                                          ShowGroupPanel="False"
                                          ShowSearchPanel="True">
                         <telerik:RadGridView.RowStyle>
@@ -128,8 +126,7 @@
                                                                           EditTriggers="CellClick"
                                                                           Header="{x:Static props:Resources.SettingsCateColTargetTracker}"
                                                                           IsSortable="False"
-                                                                          ItemsSource="{Binding Trackers,
-                                                                                                Source={StaticResource CategorySettingViewModel}}" />
+                                                                          ItemsSource="{Binding MyTrackers.Value}" />
                             <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding AndOrType.Value}"
                                                             EditTriggers="CellClick"
                                                             Header="{x:Static props:Resources.SettingsCateColCondition}"
@@ -189,15 +186,15 @@
                                                                                           EditTriggers="CellClick"
                                                                                           Header="{x:Static props:Resources.IssueGridColProject}"
                                                                                           IsSortable="False"
-                                                                                          ItemsSource="{Binding Projects,
-                                                                                                                Source={StaticResource AssignRuleViewModel}}" />
+                                                                                          ItemsSource="{Binding DataContext.Projects.Value,
+                                                                                                                RelativeSource={RelativeSource AncestorType=UserControl}}" />
                                             <libCont:MultiSelectionGridViewComboBoxColumn DataMemberBinding="{Binding SelectedTrackers}"
                                                                                           DisplayMemberPath="Name"
                                                                                           EditTriggers="CellClick"
                                                                                           Header="{x:Static props:Resources.IssueGridColTracker}"
                                                                                           IsSortable="False"
-                                                                                          ItemsSource="{Binding Trackers,
-                                                                                                                Source={StaticResource AssignRuleViewModel}}" />
+                                                                                          ItemsSource="{Binding DataContext.Trackers.Value,
+                                                                                                                RelativeSource={RelativeSource AncestorType=UserControl}}" />
                                             <telerik:GridViewDataColumn DataMemberBinding="{Binding Subject.Value}"
                                                                         EditTriggers="CellClick"
                                                                         Header="{x:Static props:Resources.IssueGridColSubject}"
@@ -212,8 +209,8 @@
                                                                                           EditTriggers="CellClick"
                                                                                           Header="{x:Static props:Resources.IssueGridColStatus}"
                                                                                           IsSortable="False"
-                                                                                          ItemsSource="{Binding Statuss,
-                                                                                                                Source={StaticResource AssignRuleViewModel}}" />
+                                                                                          ItemsSource="{Binding DataContext.Statuss.Value,
+                                                                                                                RelativeSource={RelativeSource AncestorType=UserControl}}" />
                                             <telerik:GridViewComboBoxColumn DataMemberBinding="{Binding AssignTo.Value}"
                                                                             EditTriggers="CellClick"
                                                                             Header="{x:Static props:Resources.IssueGridColAssignee}"
@@ -229,7 +226,7 @@
                     </telerik:RadGridView>
                     <controls:GridViewEditButtonPanel Grid.Column="1"
                                                       Margin="0,20,0,0"
-                                                      DataContext="{Binding Items}" />
+                                                      DataContext="{Binding Items.Value}" />
                 </Grid>
                 <CheckBox Grid.Row="2"
                           Margin="7"

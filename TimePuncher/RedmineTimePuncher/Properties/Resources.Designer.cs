@@ -19,7 +19,7 @@ namespace RedmineTimePuncher.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -1426,7 +1426,9 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   The connection to Redmine failed during the last start. Would you like to try to reconnect using your current settings? に類似しているローカライズされた文字列を検索します。
+        ///   The account {0} has failed to connect to the Redmine server {1} times.
+        ///If the number of connection errors exceeds a certain limit, the account may be locked.
+        ///Would you like to attempt to connect again with this account? に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string msgConfReconnectRedmine {
             get {
@@ -4350,6 +4352,9 @@ namespace RedmineTimePuncher.Properties {
             }
         }
         
+
+
+
         /// <summary>
         ///    に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -4401,15 +4406,6 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsReviErrMsgCannotUseTranscribe {
             get {
                 return ResourceManager.GetString("SettingsReviErrMsgCannotUseTranscribe", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Failed to set the process &quot;{0}&quot;.  に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string SettingsReviErrMsgFailedSetProcess {
-            get {
-                return ResourceManager.GetString("SettingsReviErrMsgFailedSetProcess", resourceCulture);
             }
         }
         

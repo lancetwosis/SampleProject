@@ -205,11 +205,15 @@ namespace RedmineTimePuncher.Models.Settings
         {
             cfg.CreateMap<RedmineSettingsModel, RedmineSettingsModel>()
                 .ForMember(m => m.UserName, o => o.Ignore())
+                .ForMember(m => m.UserNameEncrypt, o => o.Ignore())
                 .ForMember(m => m.Password, o => o.Ignore())
                 .ForMember(m => m.PasswordEncrypt, o => o.Ignore())
                 .ForMember(m => m.AdminApiKey, o => o.Ignore())
+                .ForMember(m => m.AdminApiKeyEncrypt, o => o.Ignore())
                 .ForMember(m => m.ApiKey, o => o.Ignore())
+                .ForMember(m => m.ApiKeyEncrypt, o => o.Ignore())
                 .ForMember(m => m.UserNameOfBasicAuth, o => o.Ignore())
+                .ForMember(m => m.UserNameOfBasicAuthEncrypt, o => o.Ignore())
                 .ForMember(m => m.PasswordOfBasicAuth, o => o.Ignore())
                 .ForMember(m => m.PasswordEncryptOfBasicAuth, o => o.Ignore());
         }

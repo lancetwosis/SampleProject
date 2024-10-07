@@ -4,6 +4,7 @@ using LibRedminePower.Helpers;
 using LibRedminePower.ViewModels;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
@@ -22,38 +23,28 @@ namespace RedmineTimePuncher.ViewModels.Settings
     public class ReviewCopyCustomFieldsSettingViewModel : Bases.SettingsViewModelBase<ReviewCopyCustomFieldsSettingModel>
     {
         public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
+        public ReadOnlyReactivePropertySlim<List<MyCustomField>> AllCustomFields { get; set; }
 
-        public TwinListBoxViewModel<MyCustomField> CustomFields { get; set; }
+        public ReadOnlyReactivePropertySlim<TwinListBoxViewModel<MyCustomField>> CustomFields { get; set; }
 
-        public ReviewCopyCustomFieldsSettingViewModel(ReviewCopyCustomFieldsSettingModel copyCustomFields,
-            ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(copyCustomFields)
+        public ReviewCopyCustomFieldsSettingViewModel(ReviewCopyCustomFieldsSettingModel model) : base(model)
         {
-            ErrorMessage = new IObservable<string>[] { errorMessage, copyCustomFields.IsBusy }
-                .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            ErrorMessage = CacheTempManager.Default.Message.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            AllCustomFields = CacheTempManager.Default.MyCustomFields.Where(a => a != null)
+                .Select(a => a.Select(b => new MyCustomField(b)).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables) ;
 
-            redmine.Where(a => a != null).SubscribeWithErr(_ => setup(copyCustomFields)).AddTo(disposables);
+            AllCustomFields.Where(a => a != null).CombineLatest(
+                model.ObserveProperty(a => a.SelectedCustomFields), (all, sel) => (all, sel)).SubscribeWithErr(a => 
+                {
+                    var notExists = a.sel.Where(sc => !a.all.Any(c => c.Id == sc.Id)).ToList();
+                    foreach (var i in notExists)
+                        a.sel.Remove(i);
+                }).AddTo(disposables);
 
-            // インポートしたら、Viewを読み込み直す
-            ImportCommand = ImportCommand.WithSubscribe(() => setup(copyCustomFields)).AddTo(disposables);
-        }
-
-        [JsonIgnore]
-        protected CompositeDisposable myDisposables;
-        private void setup(ReviewCopyCustomFieldsSettingModel copyCustomFields)
-        {
-            try
-            {
-                myDisposables?.Dispose();
-                myDisposables = new CompositeDisposable().AddTo(disposables);
-
-                copyCustomFields.Setup();
-
-                CustomFields = new TwinListBoxViewModel<MyCustomField>(copyCustomFields.AllCustomFields, copyCustomFields.SelectedCustomFields).AddTo(myDisposables);
-            }
-            catch (Exception ex)
-            {
-                copyCustomFields.IsBusy.Value = ex.Message;
-            }
+            CustomFields =
+                AllCustomFields.Where(a => a != null).CombineLatest(
+                    model.ObserveProperty(a => a.SelectedCustomFields), (all, sel) =>
+                    new TwinListBoxViewModel<MyCustomField>(all, sel)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
     }
 }

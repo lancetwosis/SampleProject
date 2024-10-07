@@ -96,7 +96,7 @@
                         <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding SaveAsCommand}" />
                     </telerik:RadRibbonGroup>
                     <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupTickets}">
-                        <telerik:RadRibbonSplitButton helpers:ButtonSetupHelper.Data="{Binding ApplyCommand}" />
+                        <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding ApplyCommand}" />
                         <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding UpdateContentCommand}" />
                         <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding SaveToRedmineCommand}" />
                         <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding ShowOnRedmineCommand}" />

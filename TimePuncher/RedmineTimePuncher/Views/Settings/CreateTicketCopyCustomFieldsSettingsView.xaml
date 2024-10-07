@@ -33,7 +33,7 @@
                                    Height="200"
                                    Margin="5,10,5,5"
                                    VerticalAlignment="top"
-                                   DataContext="{Binding CustomFields}" />
+                                   DataContext="{Binding CustomFields.Value}" />
             </StackPanel>
 
             <local:SettingsButtonsPanel Grid.Row="1"

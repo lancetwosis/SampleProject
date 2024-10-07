@@ -64,6 +64,12 @@ namespace LibRedminePower.Extentions
             return result != null ? result : defaultValue;
         }
 
+        public static T FirstOrFirst<T>(this IEnumerable<T> list, Func<T, bool> predicate)
+        {
+            var result = list.FirstOrDefault(predicate);
+            return result != null ? result : list.FirstOrDefault();
+        }
+
         /// <summary>
         /// comparer に従って同値判定を行い、Distinct したリストを返す。条件を満たすものが複数あった場合、最初の要素が追加される。
         /// </summary>

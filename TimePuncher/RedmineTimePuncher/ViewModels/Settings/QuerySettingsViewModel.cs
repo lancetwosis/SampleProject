@@ -20,49 +20,29 @@ namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class QuerySettingsViewModel : Bases.SettingsViewModelBase<QuerySettingsModel>
     {
-        public ReactivePropertySlim<bool> IsAutoUpdate { get; set; }
-        public ReactivePropertySlim<int> AutoUpdateMinutes { get; set; }
-        public TwinListBoxViewModel<MyQuery> TwinListBoxViewModel { get; set; }
         public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
 
-        private CompositeDisposable myDisposables;
+        public ReactivePropertySlim<bool> IsAutoUpdate { get; set; }
+        public ReactivePropertySlim<int> AutoUpdateMinutes { get; set; }
+        public ReadOnlyReactivePropertySlim<TwinListBoxViewModel<MyQuery>> TwinListBoxViewModel { get; set; }
 
-        public QuerySettingsViewModel(QuerySettingsModel model, ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) :base(model)
+        public QuerySettingsViewModel(QuerySettingsModel model) :base(model)
         {
-            var error1 = errorMessage.ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var error2 = new ReactivePropertySlim<string>().AddTo(disposables);
-            ErrorMessage = new IObservable<string>[] { error1, error2 }.CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a))
-                .ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var queries = new ReactivePropertySlim<List<MyQuery>>().AddTo(disposables);
-
-            redmine.Where(a => a != null).SubscribeWithErr(async r =>
-            {
-                try
-                {
-                    error2.Value = Resources.SettingsMsgNowGettingData;
-                    queries.Value = CacheManager.Default.TmpQueries.Select(a => new MyQuery(a)).ToList();
-                    error2.Value = "";
-                }
-                catch(Exception ex)
-                {
-                    error2.Value = ex.Message;
-                }
-            }).AddTo(disposables);
-
-            queries.Where(a => a != null).Merge(ImportCommand).SubscribeWithErr(_ => setUpItemsSource(model, queries.Value)).AddTo(disposables);
+            ErrorMessage = CacheTempManager.Default.Message.ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             IsAutoUpdate = model.ToReactivePropertySlimAsSynchronized(m => m.IsAutoUpdate).AddTo(disposables);
             AutoUpdateMinutes = model.ToReactivePropertySlimAsSynchronized(m => m.AutoUpdateMinutes).AddTo(disposables);
-        }
-
-        private void setUpItemsSource(QuerySettingsModel model, List<MyQuery> queries)
-        {
-            myDisposables?.Dispose();
-            myDisposables = new CompositeDisposable().AddTo(disposables);
-
-            // Redmine 上で削除されたクエリは除外する
-            model.Items = new ObservableCollection<MyQuery>(model.Items.Select(a => queries.FirstOrDefault(b => a.Id == b.Id)).Where(a => a != null));
-            TwinListBoxViewModel = new TwinListBoxViewModel<MyQuery>(queries, model.Items).AddTo(myDisposables);
+            TwinListBoxViewModel =
+                // ModelのItemsが更新されたら（インポートなどでも）
+                model.ObserveProperty(a => a.Items).CombineLatest(
+                    // かつ、Cacheが更新されたら
+                    CacheTempManager.Default.MyQueries.Where(a => a != null),
+                    (items, queries) => {
+                        // まずは、RedmineのQueiresで削除された物は、ModelのItemsから削除する。
+                        model.UpdateItems(queries);
+                        // 次に、更新したModelのItemsから、TiwnListBoxのViewModelを作る。
+                        return new TwinListBoxViewModel<MyQuery>(queries, model.Items);
+                    }).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
     }
 }

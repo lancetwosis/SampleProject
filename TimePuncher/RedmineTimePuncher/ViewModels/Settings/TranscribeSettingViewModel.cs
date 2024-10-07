@@ -23,68 +23,94 @@ using System.Threading.Tasks;
 using System.Windows.Controls;
 using LibRedminePower.ViewModels;
 using RedmineTimePuncher.Extentions;
+using Reactive.Bindings.Notifiers;
+using System.Diagnostics;
 
 namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class TranscribeSettingViewModel : LibRedminePower.ViewModels.Bases.ViewModelBase
     {
         public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
+        public ReadOnlyReactivePropertySlim<bool> IsEnabledDetectionProcess { get; set; }
+        public ReadOnlyReactivePropertySlim<List<MyProject>> PossibleProjects { get; set; }
+        public ReadOnlyReactivePropertySlim<List<MyProject>> PossibleWikiProjects { get; set; }
+        public ReadOnlyReactivePropertySlim<List<MyCustomFieldPossibleValue>> PossibleProcesses { get; set; }
+        public ReadOnlyReactivePropertySlim<List<MyTracker>> PossibleTrackers { get; set; }
+
         public ReactivePropertySlim<bool> IsEnabled { get; set; }
-        public EditableGridViewModel<TranscribeSettingItemModel> Items { get; set; }
+        public ReadOnlyReactivePropertySlim<EditableGridViewModel<TranscribeSettingItemViewModel, TranscribeSettingItemModel>> Items { get; set; }
         public ReactiveCommand TestCommand { get; set; }
 
-        public TranscribeSettingViewModel(ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> isBusy)
+        public TranscribeSettingViewModel(TranscribeSettingModel model)
         {
-            ErrorMessage = redmine.Select(r => r != null && !CacheManager.Default.TmpMarkupLang.CanTranscribe())
-                                  .Select(a => a ? Resources.SettingsReviErrMsgCannotUseTranscribe : null)
+            ErrorMessage = CacheTempManager.Default.MarkupLang.Select(a  => !a.CanTranscribe() ? Resources.SettingsReviErrMsgCannotUseTranscribe : null)
                                   .ToReadOnlyReactivePropertySlim().AddTo(disposables);
-        }
+            var createTicket = MessageBroker.Default.ToObservable<CreateTicketSettingsModel>();
+            var detectionProcess = createTicket.SelectMany(a => a.ObserveProperty(b => b.DetectionProcess));
+            var detectionProcessCustomField = detectionProcess.SelectMany(a => a.ObserveProperty(b => b.CustomField));
 
-        [JsonIgnore]
-        protected CompositeDisposable myDisposables;
-        public void Setup(TranscribeSettingModel transcribe, ReactivePropertySlim<string> isBusy)
-        {
-            myDisposables?.Dispose();
-            myDisposables = new CompositeDisposable().AddTo(disposables);
+            IsEnabledDetectionProcess = detectionProcess.SelectMany(x => x.ObserveProperty(dp => dp.IsEnabled))
+                .ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            IsEnabled = transcribe.ToReactivePropertySlimAsSynchronized(m => m.IsEnabled).AddTo(myDisposables);
+            PossibleProjects = CacheTempManager.Default.MyProjects.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            PossibleWikiProjects = CacheTempManager.Default.MyProjectsWiki.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            PossibleProcesses =
+                detectionProcessCustomField.CombineLatest(IsEnabledDetectionProcess, (proc, isEnabled) => {
+                    return isEnabled ?
+                    new List<MyCustomFieldPossibleValue> { TranscribeSettingModel.NOT_SPECIFIED_PROCESS }.Concat(proc.PossibleValues).ToList():
+                    new List<MyCustomFieldPossibleValue>();
+                }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            PossibleProcesses.SubscribeWithErr(procs =>
+            {
+                foreach (var item in model.Items)
+                    item.Process = procs?.FirstOrFirst(p => p.Equals(item.Process));
+            }).AddTo(disposables);
+            PossibleTrackers = CacheTempManager.Default.MyTrackers.Where(a => a != null).Select(a => 
+            new List<MyTracker>(new[] { MyTracker.NOT_SPECIFIED }).Concat(a).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            Items = new EditableGridViewModel<TranscribeSettingItemModel>(transcribe.Items).AddTo(myDisposables);
-            Items.CollectionChangedAsObservable().StartWithDefault().SubscribeWithErr(async e =>
+            IsEnabled = model.ToReactivePropertySlimAsSynchronized(m => m.IsEnabled).AddTo(disposables);
+            Items = model.ToReadOnlyViewModel(a => a.Items, 
+                a => new EditableGridViewModel<TranscribeSettingItemViewModel, TranscribeSettingItemModel>(a, b => new TranscribeSettingItemViewModel(b), b => b.Model)).AddTo(disposables);
+
+            // Itemsの変更とコレクションの変更を両方監視する
+            Items.Select(a => a.CollectionChangedAsObservable())  // 新しいコレクションの変更を監視
+                .Switch()                                         // 直前のObservableを破棄して、新しいObservableに切り替え
+                .StartWithDefault().SubscribeWithErr(e =>
             {
                 if (e?.Action == NotifyCollectionChangedAction.Add)
                 {
-                    foreach (var i in e.NewItems.OfType<TranscribeSettingItemModel>())
+                    foreach (var item in e.NewItems.Cast<TranscribeSettingItemViewModel>())
                     {
-                        await i.SetupAsync(isBusy);
+                        item.Process.Value = PossibleProcesses.Value?.FirstOrDefault();
+                        item.Project.Value = PossibleProjects.Value?.FirstOrDefault();
+                        item.WikiProject.Value = PossibleWikiProjects.Value?.FirstOrDefault();
                     }
                 }
-            }).AddTo(myDisposables);
+            }).AddTo(disposables);
 
-            TestCommand = Items.SelectedItem.Select(a => a != null).ToReactiveCommand().WithSubscribe(() =>
+            TestCommand = Items.SelectMany(a => a.SelectedItem).Select(a => a != null).ToReactiveCommand().WithSubscribe(() =>
             {
-                var selectedItem = Items.SelectedItem.Value;
+                var selectedItem = Items.Value.SelectedItem.Value.Model;
                 if (!selectedItem.IsValid())
                     throw new ApplicationException(Resources.SettingsReviErrMsgInvalidTranscribeSetting);
 
                 MyWikiPage wiki = null;
                 try
                 {
-                    isBusy.Value = Resources.SettingsMsgNowGettingData;
-                    wiki = TranscribeSettingModel.REDMINE.GetWikiPage(selectedItem.WikiProject.Id.ToString(), selectedItem.WikiPage.Title);
+                    wiki = CacheTempManager.Default.Redmine.Value.GetWikiPage(selectedItem.WikiProject.Id.ToString(), selectedItem.WikiPage.Title);
                 }
                 catch
                 {
                     throw new ApplicationException(string.Format(Resources.ReviewErrMsgFailedFindWikiPage, selectedItem.WikiPage.Title));
                 }
-                finally
-                {
-                    isBusy.Value = null;
-                }
 
-                var lines = wiki.GetSectionLines(CacheManager.Default.TmpMarkupLang, selectedItem.Header, selectedItem.IncludesHeader);
+                var lines = wiki.GetSectionLines(CacheTempManager.Default.MarkupLang.Value, selectedItem.Header, selectedItem.IncludesHeader);
                 MessageBoxHelper.Input(Resources.ReviewMsgTranscribeFollowings, string.Join(Environment.NewLine, lines.Select(l => l.Text)), true);
-            }).AddTo(myDisposables);
+            }).AddTo(disposables);
+
+
+            // Itemsが空の状態で、IsEnabledが有効にされたら、空のModelを追加する。
+            IsEnabled.Pairwise().Where(a => !a.OldItem && a.NewItem && !Items.Value.Any()).SubscribeWithErr(_ => model.Items.Add(new TranscribeSettingItemModel())).AddTo(disposables);
         }
     }
 }

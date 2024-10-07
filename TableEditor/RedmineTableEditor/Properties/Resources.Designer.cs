@@ -19,7 +19,7 @@ namespace RedmineTableEditor.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -485,15 +485,6 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
-        ///   Please select fields of parent issues to display . に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ErrMsgSelectFieldsToDisplay {
-            get {
-                return ResourceManager.GetString("ErrMsgSelectFieldsToDisplay", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Please input the issue id. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ErrMsgSelectIssueId {
@@ -796,6 +787,15 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   The issue id and subject are always displayed. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MsgSelectParentFields {
+            get {
+                return ResourceManager.GetString("MsgSelectParentFields", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         public static System.Drawing.Bitmap new_icon {
@@ -921,15 +921,6 @@ namespace RedmineTableEditor.Properties {
         public static string RibbonCmdApply {
             get {
                 return ResourceManager.GetString("RibbonCmdApply", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Update all information に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string RibbonCmdApplyAll {
-            get {
-                return ResourceManager.GetString("RibbonCmdApplyAll", resourceCulture);
             }
         }
         

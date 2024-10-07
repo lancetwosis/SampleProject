@@ -1,4 +1,5 @@
-﻿using Reactive.Bindings;
+﻿using LibRedminePower.Extentions;
+using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Models.Settings;
 using System.Reactive.Linq;
@@ -12,8 +13,8 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
         public OutputDataSettingsViewModel(OutputDataSettingsModel model) :base(model)
         {
-            CsvExport = model.ObserveProperty(a => a.CsvExport).Select(a => new OutputCsvExportSettingsViewModel(a)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            ExtTool = model.ObserveProperty(a => a.ExtTool).Select(a => new OutputExtToolSettingsViewModel(a)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            CsvExport = model.ToReadOnlyViewModel(a => a.CsvExport, a => new OutputCsvExportSettingsViewModel(a)).AddTo(disposables);
+            ExtTool = model.ToReadOnlyViewModel(a => a.ExtTool, a => new OutputExtToolSettingsViewModel(a)).AddTo(disposables);
         }
     }
 }

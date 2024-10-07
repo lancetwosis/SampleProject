@@ -102,13 +102,6 @@ namespace RedmineTimePuncher.ViewModels
             ErrorMessage = new TextNotifier().AddTo(disposables);
             Settings.ObserveProperty(a => a.Redmine).SubscribeWithErr(async s =>
             {
-                if (!Properties.Settings.Default.LastAuthorized)
-                {
-                    // 前回、接続に失敗していた場合は一旦エラーメッセージを出し、WindowLoaded でユーザに確認する
-                    ErrorMessage.Value = Resources.msgErrUnauthorizedRedmineSettings;
-                    return;
-                }
-
                 await tryConnectAsync(s);
             }).AddTo(disposables);
             Redmine.Where(a => a != null).SubscribeWithErr(r =>
@@ -118,15 +111,6 @@ namespace RedmineTimePuncher.ViewModels
                 MyScheduleViewDragDropBehavior.Redmine = r;
                 MyGridViewDragDropBehavior.Redmine = r;
             });
-            CacheManager.Default.Authorized.Skip(1).SubscribeWithErr(authorized =>
-            {
-                if (!authorized)
-                {
-                    Redmine.Value = null;
-                    ErrorMessage.Value = Resources.msgErrUnauthorizedRedmineSettings;
-                    Properties.Settings.Default.LastAuthorized = false;
-                }
-            }).AddTo(disposables);
 
             Input = new InputViewModel(this).AddTo(disposables);
             TableEditor = new TableEditorViewModel(this).AddTo(disposables);
@@ -181,8 +165,6 @@ namespace RedmineTimePuncher.ViewModels
                     var clone = Settings.Clone();
                     using (var vm = new SettingsViewModel(this, clone))
                     {
-                        await vm.SetupAsync();
-
                         var dialog = new Views.Settings.SettingsDialog();
                         dialog.DataContext = vm;
                         dialog.Owner = App.Current.MainWindow;
@@ -192,19 +174,7 @@ namespace RedmineTimePuncher.ViewModels
                         {
                             if (!Settings.Redmine.Equals(clone.Redmine))
                             {
-                                Properties.Settings.Default.LastAuthorized = true;
                                 Settings.Redmine = clone.Redmine;
-                            }
-                            else
-                            {
-                                if (!Properties.Settings.Default.LastAuthorized)
-                                    // 前回、接続に失敗していた場合、更新がなくても新規での接続を試みる
-                                    await tryConnectAsync(Settings.Redmine);
-                                else
-                                    using (IsBusy.ProcessStart(Resources.ProgressMsgConnectingRedmine))
-                                    {
-                                        await Task.Run(() => CacheManager.Default.Update(Redmine.Value, Settings.Redmine));
-                                    }
                             }
                             if (Settings.Schedule.ToJson() != clone.Schedule.ToJson())
                             {
@@ -280,21 +250,6 @@ namespace RedmineTimePuncher.ViewModels
                 {
                     SelectedIndex.Value = Properties.Settings.Default.LastSelectedIndex;
                 }
-
-                if (!Properties.Settings.Default.LastAuthorized)
-                {
-                    // 前回接続に失敗していた場合、ユーザに確認してから接続を行う
-                    var result = MessageBoxHelper.ConfirmWarning(Resources.msgConfReconnectRedmine, MessageBoxHelper.ButtonType.OkCancel);
-                    if (result.HasValue && result.Value == true)
-                    {
-                        await tryConnectAsync(Settings.Redmine);
-                    }
-                    else
-                    {
-                        ErrorMessage.Value = Resources.msgErrUnauthorizedRedmineSettings;
-                    }
-                }
-
                 autoUpdateCheck();
             }).AddTo(disposables);
 
@@ -307,7 +262,7 @@ namespace RedmineTimePuncher.ViewModels
             {
                 Logger.Info("WindowClosedEventCommand was started.");
 
-                CacheManager.Default.SaveCache(Redmine.Value, Settings.Redmine);
+                CacheManager.Default.SaveCache(Redmine.Value);
 
                 Functions.ToList().ForEach(f => f.OnWindowClosed());
 
@@ -327,16 +282,15 @@ namespace RedmineTimePuncher.ViewModels
                     try
                     {
                         var manager = new RedmineManager(settings);
+                        await manager.CheckConnectAsync();
                         ErrorMessage.Value = null;
 
-                        await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(manager, settings));
+                        await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(manager));
 
-                        Properties.Settings.Default.LastAuthorized = true;
                         Redmine.Value = manager;
                     }
                     catch (Exception ex)
                     {
-                        Properties.Settings.Default.LastAuthorized = false;
                         Redmine.Value = null;
 
                         if (ex is AggregateException ae && ae.InnerException is RedmineApiException rae)

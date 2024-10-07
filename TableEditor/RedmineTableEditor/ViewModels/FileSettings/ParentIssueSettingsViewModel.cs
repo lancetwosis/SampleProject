@@ -34,7 +34,6 @@ namespace RedmineTableEditor.ViewModels.FileSettings
 
         public FiltersViewModel Filters { get; set; }
 
-        public ReadOnlyReactivePropertySlim<bool> HasProperties { get; set; }
         public ReadOnlyReactivePropertySlim<string> IsValid { get; set; }
         public ReactiveProperty<bool> IsEdited { get; set; }
 
@@ -64,16 +63,14 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 myDisposables?.Dispose();
                 myDisposables = new CompositeDisposable().AddTo(disposables);
 
-                HasProperties = v.ToItems.CollectionChangedAsObservable().StartWithDefault().Select(_ => v.ToItems.Any()).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
-
-                IsValid = UseQuery.CombineLatest(SelectedQuery, HasProperties, Filters.ErrorMessage, (_1, _2, _3, _4) => true).Select(_ =>
+                IsValid = UseQuery.CombineLatest(SelectedQuery, Filters.ErrorMessage, (_1, _2, _3) => true).Select(_ =>
                 {
                     if (UseQuery.Value && SelectedQuery.Value == null)
                         return Resources.ErrMsgSelectCustomQuery;
                     if (!UseQuery.Value && Filters.ErrorMessage.Value != null)
                         return Filters.ErrorMessage.Value;
 
-                    return HasProperties.Value ? null : Resources.ErrMsgSelectFieldsToDisplay;
+                    return null;
                 }).ToReadOnlyReactivePropertySlim().AddTo(myDisposables);
             }).AddTo(disposables);
 

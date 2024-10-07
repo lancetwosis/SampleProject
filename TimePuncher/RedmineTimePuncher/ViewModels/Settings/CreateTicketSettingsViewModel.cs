@@ -24,86 +24,69 @@ namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class CreateTicketSettingsViewModel : Bases.SettingsViewModelBase<CreateTicketSettingsModel>
     {
-        public CustomFieldSettingViewModel DetectionProcess { get; set; }
+        public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
+
+        public ReadOnlyReactivePropertySlim<CustomFieldSettingViewModel> DetectionProcess { get; set; }
 
         public ReactivePropertySlim<bool> NeedsOutlookIntegration { get; set; }
         public ReactivePropertySlim<bool> NeedsGitIntegration { get; set; }
 
         public ReactivePropertySlim<MyTracker> OpenTracker { get; set; }
         public ReactivePropertySlim<IdName> OpenStatus { get; set; }
-        public CustomFieldSettingViewModel<ReviewMethodCustomField, ReviewMethodValue> ReviewMethod { get; set; }
+        public ReactivePropertySlim<IdName> DefaultStatus { get; set; }
+        public ReadOnlyReactivePropertySlim<CustomFieldSettingViewModel<ReviewMethodCustomField, ReviewMethodValue>> ReviewMethod { get; set; }
 
         public ReactivePropertySlim<MyTracker> RequestTracker { get; set; }
-        public CustomFieldSettingViewModel IsRequired { get; set; }
+        public ReadOnlyReactivePropertySlim<CustomFieldSettingViewModel> IsRequired { get; set; }
 
         public ReactivePropertySlim<MyTracker> PointTracker { get; set; }
-        public CustomFieldSettingViewModel SaveReviewer { get; set; }
+        public ReadOnlyReactivePropertySlim<CustomFieldSettingViewModel> SaveReviewer { get; set; }
 
-        public ObservableCollection<IdName> Trackers { get; set; }
-        public ObservableCollection<IdName> Statuses { get; set; }
+        public ReadOnlyReactivePropertySlim<List<MyTracker>> Trackers { get; set; }
+        public ReadOnlyReactivePropertySlim<List<IdName>> Statuses { get; set; }
 
-        public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
-
-        public TranscribeSettingsViewModel TranscribeDescription { get; set; }
-
-        public CreateTicketSettingsViewModel(CreateTicketSettingsModel createTicket, TranscribeSettingsModel transcribe,
-            ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(createTicket)
+        public CreateTicketSettingsViewModel(CreateTicketSettingsModel model) : base(model)
         {
-            TranscribeDescription = new TranscribeSettingsViewModel(createTicket, transcribe, redmine, errorMessage).AddTo(disposables);
+            ErrorMessage = CacheTempManager.Default.Message.ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            redmine.Where(a => a != null).SubscribeWithErr(async r =>
+            DetectionProcess = model.ToReadOnlyViewModel(a => a.DetectionProcess, a => new CustomFieldSettingViewModel(a)).AddTo(disposables);
+            NeedsOutlookIntegration = model.ToReactivePropertySlimAsSynchronized(m => m.NeedsOutlookIntegration).AddTo(disposables);
+            NeedsGitIntegration = model.ToReactivePropertySlimAsSynchronized(m => m.NeedsGitIntegration).AddTo(disposables);
+
+            OpenTracker = model.ToReactivePropertySlimAsSynchronized(m => m.OpenTracker).AddTo(disposables);
+            OpenStatus = model.ToReactivePropertySlimAsSynchronized(m => m.OpenStatus).AddTo(disposables);
+            DefaultStatus = model.ToReactivePropertySlimAsSynchronized(m => m.DefaultStatus).AddTo(disposables);
+            ReviewMethod = model.ToReadOnlyViewModel(a => a.ReviewMethod, 
+                a => new CustomFieldSettingViewModel<ReviewMethodCustomField, ReviewMethodValue>(a)).AddTo(disposables);
+
+            RequestTracker = model.ToReactivePropertySlimAsSynchronized(m => m.RequestTracker).AddTo(disposables);
+            IsRequired = model.ToReadOnlyViewModel(a => a.IsRequired, a => new CustomFieldSettingViewModel(a)).AddTo(disposables);
+
+            PointTracker = model.ToReactivePropertySlimAsSynchronized(m => m.PointTracker).AddTo(disposables);
+            SaveReviewer = model.ToReadOnlyViewModel(a => a.SaveReviewer, a => new CustomFieldSettingViewModel(a)).AddTo(disposables);
+
+            // 選択項目
+            Trackers = CacheTempManager.Default.MyTrackers.Where(a => a != null)
+                .Select(a => new List<MyTracker>(new[] { MyTracker.USE_PARENT_TRACKER }).Concat(a).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Trackers.Where(a => a != null).Subscribe(tracker => {
+                OpenTracker.Value = tracker.FirstOrDefault(OpenTracker.Value);
+                RequestTracker.Value = tracker.FirstOrDefault(RequestTracker.Value);
+                PointTracker.Value = tracker.FirstOrDefault(PointTracker.Value);
+            } ).AddTo(disposables);
+            Statuses = CacheTempManager.Default.Statuss.Where(a => a != null)
+                .Select(a => a.Select(b => new IdName(b)).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Statuses.Where(a => a != null).Subscribe(statuses =>
             {
-                try
-                {
-                    await setUpAsync(r, createTicket);
-                }
-                catch (Exception ex)
-                {
-                    createTicket.IsBusy.Value = ex.Message;
-                }
+                OpenStatus.Value = statuses.FirstOrDefault(OpenStatus.Value);
+                DefaultStatus.Value = statuses.FirstOrDefault(DefaultStatus.Value);
             }).AddTo(disposables);
 
-            ErrorMessage = new IObservable<string>[] { errorMessage, createTicket.IsBusy }
-                .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-
-            // インポートしたら、Viewを読み込み直す
-            ImportCommand = ImportCommand.WithSubscribe(async () =>
-            {
-                await setUpAsync(redmine.Value, createTicket);
-
-                var errors = await TranscribeDescription.SetupAsync(redmine.Value, createTicket, transcribe);
-                if (errors.Any())
-                {
-                    MessageBoxHelper.ConfirmWarning(string.Format(Resources.errImport, string.Join(Environment.NewLine, errors)));
-                }
+            CacheTempManager.Default.CustomFields.Where(a => a != null).SubscribeWithErr(cfs => {
+                var boolCustomFields = cfs.Where(c => c.IsIssueType() && c.IsBoolFormat()).Select(c => new MyCustomField(c)).ToList();
+                var listCustomFields = cfs.Where(c => c.IsIssueType() && c.IsListFormat()).Select(c => new MyCustomField(c)).ToList();
+                var userCustomFields = cfs.Where(c => c.IsIssueType() && c.IsUserFormat()).Select(c => new MyCustomField(c)).ToList();
+                model.Update(boolCustomFields, listCustomFields, userCustomFields);
             }).AddTo(disposables);
-        }
-
-        [JsonIgnore]
-        protected CompositeDisposable myDisposables;
-        private async Task setUpAsync(RedmineManager r, CreateTicketSettingsModel model)
-        {
-            myDisposables?.Dispose();
-            myDisposables = new CompositeDisposable().AddTo(disposables);
-
-            await model.SetupAsync(r);
-
-            DetectionProcess = new CustomFieldSettingViewModel(model.DetectionProcess).AddTo(myDisposables);
-            NeedsOutlookIntegration = model.ToReactivePropertySlimAsSynchronized(m => m.NeedsOutlookIntegration).AddTo(myDisposables);
-            NeedsGitIntegration = model.ToReactivePropertySlimAsSynchronized(m => m.NeedsGitIntegration).AddTo(myDisposables);
-
-            Trackers = new ObservableCollection<IdName>(model.Trackers);
-            Statuses= new ObservableCollection<IdName>(model.Statuses);
-
-            OpenTracker = model.ToReactivePropertySlimAsSynchronized(m => m.OpenTracker).AddTo(myDisposables);
-            OpenStatus = model.ToReactivePropertySlimAsSynchronized(m => m.OpenStatus).AddTo(myDisposables);
-            ReviewMethod = new CustomFieldSettingViewModel<ReviewMethodCustomField, ReviewMethodValue>(model.ReviewMethod).AddTo(myDisposables);
-
-            RequestTracker = model.ToReactivePropertySlimAsSynchronized(m => m.RequestTracker).AddTo(myDisposables);
-            IsRequired = new CustomFieldSettingViewModel(model.IsRequired).AddTo(myDisposables);
-
-            PointTracker = model.ToReactivePropertySlimAsSynchronized(m => m.PointTracker).AddTo(myDisposables);
-            SaveReviewer = new CustomFieldSettingViewModel(model.SaveReviewer).AddTo(myDisposables);
         }
     }
 }

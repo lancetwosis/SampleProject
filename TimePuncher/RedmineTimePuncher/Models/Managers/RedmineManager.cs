@@ -32,15 +32,14 @@ namespace RedmineTimePuncher.Models.Managers
     {
         public static int TickLength;
 
+        public RedmineSettingsModel Settings { get; }
         public string Host => Manager.Host;
 
         public IRedmineManager Manager { get; set; }
         public IRedmineManager MasterManager { get; set; }
 
+
         private RedmineWebManager webManager;
-
-        private RedmineSettingsModel settings;
-
         private Regex regIssuePattern = new Regex(@"#\d+", RegexOptions.Compiled);
         private Regex regIssue2Pattern = new Regex(@"issues/\d+", RegexOptions.Compiled);
 
@@ -48,7 +47,7 @@ namespace RedmineTimePuncher.Models.Managers
 
         public RedmineManager(RedmineSettingsModel settings)
         {
-            this.settings = settings;
+            this.Settings = settings;
 
             var sem = new SemaphoreSlim(settings.ConcurrencyMax);
             if (settings.UseBasicAuth)
@@ -74,7 +73,7 @@ namespace RedmineTimePuncher.Models.Managers
             if (!string.IsNullOrEmpty(settings.AdminApiKey))
             {
                 var sem2 = new SemaphoreSlim(settings.ConcurrencyMax);
-                if (this.settings.UseBasicAuth)
+                if (this.Settings.UseBasicAuth)
                 {
                     MasterManager = LoggingAdvice<IRedmineManager>.Create(
                         new Redmine.Net.Api.RedmineManager(settings.UrlBase, settings.UserNameOfBasicAuth, settings.PasswordOfBasicAuth, settings.AdminApiKey),
@@ -97,7 +96,27 @@ namespace RedmineTimePuncher.Models.Managers
         {
             try
             {
-                await Task.Run(() => GetMyUser());
+                var count = CacheManager.Default.ErrorSettings.Count(a => a.UserName == Settings.UserName);
+                if (count > 1)
+                {
+                    // ２回以上連続で失敗していた場合、ユーザに確認してから接続を行う。
+                    var result = MessageBoxHelper.ConfirmQuestion(
+                        string.Format(Properties.Resources.msgConfReconnectRedmine, Settings.UserName, count), MessageBoxHelper.ButtonType.OkCancel);
+                    if (!result.HasValue || !result.Value == true)
+                    {
+                        throw new ApplicationException(Properties.Resources.msgErrUnauthorizedRedmineSettings);
+                    }
+                }
+                try
+                {
+                    await Task.Run(() => GetMyUser());
+                    CacheManager.Default.ErrorSettings.Clear();
+                }
+                catch
+                {
+                    CacheManager.Default.ErrorSettings.Add(Settings);
+                    throw;
+                }                    
             }
             catch (Exception ex)
             {
@@ -144,7 +163,7 @@ namespace RedmineTimePuncher.Models.Managers
                 {
                     var result = regIssuePattern.Matches(line).Cast<Match>().Select(a => a.Value).FirstOrDefault()?.Substring(1);
                     if (!string.IsNullOrEmpty(result) && getCount(result) > 0) return result;
-                    if (line.Contains(settings.UrlBase))
+                    if (line.Contains(Settings.UrlBase))
                     {
                         result = regIssue2Pattern.Matches(line).Cast<Match>().Select(a => a.Value).FirstOrDefault()?.Split('/').Last();
                         if (!string.IsNullOrEmpty(result) && getCount(result) > 0) return result;
@@ -219,7 +238,7 @@ namespace RedmineTimePuncher.Models.Managers
                 if (issues == null || !issues.Any())
                     return MarkupLangType.Textile;
                 else
-                    return await webManager.GetMarkupLangTypeFromTicketAsync($"{settings.UrlBase}issues/{issues[0].Id}");
+                    return await webManager.GetMarkupLangTypeFromTicketAsync($"{Settings.UrlBase}issues/{issues[0].Id}");
             });
         }
 
@@ -379,7 +398,7 @@ namespace RedmineTimePuncher.Models.Managers
             }
         }
 
-        public string GetTicketUrl(string no) => settings.UrlBase + $"issues/{no}";
+        public string GetTicketUrl(string no) => Settings.UrlBase + $"issues/{no}";
 
         public MyIssue GetTicketIncludeJournal(string id, out string error)
         {
@@ -781,12 +800,12 @@ namespace RedmineTimePuncher.Models.Managers
 
         public List<MyWikiPageItem> GetAllWikiPages(string projIdentifier)
         {
-            return Manager.GetAllWikiPagesWithErrConv(projIdentifier).Select(w => new MyWikiPageItem(settings.UrlBase, projIdentifier, w)).ToList();
+            return Manager.GetAllWikiPagesWithErrConv(projIdentifier).Select(w => new MyWikiPageItem(Settings.UrlBase, projIdentifier, w)).ToList();
         }
 
         public MyWikiPage GetWikiPage(string projectId, string title, int? version = null)
         {
-            return new MyWikiPage(settings.UrlBase, projectId, Manager.GetWikiPage(projectId, null, title, version.HasValue ? (uint)version.Value : 0));
+            return new MyWikiPage(Settings.UrlBase, projectId, Manager.GetWikiPage(projectId, null, title, version.HasValue ? (uint)version.Value : 0));
         }
 
         public Issue CreateTicket(Issue issue)
@@ -802,7 +821,7 @@ namespace RedmineTimePuncher.Models.Managers
         public string GetIssuesUrl(int projectId)
         {
             var proj = CacheManager.Default.Projects.First(p => p.Id == projectId);
-            return $"{settings.UrlBase}/projects/{proj.Identifier}/issues";
+            return $"{Settings.UrlBase}/projects/{proj.Identifier}/issues";
         }
 
         public string CreatePointIssueURL(Issue parent, int trackerId, string detectionProcess, string saveReviewer, string reviewMethod, List<string> cfQueries)

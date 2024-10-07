@@ -29,10 +29,10 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReactivePropertySlim<bool> Sat { get; set; }
 
         public DateTime DisplayDate { get; set; }
-        public ObservableCollection<DateTime> SpecialDates { get; set; }
 
-        public PersonalHolidaySettingViewModel UseSubject { get; set; }
-        public PersonalHolidaySettingViewModel UseCategory { get; set; }
+        public ReadOnlyReactivePropertySlim<PersonalHolidaySettingViewModel> UseSubject { get; set; }
+        public ReadOnlyReactivePropertySlim<PersonalHolidaySettingViewModel> UseCategory { get; set; }
+        public ReadOnlyReactivePropertySlim<ObservableCollection<DateTime>> SpecialDates { get; set; }
 
 
         public CalendarSettingsViewModel(CalendarSettingsModel model) : base(model)
@@ -45,24 +45,11 @@ namespace RedmineTimePuncher.ViewModels.Settings
             Fri = model.ToReactivePropertySlimAsSynchronized(m => m.Fri.IsWorkingDay).AddTo(disposables);
             Sat = model.ToReactivePropertySlimAsSynchronized(m => m.Sat.IsWorkingDay).AddTo(disposables);
 
-            UseSubject = new PersonalHolidaySettingViewModel(model.OffTimeFromSubject).AddTo(disposables);
-            UseCategory = new PersonalHolidaySettingViewModel(model.OffTimeFromCatetories).AddTo(disposables);
-
-            setup(model);
-
-            // インポートしたら、Viewを読み込み直す
-            ImportCommand = ImportCommand.WithSubscribe(() => setup(model)).AddTo(disposables);
-        }
-
-        [JsonIgnore]
-        protected CompositeDisposable myDisposables;
-        private void setup(CalendarSettingsModel model)
-        {
-            myDisposables?.Dispose();
-            myDisposables = new CompositeDisposable().AddTo(disposables);
+            UseSubject = model.ToReadOnlyViewModel(a => a.OffTimeFromSubject, a => new PersonalHolidaySettingViewModel(a)).AddTo(disposables);
+            UseCategory = model.ToReadOnlyViewModel(a => a.OffTimeFromCatetories, a => new PersonalHolidaySettingViewModel(a)).AddTo(disposables);
 
             DisplayDate = new DateTime(DateTime.Today.Year, 1, 1);
-            SpecialDates = model.SpecialDates;
+            SpecialDates = model.ObserveProperty(a => a.SpecialDates).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
     }
 

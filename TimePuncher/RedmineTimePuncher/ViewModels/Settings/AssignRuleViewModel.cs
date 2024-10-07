@@ -4,6 +4,7 @@ using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Extentions;
+using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
 using System;
 using System.Collections.Generic;
@@ -19,40 +20,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class AssignRuleViewModel : LibRedminePower.ViewModels.Bases.ViewModelBase
     {
-        // MultiSelectionGridViewComboBoxColumn の ItemSource にバインドするため Static で持つ必要がある
-        private static List<Project> projects;
-        public static List<Project> Projects
-        {
-            get => projects;
-            set
-            {
-                projects = value;
-                NotifyStaticPropertyChanged();
-            }
-        }
-
-        private static List<Tracker> trackers;
-        public static List<Tracker> Trackers 
-        {
-            get => trackers;
-            set
-            {
-                trackers = value;
-                NotifyStaticPropertyChanged();
-            }
-        }
-
-        private static List<IssueStatus> statuss;
-        public static List<IssueStatus> Statuss
-        {
-            get => statuss;
-            set
-            {
-                statuss = value;
-                NotifyStaticPropertyChanged();
-            }
-        }
-
         public ObservableCollection<Project> SelectedProjects { get; set; }
         public ObservableCollection<Tracker> SelectedTrackers { get; set; }
         public ReactivePropertySlim<string> Subject { get; set; }
@@ -63,10 +30,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReadOnlyReactivePropertySlim<string> Detail { get; set; }
 
         public AssignRuleModel Model { get; set; }
-
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
-        public static void NotifyStaticPropertyChanged([CallerMemberName] string propertyName = "") =>
-            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
 
         /// <summary>
         /// RadGridView の「Click here to add new item」機能のために必要
@@ -85,21 +48,26 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
         private void setBind()
         {
-            Model.ProjectIds = Model.ProjectIds.Where(a => Projects.Any(b => b.Id == a)).ToList();
-            SelectedProjects = new ObservableCollection<Project>(Model.ProjectIds.Select(a => Projects.SingleOrDefault(b => b.Id == a)).Where(a => a != null));
+            var projects = CacheTempManager.Default.Projects.Value;
+            var trackers = CacheTempManager.Default.Trackers.Value;
+            var statuss = CacheTempManager.Default.Statuss.Value;
+
+
+            Model.ProjectIds = Model.ProjectIds.Where(a => projects.Any(b => b.Id == a)).ToList();
+            SelectedProjects = new ObservableCollection<Project>(Model.ProjectIds.Select(a => projects.SingleOrDefault(b => b.Id == a)).Where(a => a != null));
             SelectedProjects.ObserveAddChanged().SubscribeWithErr(a => Model.ProjectIds.Add(a.Id)).AddTo(disposables);
             SelectedProjects.ObserveRemoveChanged().SubscribeWithErr(a => Model.ProjectIds.Remove(a.Id)).AddTo(disposables);
 
-            Model.TrackerIds = Model.TrackerIds.Where(a => Trackers.Any(b => b.Id == a)).ToList();
-            SelectedTrackers = new ObservableCollection<Tracker>(Model.TrackerIds.Select(a => Trackers.SingleOrDefault(b => b.Id == a)).Where(a => a != null));
+            Model.TrackerIds = Model.TrackerIds.Where(a => trackers.Any(b => b.Id == a)).ToList();
+            SelectedTrackers = new ObservableCollection<Tracker>(Model.TrackerIds.Select(a => trackers.SingleOrDefault(b => b.Id == a)).Where(a => a != null));
             SelectedTrackers.ObserveAddChanged().SubscribeWithErr(a => Model.TrackerIds.Add(a.Id)).AddTo(disposables);
             SelectedTrackers.ObserveRemoveChanged().SubscribeWithErr(a => Model.TrackerIds.Remove(a.Id)).AddTo(disposables);
 
             Subject = Model.ToReactivePropertySlimAsSynchronized(a => a.Subject).AddTo(disposables);
             StringCompare = Model.ToReactivePropertySlimAsSynchronized(a => a.StringCompare).AddTo(disposables);
 
-            Model.StatusIds = Model.StatusIds.Where(a => Statuss.Any(b => b.Id == a)).ToList();
-            SelectedStatuss = new ObservableCollection<IssueStatus>(Model.StatusIds.Select(a => Statuss.SingleOrDefault(b => b.Id == a)).Where(a => a!=null));
+            Model.StatusIds = Model.StatusIds.Where(a => statuss.Any(b => b.Id == a)).ToList();
+            SelectedStatuss = new ObservableCollection<IssueStatus>(Model.StatusIds.Select(a => statuss.SingleOrDefault(b => b.Id == a)).Where(a => a!=null));
             SelectedStatuss.ObserveAddChanged().SubscribeWithErr(a => Model.StatusIds.Add(a.Id)).AddTo(disposables);
             SelectedStatuss.ObserveRemoveChanged().SubscribeWithErr(a => Model.StatusIds.Remove(a.Id)).AddTo(disposables);
 

@@ -15,7 +15,7 @@ using LibRedminePower.Extentions;
 namespace LibRedminePower.Models
 {
     public class ProgressInfo : Bases.ModelBase
-	{
+    {
         public ReadOnlyReactivePropertySlim<TimeSpan> ElapsedTime { get; set; }
         public ReactivePropertySlim<TimeSpan> RemainTime { get; set; }
         public ReadOnlyReactivePropertySlim<TimeSpan> EstimateTime { get; set; }
@@ -36,7 +36,7 @@ namespace LibRedminePower.Models
         /// <summary>
         /// キャンセル
         /// </summary>
-        public CancellationTokenSource Cancellation { get; set; } 
+        public CancellationTokenSource Cancellation { get; set; }
         /// <summary>
         /// 進捗更新時のアクション
         /// </summary>
@@ -78,7 +78,7 @@ namespace LibRedminePower.Models
             ElapsedTime = Observable.Interval(TimeSpan.FromSeconds(1))
                 .Select(a =>
                 {
-                    if(RemainTime.Value != null && RemainTime.Value.TotalMilliseconds > 0)
+                    if (RemainTime.Value != null && RemainTime.Value.TotalMilliseconds > 0)
                         RemainTime.Value -= TimeSpan.FromSeconds(1);
                     return sw.Elapsed;
                 }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
@@ -94,7 +94,7 @@ namespace LibRedminePower.Models
         public void SetValue(double value)
         {
             Cancellation.Token.ThrowIfCancellationRequested();
-            if(!double.IsNaN(value))
+            if (!double.IsNaN(value))
                 Value = value;
         }
 

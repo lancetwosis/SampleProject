@@ -1,4 +1,5 @@
-﻿using Reactive.Bindings;
+﻿using LibRedminePower.Extentions;
+using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
@@ -19,12 +20,12 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReadOnlyReactivePropertySlim<AppointmentOutlookSettingsViewModel> Outlook { get; set; }
         public ReadOnlyReactivePropertySlim<AppointmentTeamsSettingsViewModel> Teams { get; set; }
 
-        public AppointmentSettingsViewModel(AppointmentSettingsModel model, ReactivePropertySlim<RedmineManager> redmine, ReactivePropertySlim<string> errorMessage) : base(model)
+        public AppointmentSettingsViewModel(AppointmentSettingsModel model) : base(model)
         {
-            MyWorks = model.ObserveProperty(a => a.MyWorks).Select(a => new AppointmentMyWorksSettingsViewModel(a)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Redmine = model.ObserveProperty(a => a.Redmine).Select(a => new AppointmentRedmineSettingsViewModel(a, redmine, errorMessage)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Outlook = model.ObserveProperty(a => a.Outlook).Select(a => new AppointmentOutlookSettingsViewModel(a)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            Teams = model.ObserveProperty(a => a.Teams).Select(a => new AppointmentTeamsSettingsViewModel(a)).DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            MyWorks = model.ToReadOnlyViewModel(a => a.MyWorks, a => new AppointmentMyWorksSettingsViewModel(a)).AddTo(disposables);
+            Redmine = model.ToReadOnlyViewModel(a => a.Redmine, a => new AppointmentRedmineSettingsViewModel(a)).AddTo(disposables);
+            Outlook = model.ToReadOnlyViewModel(a => a.Outlook, a => new AppointmentOutlookSettingsViewModel(a)).AddTo(disposables);
+            Teams = model.ToReadOnlyViewModel(a => a.Teams, a => new AppointmentTeamsSettingsViewModel(a)).AddTo(disposables);
         }
     }
 }

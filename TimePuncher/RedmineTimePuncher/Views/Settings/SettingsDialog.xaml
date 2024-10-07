@@ -42,79 +42,79 @@
                                 myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
                                 Header="{x:Static props:Resources.SettingsCategorySchedule}">
                 <local:ScheduleSettingsView Margin="5"
-                                            DataContext="{Binding Schedule}" />
+                                            DataContext="{Binding Schedule.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
                                 Header="{x:Static props:Resources.SettingsCategoryCalendar}">
                 <local:CalendarSettingsView Margin="5"
-                                            DataContext="{Binding Calendar}" />
+                                            DataContext="{Binding Calendar.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
                                 Header="{x:Static props:Resources.SettingsCategoryCategory}">
                 <local:CategorySettingsView Margin="5"
-                                            DataContext="{Binding Category}" />
+                                            DataContext="{Binding Category.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
                                 Header="{x:Static props:Resources.SettingsCategoryAppointments}">
                 <local:AppointmentSettingsView Margin="5"
-                                               DataContext="{Binding Appointment}" />
+                                               DataContext="{Binding Appointment.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
                                 Header="{x:Static props:Resources.SettingsCategoryIssueLists}">
                 <local:QuerySettingsView Margin="5"
-                                         DataContext="{Binding Query}" />
+                                         DataContext="{Binding Query.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
                                 Header="{x:Static props:Resources.SettingsCategoryUsers}">
                 <local:UserSettingsView Margin="5"
-                                        DataContext="{Binding User}" />
+                                        DataContext="{Binding User.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
                                 Header="{x:Static props:Resources.SettingsCategoryExport}">
                 <local:OutputDataSettingsView Margin="5"
-                                              DataContext="{Binding OutputData}" />
+                                              DataContext="{Binding OutputData.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
                                 Header="{x:Static props:Resources.SettingsCategoryReport}">
                 <local:PersonHourReportSettingsView Margin="5"
-                                                    DataContext="{Binding PersonHourReport}" />
+                                                    DataContext="{Binding PersonHourReport.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
                                 Header="{x:Static props:Resources.SettingsCategoryReview}">
                 <local:CreateTicketSettingsView Margin="5"
-                                                DataContext="{Binding CreateTicket}" />
+                                                DataContext="{Binding CreateTicket.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
                                 Header="{x:Static props:Resources.SettingsCategoryReviewIssueList}">
                 <local:CreateTicketIssueListSettingsView Margin="5"
-                                                         DataContext="{Binding ReviewIssueList}" />
+                                                         DataContext="{Binding ReviewIssueList.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
                                 Header="{x:Static props:Resources.SettingsCategoryCopyCustomFields}">
                 <local:CreateTicketCopyCustomFieldsSettingsView Margin="5"
-                                                                DataContext="{Binding ReviewCopyCustomFields}" />
+                                                                DataContext="{Binding ReviewCopyCustomFields.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
                                 Header="{x:Static props:Resources.SettingsCategoryReviewDescription}">
                 <local:CreateTicketDescriptionSettingsView Margin="5"
-                                                           DataContext="{Binding CreateTicket.TranscribeDescription}" />
+                                                           DataContext="{Binding TranscribeDescription.Value}" />
             </telerik:RadTabItem>
             <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
                                 myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
                                 Header="{x:Static props:Resources.SettingsCategoryRequestWork}">
                 <local:RequestWorkSettingsView Margin="5"
-                                               DataContext="{Binding RequestWork}" />
+                                               DataContext="{Binding RequestWork.Value}" />
             </telerik:RadTabItem>
         </telerik:RadTabControl>
         <Grid Grid.Row="2"
@@ -143,14 +143,12 @@
                     Content="{x:Static props:Resources.SettingsCmdExportAll}" />
             <Button Grid.Column="4"
                     Margin="0,0,5,0"
-                    telerik:RadWindow.ResponseButton="Accept"
                     Command="{Binding OkCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
                                                                               Mode=FindAncestor}}"
                     Content="OK"
                     Style="{StaticResource StdButtonStyle}" />
             <Button Grid.Column="6"
-                    telerik:RadWindow.ResponseButton="Cancel"
                     Command="{Binding CancelCommand}"
                     CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
                                                                               Mode=FindAncestor}}"

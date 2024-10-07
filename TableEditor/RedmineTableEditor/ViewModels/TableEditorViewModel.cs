@@ -124,7 +124,7 @@ namespace RedmineTableEditor.ViewModels
                     if (dialog.ShowDialog().Value)
                     {
                         FileSettings.Read(dialog.FileName);
-                        await Issues.ApplyAsync(FileSettings.Model.Value, false);
+                        await Issues.ApplyAsync(FileSettings.Model.Value);
                     }
                 }).AddTo(disposables);
 
@@ -151,7 +151,7 @@ namespace RedmineTableEditor.ViewModels
                     {
                         if (FileSettings.LoadFirstSetting(fileName))
                         {
-                            await Issues.ApplyAsync(FileSettings.Model.Value, false);
+                            await Issues.ApplyAsync(FileSettings.Model.Value);
                         }
                     }).AddTo(disposables);
             }

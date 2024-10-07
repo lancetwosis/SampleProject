@@ -163,9 +163,12 @@ namespace LibRedminePower.Views.Controls
 
                     if (items.Count > 0)
                     {
-                        foreach (var item in items.Cast<object>().Select(item => ItemsSource.Cast<object>().FirstOrDefault(sItem => toSelectedValue(sItem) == item)).Where(a => a != null).ToList())
+                        var itemsSource = ItemsSource.Cast<object>().Select(i => (SelectedValue: toSelectedValue(i), Item: i)).ToList();
+                        foreach (var p in items.Cast<object>()
+                                               .Select(i => itemsSource.FirstOrDefault(p => p.SelectedValue.Equals(i)))
+                                               .Where(p => p.Item != null))
                         {
-                            comboBox.SelectedItems.Add(item);
+                            comboBox.SelectedItems.Add(p.Item);
                         }
                     }
                 }

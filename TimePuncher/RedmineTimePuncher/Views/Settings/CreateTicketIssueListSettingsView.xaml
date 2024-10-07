@@ -42,7 +42,7 @@
                     <views:TwinListBox Height="200"
                                        Margin="5,10,5,5"
                                        VerticalAlignment="top"
-                                       DataContext="{Binding Properties}" />
+                                       DataContext="{Binding Properties.Value}" />
                 </GroupBox>
                 <Grid Margin="0,5,0,0">
                     <Grid.ColumnDefinitions>
@@ -60,7 +60,7 @@
                                Text=" :" />
                     <StackPanel Grid.Column="2"
                                 Orientation="Horizontal">
-                        <telerik:RadComboBox ItemsSource="{Binding CanSortByProperties}"
+                        <telerik:RadComboBox ItemsSource="{Binding CanSortByProperties.Value}"
                                              SelectedItem="{Binding SortBy.Value}" />
                         <StackPanel Margin="15,0,0,0"
                                     IsEnabled="{Binding IsEnabledSorting.Value}"
@@ -89,7 +89,7 @@
                                VerticalAlignment="Center"
                                Text=" :" />
                     <telerik:RadComboBox Grid.Column="2"
-                                         ItemsSource="{Binding CanGroupByProperties}"
+                                         ItemsSource="{Binding CanGroupByProperties.Value}"
                                          SelectedItem="{Binding GroupBy.Value}" />
                 </Grid>
                 <Grid Margin="0,5,0,0">

@@ -1129,9 +1129,6 @@ Header</value>
   <data name="SettingsReviErrMsgCannotUseTranscribe" xml:space="preserve">
     <value>This function is not available when "none" is set for the text formatting of Redmine.</value>
   </data>
-  <data name="SettingsReviErrMsgFailedSetProcess" xml:space="preserve">
-    <value>Failed to set the process "{0}". </value>
-  </data>
   <data name="CustomFieldFormatUser" xml:space="preserve">
     <value>User</value>
   </data>
@@ -2011,7 +2008,9 @@ Do you want to continue creating tickets?</value>
     <value>Failed to connect redmine, please review your Redmine configuration.</value>
   </data>
   <data name="msgConfReconnectRedmine" xml:space="preserve">
-    <value>The connection to Redmine failed during the last start. Would you like to try to reconnect using your current settings?</value>
+    <value>The account {0} has failed to connect to the Redmine server {1} times.
+If the number of connection errors exceeds a certain limit, the account may be locked.
+Would you like to attempt to connect again with this account?</value>
   </data>
   <data name="ReviewCfErrMsgIsRequired" xml:space="preserve">
     <value>This field is required.</value>
@@ -2074,6 +2073,6 @@ Please review your settings if you wish to enable the custom field setting featu
     <value>Transcribed wiki page</value>
   </data>
   <data name="SettingsReviColWikiProjectMsg" xml:space="preserve">
-    <value></value>
+    <value />
   </data>
 </root>

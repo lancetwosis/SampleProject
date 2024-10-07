@@ -12,7 +12,7 @@ namespace LibRedminePower.Interfaces
 {
     public interface ICacheManager
     {
-        ReadOnlyReactivePropertySlim<DateTime> Updated { get; set; }
+        ReactivePropertySlim<DateTime> Updated { get; set; }
 
         List<Project> Projects { get; set; }
         List<Tracker> Trackers { get; set; }
@@ -26,7 +26,5 @@ namespace LibRedminePower.Interfaces
         MarkupLangType MarkupLang { get; set; }
         MyUser MyUser { get; set; }
         List<MyUser> Users { get; set; }
-
-        void ForceUpdate();
     }
 }

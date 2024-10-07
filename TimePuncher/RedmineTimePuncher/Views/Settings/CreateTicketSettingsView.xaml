@@ -32,8 +32,8 @@
             <ScrollViewer BorderThickness="0"
                           VerticalScrollBarVisibility="Auto">
                 <StackPanel Grid.IsSharedSizeScope="True">
-                    <Grid ToolTip="{Binding DetectionProcess.NoCustomFieldErrMsg}">
-                        <Grid IsEnabled="{Binding DetectionProcess.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}, Mode=OneWay}">
+                    <Grid ToolTip="{Binding DetectionProcess.Value.NoCustomFieldErrMsg}">
+                        <Grid IsEnabled="{Binding DetectionProcess.Value.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"
                                                   SharedSizeGroup="FirstColumn" />
@@ -47,7 +47,7 @@
                             <CheckBox x:Name="useTargetProcessCheckBox"
                                       Grid.Column="0"
                                       Content="{x:Static props:Resources.SettingsReviSpecipyProcess}"
-                                      IsChecked="{Binding DetectionProcess.IsEnabled.Value}" />
+                                      IsChecked="{Binding DetectionProcess.Value.IsEnabled.Value}" />
                             <TextBlock Grid.Column="1"
                                        Text=" : " />
                             <telerik:RadComboBox Grid.Column="2"
@@ -55,8 +55,8 @@
                                                  DisplayMemberPath="Name"
                                                  IsEnabled="{Binding ElementName=useTargetProcessCheckBox,
                                                                      Path=IsChecked}"
-                                                 ItemsSource="{Binding DetectionProcess.PossibleCustomFields}"
-                                                 SelectedItem="{Binding DetectionProcess.CustomField.Value}">
+                                                 ItemsSource="{Binding DetectionProcess.Value.PossibleCustomFields}"
+                                                 SelectedItem="{Binding DetectionProcess.Value.CustomField.Value}">
                                 <b:Interaction.Behaviors>
                                     <behaviors1:RadComboBoxNotNullableBehavior />
                                 </b:Interaction.Behaviors>
@@ -66,7 +66,7 @@
                                        IsEnabled="{Binding ElementName=useTargetProcessCheckBox,
                                                            Path=IsChecked}"
                                        Style="{StaticResource SettingHelpTextBlockStyle}"
-                                       Text="{Binding DetectionProcess.HelpMsg}" />
+                                       Text="{Binding DetectionProcess.Value.HelpMsg}" />
                         </Grid>
                     </Grid>
                     <Grid Margin="0,5,0,0">
@@ -123,7 +123,7 @@
                                 <telerik:RadComboBox Grid.Column="2"
                                                      Margin="5,0,0,0"
                                                      DisplayMemberPath="Name"
-                                                     ItemsSource="{Binding Trackers}"
+                                                     ItemsSource="{Binding Trackers.Value}"
                                                      SelectedItem="{Binding OpenTracker.Value}">
                                     <b:Interaction.Behaviors>
                                         <behaviors1:RadComboBoxNotNullableBehavior />
@@ -142,7 +142,7 @@
                                                      Grid.Column="2"
                                                      Margin="5,5,0,0"
                                                      DisplayMemberPath="Name"
-                                                     ItemsSource="{Binding Statuses}"
+                                                     ItemsSource="{Binding Statuses.Value}"
                                                      SelectedItem="{Binding OpenStatus.Value}">
                                     <b:Interaction.Behaviors>
                                         <behaviors1:RadComboBoxNotNullableBehavior />
@@ -154,13 +154,13 @@
                                 <GroupBox.Header>
                                     <CheckBox x:Name="useReviewMethodCheckBox"
                                               Content="{x:Static props:Resources.SettingsReviNeedsFaceToFace}"
-                                              IsChecked="{Binding ReviewMethod.IsEnabled.Value}" />
+                                              IsChecked="{Binding ReviewMethod.Value.IsEnabled.Value}" />
                                 </GroupBox.Header>
                                 <StackPanel IsEnabled="{Binding ElementName=useReviewMethodCheckBox,
                                                                 Path=IsChecked}"
                                             Orientation="Vertical"
-                                            ToolTip="{Binding ReviewMethod.NoCustomFieldErrMsg}">
-                                    <Grid IsEnabled="{Binding ReviewMethod.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
+                                            ToolTip="{Binding ReviewMethod.Value.NoCustomFieldErrMsg}">
+                                    <Grid IsEnabled="{Binding ReviewMethod.Value.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"
                                                               SharedSizeGroup="FirstColumn" />
@@ -174,7 +174,7 @@
                                         <CheckBox x:Name="needsSaveNeedsF2FCheckBox"
                                                   Grid.Column="0"
                                                   Content="{x:Static props:Resources.SettingsReviCustomField}"
-                                                  IsChecked="{Binding ReviewMethod.NeedsSaveToCustomField.Value}" />
+                                                  IsChecked="{Binding ReviewMethod.Value.NeedsSaveToCustomField.Value}" />
 
                                         <TextBlock Grid.Column="1"
                                                    Text=" : " />
@@ -183,8 +183,8 @@
                                                              DisplayMemberPath="Name"
                                                              IsEnabled="{Binding ElementName=needsSaveNeedsF2FCheckBox,
                                                                                  Path=IsChecked}"
-                                                             ItemsSource="{Binding ReviewMethod.PossibleCustomFields}"
-                                                             SelectedItem="{Binding ReviewMethod.CustomField.Value}">
+                                                             ItemsSource="{Binding ReviewMethod.Value.PossibleCustomFields}"
+                                                             SelectedItem="{Binding ReviewMethod.Value.CustomField.Value}">
                                             <b:Interaction.Behaviors>
                                                 <behaviors1:RadComboBoxNotNullableBehavior />
                                             </b:Interaction.Behaviors>
@@ -192,7 +192,7 @@
                                         <TextBlock Grid.Row="1"
                                                    Grid.Column="2"
                                                    Style="{StaticResource SettingHelpTextBlockStyle}"
-                                                   Text="{Binding ReviewMethod.HelpMsg}" />
+                                                   Text="{Binding ReviewMethod.Value.HelpMsg}" />
                                     </Grid>
                                     <TextBlock Margin="0,5,0,0"
                                                Text="{x:Static props:Resources.SettingsReviMethodMsg}"
@@ -207,7 +207,7 @@
                                                          GroupRenderMode="Flat"
                                                          IsFilteringAllowed="False"
                                                          IsReadOnly="False"
-                                                         ItemsSource="{Binding ReviewMethod.CustomField.Value.PossibleValues}"
+                                                         ItemsSource="{Binding ReviewMethod.Value.CustomField.Value.PossibleValues}"
                                                          RowIndicatorVisibility="Collapsed"
                                                          ShowGroupPanel="False"
                                                          Visibility="{Binding ElementName=needsSaveNeedsF2FCheckBox,
@@ -278,13 +278,13 @@
                                 <GroupBox.Header>
                                     <CheckBox x:Name="useIsRequiredCheckBox"
                                               Content="{x:Static props:Resources.SettingsReviIsRequired}"
-                                              IsChecked="{Binding IsRequired.IsEnabled.Value}" />
+                                              IsChecked="{Binding IsRequired.Value.IsEnabled.Value}" />
                                 </GroupBox.Header>
                                 <StackPanel IsEnabled="{Binding ElementName=useIsRequiredCheckBox,
                                                                 Path=IsChecked}"
                                             Orientation="Vertical"
-                                            ToolTip="{Binding IsRequired.NoCustomFieldErrMsg}">
-                                    <Grid IsEnabled="{Binding IsRequired.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
+                                            ToolTip="{Binding IsRequired.Value.NoCustomFieldErrMsg}">
+                                    <Grid IsEnabled="{Binding IsRequired.Value.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"
                                                               SharedSizeGroup="FirstColumn" />
@@ -298,7 +298,7 @@
                                         <CheckBox x:Name="needsSaveIsRequiredCheckBox"
                                                   Grid.Column="0"
                                                   Content="{x:Static props:Resources.SettingsReviCustomField}"
-                                                  IsChecked="{Binding IsRequired.NeedsSaveToCustomField.Value}" />
+                                                  IsChecked="{Binding IsRequired.Value.NeedsSaveToCustomField.Value}" />
 
                                         <TextBlock Grid.Column="1"
                                                    Text=" : " />
@@ -307,8 +307,8 @@
                                                              DisplayMemberPath="Name"
                                                              IsEnabled="{Binding ElementName=needsSaveIsRequiredCheckBox,
                                                                                  Path=IsChecked}"
-                                                             ItemsSource="{Binding IsRequired.PossibleCustomFields}"
-                                                             SelectedItem="{Binding IsRequired.CustomField.Value}">
+                                                             ItemsSource="{Binding IsRequired.Value.PossibleCustomFields}"
+                                                             SelectedItem="{Binding IsRequired.Value.CustomField.Value}">
                                             <b:Interaction.Behaviors>
                                                 <behaviors1:RadComboBoxNotNullableBehavior />
                                             </b:Interaction.Behaviors>
@@ -316,7 +316,7 @@
                                         <TextBlock Grid.Row="1"
                                                    Grid.Column="2"
                                                    Style="{StaticResource SettingHelpTextBlockStyle}"
-                                                   Text="{Binding IsRequired.HelpMsg}" />
+                                                   Text="{Binding IsRequired.Value.HelpMsg}" />
                                     </Grid>
                                 </StackPanel>
                             </GroupBox>
@@ -355,7 +355,7 @@
                                           Grid.Row="1"
                                           Grid.Column="0"
                                           Content="{x:Static props:Resources.SettingsReviSaveReviewer}"
-                                          IsChecked="{Binding SaveReviewer.IsEnabled.Value}" />
+                                          IsChecked="{Binding SaveReviewer.Value.IsEnabled.Value}" />
                                 <TextBlock Grid.Row="1"
                                            Grid.Column="1"
                                            Text=" : " />
@@ -365,8 +365,8 @@
                                                      DisplayMemberPath="Name"
                                                      IsEnabled="{Binding ElementName=useSaveReviewerCheckBox,
                                                                          Path=IsChecked}"
-                                                     ItemsSource="{Binding SaveReviewer.PossibleCustomFields}"
-                                                     SelectedItem="{Binding SaveReviewer.CustomField.Value}">
+                                                     ItemsSource="{Binding SaveReviewer.Value.PossibleCustomFields}"
+                                                     SelectedItem="{Binding SaveReviewer.Value.CustomField.Value}">
                                     <b:Interaction.Behaviors>
                                         <behaviors1:RadComboBoxNotNullableBehavior />
                                     </b:Interaction.Behaviors>
@@ -376,7 +376,7 @@
                                            IsEnabled="{Binding ElementName=useSaveReviewerCheckBox,
                                                                Path=IsChecked}"
                                            Style="{StaticResource SettingHelpTextBlockStyle}"
-                                           Text="{Binding SaveReviewer.HelpMsg}" />
+                                           Text="{Binding SaveReviewer.Value.HelpMsg}" />
 
                             </Grid>
                         </StackPanel>

@@ -96,7 +96,7 @@
                                      AllowMultipleSelection="True"
                                      DisplayMemberPath="Name"
                                      IsEnabled="{Binding IsIgnoreTrackers.Value}"
-                                     ItemsSource="{Binding Trackers}"
+                                     ItemsSource="{Binding Trackers.Value}"
                                      MultipleSelectionSeparator=",">
                     <b:Interaction.Behaviors>
                         <behaviors:RadComboBoxSelectedItemsBehavior SelectedItems="{Binding IgnoreTrackers}" />

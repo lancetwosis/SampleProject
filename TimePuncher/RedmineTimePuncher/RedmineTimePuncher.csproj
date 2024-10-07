@@ -2,6 +2,9 @@
 <Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <NoWarn>CS0660;CS0661</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{13F5CEB2-3824-48D7-A4E0-BB94FA248211}</ProjectGuid>
@@ -156,6 +159,7 @@
     <Compile Include="Enums\ExportItems.cs" />
     <Compile Include="Enums\AppointmentColorType.cs" />
     <Compile Include="Enums\InputPeriodType.cs" />
+    <Compile Include="Models\Managers\CacheTempManager.cs" />
     <Compile Include="Models\MyVersion.cs" />
     <Compile Include="Models\Settings\ReviewCopyCustomFieldsSettingModel.cs" />
     <Compile Include="Models\Managers\CacheManager.cs" />
@@ -257,6 +261,7 @@
     <Compile Include="ViewModels\Settings\ReviewCopyCustomFieldsSettingViewModel.cs" />
     <Compile Include="ViewModels\CreateTicket\ReviewersTwinListViewModel.cs" />
     <Compile Include="ViewModels\Settings\ReviewIssueListSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\TranscribeSettingItemViewModel.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\DateItem.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\SeriesViewModelBase.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\UserSeriesViewModel.cs" />
@@ -432,6 +437,9 @@
     </Compile>
     <Compile Include="Views\Settings\CalendarSettingsView.xaml.cs">
       <DependentUpon>CalendarSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Settings\TranscribeSettingsView.xaml.cs">
+      <DependentUpon>TranscribeSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Settings\UserSettingsView.xaml.cs">
       <DependentUpon>UserSettingsView.xaml</DependentUpon>
@@ -691,6 +699,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\Settings\TranscribeSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\Settings\UserSettingsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -804,6 +816,9 @@
     <PackageReference Include="DiffPlex">
       <Version>1.7.1</Version>
     </PackageReference>
+    <PackageReference Include="Equals.Fody">
+      <Version>4.0.2</Version>
+    </PackageReference>
     <PackageReference Include="FastEnum">
       <Version>1.6.1</Version>
     </PackageReference>
@@ -826,7 +841,7 @@
       <Version>3.4.0</Version>
     </PackageReference>
     <PackageReference Include="ReactiveProperty.WPF">
-      <Version>8.1.2</Version>
+      <Version>9.6.0</Version>
     </PackageReference>
     <PackageReference Include="SimpleExec">
       <Version>8.0.0</Version>

@@ -174,9 +174,9 @@
                                              GroupRenderMode="Flat"
                                              IsFilteringAllowed="False"
                                              IsReadOnly="False"
-                                             ItemsSource="{Binding SpecialTerms}"
+                                             ItemsSource="{Binding SpecialTerms.Value}"
                                              RowIndicatorVisibility="Collapsed"
-                                             SelectedItem="{Binding SpecialTerms.SelectedItem.Value}"
+                                             SelectedItem="{Binding SpecialTerms.Value.SelectedItem.Value}"
                                              ShowGroupPanel="False">
                             <telerik:RadGridView.RowStyle>
                                 <Style BasedOn="{StaticResource GridViewRowStyle}"
@@ -271,7 +271,7 @@
                             </telerik:RadGridView.Columns>
                         </telerik:RadGridView>
                         <controls:GridViewEditButtonPanel Grid.Column="1"
-                                                          DataContext="{Binding SpecialTerms}" />
+                                                          DataContext="{Binding SpecialTerms.Value}" />
                     </Grid>
                 </Grid>
             </Grid>

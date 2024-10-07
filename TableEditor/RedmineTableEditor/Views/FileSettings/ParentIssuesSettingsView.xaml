@@ -87,10 +87,14 @@
                   HorizontalAlignment="Left"
                   Background="Honeydew"
                   Header="{x:Static props:Resources.FileSettingsDisplayFIelds}">
-            <controls:TwinListBox MaxHeight="300"
-                                  Margin="5"
-                                  VerticalAlignment="top"
-                                  DataContext="{Binding VisibleProps}" />
+            <StackPanel Margin="5"
+                        Orientation="Vertical">
+                <TextBlock Text="{x:Static props:Resources.MsgSelectParentFields}" />
+                <controls:TwinListBox MaxHeight="300"
+                                      Margin="0,5,0,0"
+                                      VerticalAlignment="top"
+                                      DataContext="{Binding VisibleProps}" />
+            </StackPanel>
         </GroupBox>
     </StackPanel>
 </UserControl>

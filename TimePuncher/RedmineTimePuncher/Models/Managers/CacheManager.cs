@@ -28,12 +28,9 @@ namespace RedmineTimePuncher.Models.Managers
     public class CacheManager : ICacheManager
     {
         [JsonIgnore]
-        public static CacheManager Default { get; set; }
-
+        public static CacheManager Default { get; set; } = createCacheManager();
         [JsonIgnore]
-        public ReadOnlyReactivePropertySlim<DateTime> Updated { get; set; }
-        [JsonIgnore]
-        public ReadOnlyReactivePropertySlim<bool> Authorized { get; set; }
+        public ReactivePropertySlim<DateTime> Updated { get; set; } = new ReactivePropertySlim<DateTime>();
 
         public List<Project> Projects { get; set; }
         public List<Tracker> Trackers { get; set; }
@@ -52,57 +49,51 @@ namespace RedmineTimePuncher.Models.Managers
 
         public MarkupLangType MarkupLang { get; set; } = MarkupLangType.Undefined;
 
-        public RedmineSettingsModel RedmineSetting { get; set; }
         public DateTime UpdatedDate { get; set; }
 
-
-        private ReactivePropertySlim<DateTime> updated = new ReactivePropertySlim<DateTime>();
-        private ReactivePropertySlim<bool> authorized = new ReactivePropertySlim<bool>();
-
-        public CacheManager()
-        {
-            Updated = updated.ObserveOnUIDispatcher().ToReadOnlyReactivePropertySlim();
-            Authorized = authorized.ObserveOnUIDispatcher().ToReadOnlyReactivePropertySlim();
-        }
-
         /// <summary>
-        /// Updated の通知を UIThread で行うため、本メソッドを UIThread から実行すること
+        /// キャッシュ管理の接続情報
         /// </summary>
-        public static void Init()
+        public RedmineSettingsModel RedmineSetting { get; set; }
+        /// <summary>
+        /// エラーになった接続情報
+        /// </summary>
+        /// <remarks>
+        /// 一定回数のログイン失敗時にRedmineアカウントがロックされることがある。
+        /// その状態にならないように、接続に失敗したアカウントは管理しておき、そのアカウントで接続しようとする場合は、ユーザーに確認をしてから接続確認を行うようにする。
+        /// 接続が成功したら破棄する。
+        /// </remarks>
+        public List<RedmineSettingsModel> ErrorSettings { get; set; } = new List<RedmineSettingsModel>();
+
+        private static CacheManager createCacheManager()
         {
             if (!string.IsNullOrEmpty(Properties.Settings.Default.Cache))
             {
                 try
                 {
                     var result = CloneExtentions.ToObject<CacheManager>(Properties.Settings.Default.Cache);
-                    Default = result;
+                    return result;
                 }
                 catch
                 {
                     Logger.Warn("Failed to read the json of Cache.");
-                    Default = new CacheManager();
+                    return new CacheManager();
                 }
             }
             else
             {
-                Default = new CacheManager();
+                return new CacheManager();
             }
         }
 
-        public bool NeedsUpdate()
+        public bool HasValue()
         {
             // 以下の対応で値がなかった場合、空のリストを返すようにしたためチェック追加
             // http://133.242.159.37/issues/1603
-            if (Projects == null || Projects.Any(p => p.Trackers == null ||
-                                                      p.EnabledModules == null ||
-                                                      p.CustomFields == null ||
-                                                      p.TimeEntryActivities == null))
-                return true;
-
-            if (CustomFields == null || CustomFields.Any(c => c.Trackers == null))
-                return true;
-
-            if (Trackers == null ||
+            if (Projects == null ||
+                Projects.Any(p => p.Trackers == null || p.EnabledModules == null || p.CustomFields == null || p.TimeEntryActivities == null) ||
+                CustomFields == null || CustomFields.Any(c => c.Trackers == null) ||
+                Trackers == null ||
                 Statuss == null ||
                 Priorities == null ||
                 TimeEntryActivities == null ||
@@ -110,57 +101,50 @@ namespace RedmineTimePuncher.Models.Managers
                 Queries == null ||
                 MyUser == null ||
                 MarkupLang == MarkupLangType.Undefined ||
-                ProjectMemberships == null)
+                ProjectMemberships == null ||
+                RedmineSetting == null)
+            {
+                return false;
+            }
+            else
                 return true;
-
-            return false;
         }
 
-        public void UpdateCacheIfNeeded(RedmineManager redmine, RedmineSettingsModel settings)
+        public void UpdateCacheIfNeeded(RedmineManager redmine)
         {
-            this.redmine = redmine;
-            this.settings = settings;
-
-            authorized.Value = true;
-
-            // キャッシュが存在しない場合、またはRedmine設定が変更された場合、前回接続に失敗していた場合、
-            if (NeedsUpdate() || RedmineSetting == null || !RedmineSetting.Equals(settings) || (DateTime.Now - UpdatedDate).TotalDays > 10)
+            // 、前回接続に失敗していた場合、
+            if (!HasValue() ||                              // キャッシュが存在しない場合
+                !RedmineSetting.Equals(redmine.Settings) || // Redmine設定が変更された場合
+                (DateTime.Now - UpdatedDate).TotalDays > 10)// 最終更新日から10日間が経過した場合
             {
                 // 初回は同期的に更新する
-                Update(redmine, settings);
+                Update(redmine);
             }
         }
 
-        private RedmineManager redmine { get; set; }
-        private RedmineSettingsModel settings { get; set; }
-        public void ForceUpdate()
+        public void SaveCache(RedmineManager redmine)
         {
-            UpdateCacheIfNeeded(redmine, settings);
-        }
-
-        public void SaveCache(RedmineManager redmine, RedmineSettingsModel settings)
-        {
-            if (redmine == null)
-                return;
-
-            try
+            if (redmine != null)
             {
-                Update(redmine, settings, false);
+                try
+                {
+                    Update(redmine);
+                }
+                catch (Exception e)
+                {
+                    Logger.Warn(e, "Failed to update cache on WindowClosed");
+                }
+            }
 
-                Properties.Settings.Default.Cache = Default.ToJson();
-                Properties.Settings.Default.Save();
-            }
-            catch (Exception e)
-            {
-                Logger.Warn(e, "Failed to update cache on WindowClosed");
-            }
+            Properties.Settings.Default.Cache = Default.ToJson();
+            Properties.Settings.Default.Save();
         }
 
         private CancellationTokenSource cts;
         /// <summary>
         /// キャッシュと設定を更新する
         /// </summary>
-        public void Update(RedmineManager redmine, RedmineSettingsModel settings, bool needsNotify = true)
+        public void Update(RedmineManager redmine)
         {
             try
             {
@@ -234,17 +218,17 @@ namespace RedmineTimePuncher.Models.Managers
                     valueChanged = true;
                 }
 
-                RedmineSetting = settings;
+                RedmineSetting = redmine.Settings;
 
                 if (valueChanged)
                     Logger.Info("Updating cache has completed.");
                 else
                     Logger.Info("Updating cache has completed but there is no change.");
 
-                if (needsNotify && valueChanged)
+                if (valueChanged)
                 {
                     ClearShortCache();
-                    updated.Value = DateTime.Now;
+                    Updated.Value = DateTime.Now;
                 }
 
                 UpdatedDate = DateTime.Now;
@@ -259,13 +243,11 @@ namespace RedmineTimePuncher.Models.Managers
                     if (rae.InnerException is UnauthorizedException)
                     {
                         Logger.Error(rae, "Updating cache failed by UnauthorizedException.");
-                        authorized.Value = false;
                         throw new ApplicationException(Properties.Resources.msgErrUnauthorizedRedmineSettings, e);
                     }
                     else if (rae.InnerException is ForbiddenException)
                     {
                         Logger.Error(rae, $"Updating cache failed by ForbiddenException.");
-                        authorized.Value = false;
                         throw new ApplicationException(string.Format(Properties.Resources.msgErrFailedToGetForbidden, rae.Message), e);
                     }
 
@@ -274,7 +256,6 @@ namespace RedmineTimePuncher.Models.Managers
                 else if (e is RedmineLoginFailedException)
                 {
                     Logger.Error(e, "Updating cache failed by Login Failure");
-                    authorized.Value = false;
                     throw new ApplicationException(Properties.Resources.msgErrUnauthorizedRedmineSettings, e);
                 }
                 else
@@ -325,57 +306,6 @@ namespace RedmineTimePuncher.Models.Managers
             JournalIssuesShortCache.Clear();
             IssueCountShortCache.Clear();
             TimeEntriesShortCache.Clear();
-        }
-
-        // 設定ダイアログで最新の情報を使用するための一時的なキャッシュ
-        // 以下のプロパティにアクセスする場合、事前に UpdateTemporaryCacheAsync を実行しておくこと。
-        public List<Project> TmpProjects { get; set; }
-        public List<Tracker> TmpTrackers { get; set; }
-        public List<IssueStatus> TmpStatuss { get; set; }
-        public List<TimeEntryActivity> TmpTimeEntryActivities { get; set; }
-        public List<Query> TmpQueries { get; set; }
-        public List<CustomField> TmpCustomFields { get; set; }
-        public List<CustomField> TmpMyCustomFields { get; set; }
-        public List<MyUser> TmpUsers { get; set; }
-        public MyUser TmpMyUser { get; set; }
-        public MarkupLangType TmpMarkupLang { get; set; }
-
-        /// <summary>
-        /// 一時的なキャッシュを Redmine から取得する。TmpXXX にアクセスする前に適切なタイミングで本メソッドを実行すること。
-        /// </summary>
-        public async Task UpdateTemporaryCacheAsync(RedmineManager redmine)
-        {
-            var tProjects = Task.Run(() => redmine.GetProjects());
-            var tTrackers = Task.Run(() => redmine.GetTrackers());
-            var tStatuss = Task.Run(() => redmine.GetStatuss());
-            var tTimeEntryActivities = Task.Run(() => redmine.GetTimeEntryActivities());
-            var tQueries = Task.Run(() => redmine.GetQueries());
-            var tCustomFields = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetCustomFields() : new List<CustomField>());
-            var tUsers = Task.Run(() => redmine.CanUseAdminApiKey() ? redmine.GetUsers() : new List<MyUser>());
-            var tMyUser = Task.Run(() => redmine.GetMyUser());
-            var tMarkupLang = Task.Run(() => redmine.GetMarkupLangType());
-
-            await Task.WhenAll(tProjects, tTrackers, tStatuss, tTimeEntryActivities, tQueries, tCustomFields, tUsers, tMyUser, tMarkupLang);
-
-            TmpProjects = tProjects.Result;
-            TmpTrackers = tTrackers.Result;
-            TmpStatuss = tStatuss.Result;
-            TmpTimeEntryActivities = tTimeEntryActivities.Result;
-            TmpQueries = tQueries.Result;
-            TmpCustomFields = tCustomFields.Result;
-            TmpUsers = tUsers.Result;
-            TmpMyUser = tMyUser.Result;
-            TmpMarkupLang = tMarkupLang.Result;
-
-            TmpMyCustomFields = new List<CustomField>();
-            if (redmine.CanUseAdminApiKey())
-            {
-                var enableCfIds = TmpProjects.Where(p => TmpMyUser.Memberships.Any(m => p.Name == m.Project.Name))
-                    .Where(p => p.CustomFields != null)
-                    .SelectMany(p => p.CustomFields.Select(a => a.Id))
-                    .Distinct().ToList();
-                TmpMyCustomFields = TmpCustomFields.Where(c => c.IsIssueType() && enableCfIds.Contains(c.Id)).ToList();
-            }
         }
     }
 }

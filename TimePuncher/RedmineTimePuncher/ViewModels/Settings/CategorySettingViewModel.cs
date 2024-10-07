@@ -18,6 +18,7 @@ using LibRedminePower.Extentions;
 using LibRedminePower.ViewModels;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using RedmineTimePuncher.Models.Managers;
 
 namespace RedmineTimePuncher.ViewModels.Settings
 {
@@ -36,22 +37,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReadOnlyReactivePropertySlim<string> Details { get; set; }
         public ReactivePropertySlim<bool> IsWorkingTime { get; set; }
 
-        // MultiSelectionGridViewComboBoxColumn の ItemSource にバインドするため Static で持つ必要がある
-        private static List<MyTracker> trackers;
-        public static List<MyTracker> Trackers
-        {
-            get => trackers;
-            set
-            {
-                trackers = value;
-                NotifyStaticPropertyChanged();
-            }
-        }
-
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
-        public static void NotifyStaticPropertyChanged([CallerMemberName] string propertyName = "") =>
-            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
-
         // CategorySettingsView にて Resources に登録するために必要
         public CategorySettingViewModel()
         {
@@ -69,7 +54,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
             IsItalic = model.ToReactivePropertySlimAsSynchronized(a => a.IsItalic).AddTo(disposables);
             AndOrType = model.ToReactivePropertySlimAsSynchronized(a => a.AndOrType).AddTo(disposables);
 
-            model.TargetTrackers = Trackers.Where(t => model.TargetTrackers.Contains(t)).ToList();
+            model.TargetTrackers = CacheTempManager.Default.MyTrackers.Value.Where(t => model.TargetTrackers.Contains(t)).ToList();
             TargetTrackers = new ObservableCollection<MyTracker>(model.TargetTrackers);
             TargetTrackers.ObserveAddChanged().SubscribeWithErr(a => model.TargetTrackers.Add(a)).AddTo(disposables);
             TargetTrackers.ObserveRemoveChanged().SubscribeWithErr(a => model.TargetTrackers.Remove(a)).AddTo(disposables);

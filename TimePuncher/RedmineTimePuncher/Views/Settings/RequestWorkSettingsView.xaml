@@ -49,7 +49,7 @@
                             <telerik:RadComboBox Grid.Column="2"
                                                  Margin="5,0,0,0"
                                                  DisplayMemberPath="Name"
-                                                 ItemsSource="{Binding Trackers}"
+                                                 ItemsSource="{Binding PossibleTrackers.Value}"
                                                  SelectedItem="{Binding RequestTracker.Value}">
                                 <b:Interaction.Behaviors>
                                     <behaviors1:RadComboBoxNotNullableBehavior />
@@ -61,13 +61,13 @@
                             <GroupBox.Header>
                                 <CheckBox x:Name="useIsRequiredCheckBox"
                                           Content="{x:Static props:Resources.SettingsReviIsRequired}"
-                                          IsChecked="{Binding IsRequired.IsEnabled.Value}" />
+                                          IsChecked="{Binding IsRequired.Value.IsEnabled.Value}" />
                             </GroupBox.Header>
                             <StackPanel IsEnabled="{Binding ElementName=useIsRequiredCheckBox,
                                                             Path=IsChecked}"
                                         Orientation="Vertical"
-                                        ToolTip="{Binding IsRequired.NoCustomFieldErrMsg}">
-                                <Grid IsEnabled="{Binding IsRequired.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
+                                        ToolTip="{Binding IsRequired.Value.NoCustomFieldErrMsg}">
+                                <Grid IsEnabled="{Binding IsRequired.Value.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"
                                                           SharedSizeGroup="FirstColumn" />
@@ -81,7 +81,7 @@
                                     <CheckBox x:Name="needsSaveIsRequiredCheckBox"
                                               Grid.Column="0"
                                               Content="{x:Static props:Resources.SettingsReviCustomField}"
-                                              IsChecked="{Binding IsRequired.NeedsSaveToCustomField.Value}" />
+                                              IsChecked="{Binding IsRequired.Value.NeedsSaveToCustomField.Value}" />
 
                                     <TextBlock Grid.Column="1"
                                                Text=" : " />
@@ -90,8 +90,8 @@
                                                          DisplayMemberPath="Name"
                                                          IsEnabled="{Binding ElementName=needsSaveIsRequiredCheckBox,
                                                                              Path=IsChecked}"
-                                                         ItemsSource="{Binding IsRequired.PossibleCustomFields}"
-                                                         SelectedItem="{Binding IsRequired.CustomField.Value}">
+                                                         ItemsSource="{Binding IsRequired.Value.PossibleCustomFields}"
+                                                         SelectedItem="{Binding IsRequired.Value.CustomField.Value}">
                                         <b:Interaction.Behaviors>
                                             <behaviors1:RadComboBoxNotNullableBehavior />
                                         </b:Interaction.Behaviors>
@@ -99,19 +99,19 @@
                                     <TextBlock Grid.Row="1"
                                                Grid.Column="2"
                                                Style="{StaticResource SettingHelpTextBlockStyle}"
-                                               Text="{Binding IsRequired.HelpMsg}" />
+                                               Text="{Binding IsRequired.Value.HelpMsg}" />
                                 </Grid>
                             </StackPanel>
                         </GroupBox>
 
                         <Grid Grid.Row="2"
                               Margin="0,15,0,0"
-                              ToolTip="{Binding RequestTranscribe.ErrorMessage.Value}">
-                            <GroupBox IsEnabled="{Binding RequestTranscribe.ErrorMessage.Value, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}, Mode=OneWay}">
+                              ToolTip="{Binding RequestTranscribe.Value.ErrorMessage.Value}">
+                            <GroupBox IsEnabled="{Binding RequestTranscribe.Value.ErrorMessage.Value, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}, Mode=OneWay}">
                                 <GroupBox.Header>
                                     <CheckBox x:Name="useRequestTranscribeCheckBox"
                                               Content="{x:Static props:Resources.SettingsReviTranscribeRequest}"
-                                              IsChecked="{Binding RequestTranscribe.IsEnabled.Value}" />
+                                              IsChecked="{Binding RequestTranscribe.Value.IsEnabled.Value}" />
                                 </GroupBox.Header>
 
                                 <StackPanel IsEnabled="{Binding ElementName=useRequestTranscribeCheckBox,
@@ -123,7 +123,7 @@
                                                    Text="{x:Static props:Resources.SettingsReviMsgTransRequest}" />
                                         <Button Width="80"
                                                 HorizontalAlignment="Right"
-                                                Command="{Binding RequestTranscribe.TestCommand}"
+                                                Command="{Binding RequestTranscribe.Value.TestCommand}"
                                                 Content="{x:Static props:Resources.SettingsCmdTest}" />
                                     </Grid>
                                     <Grid>
@@ -141,9 +141,9 @@
                                                              GroupRenderMode="Flat"
                                                              IsFilteringAllowed="False"
                                                              IsReadOnly="False"
-                                                             ItemsSource="{Binding RequestTranscribe.Items}"
+                                                             ItemsSource="{Binding RequestTranscribe.Value.Items.Value}"
                                                              RowIndicatorVisibility="Collapsed"
-                                                             SelectedItem="{Binding RequestTranscribe.Items.SelectedItem.Value}"
+                                                             SelectedItem="{Binding RequestTranscribe.Value.Items.Value.SelectedItem.Value}"
                                                              ShowGroupPanel="False"
                                                              Visibility="{Binding ElementName=useRequestTranscribeCheckBox,
                                                                                   Path=IsChecked,
@@ -169,79 +169,85 @@
                                                     </telerik:GridViewColumnGroup.Header>
                                                 </telerik:GridViewColumnGroup>
                                             </telerik:RadGridView.ColumnGroups>
+
                                             <telerik:RadGridView.Columns>
                                                 <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
-                                                                                DataMemberBinding="{Binding Project,
+                                                                                DataMemberBinding="{Binding Project.Value,
                                                                                                             UpdateSourceTrigger=PropertyChanged}"
                                                                                 DisplayMemberPath="Name"
                                                                                 Header="{x:Static props:Resources.SettingsReviColSubProject}"
                                                                                 IsComboBoxEditable="True"
                                                                                 IsSortable="false"
-                                                                                ItemsSourceBinding="{Binding PossibleProjects}" />
+                                                                                ItemsSourceBinding="{Binding DataContext.PossibleProjects.Value,
+                                                                                                             RelativeSource={RelativeSource AncestorType=UserControl,
+                                                                                                                                            Mode=FindAncestor}}" />
                                                 <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
-                                                                                DataMemberBinding="{Binding Tracker}"
+                                                                                DataMemberBinding="{Binding Tracker.Value}"
                                                                                 DisplayMemberPath="Name"
                                                                                 Header="{x:Static props:Resources.SettingsReviColSubTracker}"
                                                                                 IsComboBoxEditable="True"
                                                                                 IsSortable="False"
-                                                                                ItemsSourceBinding="{Binding PossibleTrackers}" />
+                                                                                ItemsSourceBinding="{Binding DataContext.PossibleTrackers.Value,
+                                                                                                             RelativeSource={RelativeSource AncestorType=UserControl,
+                                                                                                                                            Mode=FindAncestor}}" />
                                                 <telerik:GridViewDataColumn ColumnGroupName="TargetGroup"
-                                                                            DataMemberBinding="{Binding Title}"
+                                                                            DataMemberBinding="{Binding Title.Value}"
                                                                             Header="{x:Static props:Resources.SettingsReviColSubTitle}"
                                                                             IsSortable="False" />
-
                                                 <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
-                                                                                DataMemberBinding="{Binding WikiProject,
+                                                                                DataMemberBinding="{Binding WikiProject.Value,
                                                                                                             UpdateSourceTrigger=PropertyChanged}"
                                                                                 DisplayMemberPath="Name"
                                                                                 Header="{x:Static props:Resources.SettingsReviColSubProject}"
                                                                                 IsComboBoxEditable="True"
                                                                                 IsSortable="false"
-                                                                                ItemsSourceBinding="{Binding PossibleWikiProjects}" />
+                                                                                ItemsSourceBinding="{Binding DataContext.PossibleWikiProjects.Value,
+                                                                                                             RelativeSource={RelativeSource AncestorType=UserControl,
+                                                                                                                                            Mode=FindAncestor}}" />
                                                 <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
-                                                                                DataMemberBinding="{Binding WikiPage,
+                                                                                DataMemberBinding="{Binding WikiPage.Value,
                                                                                                             UpdateSourceTrigger=PropertyChanged}"
                                                                                 DisplayMemberPath="Title"
                                                                                 Header="{x:Static props:Resources.SettingsReviColSubPageName}"
                                                                                 IsComboBoxEditable="True"
                                                                                 IsSortable="False"
-                                                                                ItemsSourceBinding="{Binding WikiPages}">
+                                                                                ItemsSourceBinding="{Binding WikiPages.Value}">
                                                     <telerik:GridViewComboBoxColumn.CellTemplate>
                                                         <DataTemplate>
                                                             <StackPanel Orientation="Horizontal">
                                                                 <telerik:RadHyperlinkButton Margin="0,0,10,0"
                                                                                             HorizontalAlignment="Center"
                                                                                             ClickMode="Press"
-                                                                                            Content="{Binding WikiPage.Title}"
-                                                                                            NavigateUri="{Binding WikiPage.Url}" />
+                                                                                            Content="{Binding WikiPage.Value.Title}"
+                                                                                            NavigateUri="{Binding WikiPage.Value.Url}" />
                                                             </StackPanel>
                                                         </DataTemplate>
                                                     </telerik:GridViewComboBoxColumn.CellTemplate>
                                                 </telerik:GridViewComboBoxColumn>
                                                 <telerik:GridViewDataColumn ColumnGroupName="WikiGroup"
-                                                                            DataMemberBinding="{Binding IncludesHeader}"
+                                                                            DataMemberBinding="{Binding IncludesHeader.Value}"
                                                                             EditTriggers="CellClick"
                                                                             Header="{x:Static props:Resources.SettingsReviColSubIncludesHeader}"
                                                                             IsSortable="False">
                                                     <telerik:GridViewDataColumn.CellTemplate>
                                                         <DataTemplate>
                                                             <CheckBox HorizontalAlignment="Center"
-                                                                      IsChecked="{Binding IncludesHeader,
+                                                                      IsChecked="{Binding IncludesHeader.Value,
                                                                                           Mode=TwoWay}" />
                                                         </DataTemplate>
                                                     </telerik:GridViewDataColumn.CellTemplate>
                                                 </telerik:GridViewDataColumn>
                                                 <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
-                                                                                DataMemberBinding="{Binding Header}"
+                                                                                DataMemberBinding="{Binding Header.Value}"
                                                                                 Header="{x:Static props:Resources.SettingsReviColHeader}"
                                                                                 IsComboBoxEditable="True"
                                                                                 IsSortable="False"
-                                                                                ItemsSourceBinding="{Binding Headers}" />
+                                                                                ItemsSourceBinding="{Binding Headers.Value}" />
                                             </telerik:RadGridView.Columns>
                                         </telerik:RadGridView>
                                         <controls:GridViewEditButtonPanel Grid.Column="1"
                                                                           Margin="0,5,0,0"
-                                                                          DataContext="{Binding RequestTranscribe.Items}"
+                                                                          DataContext="{Binding RequestTranscribe.Value.Items.Value}"
                                                                           Visibility="{Binding ElementName=useRequestTranscribeCheckBox,
                                                                                                Path=IsChecked,
                                                                                                Converter={StaticResource BooleanToVisibilityConverter}}" />

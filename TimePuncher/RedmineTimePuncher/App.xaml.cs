@@ -32,9 +32,6 @@ namespace RedmineTimePuncher
             LibRedminePower.Initializer.Init(this);
             TraceHelper.TrackAtomicFeature(ApplicationInfo.Title.Replace(" ", "") + ".Start");
 
-            // Updated の通知を UIThread で行いたいのでこのタイミングで実施する
-            CacheManager.Init();
-
             // スプラッシュ画面も言語切り替えを行いたいのでこのタイミングで実施する
             SettingsModel.InitLocale();
 

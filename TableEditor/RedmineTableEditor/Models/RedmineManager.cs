@@ -45,7 +45,7 @@ namespace RedmineTableEditor.Models
                 return null;
         }
 
-        public async Task UpdateAsync(List<Issue> issues, bool updateCache)
+        public async Task UpdateAsync(List<Issue> issues)
         {
             if (issues == null || issues.Count == 0)
             {
@@ -55,9 +55,6 @@ namespace RedmineTableEditor.Models
                 Categories = new List<IssueCategory>();
                 return;
             }
-
-            if (updateCache)
-                await Task.Run(() => Cache.ForceUpdate());
 
             var projIds = issues.Select(i => i.Project.Id).Distinct().ToList();
             var projs = Cache.Projects.Where(p => projIds.Contains(p.Id)).ToList();
