@@ -98,7 +98,7 @@
                                             Header="{x:Static props:Resources.SettingsReviColSubTitle}"
                                             IsSortable="False" />
                 <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
-                                                DataMemberBinding="{Binding WikiProject,
+                                                DataMemberBinding="{Binding WikiProject.Value,
                                                                             UpdateSourceTrigger=PropertyChanged}"
                                                 DisplayMemberPath="Name"
                                                 Header="{x:Static props:Resources.SettingsReviColSubProject}"

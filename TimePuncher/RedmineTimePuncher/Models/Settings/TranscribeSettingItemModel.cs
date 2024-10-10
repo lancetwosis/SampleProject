@@ -24,29 +24,18 @@ namespace RedmineTimePuncher.Models.Settings
         public string Title { get; set; }
         public MyProject WikiProject { get; set; }
         public MyWikiPageItem WikiPage { get; set; }
-        public List<MyWikiPageItem> WikiPages { get; set; }
         public bool IncludesHeader { get; set; } = true;
         public WikiLine Header { get; set; }
-        public List<WikiLine> Headers { get; set; }
-
-        [JsonIgnore]
-        public ReactiveCommand GoToWikiCommand { get; set; }
 
         /// <summary>
         /// RadGridView の「Click here to add new item」機能のために引数なしのコンストラクタが必要となる
-        /// よって、ReviewTranscribeSettingsModel にて static で有効な Processes と Projects を保持し、それを利用してインスタンスを生成する
         /// </summary>
         public TranscribeSettingItemModel()
-        {
-            WikiPages = new List<MyWikiPageItem>();
-            Headers = new List<WikiLine>();
-
-            GoToWikiCommand = this.ObserveProperty(a => a.WikiPage).Select(w => w != null).ToReactiveCommand().WithSubscribe(() => WikiPage.GoToWiki()).AddTo(disposables);
-        }
+        { }
 
         public bool IsValid()
         {
-            return Project != null && Process != null && WikiProject != null && WikiPage != null && Header != null;
+            return Project != null && WikiProject != null && WikiPage != null && Header != null;
         }
 
         public bool NeedsTranscribe(MyIssue issue, MyCustomFieldPossibleValue process = null)

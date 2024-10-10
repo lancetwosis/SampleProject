@@ -88,12 +88,16 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 }
             }).AddTo(disposables);
 
-            TestCommand = Items.SelectMany(a => a.SelectedItem).Select(a => a != null).ToReactiveCommand().WithSubscribe(() =>
+            var selected = Items.SelectMany(a => a.SelectedItem);
+            var canTest = new[] {
+                selected.Select(a => a != null),
+                selected.Where(a => a != null).SelectMany(a => a.WikiProject).Select(a => a != null),
+                selected.Where(a => a != null).SelectMany(a => a.Header).Select(a => a != null),
+                }.CombineLatestValuesAreAllTrue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
+
+            TestCommand = canTest.ToReactiveCommand().WithSubscribe(() =>
             {
                 var selectedItem = Items.Value.SelectedItem.Value.Model;
-                if (!selectedItem.IsValid())
-                    throw new ApplicationException(Resources.SettingsReviErrMsgInvalidTranscribeSetting);
-
                 MyWikiPage wiki = null;
                 try
                 {
