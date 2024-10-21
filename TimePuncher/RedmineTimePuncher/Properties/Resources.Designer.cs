@@ -1618,6 +1618,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Please specify {0}. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MsgPleaseSpecifyXXX {
+            get {
+                return ResourceManager.GetString("MsgPleaseSpecifyXXX", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   You cannot specify &quot;{0}&quot; for this project&apos;s appointment. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string MyAppoMsgCantSetActivityToThisProject {
@@ -4352,9 +4361,6 @@ namespace RedmineTimePuncher.Properties {
             }
         }
         
-
-
-
         /// <summary>
         ///    に類似しているローカライズされた文字列を検索します。
         /// </summary>
@@ -4829,6 +4835,15 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsScheWorkStartTime {
             get {
                 return ResourceManager.GetString("SettingsScheWorkStartTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select an item. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsTranscibeMsgSelectItem {
+            get {
+                return ResourceManager.GetString("SettingsTranscibeMsgSelectItem", resourceCulture);
             }
         }
         

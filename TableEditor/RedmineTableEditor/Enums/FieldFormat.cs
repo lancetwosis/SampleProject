@@ -1,4 +1,5 @@
 ﻿using Redmine.Net.Api.Types;
+using RedmineTableEditor.Models.Bases;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -122,6 +123,31 @@ namespace RedmineTableEditor.Enums
                 default:
                     return null;
             }
+        }
+
+        public static string GetPropertyName(this FieldFormat format)
+        {
+            switch (format)
+            {
+                case FieldFormat.@string:
+                case FieldFormat.text:
+                case FieldFormat.link:
+                case FieldFormat.list:              return nameof(MyIssueBase.DicCustomFieldString);
+                case FieldFormat.@float:            return nameof(MyIssueBase.DicCustomFieldFloat);
+                case FieldFormat.@bool:             return nameof(MyIssueBase.DicCustomFieldBool);
+                case FieldFormat.@int:
+                case FieldFormat.user:
+                case FieldFormat.version:
+                case FieldFormat.enumeration:       return nameof(MyIssueBase.DicCustomFieldInt);
+                case FieldFormat.date:              return nameof(MyIssueBase.DicCustomFieldDate);
+                case FieldFormat.version_multi:
+                case FieldFormat.user_multi:        return nameof(MyIssueBase.DicCustomFieldInts);
+                case FieldFormat.list_multi:
+                case FieldFormat.enumeration_multi: return nameof(MyIssueBase.DicCustomFieldStrings);
+                default:
+                    return null;
+            }
+
         }
     }
 }

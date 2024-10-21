@@ -10,6 +10,9 @@ namespace RedmineTableEditor.Models.TicketFields.Custom
 {
     public class CfStrings : Bases.CfBase<ObservableCollection<string>>
     {
+        public static CfStrings DUMMY { get; } = new CfStrings();
+        private CfStrings() : base() { }
+
         public CfStrings(CustomField meta, IssueCustomField cf)
             : base(meta,
                   cf,

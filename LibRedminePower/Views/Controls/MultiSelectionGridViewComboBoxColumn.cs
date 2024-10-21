@@ -11,6 +11,8 @@ using Telerik.Windows.Controls.GridView;
 
 namespace LibRedminePower.Views.Controls
 {
+    // 以下を参考に作成
+    // https://docs.telerik.com/devtools/wpf/knowledge-base/kb-gridview-howto-create-multiselection-combobox-column
     public class MultiSelectionGridViewComboBoxColumn : GridViewDataColumn
     {
         public static readonly DependencyProperty ItemsSourceProperty =
@@ -66,9 +68,17 @@ namespace LibRedminePower.Views.Controls
                 this.SetValue(SelectedValuePathProperty, value);
             }
         }
-
+        
         public override FrameworkElement CreateCellElement(GridViewCell cell, object dataItem)
         {
+            if (CellTemplateSelector != null)
+            {
+                // CellTemplateSelector が有効な Template を返した場合、そちらを優先する
+                var t = CellTemplateSelector.SelectTemplate(dataItem, cell);
+                if (t != null)
+                    return new UserControl() { ContentTemplate = t };
+            }
+
             var displayTextBlock = new TextBlock();
             displayTextBlock.Text = Properties.Resources.SettingsNotSpecified;
             var items = base.GetCellContent(dataItem) as ICollection;

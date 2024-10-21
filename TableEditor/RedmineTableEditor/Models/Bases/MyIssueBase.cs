@@ -12,6 +12,7 @@ using RedmineTableEditor.Extentions;
 using RedmineTableEditor.Models.FileSettings;
 using RedmineTableEditor.Models.TicketFields.Bases;
 using RedmineTableEditor.Models.TicketFields.Custom;
+using RedmineTableEditor.Models.TicketFields.Custom.Bases;
 using RedmineTableEditor.Models.TicketFields.Standard;
 using RedmineTableEditor.ViewModels;
 using RedmineTableEditor.Views;
@@ -184,13 +185,13 @@ namespace RedmineTableEditor.Models.Bases
         // 当初は、カスタムフィールドのプロパティは、型毎に作らずに、一つのプロパティにまとめるため、Generic型のプロパティを定義していた。
         // Generic型のプロパティの場合、GridView側が型判断が出来ずに、コピペができないことがわかった。
         // よって、多少煩雑であるが型毎にプロパティを用意した。
-        public Dictionary<int, CfString> DicCustomFieldString { get; set; }
-        public Dictionary<int, CfFloat> DicCustomFieldFloat { get; set; }
-        public Dictionary<int, CfBool> DicCustomFieldBool { get; set; }
-        public Dictionary<int, CfInt> DicCustomFieldInt { get; set; }
-        public Dictionary<int, CfDate> DicCustomFieldDate { get; set; }
-        public Dictionary<int, CfInts> DicCustomFieldInts { get; set; }
-        public Dictionary<int, CfStrings> DicCustomFieldStrings { get; set; }
+        public CfDictionary<CfString, string> DicCustomFieldString { get; set; }
+        public CfDictionary<CfFloat, double?> DicCustomFieldFloat { get; set; }
+        public CfDictionary<CfBool, bool?> DicCustomFieldBool { get; set; }
+        public CfDictionary<CfInt, int?> DicCustomFieldInt { get; set; }
+        public CfDictionary<CfDate, DateTime?> DicCustomFieldDate { get; set; }
+        public CfDictionary<CfInts, ObservableCollection<int>> DicCustomFieldInts { get; set; }
+        public CfDictionary<CfStrings, ObservableCollection<string>> DicCustomFieldStrings { get; set; }
 
         protected RedmineManager redmine { get; }
         private ObservableCollection<FieldModel> properties { get; set; }
@@ -211,13 +212,13 @@ namespace RedmineTableEditor.Models.Bases
             this.Created = issue != null ? issue.CreatedOn : null;
             this.Updated = issue != null ? issue.UpdatedOn : null;
 
-            DicCustomFieldString = new Dictionary<int, CfString>();
-            DicCustomFieldFloat = new Dictionary<int, CfFloat>();
-            DicCustomFieldBool = new Dictionary<int, CfBool>();
-            DicCustomFieldInt = new Dictionary<int, CfInt>();
-            DicCustomFieldDate = new Dictionary<int, CfDate>();
-            DicCustomFieldInts = new Dictionary<int, CfInts>();
-            DicCustomFieldStrings = new Dictionary<int, CfStrings>();
+            DicCustomFieldString = new CfDictionary<CfString, string>(CfString.DUMMY);
+            DicCustomFieldFloat = new CfDictionary<CfFloat, double?>(CfFloat.DUMMY);
+            DicCustomFieldBool = new CfDictionary<CfBool, bool?>(CfBool.DUMMY);
+            DicCustomFieldInt = new CfDictionary<CfInt, int?>(CfInt.DUMMY);
+            DicCustomFieldDate = new CfDictionary<CfDate, DateTime?>(CfDate.DUMMY);
+            DicCustomFieldInts = new CfDictionary<CfInts, ObservableCollection<int>>(CfInts.DUMMY);
+            DicCustomFieldStrings = new CfDictionary<CfStrings, ObservableCollection<string>>(CfStrings.DUMMY);
 
             var editableProps = new ObservableCollection<FieldBase>();
             editableProps.Add(Subject = new Subject(issue));
@@ -378,6 +379,57 @@ namespace RedmineTableEditor.Models.Bases
                 var ex = webEx.InnerException;
                 throw new ApplicationException($"#{this.Id}\n{ex.Message}", ex);
             }
+        }
+
+        public bool IsEnabledCustomField(CustomField cf)
+        {
+            var format = cf.ToFieldFormat();
+            switch (format)
+            {
+                case FieldFormat.@string:
+                case FieldFormat.text:
+                case FieldFormat.link:
+                case FieldFormat.list:              return DicCustomFieldString.ContainsKey(cf.Id);
+                case FieldFormat.@float:            return DicCustomFieldFloat.ContainsKey(cf.Id);
+                case FieldFormat.@bool:             return DicCustomFieldBool.ContainsKey(cf.Id);
+                case FieldFormat.@int:
+                case FieldFormat.user:
+                case FieldFormat.version:
+                case FieldFormat.enumeration:       return DicCustomFieldInt.ContainsKey(cf.Id);
+                case FieldFormat.date:              return DicCustomFieldDate.ContainsKey(cf.Id);
+                case FieldFormat.version_multi:
+                case FieldFormat.user_multi:        return DicCustomFieldInts.ContainsKey(cf.Id);
+                case FieldFormat.list_multi:
+                case FieldFormat.enumeration_multi: return DicCustomFieldStrings.ContainsKey(cf.Id);
+                default:
+                    throw new NotSupportedException($"fieldFormat が {format} は、サポート対象外です。");
+            }
+        }
+    }
+
+    public class CfDictionary<TCfBase, TValue> : Dictionary<int, TCfBase> where TCfBase : CfBase<TValue>
+    {
+        // Binding で DicCustomFieldString[20].Value のようにアクセスして
+        // 要素がなかった場合でも例外にならないよう以下のように処理を上書きする
+        new public TCfBase this[int key]
+        {
+            get
+            {
+                if (this.TryGetValue(key, out var v))
+                    return v;
+                else
+                    return dummy;
+            }
+            set
+            {
+                base[key] = value;
+            }
+        }
+
+        private TCfBase dummy { get; }
+        public CfDictionary(TCfBase dummy) : base()
+        {
+            this.dummy = dummy;
         }
     }
 }

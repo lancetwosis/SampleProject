@@ -239,7 +239,7 @@ namespace RedmineTableEditor.Models.FileSettings
                 if (cf == null) return null;
 
                 var fieldFormat = cf.ToFieldFormat();
-                var prop = $"{getCfPropName(fieldFormat)}[{cf.Id}]";
+                var prop = $"{getCfDicName(fieldFormat)}[{cf.Id}]";
                 switch (fieldFormat)
                 {
                     case FieldFormat.@string:
@@ -255,36 +255,25 @@ namespace RedmineTableEditor.Models.FileSettings
                             ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
                             TextAlignment = fieldFormat.GetTextAlignment(),
                             DataMemberBinding = new Binding(bindingBase + prop + ".Value"),
-                            IsReadOnlyBinding = getIsReadOnlyBinding(bindingBase),
+                            IsReadOnlyBinding = getIsReadOnlyBinding(bindingBase, cf),
                             DataFormatString = fieldFormat.GetDataFormatString(),
                             CellStyle = getCellStyle(
                                 getForegroundPropertyIsEdited(bindingBase + prop + $".{nameof(FieldBase.IsEdited)}"),
                                 getAutoBackColorPropertyStatus(bindingBase)),
-                            CellTemplate = null,
+                            CellTemplateSelector = new CfCellTemplateSelector(bindingBase, cf),
                             IsCellMergingEnabled = false,
                         };
                     case FieldFormat.@bool:
-                        var checkBox = new FrameworkElementFactory(typeof(CheckBox));
-                        checkBox.SetBinding(CheckBox.IsCheckedProperty, new Binding(bindingBase + prop + ".Value"));
-                        checkBox.SetValue(CheckBox.IsThreeStateProperty, !cf.IsRequired);
-                        checkBox.SetBinding(CheckBox.BorderBrushProperty,
-                            new Binding(bindingBase + prop + $".{nameof(FieldBase.IsEdited)}") { Converter = IS_EDITED_TO_RED });
-                        var template = new DataTemplate();
-                        template.VisualTree = checkBox;
-                        template.Seal();
                         return new GridViewDataColumn
                         {
                             Header = cf.Name,
                             Tag = key,
                             ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
-                            DataMemberBinding = new Binding(bindingBase + prop + ".Value"),
                             TextAlignment = fieldFormat.GetTextAlignment(),
-                            IsReadOnlyBinding = getIsReadOnlyBinding(bindingBase),
+                            IsReadOnlyBinding = getIsReadOnlyBinding(bindingBase, cf),
                             DataFormatString = fieldFormat.GetDataFormatString(),
-                            CellTemplate = template,
-                            CellStyle = getCellStyle(
-                                getForegroundPropertyIsEdited(bindingBase + prop + $".{nameof(FieldBase.IsEdited)}"),
-                                getAutoBackColorPropertyStatus(bindingBase)),
+                            CellTemplateSelector = new CfCellTemplateSelector(bindingBase, cf),
+                            CellStyle = getCellStyle(getAutoBackColorPropertyStatus(bindingBase)),
                             IsCellMergingEnabled = false,
                         };
                     case FieldFormat.user:
@@ -300,7 +289,8 @@ namespace RedmineTableEditor.Models.FileSettings
                                 ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
                                 DataMemberBinding = new Binding(bindingBase + prop + ".Value"),
                                 TextAlignment = fieldFormat.GetTextAlignment(),
-                                IsReadOnlyBinding = getIsReadOnlyBinding(bindingBase),
+                                IsReadOnlyBinding = getIsReadOnlyBinding(bindingBase, cf),
+                                CellTemplateSelector = new CfCellTemplateSelector(bindingBase, cf),
                                 CellStyle = getCellStyle(
                                     getForegroundPropertyIsEdited(bindingBase + prop + $".{nameof(FieldBase.IsEdited)}"),
                                     getAutoBackColorPropertyStatus(bindingBase)),
@@ -325,7 +315,8 @@ namespace RedmineTableEditor.Models.FileSettings
                                 ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
                                 DataMemberBinding = new Binding(bindingBase + prop + ".Value"),
                                 TextAlignment = fieldFormat.GetTextAlignment(),
-                                IsReadOnlyBinding = getIsReadOnlyBinding(bindingBase),
+                                IsReadOnlyBinding = getIsReadOnlyBinding(bindingBase, cf),
+                                CellTemplateSelector = new CfCellTemplateSelector(bindingBase, cf),
                                 CellStyle = getCellStyle(
                                     getForegroundPropertyIsEdited(bindingBase + prop + $".{nameof(FieldBase.IsEdited)}"),
                                     getAutoBackColorPropertyStatus(bindingBase)),
@@ -438,7 +429,7 @@ namespace RedmineTableEditor.Models.FileSettings
             }
         }
 
-        private string getCfPropName(FieldFormat fieldFormat)
+        private string getCfDicName(FieldFormat fieldFormat)
         {
             switch (fieldFormat)
             {
@@ -471,7 +462,7 @@ namespace RedmineTableEditor.Models.FileSettings
             return cellStyle;
         }
 
-        private static IsEditedToRedColorConverter IS_EDITED_TO_RED = new IsEditedToRedColorConverter();
+        private static IsEditedToRedColorConverter IS_EDITED_TO_RED { get; } = new IsEditedToRedColorConverter();
         protected Setter getForegroundPropertyIsEdited(string propertyName)
         {
             return new Setter(GridViewCell.ForegroundProperty, new Binding(propertyName)
@@ -506,12 +497,10 @@ namespace RedmineTableEditor.Models.FileSettings
             return new Setter(GridViewCell.BackgroundProperty, multiBinding);
         }
 
-        private static IsNullConverter IS_NULL = new IsNullConverter();
-        private Binding getIsReadOnlyBinding(string bindingBase)
+        private static ColumnIsReadOnlyConverter IS_READONLY { get; } = new ColumnIsReadOnlyConverter();
+        private Binding getIsReadOnlyBinding(string bindingBase, CustomField cf = null)
         {
-            var binding = new Binding(bindingBase + nameof(MyIssueBase.Issue));
-            binding.Converter = IS_NULL;
-            return binding;
+            return new Binding(bindingBase) { Converter = IS_READONLY, ConverterParameter = cf };
         }
 
         protected DataTemplate getDataTemplate(IssuePropertyType prop, string bindingBase)
@@ -588,6 +577,55 @@ namespace RedmineTableEditor.Models.FileSettings
             template.VisualTree = grid;
             template.Seal();
             return template;
+        }
+    }
+
+    public class CfCellTemplateSelector : DataTemplateSelector
+    {
+        private string bindingBase { get; set; }
+        private CustomField cf { get; set; }
+
+        public CfCellTemplateSelector(string bindingBase, CustomField cf) : base()
+        {
+            this.bindingBase = bindingBase;
+            this.cf = cf;
+        }
+
+        private static IsEditedToRedColorConverter IS_EDITED_TO_RED = new IsEditedToRedColorConverter();
+        public override DataTemplate SelectTemplate(object item, DependencyObject container)
+        {
+            var issue = item as MyIssueBase;
+            if (issue == null)
+                return null;
+
+            if (!issue.IsEnabledCustomField(cf))
+            {
+                var textBlock = new FrameworkElementFactory(typeof(TextBlock));
+                textBlock.SetValue(TextBlock.TextProperty, "----");
+                textBlock.SetValue(TextBlock.ToolTipProperty, string.Format(Properties.Resources.CellErrInvalidField, cf.Name));
+                var template = new DataTemplate();
+                template.VisualTree = textBlock;
+                template.Seal();
+                return template;
+            }
+
+            var format = cf.ToFieldFormat();
+            var cfDicPath = bindingBase + $"{format.GetPropertyName()}[{cf.Id}]";
+            switch (format)
+            {
+                case FieldFormat.@bool:
+                    var checkBox = new FrameworkElementFactory(typeof(CheckBox));
+                    checkBox.SetBinding(CheckBox.IsCheckedProperty, new Binding(cfDicPath + ".Value"));
+                    checkBox.SetValue(CheckBox.IsThreeStateProperty, !cf.IsRequired);
+                    checkBox.SetBinding(CheckBox.BorderBrushProperty,
+                        new Binding(cfDicPath + $".{nameof(FieldBase.IsEdited)}") { Converter = IS_EDITED_TO_RED });
+                    var template = new DataTemplate();
+                    template.VisualTree = checkBox;
+                    template.Seal();
+                    return template;
+                default:
+                    return null;
+            }
         }
     }
 }

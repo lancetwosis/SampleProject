@@ -25,11 +25,15 @@ using LibRedminePower.ViewModels;
 using RedmineTimePuncher.Extentions;
 using Reactive.Bindings.Notifiers;
 using System.Diagnostics;
+using LibRedminePower.Exceptions;
 
 namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class TranscribeSettingViewModel : LibRedminePower.ViewModels.Bases.ViewModelBase
     {
+        public string Title { get; set; }
+        public string Description { get; set; }
+
         public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
         public ReadOnlyReactivePropertySlim<bool> IsEnabledDetectionProcess { get; set; }
         public ReadOnlyReactivePropertySlim<List<MyProject>> PossibleProjects { get; set; }
@@ -39,18 +43,24 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
         public ReactivePropertySlim<bool> IsEnabled { get; set; }
         public ReadOnlyReactivePropertySlim<EditableGridViewModel<TranscribeSettingItemViewModel, TranscribeSettingItemModel>> Items { get; set; }
-        public ReactiveCommand TestCommand { get; set; }
+        public ReactiveCommandSlimToolTip TestCommand { get; set; }
 
-        public TranscribeSettingViewModel(TranscribeSettingModel model)
+        public TranscribeSettingViewModel(TranscribeSettingModel model, bool isDetectionProcess, string title, string description)
         {
-            ErrorMessage = CacheTempManager.Default.MarkupLang.Select(a  => !a.CanTranscribe() ? Resources.SettingsReviErrMsgCannotUseTranscribe : null)
-                                  .ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = title;
+            Description = description;
+
+            ErrorMessage = new [] {
+                CacheTempManager.Default.Message,
+                CacheTempManager.Default.MarkupLang.Select(a  => !a.CanTranscribe() ? Resources.SettingsReviErrMsgCannotUseTranscribe : null),
+            }.CombineLatest(values => values.FirstOrDefault(a => a != null)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             var createTicket = MessageBroker.Default.ToObservable<CreateTicketSettingsModel>();
             var detectionProcess = createTicket.SelectMany(a => a.ObserveProperty(b => b.DetectionProcess));
             var detectionProcessCustomField = detectionProcess.SelectMany(a => a.ObserveProperty(b => b.CustomField));
 
-            IsEnabledDetectionProcess = detectionProcess.SelectMany(x => x.ObserveProperty(dp => dp.IsEnabled))
-                .ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            IsEnabledDetectionProcess =
+                !isDetectionProcess ? Observable.Return(false).ToReadOnlyReactivePropertySlim().AddTo(disposables) :
+                detectionProcess.SelectMany(x => x.ObserveProperty(dp => dp.IsEnabled)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             PossibleProjects = CacheTempManager.Default.MyProjects.ToReadOnlyReactivePropertySlim().AddTo(disposables);
             PossibleWikiProjects = CacheTempManager.Default.MyProjectsWiki.ToReadOnlyReactivePropertySlim().AddTo(disposables);
@@ -89,13 +99,16 @@ namespace RedmineTimePuncher.ViewModels.Settings
             }).AddTo(disposables);
 
             var selected = Items.SelectMany(a => a.SelectedItem);
-            var canTest = new[] {
-                selected.Select(a => a != null),
-                selected.Where(a => a != null).SelectMany(a => a.WikiProject).Select(a => a != null),
-                selected.Where(a => a != null).SelectMany(a => a.Header).Select(a => a != null),
-                }.CombineLatestValuesAreAllTrue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
-
-            TestCommand = canTest.ToReactiveCommand().WithSubscribe(() =>
+            var canTestCommand = new[] {
+                selected.Select(a => a == null ? Properties.Resources.SettingsTranscibeMsgSelectItem : null),
+                selected.SelectManyIfNotNull(a => a.WikiProject)
+                    .Select(a => a == null ? string.Format(Properties.Resources.MsgPleaseSpecifyXXX, Properties.Resources.SettingsReviColWikiProject)  : null),
+                selected.SelectManyIfNotNull(a => a.WikiPage)
+                    .Select(a => a == null ?  string.Format(Properties.Resources.MsgPleaseSpecifyXXX, Properties.Resources.SettingsReviColWikiPage)  : null),
+                selected.SelectManyIfNotNull(a => a.Header)
+                    .Select(a => a == null ?  string.Format(Properties.Resources.MsgPleaseSpecifyXXX, Properties.Resources.SettingsReviColHeader)  : null),
+            }.CombineLatest().Select(strings => strings.FirstOrDefault(s => s != null)).ToReactiveProperty();
+            TestCommand = canTestCommand.ToReactiveCommandToolTipSlim().WithSubscribe(() =>
             {
                 var selectedItem = Items.Value.SelectedItem.Value.Model;
                 MyWikiPage wiki = null;
@@ -111,7 +124,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
                 var lines = wiki.GetSectionLines(CacheTempManager.Default.MarkupLang.Value, selectedItem.Header, selectedItem.IncludesHeader);
                 MessageBoxHelper.Input(Resources.ReviewMsgTranscribeFollowings, string.Join(Environment.NewLine, lines.Select(l => l.Text)), true);
             }).AddTo(disposables);
-
 
             // Itemsが空の状態で、IsEnabledが有効にされたら、空のModelを追加する。
             IsEnabled.Pairwise().Where(a => !a.OldItem && a.NewItem && !Items.Value.Any()).SubscribeWithErr(_ => model.Items.Add(new TranscribeSettingItemModel())).AddTo(disposables);

@@ -2075,4 +2075,10 @@ Please review your settings if you wish to enable the custom field setting featu
   <data name="SettingsReviColWikiProjectMsg" xml:space="preserve">
     <value />
   </data>
+  <data name="SettingsTranscibeMsgSelectItem" xml:space="preserve">
+    <value>Please select an item.</value>
+  </data>
+  <data name="MsgPleaseSpecifyXXX" xml:space="preserve">
+    <value>Please specify {0}.</value>
+  </data>
 </root>

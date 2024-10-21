@@ -10,6 +10,9 @@ namespace RedmineTableEditor.Models.TicketFields.Custom
 {
     public class CfBool : Bases.CfBase<bool?>
     {
+        public static CfBool DUMMY { get; } = new CfBool();
+        private CfBool() : base() { }
+
         public CfBool(CustomField meta, IssueCustomField cf)
             : base(meta, 
                   cf,

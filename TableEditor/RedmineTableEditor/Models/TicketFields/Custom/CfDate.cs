@@ -10,6 +10,9 @@ namespace RedmineTableEditor.Models.TicketFields.Custom
 {
     public class CfDate : Bases.CfBase<DateTime?>
     {
+        public static CfDate DUMMY { get; } = new CfDate();
+        private CfDate() : base() { }
+
         public CfDate(CustomField meta, IssueCustomField cf)
             : base(meta, 
                   cf,

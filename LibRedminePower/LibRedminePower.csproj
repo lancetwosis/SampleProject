@@ -110,6 +110,7 @@
     <Compile Include="Models\Bases\ModelBaseSlim.cs" />
     <Compile Include="Models\IdName.cs" />
     <Compile Include="Models\MyUser.cs" />
+    <Compile Include="ReactiveCommandSlimToolTip.cs" />
     <Compile Include="ViewModels\EditableGridViewModel.cs" />
     <Compile Include="AsyncLazy.cs" />
     <Compile Include="Attributes\LocalizedDisplayNameAttribute.cs" />

@@ -85,7 +85,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
             // ページ切り替えのタイミングでRedmineサーバーに接続を試みる。
             SelectedIndex = new ReactivePropertySlim<int>().AddTo(disposables);
-            SelectedIndex.Subscribe(async _ => await CacheTempManager.Default.TryConnectAsync(model.Redmine.Clone()));
             SelectedIndex.Pairwise().SubscribeWithErr(async p =>
             {
                 // 「全般」から他のタブに移動したら必要に応じて接続確認をする

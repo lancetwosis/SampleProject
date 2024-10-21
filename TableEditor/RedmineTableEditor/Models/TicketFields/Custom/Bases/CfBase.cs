@@ -20,5 +20,9 @@ namespace RedmineTableEditor.Models.TicketFields.Custom.Bases
             Meta = meta;
             Cf = cf;
         }
+
+        protected CfBase() : base("Dummy", () => default(T), v => { })
+        {
+        }
     }
 }

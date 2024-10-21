@@ -19,152 +19,107 @@
              d:DesignWidth="800"
              mc:Ignorable="d">
     <UserControl.Resources>
-        <conv:StringIsNullOrEmptyToBooleanConverter x:Key="StringIsNullOrEmptyToBooleanConverter" />
         <conv:VisibilityToBooleanConverter x:Key="VisibilityToBooleanConverter" />
         <Style BasedOn="{StaticResource FilterableComboBoxStyleKey}"
                TargetType="telerik:RadComboBox" />
     </UserControl.Resources>
 
-    <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-        <Grid>
+        <Grid Grid.IsSharedSizeScope="True">
             <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="AUTO" />
+                <RowDefinition Height="AUTO" />
+                <RowDefinition Height="AUTO" />
             </Grid.RowDefinitions>
+            <StackPanel Orientation="Vertical">
+                <StackPanel.Resources>
+                    <Style BasedOn="{StaticResource SettingHelpTextBlockStyle}"
+                           TargetType="TextBlock" />
+                    <Style x:Key="Column1HelpStyle"
+                           BasedOn="{StaticResource SettingHelpTextBlockStyle}"
+                           TargetType="TextBlock">
+                        <Setter Property="Margin" Value="5,5,0,0" />
+                        <Setter Property="Grid.Column" Value="1" />
+                    </Style>
+                </StackPanel.Resources>
+                <TextBlock Style="{StaticResource MyTextBlockStyle}"
+                           Text="{x:Static props:Resources.SettingsReviMsgTransGeneral}" />
+                <Grid Margin="10,0,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                        <RowDefinition Height="AUTO" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="AUTO" />
+                        <ColumnDefinition Width="AUTO" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{x:Static props:Resources.SettingsReviColProject}" />
+                    <TextBlock Style="{StaticResource Column1HelpStyle}"
+                               Text="{x:Static props:Resources.SettingsReviColProjectMsg}" />
+                    <TextBlock x:Name="detectionProcessHelpText"
+                               Grid.Row="1"
+                               Text="{x:Static props:Resources.SettingsReviColProcess}"
+                               Visibility="{Binding IsEnabledDetectionProcess.Value,
+                                                    Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Row="1"
+                               Style="{StaticResource Column1HelpStyle}"
+                               Text="{x:Static props:Resources.SettingsReviColProcessMsg}"
+                               Visibility="{Binding IsEnabledDetectionProcess.Value,
+                                                    Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    <TextBlock Grid.Row="2"
+                               Text="{x:Static props:Resources.SettingsReviColTracker}" />
+                    <TextBlock Grid.Row="2"
+                               Style="{StaticResource Column1HelpStyle}"
+                               Text="{x:Static props:Resources.SettingsReviColTrackerMsg}" />
+                    <TextBlock Grid.Row="3"
+                               Text="{x:Static props:Resources.SettingsReviColTitle}" />
+                    <TextBlock Grid.Row="3"
+                               Style="{StaticResource Column1HelpStyle}"
+                               Text="{x:Static props:Resources.SettingsReviColTitleMsg}" />
+                    <TextBlock Grid.Row="4"
+                               Text="{x:Static props:Resources.SettingsReviColWikiProject}" />
+                    <TextBlock Grid.Row="4"
+                               Style="{StaticResource Column1HelpStyle}"
+                               Text="{x:Static props:Resources.SettingsReviColWikiProjectMsg}" />
+                    <TextBlock Grid.Row="5"
+                               Text="{x:Static props:Resources.SettingsReviColWikiPage}" />
+                    <TextBlock Grid.Row="5"
+                               Style="{StaticResource Column1HelpStyle}"
+                               Text="{x:Static props:Resources.SettingsReviColWikiPageMsg}" />
+                    <TextBlock Grid.Row="6"
+                               Text="{x:Static props:Resources.SettingsReviColIncludesHeader}" />
+                    <TextBlock Grid.Row="6"
+                               Style="{StaticResource Column1HelpStyle}"
+                               Text="{x:Static props:Resources.SettingsReviColIncludesHeaderMsg}" />
+                    <TextBlock Grid.Row="7"
+                               Text="{x:Static props:Resources.SettingsReviColHeader}" />
+                    <TextBlock Grid.Row="7"
+                               Style="{StaticResource Column1HelpStyle}"
+                               Text="{x:Static props:Resources.SettingsReviColHeaderMsg}" />
+                </Grid>
+            </StackPanel>
 
-            <Grid Grid.IsSharedSizeScope="True">
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="AUTO" />
-                    <RowDefinition Height="AUTO" />
-                    <RowDefinition Height="AUTO" />
-                </Grid.RowDefinitions>
-                <StackPanel Orientation="Vertical">
-                    <StackPanel.Resources>
-                        <Style BasedOn="{StaticResource SettingHelpTextBlockStyle}"
-                               TargetType="TextBlock" />
-                        <Style x:Key="Column1HelpStyle"
-                               BasedOn="{StaticResource SettingHelpTextBlockStyle}"
-                               TargetType="TextBlock">
-                            <Setter Property="Margin" Value="5,5,0,0" />
-                            <Setter Property="Grid.Column" Value="1" />
-                        </Style>
-                    </StackPanel.Resources>
-                    <TextBlock Style="{StaticResource MyTextBlockStyle}"
-                               Text="{x:Static props:Resources.SettingsReviMsgTransGeneral}" />
-                    <Grid Margin="10,0,0,0">
-                        <Grid.RowDefinitions>
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                            <RowDefinition Height="AUTO" />
-                        </Grid.RowDefinitions>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="AUTO" />
-                            <ColumnDefinition Width="AUTO" />
-                        </Grid.ColumnDefinitions>
-                        <TextBlock Text="{x:Static props:Resources.SettingsReviColProject}" />
-                        <TextBlock Style="{StaticResource Column1HelpStyle}"
-                                   Text="{x:Static props:Resources.SettingsReviColProjectMsg}" />
-                        <TextBlock x:Name="detectionProcessHelpText"
-                                   Grid.Row="1"
-                                   Text="{x:Static props:Resources.SettingsReviColProcess}"
-                                   Visibility="{Binding IsEnabledDetectionProcess.Value,
-                                                        Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBlock Grid.Row="1"
-                                   Style="{StaticResource Column1HelpStyle}"
-                                   Text="{x:Static props:Resources.SettingsReviColProcessMsg}"
-                                   Visibility="{Binding IsEnabledDetectionProcess.Value,
-                                                        Converter={StaticResource BooleanToVisibilityConverter}}" />
-                        <TextBlock Grid.Row="2"
-                                   Text="{x:Static props:Resources.SettingsReviColTracker}" />
-                        <TextBlock Grid.Row="2"
-                                   Style="{StaticResource Column1HelpStyle}"
-                                   Text="{x:Static props:Resources.SettingsReviColTrackerMsg}" />
-                        <TextBlock Grid.Row="3"
-                                   Text="{x:Static props:Resources.SettingsReviColTitle}" />
-                        <TextBlock Grid.Row="3"
-                                   Style="{StaticResource Column1HelpStyle}"
-                                   Text="{x:Static props:Resources.SettingsReviColTitleMsg}" />
-                        <TextBlock Grid.Row="4"
-                                   Text="{x:Static props:Resources.SettingsReviColWikiProject}" />
-                        <TextBlock Grid.Row="4"
-                                   Style="{StaticResource Column1HelpStyle}"
-                                   Text="{x:Static props:Resources.SettingsReviColWikiProjectMsg}" />
-                        <TextBlock Grid.Row="5"
-                                   Text="{x:Static props:Resources.SettingsReviColWikiPage}" />
-                        <TextBlock Grid.Row="5"
-                                   Style="{StaticResource Column1HelpStyle}"
-                                   Text="{x:Static props:Resources.SettingsReviColWikiPageMsg}" />
-                        <TextBlock Grid.Row="6"
-                                   Text="{x:Static props:Resources.SettingsReviColIncludesHeader}" />
-                        <TextBlock Grid.Row="6"
-                                   Style="{StaticResource Column1HelpStyle}"
-                                   Text="{x:Static props:Resources.SettingsReviColIncludesHeaderMsg}" />
-                        <TextBlock Grid.Row="7"
-                                   Text="{x:Static props:Resources.SettingsReviColHeader}" />
-                        <TextBlock Grid.Row="7"
-                                   Style="{StaticResource Column1HelpStyle}"
-                                   Text="{x:Static props:Resources.SettingsReviColHeaderMsg}" />
-                    </Grid>
-                </StackPanel>
-                <GroupBox Grid.Row="1"
-                          Margin="0,15,0,0">
-                    <GroupBox.Header>
-                        <CheckBox x:Name="useOpenTranscribeCheckBox"
-                                  Content="{x:Static props:Resources.SettingsReviTranscribeOpen}"
-                                  IsChecked="{Binding OpenTranscribe.Value.IsEnabled.Value}" />
-                    </GroupBox.Header>
-                    <StackPanel IsEnabled="{Binding ElementName=useOpenTranscribeCheckBox,
-                                                    Path=IsChecked}"
-                                Orientation="Vertical">
-                        <Grid>
-                            <TextBlock Style="{StaticResource MyTextBlockStyle}"
-                                       Text="{x:Static props:Resources.SettingsReviMsgTransOpen}" />
-                            <Button Width="80"
-                                    HorizontalAlignment="Right"
-                                    Command="{Binding OpenTranscribe.Value.TestCommand}"
-                                    Content="{x:Static props:Resources.SettingsCmdTest}" />
-                        </Grid>
-                        <local:TranscribeSettingsView DataContext="{Binding OpenTranscribe.Value}"
-                                                      Visibility="{Binding ElementName=useOpenTranscribeCheckBox,
-                                                                           Path=IsChecked,
-                                                                           Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </StackPanel>
-                </GroupBox>
-                <GroupBox Grid.Row="2"
-                          Margin="0,15,0,0">
-                    <GroupBox.Header>
-                        <CheckBox x:Name="useRequestTranscribeCheckBox"
-                                  Content="{x:Static props:Resources.SettingsReviTranscribeRequest}"
-                                  IsChecked="{Binding RequestTranscribe.Value.IsEnabled.Value}" />
-                    </GroupBox.Header>
-                    <StackPanel IsEnabled="{Binding ElementName=useRequestTranscribeCheckBox,
-                                                    Path=IsChecked}"
-                                Orientation="Vertical">
-                        <Grid>
-                            <TextBlock Style="{StaticResource MyTextBlockStyle}"
-                                       Text="{x:Static props:Resources.SettingsReviMsgTransRequest}" />
-                            <Button Width="80"
-                                    HorizontalAlignment="Right"
-                                    Command="{Binding RequestTranscribe.Value.TestCommand}"
-                                    Content="{x:Static props:Resources.SettingsCmdTest}" />
-                        </Grid>
-                        <local:TranscribeSettingsView DataContext="{Binding RequestTranscribe.Value}"
-                                                      Visibility="{Binding ElementName=useRequestTranscribeCheckBox,
-                                                                           Path=IsChecked,
-                                                                           Converter={StaticResource BooleanToVisibilityConverter}}" />
-                    </StackPanel>
-                </GroupBox>
-            </Grid>
-
-            <local:SettingsButtonsPanel Grid.Row="1"
-                                        DataContext="{Binding}" />
+            <local:TranscribeSettingsView Grid.Row="1"
+                                          Margin="0,15,0,0"
+                                          DataContext="{Binding OpenTranscribe.Value}" />
+            <local:TranscribeSettingsView Grid.Row="2"
+                                          Margin="0,15,0,0"
+                                          DataContext="{Binding RequestTranscribe.Value}" />
         </Grid>
-    </libCont:OverwrapMessage>
+
+        <local:SettingsButtonsPanel Grid.Row="1"
+                                    DataContext="{Binding}" />
+    </Grid>
 
 </UserControl>

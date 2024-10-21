@@ -25,24 +25,20 @@ namespace RedmineTimePuncher.ViewModels.Settings
 
         public ReadOnlyReactivePropertySlim<TranscribeSettingViewModel> OpenTranscribe { get; set; }
         public ReadOnlyReactivePropertySlim<TranscribeSettingViewModel> RequestTranscribe { get; set; }
-        public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
 
         public TranscribeSettingsViewModel(TranscribeSettingsModel model) : base(model)
         {
-            var canUseTranscribe = CacheTempManager.Default.MarkupLang.Select(a => !a.CanTranscribe() ? Resources.SettingsReviErrMsgCannotUseTranscribe : null)
-                                  .ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            ErrorMessage = new IObservable<string>[] { CacheTempManager.Default.Message, canUseTranscribe }
-                .CombineLatestFirstOrDefault(a => !string.IsNullOrEmpty(a)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-
             var createTicket = MessageBroker.Default.ToObservable<CreateTicketSettingsModel>();
             var detectionProcess = createTicket.SelectMany(a => a.ObserveProperty(b => b.DetectionProcess));
             IsEnabledDetectionProcess = detectionProcess.SelectMany(x => x.ObserveProperty(dp => dp.IsEnabled))
                 .ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             OpenTranscribe =
-                model.ToReadOnlyViewModel(a => a.OpenTranscribe, a => new TranscribeSettingViewModel(a)).AddTo(disposables);
+                model.ToReadOnlyViewModel(a => a.OpenTranscribe, 
+                a => new TranscribeSettingViewModel(a, true, Resources.SettingsReviTranscribeOpen, Resources.SettingsReviMsgTransOpen)).AddTo(disposables);
             RequestTranscribe =
-                model.ToReadOnlyViewModel(a => a.RequestTranscribe, a => new TranscribeSettingViewModel(a)).AddTo(disposables);
+                model.ToReadOnlyViewModel(a => a.RequestTranscribe, 
+                a => new TranscribeSettingViewModel(a, true, Resources.SettingsReviTranscribeRequest, Resources.SettingsReviMsgTransRequest)).AddTo(disposables);
         }
     }
 }

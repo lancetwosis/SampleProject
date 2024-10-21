@@ -7,6 +7,7 @@
              xmlns:conv="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
              xmlns:local="clr-namespace:RedmineTimePuncher.Views.Settings"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
@@ -20,136 +21,160 @@
     <UserControl.Resources>
         <conv:VisibilityToBooleanConverter x:Key="VisibilityToBooleanConverter" />
     </UserControl.Resources>
-    <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="AUTO" />
-        </Grid.ColumnDefinitions>
-        <telerik:RadGridView Margin="0,5,0,0"
-                             behaviors1:RowReorderBehavior.IsEnabled="True"
-                             AutoGenerateColumns="False"
-                             CanUserDeleteRows="True"
-                             CanUserFreezeColumns="False"
-                             CanUserInsertRows="True"
-                             CanUserReorderColumns="False"
-                             GroupRenderMode="Flat"
-                             IsFilteringAllowed="False"
-                             IsReadOnly="False"
-                             ItemsSource="{Binding Items.Value}"
-                             RowIndicatorVisibility="Collapsed"
-                             SelectedItem="{Binding Items.Value.SelectedItem.Value}"
-                             ShowGroupPanel="False">
-            <telerik:RadGridView.RowStyle>
-                <Style BasedOn="{StaticResource GridViewRowStyle}"
-                       TargetType="telerik:GridViewRow">
-                    <Setter Property="telerik:DragDropManager.AllowDrag" Value="True" />
-                    <Setter Property="telerik:DragDropManager.TouchDragTrigger" Value="TapAndHold" />
-                </Style>
-            </telerik:RadGridView.RowStyle>
+    <GroupBox>
+        <GroupBox.Header>
+            <CheckBox x:Name="useCheckBox"
+                      Content="{Binding Title}"
+                      IsChecked="{Binding IsEnabled.Value}" />
+        </GroupBox.Header>
 
-            <telerik:RadGridView.ColumnGroups>
-                <telerik:GridViewColumnGroup Name="TargetGroup">
-                    <!--  直接 Header に文字列を設定するとなぜか ToUpperCase されるので、以下のようにする  -->
-                    <telerik:GridViewColumnGroup.Header>
-                        <TextBlock Text="{x:Static props:Resources.SettingsReviColGroupTarget}" />
-                    </telerik:GridViewColumnGroup.Header>
-                </telerik:GridViewColumnGroup>
-                <telerik:GridViewColumnGroup Name="WikiGroup">
-                    <telerik:GridViewColumnGroup.Header>
-                        <TextBlock Text="{x:Static props:Resources.SettingsReviColGroupWiki}" />
-                    </telerik:GridViewColumnGroup.Header>
-                </telerik:GridViewColumnGroup>
-            </telerik:RadGridView.ColumnGroups>
+        <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+            <StackPanel IsEnabled="{Binding ElementName=useCheckBox,
+                                            Path=IsChecked}"
+                        Orientation="Vertical">
+                <Grid>
+                    <TextBlock Style="{StaticResource MyTextBlockStyle}"
+                               Text="{Binding Description}" />
+                    <Button Width="80"
+                            HorizontalAlignment="Right"
+                            Command="{Binding TestCommand}"
+                            Content="{x:Static props:Resources.SettingsCmdTest}"
+                            ToolTip="{Binding TestCommand.ToolTip.Value}"
+                            ToolTipService.ShowOnDisabled="True" />
+                </Grid>
+                <Grid Visibility="{Binding ElementName=useCheckBox, Path=IsChecked, Converter={StaticResource BooleanToVisibilityConverter}}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="AUTO" />
+                    </Grid.ColumnDefinitions>
+                    <telerik:RadGridView Margin="0,5,0,0"
+                                         behaviors1:RowReorderBehavior.IsEnabled="True"
+                                         AutoGenerateColumns="False"
+                                         CanUserDeleteRows="True"
+                                         CanUserFreezeColumns="False"
+                                         CanUserInsertRows="True"
+                                         CanUserReorderColumns="False"
+                                         GroupRenderMode="Flat"
+                                         IsFilteringAllowed="False"
+                                         IsReadOnly="False"
+                                         ItemsSource="{Binding Items.Value}"
+                                         RowIndicatorVisibility="Collapsed"
+                                         SelectedItem="{Binding Items.Value.SelectedItem.Value}"
+                                         ShowGroupPanel="False">
+                        <telerik:RadGridView.RowStyle>
+                            <Style BasedOn="{StaticResource GridViewRowStyle}"
+                                   TargetType="telerik:GridViewRow">
+                                <Setter Property="telerik:DragDropManager.AllowDrag" Value="True" />
+                                <Setter Property="telerik:DragDropManager.TouchDragTrigger" Value="TapAndHold" />
+                            </Style>
+                        </telerik:RadGridView.RowStyle>
 
-            <telerik:RadGridView.Columns>
-                <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
-                                                DataMemberBinding="{Binding Project.Value,
-                                                                            UpdateSourceTrigger=PropertyChanged}"
-                                                DisplayMemberPath="Name"
-                                                Header="{x:Static props:Resources.SettingsReviColSubProject}"
-                                                IsComboBoxEditable="True"
-                                                IsSortable="false"
-                                                ItemsSourceBinding="{Binding DataContext.PossibleProjects.Value,
-                                                                             RelativeSource={RelativeSource AncestorType=UserControl,
-                                                                                                            Mode=FindAncestor}}" />
-                <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
-                                                DataMemberBinding="{Binding Process.Value}"
-                                                DisplayMemberPath="Label"
-                                                Header="{x:Static props:Resources.SettingsReviColSubProcess}"
-                                                IsComboBoxEditable="True"
-                                                IsSortable="False"
-                                                IsVisible="{Binding DataContext.IsEnabledDetectionProcess.Value,
-                                                                    RelativeSource={RelativeSource AncestorType=UserControl,
-                                                                                                   Mode=FindAncestor}}"
-                                                ItemsSourceBinding="{Binding DataContext.PossibleProcesses.Value,
-                                                                             RelativeSource={RelativeSource AncestorType=UserControl,
-                                                                                                            Mode=FindAncestor}}" />
-                <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
-                                                DataMemberBinding="{Binding Tracker.Value}"
-                                                DisplayMemberPath="Name"
-                                                Header="{x:Static props:Resources.SettingsReviColSubTracker}"
-                                                IsComboBoxEditable="True"
-                                                IsSortable="False"
-                                                ItemsSourceBinding="{Binding DataContext.PossibleTrackers.Value,
-                                                                             RelativeSource={RelativeSource AncestorType=UserControl,
-                                                                                                            Mode=FindAncestor}}" />
-                <telerik:GridViewDataColumn ColumnGroupName="TargetGroup"
-                                            DataMemberBinding="{Binding Title.Value}"
-                                            Header="{x:Static props:Resources.SettingsReviColSubTitle}"
-                                            IsSortable="False" />
-                <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
-                                                DataMemberBinding="{Binding WikiProject.Value,
-                                                                            UpdateSourceTrigger=PropertyChanged}"
-                                                DisplayMemberPath="Name"
-                                                Header="{x:Static props:Resources.SettingsReviColSubProject}"
-                                                IsComboBoxEditable="True"
-                                                IsSortable="false"
-                                                ItemsSourceBinding="{Binding DataContext.PossibleWikiProjects.Value,
-                                                                             RelativeSource={RelativeSource AncestorType=UserControl,
-                                                                                                            Mode=FindAncestor}}" />
-                <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
-                                                DataMemberBinding="{Binding WikiPage.Value,
-                                                                            UpdateSourceTrigger=PropertyChanged}"
-                                                DisplayMemberPath="Title"
-                                                Header="{x:Static props:Resources.SettingsReviColSubPageName}"
-                                                IsComboBoxEditable="True"
-                                                IsSortable="False"
-                                                ItemsSourceBinding="{Binding WikiPages.Value}">
-                    <telerik:GridViewComboBoxColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <telerik:RadHyperlinkButton Margin="0,0,10,0"
-                                                            HorizontalAlignment="Center"
-                                                            ClickMode="Press"
-                                                            Content="{Binding WikiPage.Value.Title}"
-                                                            NavigateUri="{Binding WikiPage.Value.Url}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </telerik:GridViewComboBoxColumn.CellTemplate>
-                </telerik:GridViewComboBoxColumn>
-                <telerik:GridViewDataColumn ColumnGroupName="WikiGroup"
-                                            DataMemberBinding="{Binding IncludesHeader.Value}"
-                                            EditTriggers="CellClick"
-                                            Header="{x:Static props:Resources.SettingsReviColSubIncludesHeader}"
-                                            IsSortable="False">
-                    <telerik:GridViewDataColumn.CellTemplate>
-                        <DataTemplate>
-                            <CheckBox HorizontalAlignment="Center"
-                                      IsChecked="{Binding IncludesHeader.Value,
-                                                          Mode=TwoWay}" />
-                        </DataTemplate>
-                    </telerik:GridViewDataColumn.CellTemplate>
-                </telerik:GridViewDataColumn>
-                <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
-                                                DataMemberBinding="{Binding Header.Value}"
-                                                Header="{x:Static props:Resources.SettingsReviColHeader}"
-                                                IsComboBoxEditable="True"
-                                                IsSortable="False"
-                                                ItemsSourceBinding="{Binding Headers.Value}" />
-            </telerik:RadGridView.Columns>
-        </telerik:RadGridView>
-        <controls:GridViewEditButtonPanel Grid.Column="1"
-                                          Margin="0,5,0,0"
-                                          DataContext="{Binding Items.Value}" />
-    </Grid>
+                        <telerik:RadGridView.ColumnGroups>
+                            <telerik:GridViewColumnGroup Name="TargetGroup">
+                                <!--  直接 Header に文字列を設定するとなぜか ToUpperCase されるので、以下のようにする  -->
+                                <telerik:GridViewColumnGroup.Header>
+                                    <TextBlock Text="{x:Static props:Resources.SettingsReviColGroupTarget}" />
+                                </telerik:GridViewColumnGroup.Header>
+                            </telerik:GridViewColumnGroup>
+                            <telerik:GridViewColumnGroup Name="WikiGroup">
+                                <telerik:GridViewColumnGroup.Header>
+                                    <TextBlock Text="{x:Static props:Resources.SettingsReviColGroupWiki}" />
+                                </telerik:GridViewColumnGroup.Header>
+                            </telerik:GridViewColumnGroup>
+                        </telerik:RadGridView.ColumnGroups>
+
+                        <telerik:RadGridView.Columns>
+                            <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
+                                                            DataMemberBinding="{Binding Project.Value,
+                                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                            DisplayMemberPath="Name"
+                                                            Header="{x:Static props:Resources.SettingsReviColSubProject}"
+                                                            IsComboBoxEditable="True"
+                                                            IsSortable="false"
+                                                            ItemsSourceBinding="{Binding DataContext.PossibleProjects.Value,
+                                                                                         RelativeSource={RelativeSource AncestorType=UserControl,
+                                                                                                                        Mode=FindAncestor}}" />
+                            <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
+                                                            DataMemberBinding="{Binding Process.Value}"
+                                                            DisplayMemberPath="Label"
+                                                            Header="{x:Static props:Resources.SettingsReviColSubProcess}"
+                                                            IsComboBoxEditable="True"
+                                                            IsSortable="False"
+                                                            IsVisible="{Binding DataContext.IsEnabledDetectionProcess.Value,
+                                                                                RelativeSource={RelativeSource AncestorType=UserControl,
+                                                                                                               Mode=FindAncestor}}"
+                                                            ItemsSourceBinding="{Binding DataContext.PossibleProcesses.Value,
+                                                                                         RelativeSource={RelativeSource AncestorType=UserControl,
+                                                                                                                        Mode=FindAncestor}}" />
+                            <telerik:GridViewComboBoxColumn ColumnGroupName="TargetGroup"
+                                                            DataMemberBinding="{Binding Tracker.Value}"
+                                                            DisplayMemberPath="Name"
+                                                            Header="{x:Static props:Resources.SettingsReviColSubTracker}"
+                                                            IsComboBoxEditable="True"
+                                                            IsSortable="False"
+                                                            ItemsSourceBinding="{Binding DataContext.PossibleTrackers.Value,
+                                                                                         RelativeSource={RelativeSource AncestorType=UserControl,
+                                                                                                                        Mode=FindAncestor}}" />
+                            <telerik:GridViewDataColumn ColumnGroupName="TargetGroup"
+                                                        DataMemberBinding="{Binding Title.Value}"
+                                                        Header="{x:Static props:Resources.SettingsReviColSubTitle}"
+                                                        IsSortable="False" />
+                            <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
+                                                            DataMemberBinding="{Binding WikiProject.Value,
+                                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                            DisplayMemberPath="Name"
+                                                            Header="{x:Static props:Resources.SettingsReviColSubProject}"
+                                                            IsComboBoxEditable="True"
+                                                            IsSortable="false"
+                                                            ItemsSourceBinding="{Binding DataContext.PossibleWikiProjects.Value,
+                                                                                         RelativeSource={RelativeSource AncestorType=UserControl,
+                                                                                                                        Mode=FindAncestor}}" />
+                            <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
+                                                            DataMemberBinding="{Binding WikiPage.Value,
+                                                                                        UpdateSourceTrigger=PropertyChanged}"
+                                                            DisplayMemberPath="Title"
+                                                            Header="{x:Static props:Resources.SettingsReviColSubPageName}"
+                                                            IsComboBoxEditable="True"
+                                                            IsSortable="False"
+                                                            ItemsSourceBinding="{Binding WikiPages.Value}">
+                                <telerik:GridViewComboBoxColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <StackPanel Orientation="Horizontal">
+                                            <telerik:RadHyperlinkButton Margin="0,0,10,0"
+                                                                        HorizontalAlignment="Center"
+                                                                        ClickMode="Press"
+                                                                        Content="{Binding WikiPage.Value.Title}"
+                                                                        NavigateUri="{Binding WikiPage.Value.Url}" />
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </telerik:GridViewComboBoxColumn.CellTemplate>
+                            </telerik:GridViewComboBoxColumn>
+                            <telerik:GridViewDataColumn ColumnGroupName="WikiGroup"
+                                                        DataMemberBinding="{Binding IncludesHeader.Value}"
+                                                        EditTriggers="CellClick"
+                                                        Header="{x:Static props:Resources.SettingsReviColSubIncludesHeader}"
+                                                        IsSortable="False">
+                                <telerik:GridViewDataColumn.CellTemplate>
+                                    <DataTemplate>
+                                        <CheckBox HorizontalAlignment="Center"
+                                                  IsChecked="{Binding IncludesHeader.Value,
+                                                                      Mode=TwoWay}" />
+                                    </DataTemplate>
+                                </telerik:GridViewDataColumn.CellTemplate>
+                            </telerik:GridViewDataColumn>
+                            <telerik:GridViewComboBoxColumn ColumnGroupName="WikiGroup"
+                                                            DataMemberBinding="{Binding Header.Value}"
+                                                            Header="{x:Static props:Resources.SettingsReviColHeader}"
+                                                            IsComboBoxEditable="True"
+                                                            IsSortable="False"
+                                                            ItemsSourceBinding="{Binding Headers.Value}" />
+                        </telerik:RadGridView.Columns>
+                    </telerik:RadGridView>
+                    <controls:GridViewEditButtonPanel Grid.Column="1"
+                                                      Margin="0,5,0,0"
+                                                      DataContext="{Binding Items.Value}" />
+                </Grid>
+            </StackPanel>
+        </libCont:OverwrapMessage>
+    </GroupBox>
 </UserControl>

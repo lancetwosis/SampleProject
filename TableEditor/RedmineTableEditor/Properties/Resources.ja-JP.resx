@@ -475,4 +475,7 @@
   <data name="RibbonCmdSetFrozenColumn" xml:space="preserve">
     <value>列を固定する</value>
   </data>
+  <data name="CellErrInvalidField" xml:space="preserve">
+    <value>「{0}」は無効です。</value>
+  </data>
 </root>

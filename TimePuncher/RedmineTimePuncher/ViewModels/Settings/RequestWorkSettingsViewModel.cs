@@ -39,7 +39,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
             RequestTracker = model.ToReactivePropertySlimAsSynchronized(m => m.RequestTracker).AddTo(disposables);
             IsRequired = model.ToReadOnlyViewModel(a => a.IsRequired, a => new CustomFieldSettingViewModel(a)).AddTo(disposables);
             RequestTranscribe = model.ToReadOnlyViewModel(a => a.RequestTranscribe,
-                a => new TranscribeSettingViewModel(a)).AddTo(disposables);
+                a => new TranscribeSettingViewModel(a, false, Resources.SettingsReviTranscribeRequest, Resources.SettingsReviMsgTransRequest)).AddTo(disposables);
 
             PossibleTrackers.Where(a => a != null).Subscribe(trackers => { 
                 RequestTracker.Value = trackers.FirstOrFirst(a => a == RequestTracker.Value);

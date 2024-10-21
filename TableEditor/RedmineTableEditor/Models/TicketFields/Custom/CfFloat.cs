@@ -10,6 +10,9 @@ namespace RedmineTableEditor.Models.TicketFields.Custom
 {
     public class CfFloat : Bases.CfBase<double?>
     {
+        public static CfFloat DUMMY { get; } = new CfFloat();
+        private CfFloat() : base() { }
+
         public CfFloat(CustomField meta, IssueCustomField cf)
             :base(meta, 
                  cf,

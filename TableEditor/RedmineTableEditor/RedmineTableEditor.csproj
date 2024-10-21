@@ -110,6 +110,7 @@
   <ItemGroup>
     <Compile Include="Attachments\ExpanderAttachment.cs" />
     <Compile Include="Behaviors\GridViewCurrentCellToMyIssueChildBehavior.cs" />
+    <Compile Include="Converters\ColumnIsReadOnlyConverter.cs" />
     <Compile Include="Enums\FieldFormat.cs" />
     <Compile Include="Enums\MyIssuePropertyType.cs" />
     <Compile Include="Enums\IssueStatusCompareType.cs" />
