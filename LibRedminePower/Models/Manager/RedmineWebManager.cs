@@ -33,6 +33,8 @@ namespace LibRedminePower.Models.Manager
         private const string cUrlIssuePrefix = "/issues/";
         private const string cUrlChange = "#change-";
 
+        private const string UA = "Mozilla/5.0 (Windows NT 6.1) AppleWebKit/535.1 (KHTML, like Gecko) Chrome/14.0.835.163 Safari/535.1";
+
         public RedmineWebManager(string urlBase, string userName, string password)
         {
             this.urlBase = urlBase;
@@ -44,6 +46,8 @@ namespace LibRedminePower.Models.Manager
                 CookieContainer = new System.Net.CookieContainer(),
                 UseDefaultCredentials = true,
             });
+
+            client.DefaultRequestHeaders.UserAgent.TryParseAdd(UA);
         }
 
         public RedmineWebManager(string urlBase, string userName, string password, string userNameForBasicAuth, string passwordForBasicAuth)
