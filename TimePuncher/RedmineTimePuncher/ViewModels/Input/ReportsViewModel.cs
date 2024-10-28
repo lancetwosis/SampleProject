@@ -30,7 +30,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             IsBusy = new ReactivePropertySlim<bool>().AddTo(disposables);
             Items = new ObservableCollection<PersonHourReportViewModel>();
 
-            input.Parent.ObserveProperty(p => p.Settings.PersonHourReport).SubscribeWithErr(s =>
+            SettingsModel.Default.ObserveProperty(p => p.PersonHourReport).SubscribeWithErr(s =>
             {
                 if (s == null)
                     return;

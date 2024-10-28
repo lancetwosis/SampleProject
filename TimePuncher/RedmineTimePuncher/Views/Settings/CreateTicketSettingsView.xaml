@@ -32,8 +32,8 @@
             <ScrollViewer BorderThickness="0"
                           VerticalScrollBarVisibility="Auto">
                 <StackPanel Grid.IsSharedSizeScope="True">
-                    <Grid ToolTip="{Binding DetectionProcess.Value.NoCustomFieldErrMsg}">
-                        <Grid IsEnabled="{Binding DetectionProcess.Value.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}, Mode=OneWay}">
+                    <Grid ToolTip="{Binding DetectionProcess.Value.NoCustomFieldErrMsg.Value}">
+                        <Grid IsEnabled="{Binding DetectionProcess.Value.NoCustomFieldErrMsg.Value, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}, Mode=OneWay}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto"
                                                   SharedSizeGroup="FirstColumn" />
@@ -55,7 +55,7 @@
                                                  DisplayMemberPath="Name"
                                                  IsEnabled="{Binding ElementName=useTargetProcessCheckBox,
                                                                      Path=IsChecked}"
-                                                 ItemsSource="{Binding DetectionProcess.Value.PossibleCustomFields}"
+                                                 ItemsSource="{Binding DetectionProcess.Value.PossibleCustomFields.Value}"
                                                  SelectedItem="{Binding DetectionProcess.Value.CustomField.Value}">
                                 <b:Interaction.Behaviors>
                                     <behaviors1:RadComboBoxNotNullableBehavior />
@@ -159,8 +159,8 @@
                                 <StackPanel IsEnabled="{Binding ElementName=useReviewMethodCheckBox,
                                                                 Path=IsChecked}"
                                             Orientation="Vertical"
-                                            ToolTip="{Binding ReviewMethod.Value.NoCustomFieldErrMsg}">
-                                    <Grid IsEnabled="{Binding ReviewMethod.Value.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
+                                            ToolTip="{Binding ReviewMethod.Value.NoCustomFieldErrMsg.Value}">
+                                    <Grid IsEnabled="{Binding ReviewMethod.Value.NoCustomFieldErrMsg.Value, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"
                                                               SharedSizeGroup="FirstColumn" />
@@ -183,7 +183,7 @@
                                                              DisplayMemberPath="Name"
                                                              IsEnabled="{Binding ElementName=needsSaveNeedsF2FCheckBox,
                                                                                  Path=IsChecked}"
-                                                             ItemsSource="{Binding ReviewMethod.Value.PossibleCustomFields}"
+                                                             ItemsSource="{Binding ReviewMethod.Value.PossibleCustomFields.Value}"
                                                              SelectedItem="{Binding ReviewMethod.Value.CustomField.Value}">
                                             <b:Interaction.Behaviors>
                                                 <behaviors1:RadComboBoxNotNullableBehavior />
@@ -266,7 +266,7 @@
                                 <telerik:RadComboBox Grid.Column="2"
                                                      Margin="5,0,0,0"
                                                      DisplayMemberPath="Name"
-                                                     ItemsSource="{Binding Trackers}"
+                                                     ItemsSource="{Binding Trackers.Value}"
                                                      SelectedItem="{Binding RequestTracker.Value}">
                                     <b:Interaction.Behaviors>
                                         <behaviors1:RadComboBoxNotNullableBehavior />
@@ -283,8 +283,8 @@
                                 <StackPanel IsEnabled="{Binding ElementName=useIsRequiredCheckBox,
                                                                 Path=IsChecked}"
                                             Orientation="Vertical"
-                                            ToolTip="{Binding IsRequired.Value.NoCustomFieldErrMsg}">
-                                    <Grid IsEnabled="{Binding IsRequired.Value.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
+                                            ToolTip="{Binding IsRequired.Value.NoCustomFieldErrMsg.Value}">
+                                    <Grid IsEnabled="{Binding IsRequired.Value.NoCustomFieldErrMsg.Value, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
                                         <Grid.ColumnDefinitions>
                                             <ColumnDefinition Width="Auto"
                                                               SharedSizeGroup="FirstColumn" />
@@ -307,7 +307,7 @@
                                                              DisplayMemberPath="Name"
                                                              IsEnabled="{Binding ElementName=needsSaveIsRequiredCheckBox,
                                                                                  Path=IsChecked}"
-                                                             ItemsSource="{Binding IsRequired.Value.PossibleCustomFields}"
+                                                             ItemsSource="{Binding IsRequired.Value.PossibleCustomFields.Value}"
                                                              SelectedItem="{Binding IsRequired.Value.CustomField.Value}">
                                             <b:Interaction.Behaviors>
                                                 <behaviors1:RadComboBoxNotNullableBehavior />
@@ -345,7 +345,7 @@
                                 <telerik:RadComboBox Grid.Column="2"
                                                      Margin="5,0,0,0"
                                                      DisplayMemberPath="Name"
-                                                     ItemsSource="{Binding Trackers}"
+                                                     ItemsSource="{Binding Trackers.Value}"
                                                      SelectedItem="{Binding PointTracker.Value}">
                                     <b:Interaction.Behaviors>
                                         <behaviors1:RadComboBoxNotNullableBehavior />
@@ -365,7 +365,7 @@
                                                      DisplayMemberPath="Name"
                                                      IsEnabled="{Binding ElementName=useSaveReviewerCheckBox,
                                                                          Path=IsChecked}"
-                                                     ItemsSource="{Binding SaveReviewer.Value.PossibleCustomFields}"
+                                                     ItemsSource="{Binding SaveReviewer.Value.PossibleCustomFields.Value}"
                                                      SelectedItem="{Binding SaveReviewer.Value.CustomField.Value}">
                                     <b:Interaction.Behaviors>
                                         <behaviors1:RadComboBoxNotNullableBehavior />

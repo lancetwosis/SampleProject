@@ -66,8 +66,8 @@
                             <StackPanel IsEnabled="{Binding ElementName=useIsRequiredCheckBox,
                                                             Path=IsChecked}"
                                         Orientation="Vertical"
-                                        ToolTip="{Binding IsRequired.Value.NoCustomFieldErrMsg}">
-                                <Grid IsEnabled="{Binding IsRequired.Value.NoCustomFieldErrMsg, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
+                                        ToolTip="{Binding IsRequired.Value.NoCustomFieldErrMsg.Value}">
+                                <Grid IsEnabled="{Binding IsRequired.Value.NoCustomFieldErrMsg.Value, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="Auto"
                                                           SharedSizeGroup="FirstColumn" />
@@ -90,7 +90,7 @@
                                                          DisplayMemberPath="Name"
                                                          IsEnabled="{Binding ElementName=needsSaveIsRequiredCheckBox,
                                                                              Path=IsChecked}"
-                                                         ItemsSource="{Binding IsRequired.Value.PossibleCustomFields}"
+                                                         ItemsSource="{Binding IsRequired.Value.PossibleCustomFields.Value}"
                                                          SelectedItem="{Binding IsRequired.Value.CustomField.Value}">
                                         <b:Interaction.Behaviors>
                                             <behaviors1:RadComboBoxNotNullableBehavior />

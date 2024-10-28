@@ -21,6 +21,7 @@ using Reactive.Bindings.Notifiers;
 using RedmineTimePuncher.Extentions;
 using LibRedminePower.Helpers;
 using LibRedminePower.Applications;
+using RedmineTimePuncher.Models.Managers;
 
 namespace RedmineTimePuncher.ViewModels.Input
 {
@@ -63,8 +64,8 @@ namespace RedmineTimePuncher.ViewModels.Input
             var myWorksChanged = myWorksApos.CollectionChangedAsObservable().StartWithDefault().CombineLatest(
                myWorksApos.ObserveElementProperty(a => a.Start).StartWithDefault(),
                myWorksApos.ObserveElementProperty(a => a.End).StartWithDefault(), (_, __, ___) => _).ToReadOnlyReactivePropertySlim(mode: ReactivePropertyMode.RaiseLatestValueOnSubscribe).AddTo(disposables);
-            var tickLength = parent.Parent.Settings.ObserveProperty(a => a.Schedule.TickLength).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var myWorksError = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(parent.SelectedDate, myWorksChanged, (sche, currentDate, __) =>
+            var tickLength = SettingsModel.Default.ObserveProperty(a => a.Schedule.TickLength).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var myWorksError = SettingsModel.Default.ObserveProperty(a => a.Schedule).CombineLatest(parent.SelectedDate, myWorksChanged, (sche, currentDate, __) =>
             {
                 var targetApos = myWorksApos.Where(a => sche.Contains(currentDate, a)).ToList();
                 if (targetApos.Count == 0)
@@ -87,7 +88,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }
                 return null;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var myWorksWarn = parent.Parent.Settings.ObserveProperty(a => a.Schedule).CombineLatest(parent.SelectedDate, myWorksChanged, (sche, currentDate, __) =>
+            var myWorksWarn = SettingsModel.Default.ObserveProperty(a => a.Schedule).CombineLatest(parent.SelectedDate, myWorksChanged, (sche, currentDate, __) =>
             {
                 var targetApos = myWorksApos.Where(a => sche.Contains(currentDate, a)).ToList();
                 if (targetApos.Count == 0)
@@ -111,8 +112,8 @@ namespace RedmineTimePuncher.ViewModels.Input
                 myWorksApos.ObserveAddChanged<MyAppointment>().Select(_ => ""),
                 myWorksApos.ObserveElementProperty(a => a.Start).Select(_ => ""),
                 myWorksApos.ObserveElementProperty(a => a.End).Select(_ => ""),
-                parent.Parent.Settings.ObserveProperty(a => a.Schedule).Select(_ => ""),
-            }.CombineLatest().Where(_ => !isDoingMyWorksChanged.IsBusy && parent.Parent.Redmine.Value != null).Delay(TimeSpan.FromMilliseconds(10)).ObserveOnUIDispatcher().SubscribeWithErr(_ =>
+                SettingsModel.Default.ObserveProperty(a => a.Schedule).Select(_ => ""),
+            }.CombineLatest().Where(_ => !isDoingMyWorksChanged.IsBusy && RedmineManager.Default.Value != null).Delay(TimeSpan.FromMilliseconds(10)).ObserveOnUIDispatcher().SubscribeWithErr(_ =>
             {
                 execUpdate(parent, () =>
                 {
@@ -123,7 +124,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                         //------------------------------------
                         foreach (var item in myWorksApos.ToList())
                         {
-                            var prohibitedTerms = parent.Parent.Settings.Schedule.SpecialTerms
+                            var prohibitedTerms = SettingsModel.Default.Schedule.SpecialTerms
                                 .Where(a => a.ValidationType == TermInputValidationType.ProhibitedInput)
                                 .Where(a => item.IntersectsWith(a)).ToList();
                             if (prohibitedTerms.Any())
@@ -224,14 +225,14 @@ namespace RedmineTimePuncher.ViewModels.Input
                 });
             }).AddTo(disposables);
 
-            Resource.Updater.SetUpdateCommand(parent.Parent.Redmine.Select(a => a != null), async (ct) =>
+            Resource.Updater.SetUpdateCommand(RedmineManager.Default.Select(a => a != null), async (ct) =>
             {
                 await execUpdateAsync(parent, async () =>
                 {
                     Logger.Info("myWorksResource.SetReloadCommand Start");
 
                     var errorIds = new List<int>();
-                    var result = await Task.Run(() => parent.Parent.Redmine.Value.GetEntryApos(Resource, parent.Members.Resources.Value, parent.StartTime.Value, parent.EndTime.Value, out errorIds), ct);
+                    var result = await Task.Run(() => RedmineManager.Default.Value.GetEntryApos(Resource, parent.Members.Resources.Value, parent.StartTime.Value, parent.EndTime.Value, out errorIds), ct);
 
                     // 画面に表示している予定のうち、不要なものを削除
                     parent.Appointments.RemoveAll(a =>
@@ -290,7 +291,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 myWorksWarn,
                 (new[] {
                     parent.Parent.IsBusy.Select(a => a ? "" : null),
-                    parent.Parent.Redmine.Select(a => a == null ? Properties.Resources.RibbonCmdMsgNeedsRedmineSettings : null),
+                    RedmineManager.Default.Select(a => a == null ? Properties.Resources.RibbonCmdMsgNeedsRedmineSettings : null),
                     myWorksApos.AnyAsObservable(a => a.IsError.Value, a => a.IsError.Value).Select(a  => a ? Properties.Resources.RibbonCmdMsgExistsUnsavedAppointment : null),
                     myWorksError.Select(a => !string.IsNullOrEmpty(a) ? a : null),
                     IsEditedApos.Inverse().Select(a  => a ? Properties.Resources.RibbonCmdMsgNotExistUpdatedAppointment : null),
@@ -306,14 +307,14 @@ namespace RedmineTimePuncher.ViewModels.Input
                     await execUpdateAsync(parent, async () =>
                     {
                         // 更新された予定を、Redmineに反映する。
-                        parent.Parent.Redmine.Value.SetEntryApos(parent.Parent.Settings, myWorksApos.ToList(), out setFails);
+                        RedmineManager.Default.Value.SetEntryApos(SettingsModel.Default, myWorksApos.ToList(), out setFails);
 
                         // 削除された予定を、Redmineに反映する。
-                        parent.Parent.Redmine.Value.DelEntryApos(parent.DeletedAppointments.ToList(), out delFails);
+                        RedmineManager.Default.Value.DelEntryApos(parent.DeletedAppointments.ToList(), out delFails);
                         parent.DeletedAppointments.RemoveAll(a => !delFails.Any(b => b.Item1 == a));
 
                         // 予定を取りこむ
-                        var result = await Task.Run(() => parent.Parent.Redmine.Value.GetEntryApos(Resource, parent.Members.Resources.Value, parent.StartTime.Value, parent.EndTime.Value, out errorIds));
+                        var result = await Task.Run(() => RedmineManager.Default.Value.GetEntryApos(Resource, parent.Members.Resources.Value, parent.StartTime.Value, parent.EndTime.Value, out errorIds));
 
                         // 予定を画面に反映させる。
                         parent.Appointments.RemoveAll(a =>
@@ -338,14 +339,14 @@ namespace RedmineTimePuncher.ViewModels.Input
                         throw new ApplicationException(string.Format(Properties.Resources.msgErrInvalidTermComments, string.Join(", ", errorIds)));
                 }).AddTo(disposables);
 
-            Timer = parent.Parent.Settings.ObserveProperty(a => a.Appointment.MyWorks)
+            Timer = SettingsModel.Default.ObserveProperty(a => a.Appointment.MyWorks)
                 .Select(a => Resource.Updater.CreateAutoReloadTimer(a, SaveCommand.Command))
                 .DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             var canExport = (new[]
             {
                 parent.Parent.IsBusy.Select(a => a ? "" : null),
-                parent.Parent.Redmine.Select(a => a == null ? Properties.Resources.RibbonCmdMsgNeedsRedmineSettings : null),
+                RedmineManager.Default.Select(a => a == null ? Properties.Resources.RibbonCmdMsgNeedsRedmineSettings : null),
                 myWorksApos.AnyAsObservable(a => a.IsError.Value, a => a.IsError.Value).Select(a  => a ? Properties.Resources.RibbonCmdMsgExistsUnsavedAppointment : null),
                 myWorksError.Select(a => !string.IsNullOrEmpty(a) ? a : null),
             }).CombineLatestFirstOrDefault(a => a != null).ToReadOnlyReactivePropertySlim().AddTo(disposables);
@@ -364,7 +365,7 @@ namespace RedmineTimePuncher.ViewModels.Input
 
                     TraceHelper.TrackCommand(nameof(ToCSVCommand));
 
-                    parent.Parent.Settings.OutputData.CsvExport.Export(r.Date.Value, r.Appointments);
+                    SettingsModel.Default.OutputData.CsvExport.Export(r.Date.Value, r.Appointments);
                     await Task.CompletedTask;
                 }).AddTo(disposables);
 
@@ -376,7 +377,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 myWorksWarn,
                 (new[] {
                     canExport,
-                    parent.Parent.Settings.ObserveProperty(a => a.OutputData.ExtTool.Error.Value),
+                    SettingsModel.Default.ObserveProperty(a => a.OutputData.ExtTool.Error.Value),
                 }).CombineLatestFirstOrDefault(a => a != null),
                 async () =>
                 {
@@ -386,7 +387,7 @@ namespace RedmineTimePuncher.ViewModels.Input
 
                     TraceHelper.TrackCommand(nameof(ToExtToolCommand));
 
-                    parent.Parent.Settings.OutputData.ExportToExtTool(r.Date.Value, r.Appointments);
+                    SettingsModel.Default.OutputData.ExportToExtTool(r.Date.Value, r.Appointments);
                     await Task.CompletedTask;
                 }).AddTo(disposables);
 
@@ -531,7 +532,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     TraceHelper.TrackCommand(nameof(AlignEvenlyCommand));
 
                     var slot = parent.SelectedSlot.Value;
-                    var prohibitedTerms = parent.Parent.Settings.Schedule.SpecialTerms
+                    var prohibitedTerms = SettingsModel.Default.Schedule.SpecialTerms
                     .Where(a => a.ValidationType == TermInputValidationType.ProhibitedInput || a.ValidationType == TermInputValidationType.InputWarning)
                     .Where(a => slot.IntersectsWith(a)).ToList();
                     var slotCount = ((int)(slot.End - slot.Start).TotalMinutes - (prohibitedTerms.Sum(a => (a.End - a.Start).TotalMinutes))) / (int)tickLength.Value;
@@ -630,15 +631,15 @@ namespace RedmineTimePuncher.ViewModels.Input
                 save = SaveCommand.Command.CanExecuteChangedAsObservable().StartWithDefault().Select(a => SaveCommand.Command.CanExecute()).ToReactiveCommand().WithSubscribe(() =>
                 {
                     // 更新された予定を、、Redmineに反映する。
-                    parent.Parent.Redmine.Value.SetEntryApos(parent.Parent.Settings, myWorksApos.ToList(), out var failList1);
+                    RedmineManager.Default.Value.SetEntryApos(SettingsModel.Default, myWorksApos.ToList(), out var failList1);
 
                     // 削除された予定を、Redmineに反映する。
-                    parent.Parent.Redmine.Value.DelEntryApos(parent.DeletedAppointments.ToList(), out var failList2);
+                    RedmineManager.Default.Value.DelEntryApos(parent.DeletedAppointments.ToList(), out var failList2);
                     parent.DeletedAppointments.RemoveAll(a => !failList2.Any(b => b.Item1 == a));
 
                     // 予定を取りこむ
                     var errorIds = new List<int>();
-                    var result = parent.Parent.Redmine.Value.GetEntryApos(Resource, parent.Members.Resources.Value, parent.StartTime.Value, parent.EndTime.Value, out errorIds);
+                    var result = RedmineManager.Default.Value.GetEntryApos(Resource, parent.Members.Resources.Value, parent.StartTime.Value, parent.EndTime.Value, out errorIds);
 
                     // 予定を画面に反映させる。
                     parent.Appointments.RemoveAll(a =>
@@ -707,7 +708,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             }
 
             // 入力禁止エリアに予定がある場合は、確認後に削除する。
-            var allTerms = parent.Parent.Settings.Schedule.SpecialTerms.SelectMany(a => a.Split((int)parent.Parent.Settings.Schedule.TickLength))
+            var allTerms = SettingsModel.Default.Schedule.SpecialTerms.SelectMany(a => a.Split((int)SettingsModel.Default.Schedule.TickLength))
                 .Where(a => a.ValidationType == TermInputValidationType.InputWarning || a.ValidationType == TermInputValidationType.ProhibitedInput).ToList();
             var targetTerms = allTerms
                 .Where(a => result.Any(b => b.Start.TimeOfDay <= a.Start && a.End <= b.End.TimeOfDay)).ToList();
@@ -721,7 +722,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     var r = MessageBoxHelper.ConfirmQuestion(message);
                     if (r.HasValue && r.Value)
                     {
-                        foreach (var term in group.Split((int)parent.Parent.Settings.Schedule.TickLength))
+                        foreach (var term in group.Split((int)SettingsModel.Default.Schedule.TickLength))
                         {
                             var targetApos = result.Where(a => a.Start.TimeOfDay <= term.Start && term.End <= a.End.TimeOfDay).ToList();
                             if (targetApos.Any())
@@ -758,7 +759,7 @@ namespace RedmineTimePuncher.ViewModels.Input
         private (DateTime? Date, List<MyAppointment> Appointments) confirmExportIfNeeded()
         {
             var targetDate = parent.SelectedDate.Value;
-            var targetApos = myWorksApos.Where(a => parent.Parent.Settings.Schedule.Contains(parent.SelectedDate.Value, a)).ToList();
+            var targetApos = myWorksApos.Where(a => SettingsModel.Default.Schedule.Contains(parent.SelectedDate.Value, a)).ToList();
             if (targetApos.Count == 0)
             {
                 var r1 = MessageBoxHelper.ConfirmQuestion(string.Format(Properties.Resources.msgConfExportEmpty, targetDate.ToDateString()));
@@ -790,11 +791,11 @@ namespace RedmineTimePuncher.ViewModels.Input
             }
 
             // コピー先の日が休みの日かどうか？
-            var isToDateHoliday = !parent.Parent.Settings.Calendar.IsWorkingDay(toDate);
+            var isToDateHoliday = !SettingsModel.Default.Calendar.IsWorkingDay(toDate);
             if (isToDateHoliday)
             {
                 // コピー先の日を「直近の稼働日」に変更するかどうか確認する
-                var recentWorkDay = parent.Parent.Settings.Calendar.GetMostRecentWorkingDay(toDate, moveNext);
+                var recentWorkDay = SettingsModel.Default.Calendar.GetMostRecentWorkingDay(toDate, moveNext);
                 var msg = string.Format(Properties.Resources.RibbonCmdCopyToConfirmMsgHolidy, toDate.ToDateString(), recentWorkDay.ToDateString());
                 var selectedIndex = MessageBoxHelper.Select(msg, toDate.ToDateString(), recentWorkDay.ToDateString());
                 if (!selectedIndex.HasValue)
@@ -833,7 +834,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     // 新しい表示範囲に含まれる編集中の予定は退避させておき、更新の処理が走った後に追加する
                     // これにより形式変更後も表示範囲に含まれる予定に関しては、削除の確認ダイアログが出ないようにしている
                     var editedApos = parent.Appointments.Where(a => a.IsMyWork.Value && a.ApoType == AppointmentType.Manual).ToList();
-                    removed = editedApos.Where(a => InputPeriodType.Last3Days.Contains(toDate, a.Start.Date, parent.Parent.Settings.Calendar)).ToList();
+                    removed = editedApos.Where(a => InputPeriodType.Last3Days.Contains(toDate, a.Start.Date, SettingsModel.Default.Calendar)).ToList();
                     foreach (var a in removed)
                     {
                         parent.Appointments.Remove(a);
@@ -849,7 +850,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                         parent.SetValueWithoutLoading(() => parent.PeriodType.Value = InputPeriodType.ThisWeek);
 
                         var editedApos = parent.Appointments.Where(a => a.IsMyWork.Value && a.ApoType == AppointmentType.Manual).ToList();
-                        removed = editedApos.Where(a => InputPeriodType.ThisWeek.Contains(toDate, a.Start.Date, parent.Parent.Settings.Calendar)).ToList();
+                        removed = editedApos.Where(a => InputPeriodType.ThisWeek.Contains(toDate, a.Start.Date, SettingsModel.Default.Calendar)).ToList();
                         foreach (var a in removed)
                         {
                             parent.Appointments.Remove(a);

@@ -1,6 +1,7 @@
 ﻿using LibRedminePower.Extentions;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
@@ -40,9 +41,10 @@ namespace RedmineTimePuncher.ViewModels.Input.Report
             this.setting = setting;
             this.model = new ReactivePropertySlim<PersonHourReportModel>(new PersonHourReportModel(setting.Period)).AddTo(disposables);
 
-            var settingsChanged = parent.Parent.ObserveProperty(p => p.Settings.Schedule).CombineLatest(
-                parent.Parent.ObserveProperty(p => p.Settings.Calendar),
-                parent.Parent.ObserveProperty(p => p.Settings.Category), (s1, s2, s3) => (s1, s2, s3));
+            var settingsChanged = 
+                SettingsModel.Default.ObserveProperty(p => p.Schedule).CombineLatest(
+                SettingsModel.Default.ObserveProperty(p => p.Calendar),
+                SettingsModel.Default.ObserveProperty(p => p.Category), (s1, s2, s3) => (s1, s2, s3));
 
             model.CombineLatest(settingsChanged, (m, s) => (m, s)).SubscribeWithErr(async p =>
             {
@@ -50,7 +52,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Report
                 await updateScheduledTimesAsync(p.m);
             }).AddTo(disposables);
 
-            model.CombineLatest(parent.Parent.Redmine, settingsChanged, (m, r, s) => (m, r, s)).SubscribeWithErr(async p =>
+            model.CombineLatest(RedmineManager.Default, settingsChanged, (m, r, s) => (m, r, s)).SubscribeWithErr(async p =>
             {
                 updateTitle();
                 await updateActualTimesAsync(p.m, p.r);
@@ -72,7 +74,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Report
 
         private void updateTitle()
         {
-            Title = $"{setting.Period.GetDescription()} ( {parent.Parent.Settings.Schedule.GetPeriodString(setting.Period)} )";
+            Title = $"{setting.Period.GetDescription()} ( {SettingsModel.Default.Schedule.GetPeriodString(setting.Period)} )";
         }
 
         private CompositeDisposable myDispo1 = null;
@@ -86,7 +88,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Report
                 if (m == null)
                     return;
 
-                m.UpdateScheduledTimes(parent.Parent.Settings, parent.Parent.Outlook);
+                m.UpdateScheduledTimes(SettingsModel.Default, OutlookManager.Default.Value);
 
                 myDispo1?.Dispose();
                 myDispo1 = new CompositeDisposable().AddTo(disposables);
@@ -117,7 +119,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Report
                 if (m == null || r == null)
                     return;
 
-                await m.UpdateActualTimesAsync(parent.Parent.Settings, r, parent.Parent.Outlook);
+                await m.UpdateActualTimesAsync(SettingsModel.Default, r, OutlookManager.Default.Value);
 
                 myDispo2?.Dispose();
                 myDispo2 = new CompositeDisposable().AddTo(disposables);
@@ -133,7 +135,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Report
         {
             updateTitle();
             var t1 = updateScheduledTimesAsync(model.Value);
-            var t2 = updateActualTimesAsync(model.Value, parent.Parent.Redmine.Value);
+            var t2 = updateActualTimesAsync(model.Value, RedmineManager.Default.Value);
             await Task.WhenAll(t1, t2);
         }
     }

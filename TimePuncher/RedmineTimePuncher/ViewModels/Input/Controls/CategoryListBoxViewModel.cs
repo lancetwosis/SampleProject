@@ -1,6 +1,7 @@
 ﻿using LibRedminePower.Extentions;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using RedmineTimePuncher.Extentions;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
@@ -62,7 +63,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
             }).AddTo(disposables);
             SearchText.SubscribeWithErr(_ => View.Value.Refresh()).AddTo(disposables);
 
-            parent.Parent.Redmine.CombineLatest(AllSettings, CacheManager.Default.Updated, (r, allCates, _) => (r, allCates)).SubscribeWithErr(p =>
+            RedmineManager.Default.CombineLatest(AllSettings, CacheManager.Default.Updated, (r, allCates, _) => (r, allCates)).SubscribeWithErr(p =>
             {
                 // Redmine や設定、キャッシュが更新された場合は必ず update する
                 update(p.r, p.allCates, parent.SelectedAppointments.Value);
@@ -71,7 +72,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
             {
                 // 選択が変更された場合は更新中でない場合のみ update する。
                 if (parent.NowUpdating != null && !parent.NowUpdating.Value)
-                    update(parent.Parent.Redmine.Value, AllSettings.Value, a);
+                    update(RedmineManager.Default.Value, AllSettings.Value, a);
             }).AddTo(disposables);
 
             CompositeDisposable myDisposable = null;
@@ -85,7 +86,7 @@ namespace RedmineTimePuncher.ViewModels.Input.Controls
                     apo.ObserveProperty(a => a.Ticket).SubscribeWithErr(_ =>
                     {
                         if (parent.NowUpdating != null && !parent.NowUpdating.Value)
-                            update(parent.Parent.Redmine.Value, AllSettings.Value, appointments);
+                            update(RedmineManager.Default.Value, AllSettings.Value, appointments);
                     }).AddTo(myDisposable);
                 }
             }).AddTo(disposables);

@@ -2,6 +2,8 @@
 using LibRedminePower.Extentions;
 using Microsoft.Win32;
 using RedmineTimePuncher.Behaviors;
+using RedmineTimePuncher.Models.Managers;
+using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.ViewModels;
 using RedmineTimePuncher.ViewModels.Input;
 using RedmineTimePuncher.ViewModels.Input.Controls;
@@ -131,7 +133,7 @@ namespace RedmineTimePuncher.Views
         private void scrollToWorkStartTime(RadScheduleView schedule)
         {
             var vm = schedule.DataContext as MainWindowViewModel;
-            schedule.ScrollTimeRuler(vm.Settings.Schedule.WorkStartTime, true);
+            schedule.ScrollTimeRuler(SettingsModel.Default.Schedule.WorkStartTime, true);
         }
     }
 }

@@ -21,8 +21,6 @@ namespace RedmineTimePuncher.Behaviors
 {
     public class MyGridViewDragDropBehavior : BehaviorBase<RadGridView>
     {
-        public static RedmineManager Redmine { get; set; }
-
         protected override void OnSetup()
         {
             this.unsubscribeFromDragDropEvents();
@@ -58,10 +56,10 @@ namespace RedmineTimePuncher.Behaviors
             if (DataObjectHelper.GetDataPresent(e.Data, "UniformResourceLocator", false))
             {
                 var url = DataObjectHelper.GetData(e.Data, typeof(string), true) as string;
-                var ticketNo = Redmine.GetTicketNoFromUrl(url);
+                var ticketNo = RedmineManager.Default.Value.GetTicketNoFromUrl(url);
                 if (!string.IsNullOrEmpty(ticketNo))
                 {
-                    var ticket = Redmine.GetTicketIncludeJournal(ticketNo, out var _);
+                    var ticket = RedmineManager.Default.Value.GetTicketIncludeJournal(ticketNo, out var _);
                     if (ticket != null)
                     {
                         var vm = AssociatedObject.DataContext as TicketGridViewModel;
@@ -126,7 +124,7 @@ namespace RedmineTimePuncher.Behaviors
             if (DataObjectHelper.GetDataPresent(e.Data, "UniformResourceLocator", false))
             {
                 var url = DataObjectHelper.GetData(e.Data, typeof(string), true) as string;
-                var ticketNo = Redmine.GetTicketNoFromUrl(url);
+                var ticketNo = RedmineManager.Default.Value.GetTicketNoFromUrl(url);
                 if (string.IsNullOrEmpty(ticketNo))
                 {
                     e.Effects = DragDropEffects.None;

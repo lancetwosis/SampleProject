@@ -97,6 +97,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
         public CreateTicketViewModel(MainWindowViewModel parent) : base(ApplicationMode.TicketCreater, parent)
         {
+
             Parent = parent;
 
             IsBusy = new BusyTextNotifier();
@@ -109,7 +110,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 CreateMode = prev.CreateMode;
             }
 
-            ErrorMessage = IsSelected.CombineLatest(parent.Redmine, parent.ObserveProperty(a => a.Settings.CreateTicket), (isSelected, r, s) => (isSelected, r, s)).Select(t =>
+            ErrorMessage = IsSelected.CombineLatest(RedmineManager.Default, SettingsModel.Default.ObserveProperty(a => a.CreateTicket), (isSelected, r, s) => (isSelected, r, s)).Select(t =>
             {
                 // RedmineManager のチェックは MainWindowViewModel で行っているのでスルーする
                 if (!t.isSelected || t.r == null)
@@ -127,7 +128,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
 
             // チケット番号
             TicketNo = new ReactivePropertySlim<string>(prev != null && prev.Ticket != null ? prev.Ticket.Id.ToString() : null).AddTo(disposables);
-            TicketNo.CombineLatest(parent.Redmine, (no, r) => (no, r)).Where(p => p.no != null && p.r != null).SubscribeWithErr(p =>
+            TicketNo.CombineLatest(RedmineManager.Default, (no, r) => (no, r)).Where(p => p.no != null && p.r != null).SubscribeWithErr(p =>
             {
                 var no = p.no.Trim().TrimStart('#');
                 if (!Regex.IsMatch(no, "^[0-9]+$"))
@@ -139,7 +140,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                 MyIssue ticket = null;
                 try
                 {
-                    ticket = parent.Redmine.Value.GetTicketsById(no);
+                    ticket = RedmineManager.Default.Value.GetTicketsById(no);
                 }
                 catch
                 {
@@ -188,7 +189,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             });
 
             DetectionProcess = new DetectionProcessViewModel().AddTo(disposables);
-            ReviewMethod = new ReviewMethodViewModel(parent.Settings).AddTo(disposables);
+            ReviewMethod = new ReviewMethodViewModel(SettingsModel.Default).AddTo(disposables);
 
             ReviewerTwinList = new ReviewersTwinListViewModel().AddTo(disposables);
             OperatorTwinList = new ReviewersTwinListViewModel().AddTo(disposables);
@@ -208,30 +209,30 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
             var needsRestorePrev = true;
             try
             {
-                needsRestorePrev = updateTicket(parent.Settings, prev, Ticket, true);
+                needsRestorePrev = updateTicket(SettingsModel.Default, prev, Ticket, true);
             }
             catch (System.Exception e)
             {
                 Logger.Warn(e, $"Failed to updateTicket");
             }
-            parent.Redmine.CombineLatest(onTicketUpdated, CacheManager.Default.Updated, (r, t, _) => (r, t)).Skip(1).SubscribeWithErr(p =>
+            RedmineManager.Default.CombineLatest(onTicketUpdated, CacheManager.Default.Updated, (r, t, _) => (r, t)).Skip(1).SubscribeWithErr(p =>
             {
-                if (p.r == null || p.t == null || !parent.Settings.CreateTicket.IsValid() || !p.r.CanUseAdminApiKey())
+                if (p.r == null || p.t == null || !SettingsModel.Default.CreateTicket.IsValid() || !p.r.CanUseAdminApiKey())
                     return;
 
                 if (needsRestorePrev)
-                    needsRestorePrev = updateTicket(parent.Settings, prev, p.t, needsRestorePrev);
+                    needsRestorePrev = updateTicket(SettingsModel.Default, prev, p.t, needsRestorePrev);
                 else
-                    updateTicket(parent.Settings, this, p.t, needsRestorePrev);
+                    updateTicket(SettingsModel.Default, this, p.t, needsRestorePrev);
             }).AddTo(disposables);
 
             // 設定更新時の処理
-            updateSettings(parent.Settings, prev);
-            parent.ObserveProperty(a => a.Settings.CreateTicket).CombineLatest(
-                parent.ObserveProperty(a => a.Settings.TranscribeSettings),
-                parent.ObserveProperty(a => a.Settings.RequestWork), (_1, _2, _3) => (_1, _2, _3)).Skip(1).SubscribeWithErr(c =>
+            updateSettings(SettingsModel.Default, prev);
+            SettingsModel.Default.ObserveProperty(a => a.CreateTicket).CombineLatest(
+                SettingsModel.Default.ObserveProperty(a => a.TranscribeSettings),
+                SettingsModel.Default.ObserveProperty(a => a.RequestWork), (_1, _2, _3) => (_1, _2, _3)).Skip(1).SubscribeWithErr(c =>
                 {
-                    updateSettings(parent.Settings, this);
+                    updateSettings(SettingsModel.Default, this);
                 }).AddTo(disposables);
 
             // タイトル
@@ -289,9 +290,9 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
                     using (IsBusy.ProcessStart(Resources.ProgressMsgCreatingIssues))
                     {
                         if (CreateMode == CreateTicketMode.Review)
-                            await createReviewTicketAsync(parent.Redmine.Value, parent.Settings);
+                            await createReviewTicketAsync(RedmineManager.Default.Value, SettingsModel.Default);
                         else if (CreateMode == CreateTicketMode.Work)
-                            await createRequestsTicketAsync(parent.Redmine.Value, parent.Settings);
+                            await createRequestsTicketAsync(RedmineManager.Default.Value, SettingsModel.Default);
                     }
                 }).AddTo(disposables);
 

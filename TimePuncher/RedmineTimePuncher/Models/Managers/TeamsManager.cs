@@ -17,6 +17,9 @@ using RedmineTimePuncher.ViewModels.Input.Slots;
 using RedmineTimePuncher.Models.Settings;
 using Cysharp.Diagnostics;
 using Reactive.Bindings;
+using Reactive.Bindings.ObjectExtensions;
+using Reactive.Bindings.Extensions;
+using System.Reactive.Linq;
 
 namespace RedmineTimePuncher.Models.Managers
 {
@@ -25,27 +28,25 @@ namespace RedmineTimePuncher.Models.Managers
     /// </summary>
     public class TeamsManager : LibRedminePower.Models.Bases.ModelBaseSlim
     {
-        public static int TickLength;
-        public bool IsInstalled { get; }
+        public static ReadOnlyReactivePropertySlim<TeamsManager> Default { get; set; } = 
+            SettingsModel.Default.ObserveProperty(a => a.Appointment.Teams.IsEnabled).Select(a => new TeamsManager(a))
+            .DisposePreviousValue().ToReadOnlyReactivePropertySlim();
+
+        public bool IsInstalled { get; } = false;
 
         // インストール確認
-        private static string installedFolder = Path.Combine(
+        private string installedFolder = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
             @"Microsoft\Teams");
-        private string deadFileName = Path.Combine(installedFolder, @".dead");
-
         private string teamsFolderName = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
             @"Microsoft\Teams");
 
         private string msTeamParserExePath;
-        private SettingsModel settings;
-        private DebugDataManager debugDataManager = new DebugDataManager();
 
-        public TeamsManager(SettingsModel settings)
+        public TeamsManager(bool isEnabled)
         {
-            this.settings = settings;
-            if (!settings.Appointment.Teams.IsEnabled) return;
+            if (isEnabled) return;
 
             IsInstalled = isInstalled();
 
@@ -60,7 +61,8 @@ namespace RedmineTimePuncher.Models.Managers
         {
             if (System.IO.Directory.Exists(installedFolder))
             {
-                if(System.IO.File.Exists(deadFileName))
+                var deadFileName = Path.Combine(installedFolder, @".dead");
+                if (System.IO.File.Exists(deadFileName))
                     return false;
                 else
                     return true;
@@ -78,11 +80,9 @@ namespace RedmineTimePuncher.Models.Managers
         public async Task<List<MyAppointment>> GetCallAsync(Resource resource, CancellationToken token, DateTime start, DateTime end)
         {
             if (!IsInstalled) return new List<MyAppointment>();
-            if (!settings.Appointment.Teams.IsEnabledCallHistory) return new List<MyAppointment>();
+            if (!SettingsModel.Default.Appointment.Teams.IsEnabledCallHistory) return new List<MyAppointment>();
 
-            if (debugDataManager.IsExist) return debugDataManager.GetData(resource, start, end, AppointmentType.TeamsCall);
-
-            var today = settings.Schedule.GetToday();
+            var today = SettingsModel.Default.Schedule.GetToday();
             // 未来の日付が指定されたら履歴は存在しないのでファイルの読み込みは行わず空を返す
             if (today.AddDays(1) < start)
                 return new List<MyAppointment>();
@@ -177,6 +177,8 @@ namespace RedmineTimePuncher.Models.Managers
                                 meetings.Add(i);
                         }
 
+                        var tickLength = (int)SettingsModel.Default.Schedule.TickLength;
+
                         foreach (var call in calls)
                         {
                             var prop = call.properties;
@@ -186,8 +188,8 @@ namespace RedmineTimePuncher.Models.Managers
                                 var isFromMe = (bool)(callLog.callDirection == "outgoing");
                                 var startTime = ((DateTime)callLog.startTime).ToLocalTime();
                                 var endTime = ((DateTime)callLog.endTime).ToLocalTime();
-                                if (endTime - startTime <= TimeSpan.FromMinutes(TickLength))
-                                    endTime = startTime + TimeSpan.FromMinutes(TickLength);
+                                if (endTime - startTime <= TimeSpan.FromMinutes(tickLength))
+                                    endTime = startTime + TimeSpan.FromMinutes(tickLength);
 
                                 var attenders = new List<dynamic>();
 
@@ -237,7 +239,7 @@ namespace RedmineTimePuncher.Models.Managers
 
         public List<Slot> GetStatus(Resource resource, DateTime start, DateTime end)
         {
-            if (!IsInstalled || !settings.Appointment.Teams.IsEnabledStatus)
+            if (!IsInstalled || !SettingsModel.Default.Appointment.Teams.IsEnabledStatus)
                 return new List<Slot>();
 
             var result = new List<TeamsStatusSlot>();

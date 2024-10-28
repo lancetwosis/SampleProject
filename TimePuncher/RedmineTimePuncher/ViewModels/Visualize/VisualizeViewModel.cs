@@ -65,7 +65,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         {
             this.Parent = parent;
 
-            ErrorMessage = IsSelected.CombineLatest(parent.Redmine, (i, r) => (isSelected: i, r)).Select(t =>
+            ErrorMessage = IsSelected.CombineLatest(RedmineManager.Default, (i, r) => (isSelected: i, r)).Select(t =>
             {
                 // RedmineManager のチェックは MainWindowViewModel で行っているのでスルーする
                 if (!t.isSelected || t.r == null)
@@ -90,7 +90,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             SaveAsResultCommand = new CommandBase(Resources.VisualizeCmdSaveAs, Resources.saveas_icon);
 
             CompositeDisposable myDisposables = null;
-            parent.Redmine.SubscribeWithErr(r =>
+            RedmineManager.Default.SubscribeWithErr(r =>
             {
                 if (r == null || !r.CanUseAdminApiKey())
                     return;

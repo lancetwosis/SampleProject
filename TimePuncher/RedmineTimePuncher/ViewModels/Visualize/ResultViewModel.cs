@@ -7,6 +7,7 @@ using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
+using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.Models.Visualize;
 using RedmineTimePuncher.Models.Visualize.Factors;
 using RedmineTimePuncher.Properties;
@@ -196,7 +197,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
             Model.CustomFields = CacheManager.Default.CustomFields;
             Model.Users = CacheManager.Default.Users;
-            Model.Categories = parent.Parent.Settings.Category.Items.ToList();
+            Model.Categories = SettingsModel.Default.Category.Items.ToList();
 
             Model.TimeEntries = filters.GetTimeEntries();
             Model.Tickets = await filters.GetTicketsAsync(Model.TimeEntries);

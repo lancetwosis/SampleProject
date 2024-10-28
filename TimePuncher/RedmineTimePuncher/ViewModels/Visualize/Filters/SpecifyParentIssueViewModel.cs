@@ -2,6 +2,7 @@
 using NetOffice.OutlookApi.Enums;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
@@ -29,12 +30,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
         public ReactiveCommand GoToTicketCommand { get; set; }
 
         // https://www.colordic.org/colorsample/f0fff7
-        public SpecifyParentIssueViewModel(TicketFiltersModel model, ReactivePropertySlim<RedmineManager> redmine)
+        public SpecifyParentIssueViewModel(TicketFiltersModel model)
             : base(model.ToReactivePropertySlimAsSynchronized(a => a.SpecifyParentIssue), ColorEx.ToBrush("#f0fff7"))
         {
             ParentIssueId = model.ToReactivePropertySlimAsSynchronized(a => a.ParentIssueId).AddTo(disposables);
 
-            var parentIssue = ParentIssueId.StartWithDefault().CombineLatest(redmine, (no, r) => (no, r)).Where(p => p.no != null && p.r != null)
+            var parentIssue = ParentIssueId.StartWithDefault().CombineLatest(RedmineManager.Default, (no, r) => (no, r)).Where(p => p.no != null && p.r != null)
                 .Throttle(TimeSpan.FromMilliseconds(500)).ObserveOnUIDispatcher().Select(p =>
                 {
                     var no = p.no.Trim().TrimStart('#');
@@ -42,7 +43,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
                     {
                         try
                         {
-                            return redmine.Value.GetTicketsById(no);
+                            return RedmineManager.Default.Value.GetTicketsById(no);
                         }
                         catch
                         {

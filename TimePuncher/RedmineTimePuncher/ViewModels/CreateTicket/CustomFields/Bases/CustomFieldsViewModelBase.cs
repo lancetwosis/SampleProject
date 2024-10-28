@@ -2,6 +2,7 @@
 using LibRedminePower.ViewModels.Bases;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
@@ -39,9 +40,9 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
 
             TicketType = ticketType;
 
-            parent.Parent.Redmine.CombineLatest(CacheManager.Default.Updated,
-                parent.Parent.Settings.ObserveProperty(a => a.CreateTicket),
-                parent.Parent.Settings.ObserveProperty(a => a.ReviewCopyCustomFields),
+            Models.Managers.RedmineManager.Default.CombineLatest(CacheManager.Default.Updated,
+                SettingsModel.Default.ObserveProperty(a => a.CreateTicket),
+                SettingsModel.Default.ObserveProperty(a => a.ReviewCopyCustomFields),
                 parent.ObserveProperty(a => a.Ticket).Pairwise(),
                 (r, _1, _2, _3, p) => (Redmine: r, Pair: p)).SubscribeWithErr(p =>
                 {
@@ -49,11 +50,11 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.CustomFields.Bases
                         p.Pair.OldItem.Project.Id != p.Pair.NewItem.Project.Id)
                     {
                         // チケットのプロジェクトが変わった場合だけカスタムフィールド全体を更新する
-                        update(p.Redmine, p.Pair.NewItem, parent.Parent.Settings);
+                        update(p.Redmine, p.Pair.NewItem, SettingsModel.Default);
                     }
 
                     // カスタムフィールドに「前回値」もしくは「対象チケットの値」を設定する
-                    updateValues(p.Redmine, p.Pair.NewItem, parent.Parent.Settings);
+                    updateValues(p.Redmine, p.Pair.NewItem, SettingsModel.Default);
                 }).AddTo(disposables);
         }
 

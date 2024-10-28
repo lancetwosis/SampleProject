@@ -3,9 +3,11 @@ using LibRedminePower.Helpers;
 using LibRedminePower.ViewModels;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
+using RedmineTimePuncher.Models.Settings;
 using RedmineTimePuncher.ViewModels.Input.Resources;
 using System;
 using System.Collections.Generic;
@@ -28,7 +30,7 @@ namespace RedmineTimePuncher.ViewModels.Input
         public MembersViewModel(InputViewModel parent)
         {
             // ユーザー情報を元にリソースを作成する。
-            Resources = parent.Parent.Settings.ObserveProperty(a => a.User).Select(u => u.Items.Select(a => new MemberResource(a, parent.MyWorks.Resource)).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Resources = SettingsModel.Default.ObserveProperty(a => a.User).Select(u => u.Items.Select(a => new MemberResource(a, parent.MyWorks.Resource)).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             Resources.SubscribeWithErr(users =>
             {
                 var members = parent.MyType.Resources.OfType<MemberResource>().ToList();
@@ -41,7 +43,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                 parent.ResourceTypes.Remove(parent.MyType);
                 parent.ResourceTypes.Add(parent.MyType);
             }).AddTo(disposables);
-            Resources.CombineLatest(parent.Parent.Redmine.Where(a => a != null),
+            Resources.CombineLatest(RedmineManager.Default.Where(a => a != null),
                 (users, r) => users.Select(a => a.User).Concat(new[] { CacheManager.Default.MyUser }).ToList())
                 .SubscribeWithErr(a => MyTimeEntry.DicUsers = a.ToDictionary(b => b.Id)).AddTo(disposables);
 

@@ -30,8 +30,6 @@ namespace RedmineTimePuncher.Behaviors
             CacheConvertedDragData = true;
         }
 
-        public static RedmineManager Redmine { get; set; }
-
         public override IEnumerable<IOccurrence> ConvertDraggedData(object data)
         {
             InputView.IsUrlDragging = false;
@@ -58,10 +56,10 @@ namespace RedmineTimePuncher.Behaviors
             else if (DataObjectHelper.GetDataPresent(data, "UniformResourceLocator", false))
             {
                 var url = DataObjectHelper.GetData(data, typeof(string), true) as string;
-                var ticketNo = Redmine.GetTicketNoFromUrl(url);
+                var ticketNo = RedmineManager.Default.Value.GetTicketNoFromUrl(url);
                 if (!string.IsNullOrEmpty(ticketNo))
                 {
-                    var ticket = Redmine.GetTicketIncludeJournal(ticketNo, out var _);
+                    var ticket = RedmineManager.Default.Value.GetTicketIncludeJournal(ticketNo, out var _);
                     if (ticket != null)
                     {
                         InputView.IsUrlDragging = true;

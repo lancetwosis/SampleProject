@@ -203,6 +203,7 @@ namespace RedmineTimePuncher.Models.Settings
 
         public override void SetupConfigure(IMapperConfigurationExpression cfg)
         {
+            // 個人情報はコピーしない
             cfg.CreateMap<RedmineSettingsModel, RedmineSettingsModel>()
                 .ForMember(m => m.UserName, o => o.Ignore())
                 .ForMember(m => m.UserNameEncrypt, o => o.Ignore())

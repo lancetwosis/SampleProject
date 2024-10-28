@@ -2,6 +2,7 @@
 using LibRedminePower.Interfaces;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models.Managers;
@@ -26,7 +27,7 @@ namespace RedmineTimePuncher.ViewModels.TableEditor
         public TableEditorViewModel(MainWindowViewModel parent)
             : base(ApplicationMode.TableEditor, parent)
         {
-            var redmine = parent.Redmine.Select(r => (r?.Manager, r?.MasterManager, (ICacheManager)CacheManager.Default)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var redmine = RedmineManager.Default.Select(r => (r?.Manager, r?.MasterManager, (ICacheManager)CacheManager.Default)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             ViewModel = new RedmineTableEditor.ViewModels.TableEditorViewModel(redmine).AddTo(disposables);
 
             IsSelected.SubscribeWithErr(i =>

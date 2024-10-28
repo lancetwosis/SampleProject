@@ -35,10 +35,7 @@ namespace RedmineTimePuncher.Models
         public static bool IsAutoSameName { get; set; }
         public static ReactivePropertySlim<AppointmentColorType> ColorType { get; set; } = new ReactivePropertySlim<AppointmentColorType>();
         public static TimeMarker EditMarker { get; set; }
-        public static RedmineManager Redmine { get; set; }
         public static ReactivePropertySlim<List<MyCategory>> AllCategories { get; set; } = new ReactivePropertySlim<List<MyCategory>>();
-
-        public static string UrlBase { get; set; }
 
         private string ticketNo;
         public string TicketNo
@@ -238,7 +235,7 @@ namespace RedmineTimePuncher.Models
             if (propertyName == nameof(this.TicketNo))
             {
                 ticketNoRp.Value = TicketNo;
-                Url = UrlBase + $"issues/{TicketNo}";
+                Url = SettingsModel.Default.Redmine.UrlBase + $"issues/{TicketNo}";
             }
             else if (propertyName == nameof(Ticket))
                 ticketRp.Value = Ticket;
@@ -259,7 +256,7 @@ namespace RedmineTimePuncher.Models
             ticketNoRp.Pairwise().Where(a => !disableGetTicket.IsBusy && !string.IsNullOrEmpty(a.NewItem)).SubscribeWithErr(no =>
             {
                 // チケットを取得する。
-                Ticket = Redmine.GetTicketIncludeJournal(no.NewItem, out var _);
+                Ticket = RedmineManager.Default.Value.GetTicketIncludeJournal(no.NewItem, out var _);
                 if (Ticket == null)
                     return;
 
@@ -281,7 +278,7 @@ namespace RedmineTimePuncher.Models
                 AllCategories.Select(_ => ""),                  // 「作業分類」の一覧が更新されたり
                 ticketRp.Where(a => a != null).Select(_ => ""), // チケットが更新されたりしたら
                 CacheManager.Default.Updated.Select(_ => "")    // キャッシュが更新されたら
-            }.CombineLatest().Where(_ => Redmine != null).Select(_ =>
+            }.CombineLatest().Where(_ => RedmineManager.Default.Value != null).Select(_ =>
             {
                 var proj = CacheManager.Default.Projects.FirstOrDefault(p => p.Id == ticketRp.Value.Project.Id);
                 if (proj != null)
@@ -328,7 +325,7 @@ namespace RedmineTimePuncher.Models
 
             ticketRp.Where(t => t != null).SubscribeWithErr(t =>
             {
-                ProjectStatus = Redmine == null || CacheManager.Default.IsActiveProject(t.Project.Id) ?
+                ProjectStatus = RedmineManager.Default.Value == null || CacheManager.Default.IsActiveProject(t.Project.Id) ?
                     ProjectStatusType.Active :
                     ProjectStatusType.NotActive;
             }).AddTo(disposables);
@@ -410,7 +407,7 @@ namespace RedmineTimePuncher.Models
         public MyAppointment(IResource resource, MyTimeEntry entry) : this()
         {
             var issueId = entry.Entry.Issue.Id;
-            var issue = Redmine.GetTicketIncludeJournal(issueId.ToString(), out var error);
+            var issue = RedmineManager.Default.Value.GetTicketIncludeJournal(issueId.ToString(), out var error);
 
             if (string.IsNullOrEmpty(error))
                 Subject = !string.IsNullOrEmpty(entry.Subject) ? entry.Subject : issue.Subject;
@@ -518,9 +515,9 @@ namespace RedmineTimePuncher.Models
             var result = new List<MyIssue>();
             while (true)
             {
-                var issue = Redmine.GetIssueIncludeJournal(ticketNo);
+                var issue = RedmineManager.Default.Value.GetIssueIncludeJournal(ticketNo);
                 if (issue == null) break;
-                var issueSlim = Redmine.RestoreJournals(issue, End);
+                var issueSlim = RedmineManager.Default.Value.RestoreJournals(issue, End);
                 result.Add(issueSlim);
                 if (!issueSlim.ParentId.HasValue) break;
                 ticketNo = issueSlim.ParentId.Value.ToString();

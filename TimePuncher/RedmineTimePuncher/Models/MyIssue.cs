@@ -3,6 +3,7 @@ using LibRedminePower.Models;
 using Reactive.Bindings.Extensions;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models.Managers;
+using RedmineTimePuncher.Models.Settings;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -16,8 +17,6 @@ namespace RedmineTimePuncher.Models
 {
     public class MyIssue : IdName, IComparable<MyIssue>, IDisposable
     {
-        public static string UrlBase;
-
         public int? ParentId { get; set; }
         public MyPriority Priority { get; set; } = new MyPriority();
         public IdName Project { get; set; } = new IdName();
@@ -181,7 +180,7 @@ namespace RedmineTimePuncher.Models
 
         public static string GetUrl(int id)
         {
-            return $"{UrlBase}issues/{id}";
+            return $"{SettingsModel.Default.Redmine.UrlBase}issues/{id}";
         }
     }
 }

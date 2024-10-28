@@ -59,16 +59,11 @@ namespace RedmineTimePuncher.ViewModels
         public ReactiveCommand RibbonMinimizeCommand { get; set; }
         public ReactiveCommand ShowVersionDialogCommand { get; set; }
         public ReactiveCommand ShowOnlienHelpCommand { get; set; }
-        public AsyncReactiveCommand ShowSettingDialogCommand { get; set; }
+        public ReactiveCommand ShowSettingDialogCommand { get; set; }
 
         public ReactiveCommand<RoutedEventArgs> WindowLoadedEventCommand { get; }
         public ReactiveCommand<CancelEventArgs> WindowClosingEventCommand { get; set; }
         public ReactiveCommand<EventArgs> WindowClosedEventCommand { get; set; }
-
-        public SettingsModel Settings { get; set; }
-        public ReactivePropertySlim<RedmineManager> Redmine { get; set; }
-        public OutlookManager Outlook { get; set; }
-        public TeamsManager Teams { get; set; }
 
         public ReactivePropertySlim<int> SelectedIndex { get; set; }
         public ReadOnlyReactivePropertySlim<ApplicationMode> Mode { get; set; }
@@ -82,6 +77,8 @@ namespace RedmineTimePuncher.ViewModels
         public WikiPageViewModel WikiPage { get; set; }
         public ObservableCollection<FunctionViewModelBase> Functions { get; set; }
 
+        private ReactivePropertySlim<RedmineManager> redmine;
+
         public MainWindowViewModel(string[] args)
         {
             SelectedIndex = new ReactivePropertySlim<int>(0).AddTo(disposables);
@@ -92,25 +89,15 @@ namespace RedmineTimePuncher.ViewModels
             RibbonMinimizeCommand = new ReactiveCommand().WithSubscribe(() =>
             Properties.Settings.Default.RadRibbonViewIsMinimized = !Properties.Settings.Default.RadRibbonViewIsMinimized).AddTo(disposables);
 
-            // 設定を作成する。
-            Settings = SettingsModel.Read();
-
             // 各種マネージャーを作成する。
-            Outlook = new OutlookManager(Settings.ObserveProperty(a => a.Appointment.Outlook).ToReadOnlyReactivePropertySlim().AddTo(disposables)).AddTo(disposables);
-            Teams = new TeamsManager(Settings);
-            Redmine = new ReactivePropertySlim<RedmineManager>().AddTo(disposables);
+            redmine = new ReactivePropertySlim<RedmineManager>().AddTo(disposables);
+            RedmineManager.Default = redmine.ToReadOnlyReactivePropertySlim().AddTo(disposables);
+
             ErrorMessage = new TextNotifier().AddTo(disposables);
-            Settings.ObserveProperty(a => a.Redmine).SubscribeWithErr(async s =>
+            SettingsModel.Default.ObserveProperty(a => a.Redmine).SubscribeWithErr(async s =>
             {
                 await tryConnectAsync(s);
             }).AddTo(disposables);
-            Redmine.Where(a => a != null).SubscribeWithErr(r =>
-            {
-                MyAppointment.Redmine = r;
-                OutlookManager.Redmine = r;
-                MyScheduleViewDragDropBehavior.Redmine = r;
-                MyGridViewDragDropBehavior.Redmine = r;
-            });
 
             Input = new InputViewModel(this).AddTo(disposables);
             TableEditor = new TableEditorViewModel(this).AddTo(disposables);
@@ -121,7 +108,7 @@ namespace RedmineTimePuncher.ViewModels
             // 定義の順番が NavigationView での表示順と処理に影響するので注意すること
             Functions = new ObservableCollection<FunctionViewModelBase>() { Input, Visualize, TableEditor, CreateTicket, WikiPage };
 
-            Redmine.CombineLatest(Functions.Select(f => f.ErrorMessage).Where(e => e != null).CombineLatest(), (r, errs) => (r, errs)).SubscribeWithErr(p =>
+            redmine.CombineLatest(Functions.Select(f => f.ErrorMessage).Where(e => e != null).CombineLatest(), (r, errs) => (r, errs)).SubscribeWithErr(p =>
             {
                 if (p.r != null)
                 {
@@ -151,81 +138,34 @@ namespace RedmineTimePuncher.ViewModels
             ShowOnlienHelpCommand = new ReactiveCommand().WithSubscribe(() => Process.Start(ApplicationInfo.AppBaseUrl)).AddTo(disposables);
 
             // 設定ダイアログを開く
-            ShowSettingDialogCommand = IsBusy.Inverse().ToAsyncReactiveCommand().WithSubscribe(async () =>
+            ShowSettingDialogCommand = IsBusy.Inverse().ToReactiveCommand().WithSubscribe(() =>
             {
                 TraceHelper.TrackAtomicFeature($"{nameof(ShowSettingDialogCommand)}.Executed@{Mode.Value}");
 
-                using (IsBusy.ProcessStart(""))
-                {
-                    // 自動更新を止めておく
-                    Input.Timers.Where(a => a != null).Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Stop());
-                    if (Input.Redmine.QueryTimer != null && Input.Redmine.QueryTimer.Value != null)
-                        Input.Redmine.QueryTimer.Value.Stop();
+                // 自動更新を止めておく
+                Input.Timers.Where(a => a != null).Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Stop());
+                if (Input.Redmine.QueryTimer != null && Input.Redmine.QueryTimer.Value != null)
+                    Input.Redmine.QueryTimer.Value.Stop();
 
-                    var clone = Settings.Clone();
-                    using (var vm = new SettingsViewModel(this, clone))
+                var clone = SettingsModel.Default.Clone();
+                using (var vm = new SettingsViewModel(this, clone))
+                {
+                    var dialog = new Views.Settings.SettingsDialog();
+                    dialog.DataContext = vm;
+                    dialog.Owner = App.Current.MainWindow;
+                    dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
+                    dialog.ShowDialog();
+                    if (dialog.DialogResult == true)
                     {
-                        var dialog = new Views.Settings.SettingsDialog();
-                        dialog.DataContext = vm;
-                        dialog.Owner = App.Current.MainWindow;
-                        dialog.WindowStartupLocation = WindowStartupLocation.CenterOwner;
-                        dialog.ShowDialog();
-                        if (dialog.DialogResult == true)
+                        SettingsModel.Default = clone;
+                        SettingsModel.Default.Save();
+
+                        // 設定ダイアログを開く前に、タイマーを止めていたので、再開させる。
+                        Input.Timers.Select(a => a.Value).Where(a => a != null && !a.IsEnabled).ToList().ForEach(a => { a.Reset(); a.Start(); });
+                        if (Input.Redmine.QueryTimer != null && Input.Redmine.QueryTimer.Value != null && !Input.Redmine.QueryTimer.Value.IsEnabled)
                         {
-                            if (!Settings.Redmine.Equals(clone.Redmine))
-                            {
-                                Settings.Redmine = clone.Redmine;
-                            }
-                            if (Settings.Schedule.ToJson() != clone.Schedule.ToJson())
-                            {
-                                Settings.Schedule = clone.Schedule;
-                                Input.MinTimeRulerExtent.Value = Settings.Schedule.TickLength.GetDefaultMinTimeRulerExtent();
-                                Input.ScalingSliderValue.Value = 100;
-                            }
-                            if (Settings.Calendar.ToJson() != clone.Calendar.ToJson())
-                                Settings.Calendar = clone.Calendar;
-                            if (Settings.Category.ToJson() != clone.Category.ToJson())
-                                Settings.Category = clone.Category;
-                            if (Settings.Appointment.ToJson() != clone.Appointment.ToJson())
-                            {
-                                Settings.Appointment = clone.Appointment;
-                            }
-                            else
-                            {
-                                // 設定が更新されていなかったら、自動更新を再開させる。
-                                Input.Timers.Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Reset());
-                                Input.Timers.Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Start());
-                            }
-                            if (Settings.Query.ToJson() != clone.Query.ToJson())
-                            {
-                                Settings.Query = clone.Query;
-                            }
-                            else
-                            {
-                                // 設定が更新されていなかったら、自動更新を再開させる。
-                                if (Input.Redmine.QueryTimer != null && Input.Redmine.QueryTimer.Value != null)
-                                {
-                                    Input.Redmine.QueryTimer.Value.Reset();
-                                    Input.Redmine.QueryTimer.Value.Start();
-                                }
-                            }
-                            if (Settings.User.ToJson() != clone.User.ToJson())
-                                Settings.User = clone.User;
-                            if (Settings.OutputData.ToJson() != clone.OutputData.ToJson())
-                                Settings.OutputData = clone.OutputData;
-                            if (Settings.CreateTicket.ToJson() != clone.CreateTicket.ToJson())
-                                Settings.CreateTicket = clone.CreateTicket;
-                            if (Settings.ReviewIssueList.ToJson() != clone.ReviewIssueList.ToJson())
-                                Settings.ReviewIssueList = clone.ReviewIssueList;
-                            if (Settings.ReviewCopyCustomFields.ToJson() != clone.ReviewCopyCustomFields.ToJson())
-                                Settings.ReviewCopyCustomFields = clone.ReviewCopyCustomFields;
-                            if (Settings.TranscribeSettings.ToJson() != clone.TranscribeSettings.ToJson())
-                                Settings.TranscribeSettings = clone.TranscribeSettings;
-                            if (Settings.RequestWork.ToJson() != clone.RequestWork.ToJson())
-                                Settings.RequestWork = clone.RequestWork;
-                            if (Settings.PersonHourReport.ToJson() != clone.PersonHourReport.ToJson())
-                                Settings.PersonHourReport = clone.PersonHourReport;
-                            Settings.Save();
+                            Input.Redmine.QueryTimer.Value.Reset();
+                            Input.Redmine.QueryTimer.Value.Start();
                         }
                     }
                 }
@@ -262,7 +202,7 @@ namespace RedmineTimePuncher.ViewModels
             {
                 Logger.Info("WindowClosedEventCommand was started.");
 
-                CacheManager.Default.SaveCache(Redmine.Value);
+                CacheManager.Default.SaveCache(redmine.Value);
 
                 Functions.ToList().ForEach(f => f.OnWindowClosed());
 
@@ -287,11 +227,11 @@ namespace RedmineTimePuncher.ViewModels
 
                         await Task.Run(() => CacheManager.Default.UpdateCacheIfNeeded(manager));
 
-                        Redmine.Value = manager;
+                        redmine.Value = manager;
                     }
                     catch (Exception ex)
                     {
-                        Redmine.Value = null;
+                        redmine.Value = null;
 
                         if (ex is AggregateException ae && ae.InnerException is RedmineApiException rae)
                         {
@@ -308,7 +248,7 @@ namespace RedmineTimePuncher.ViewModels
             }
             else
             {
-                Redmine.Value = null;
+                redmine.Value = null;
                 ErrorMessage.Value = Resources.msgErrUnsetRedmineSettings;
             }
         }

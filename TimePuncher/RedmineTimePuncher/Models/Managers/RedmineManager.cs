@@ -7,6 +7,9 @@ using LibRedminePower.Logging;
 using LibRedminePower.Models;
 using LibRedminePower.Models.Manager;
 using LibRedminePower.Proxy;
+using Reactive.Bindings;
+using Reactive.Bindings.Extensions;
+using Reactive.Bindings.ObjectExtensions;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Async;
 using Redmine.Net.Api.Exceptions;
@@ -30,7 +33,7 @@ namespace RedmineTimePuncher.Models.Managers
 {
     public class RedmineManager : LibRedminePower.Models.Bases.ModelBaseSlim
     {
-        public static int TickLength;
+        public static ReadOnlyReactivePropertySlim<RedmineManager> Default { get; set; }
 
         public RedmineSettingsModel Settings { get; }
         public string Host => Manager.Host;
@@ -42,8 +45,6 @@ namespace RedmineTimePuncher.Models.Managers
         private RedmineWebManager webManager;
         private Regex regIssuePattern = new Regex(@"#\d+", RegexOptions.Compiled);
         private Regex regIssue2Pattern = new Regex(@"issues/\d+", RegexOptions.Compiled);
-
-        private DebugDataManager debugDataManager = new DebugDataManager();
 
         public RedmineManager(RedmineSettingsModel settings)
         {
@@ -671,14 +672,14 @@ namespace RedmineTimePuncher.Models.Managers
 
         public async Task<List<MyAppointment>> GetActivityAposAsync(CancellationToken token, Resource resource, DateTime start, DateTime end)
         {
-            if (debugDataManager.IsExist) return debugDataManager.GetData(resource, start, end, Enums.AppointmentType.RedmineActivity);
-
             // WEBから活動を取得する。
             var items = await webManager.GetActivitiesAsync(token, CacheManager.Default.MyUser.Id, start, end);
             // WEB活動からそのときのチケットを復元する。
             var issueItems = items.Where(a => a.IssueId != null).ToList();
             var tasks = issueItems.Select(a => a.ToIssueAtTheTimeAsync(this)).ToList();
             await Task.Run(() => Task.WhenAll(tasks), token);
+
+            var tickLength = (int)SettingsModel.Default.Schedule.TickLength;
 
             var result1 =  await Task.Run(() => tasks.Indexed().Select(a => 
             {
@@ -688,7 +689,7 @@ namespace RedmineTimePuncher.Models.Managers
                     Enums.AppointmentType.RedmineActivity,
                     issue.Item1.ToString(issue.Item2),
                     activity.Description,
-                    activity.Date.AddMinutes((-1 * TickLength)),
+                    activity.Date.AddMinutes((-1 * tickLength)),
                     activity.Date,
                     activity.IssueId, issue.Item1);
             }).ToList(), token);
@@ -698,7 +699,7 @@ namespace RedmineTimePuncher.Models.Managers
                 Enums.AppointmentType.RedmineActivity,
                 a.Subject,
                 "",
-                a.Date.AddMinutes((-1 * TickLength)),
+                a.Date.AddMinutes((-1 * tickLength)),
                 a.Date,
                 a.IssueId)).ToList();
 

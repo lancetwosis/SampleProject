@@ -2,6 +2,7 @@
 using NetOffice.OutlookApi.Enums;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
+using Reactive.Bindings.Notifiers;
 using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Models;
 using RedmineTimePuncher.Models.Managers;
@@ -57,7 +58,7 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
         {
             IsExpanded = Model.ToReactivePropertySlimAsSynchronized(a => a.IsExpanded).AddTo(disposables);
 
-            SpecifyParentIssue = new SpecifyParentIssueViewModel(Model, parent.Parent.Redmine).AddTo(disposables);
+            SpecifyParentIssue = new SpecifyParentIssueViewModel(Model).AddTo(disposables);
             SpecifyPeriod = new SpecifyPeriodViewModel(Model, createAt).AddTo(disposables);
             SpecifyUsers = new SpecifyUsersViewModel(Model).AddTo(disposables);
             SpecifyProjects = new SpecifyProjectsViewModel(Model).AddTo(disposables);
@@ -84,12 +85,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
 
         public List<TimeEntry> GetTimeEntries()
         {
-            return Model.GetTimeEntries(parent.Parent.Settings.Schedule, parent.Parent.Redmine.Value);
+            return Model.GetTimeEntries(SettingsModel.Default.Schedule, RedmineManager.Default.Value);
         }
 
         public async Task<List<TicketModel>> GetTicketsAsync(List<TimeEntry> times)
         {
-            return await Model.GetTicketsAsync(times, parent.Parent.Redmine.Value);
+            return await Model.GetTicketsAsync(times, RedmineManager.Default.Value);
         }
 
         public TicketFiltersViewModel(VisualizeViewModel parent, TicketFiltersModel model, DateTime createAt)

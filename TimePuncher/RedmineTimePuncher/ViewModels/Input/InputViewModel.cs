@@ -173,36 +173,37 @@ namespace RedmineTimePuncher.ViewModels.Input
                 return result;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            Parent.Settings.ObserveProperty(a => a.Redmine.UrlBase).SubscribeWithErr(a =>
+            SettingsModel.Default.ObserveProperty(a => a.Redmine.UrlBase).SubscribeWithErr(a =>
             {
-                MyAppointment.UrlBase = MyIssue.UrlBase = MyUser.UrlBase = a;
+                MyUser.UrlBase = a;
             }).AddTo(disposables);
-            ScheduleSettings = Parent.Settings.ObserveProperty(a => a.Schedule).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            var tickLength = Parent.Settings.ObserveProperty(a => a.Schedule.TickLength).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            ScheduleSettings = SettingsModel.Default.ObserveProperty(a => a.Schedule).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            var tickLength = SettingsModel.Default.ObserveProperty(a => a.Schedule.TickLength).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             TickLength = tickLength.Select(a => a.ToTickProvider()).ToReadOnlyReactivePropertySlim();
-            tickLength.Select(a => (int)a).SubscribeWithErr(a =>
-            {
-                RedmineManager.TickLength = a;
-                OutlookManager.TickLength = a;
-                TeamsManager.TickLength = a;
-            }).AddTo(disposables);
-            UrlBase = Parent.Settings.ObserveProperty(a => a.Redmine.UrlBase).Where(a => !string.IsNullOrEmpty(a)).Select(u => !u.EndsWith("/") ? u + "/" : u).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            UrlBase = SettingsModel.Default.ObserveProperty(a => a.Redmine.UrlBase).Where(a => !string.IsNullOrEmpty(a)).Select(u => !u.EndsWith("/") ? u + "/" : u).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            DayStartTime = Parent.Settings.ObserveProperty(a => a.Schedule.DayStartTime).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            DayEndTime = Parent.Settings.ObserveProperty(a => a.Schedule.DayStartTime).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            DayStartTime = SettingsModel.Default.ObserveProperty(a => a.Schedule.DayStartTime).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            DayEndTime = SettingsModel.Default.ObserveProperty(a => a.Schedule.DayStartTime).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             MinTimeRulerExtent = new ReactivePropertySlim<double>(Properties.Settings.Default.MinTimeRulerExtent).AddTo(disposables);
-            ScalingSliderValue = new ReactivePropertySlim<double>(MinTimeRulerExtent.Value * 100 / Parent.Settings.Schedule.TickLength.GetDefaultMinTimeRulerExtent()).AddTo(disposables);
+            ScalingSliderValue = new ReactivePropertySlim<double>(MinTimeRulerExtent.Value * 100 / SettingsModel.Default.Schedule.TickLength.GetDefaultMinTimeRulerExtent()).AddTo(disposables);
             ScalingSliderValue.Select(a => a).SubscribeWithErr(a =>
             {
-                MinTimeRulerExtent.Value = Parent.Settings.Schedule.TickLength.GetDefaultMinTimeRulerExtent() * (a / 100);
+                MinTimeRulerExtent.Value = SettingsModel.Default.Schedule.TickLength.GetDefaultMinTimeRulerExtent() * (a / 100);
             });
-            Parent.Settings.ObserveProperty(a => a.Category.IsAutoSameName).SubscribeWithErr(a =>
+
+            // 設定が変更されたらデフォルトに戻す。
+            SettingsModel.Default.ObserveProperty(a => a.Schedule.TickLength).Skip(1).Subscribe(a =>
+            {
+                ScalingSliderValue.Value = 0;
+                ScalingSliderValue.Value = 100;
+            }).AddTo(disposables);
+            SettingsModel.Default.ObserveProperty(a => a.Category.IsAutoSameName).SubscribeWithErr(a =>
             {
                 MyAppointment.IsAutoSameName = a;
             }).AddTo(disposables);
 
-            StartTime = SelectedDate.CombineLatest(PeriodType, (d, p) => p.GetStartDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            EndTime = SelectedDate.CombineLatest(PeriodType, (d, p) => p.GetEndDate(d, Parent.Settings.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            StartTime = SelectedDate.CombineLatest(PeriodType, (d, p) => p.GetStartDate(d, SettingsModel.Default.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            EndTime = SelectedDate.CombineLatest(PeriodType, (d, p) => p.GetEndDate(d, SettingsModel.Default.Calendar).Add(DayStartTime.Value)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             DisplayStartTime = new ReactivePropertySlim<DateTime>(StartTime.Value).AddTo(disposables);
             DisplayEndTime = new ReactivePropertySlim<DateTime>(EndTime.Value).AddTo(disposables);
@@ -226,6 +227,13 @@ namespace RedmineTimePuncher.ViewModels.Input
                 .CombineLatest().Select(a => a.Any(n => n)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             defaultResouces = new MyResourceBase[] { MyWorks.Resource, Redmine.Resource, OutlookTeams.Resource }.Where(a => a != null).ToList();
+
+            var outlookTeamsIsEnabled =
+                new[] {
+                    SettingsModel.Default.ObserveProperty(a => a.Appointment.Outlook.IsEnabled),
+                    SettingsModel.Default.ObserveProperty(a => a.Appointment.Teams.IsEnabled)
+                }.CombineLatestValuesAreAllFalse().Inverse().ToReadOnlyReactivePropertySlim().AddTo(disposables);
+
             MyType.Resources.AddRange(defaultResouces);
 
             Members = new MembersViewModel(this);
@@ -296,14 +304,14 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             #region "********* 読込コマンド ************"
             var reloadCommands = new List<ResourceUpdater>() { MyWorks.Resource.Updater, Redmine.Resource.Updater };
-            if (Parent.Outlook.IsInstalled)
+            if (OutlookManager.Default.Value.IsInstalled)
                 reloadCommands.Add(OutlookTeams.Resource.Updater);
-            if (Parent.Teams.IsInstalled)
+            if (TeamsManager.Default.Value.IsInstalled)
                 reloadCommands.Add(OutlookTeams.Resource.Updater2);
             // 全体の読込コマンド
             ReloadCommand = new AsyncCommandBase(
                 Properties.Resources.RibbonCmdReload, Properties.Resources.reload,
-                Parent.Redmine.Select(a => a != null ? null : ""),
+                RedmineManager.Default.Select(a => a != null ? null : ""),
                 async () =>
                 {
                     Logger.Info("ReloadCommand Start");
@@ -373,11 +381,11 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             SelectedDate.Pairwise().SubscribeWithErr(async p =>
             {
-                if (skipLoadAppointments.IsBusy || Parent.Redmine.Value == null)
+                if (skipLoadAppointments.IsBusy || RedmineManager.Default.Value == null)
                     return;
 
                 // 変更後の日付がすでに ScheduleView に表示中だった場合何もしない
-                if (PeriodType.Value.Contains(CurrentDate.Value, p.NewItem, Parent.Settings.Calendar))
+                if (PeriodType.Value.Contains(CurrentDate.Value, p.NewItem, SettingsModel.Default.Calendar))
                 {
                     if (PeriodType.Value != InputPeriodType.Last3Days &&
                         PeriodType.Value != InputPeriodType.Last7Days)
@@ -400,7 +408,7 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             PeriodType.Pairwise().SubscribeWithErr(async p =>
             {
-                if (skipLoadAppointments.IsBusy || Parent.Redmine.Value == null)
+                if (skipLoadAppointments.IsBusy || RedmineManager.Default.Value == null)
                     return;
 
                 var r = confirmClearIfNeeded();
@@ -422,7 +430,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             SetTodayCommand = new CommandBase(
                 Properties.Resources.RibbonCmdToday, Properties.Resources.today32,
                 Properties.Resources.RibbonCmdToday,
-                Parent.Redmine.Select(a => a != null ? null : ""),
+                RedmineManager.Default.Select(a => a != null ? null : ""),
                 () =>
                 {
                     if (SelectedDate.Value != DateTime.Today)
@@ -434,8 +442,8 @@ namespace RedmineTimePuncher.ViewModels.Input
             var tooltip = PeriodType.CombineLatest(SelectedDate, (t, s) => (Period: t, Date: s)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             DecreaseDateCommand = new CommandBase(
                 Properties.Resources.RibbonCmdMoveBack, Properties.Resources.back32,
-                tooltip.Select(p => p.Period.GetMoveCommandToolTip(p.Date, true, Parent.Settings.Calendar)),
-                Parent.Redmine.Select(a => a != null ? null : ""),
+                tooltip.Select(p => p.Period.GetMoveCommandToolTip(p.Date, true, SettingsModel.Default.Calendar)),
+                RedmineManager.Default.Select(a => a != null ? null : ""),
                 () =>
                 {
                     SelectedDate.Value = SelectedDate.Value.AddDays(-1 * PeriodType.Value.GetIntervalDays());
@@ -443,14 +451,14 @@ namespace RedmineTimePuncher.ViewModels.Input
                 }).AddTo(disposables);
             IncreaseDateCommand = new CommandBase(
                 Properties.Resources.RibbonCmdMoveNext, Properties.Resources.next32,
-                tooltip.Select(p => p.Period.GetMoveCommandToolTip(p.Date, false, Parent.Settings.Calendar)),
-                Parent.Redmine.Select(a => a != null ? null : ""),
+                tooltip.Select(p => p.Period.GetMoveCommandToolTip(p.Date, false, SettingsModel.Default.Calendar)),
+                RedmineManager.Default.Select(a => a != null ? null : ""),
                 () =>
                 {
                     SelectedDate.Value = SelectedDate.Value.AddDays(PeriodType.Value.GetIntervalDays());
                     RibbonIndex = 1;
                 }).AddTo(disposables);
-            
+
             ChangePeriodCommand = new ReactiveCommand<string>().WithSubscribe(async str =>
             {
                 var type = FastEnumUtility.FastEnum.Parse<InputPeriodType>(str);
@@ -598,7 +606,7 @@ namespace RedmineTimePuncher.ViewModels.Input
 
         private DateTime getMyToday()
         {
-            if (DateTime.Now < Parent.Settings.Schedule.GetToday())
+            if (DateTime.Now < SettingsModel.Default.Schedule.GetToday())
                 return DateTime.Today.AddDays(-1);
             else
                 return DateTime.Today;
@@ -635,8 +643,8 @@ namespace RedmineTimePuncher.ViewModels.Input
         /// </summary>
         private void updateDisplayRange()
         {
-            DisplayStartTime.Value = PeriodType.Value.GetStartDate(SelectedDate.Value, Parent.Settings.Calendar);
-            DisplayEndTime.Value = PeriodType.Value.GetEndDate(SelectedDate.Value, Parent.Settings.Calendar);
+            DisplayStartTime.Value = PeriodType.Value.GetStartDate(SelectedDate.Value, SettingsModel.Default.Calendar);
+            DisplayEndTime.Value = PeriodType.Value.GetEndDate(SelectedDate.Value, SettingsModel.Default.Calendar);
         }
 
         private void setAppointmentColorType(string str)
@@ -736,7 +744,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             defaultResouces.SelectMany(a => a.GetReloads()).Where(a => a.CancelCommand.CanExecute()).ToList().ForEach(a => a.CancelCommand.Execute());
 
             // 予定表の内容を保存する。
-            if (Parent.Redmine.Value != null)
+            if (RedmineManager.Default.Value != null)
             {
                 if (!MyWorks.IsOutputed)
                 {

@@ -46,11 +46,12 @@ namespace RedmineTimePuncher.ViewModels.Input
 
         public InputViewModel Parent { get; set; }
 
+
         public RedmineViewModel(InputViewModel parent) : base()
         {
             Parent = parent;
 
-            Resource = new RedmineResource(parent.UrlBase, parent.Parent.Redmine);
+            Resource = new RedmineResource(parent.UrlBase);
 
             IsBusyTicketList = new BusyTextNotifier();
 
@@ -59,8 +60,8 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             // チケット一覧を更新する
             TicketList = new ReactivePropertySlim<List<TicketGridViewModel>>().AddTo(disposables);
-            parent.Parent.Redmine.Where(a => a != null).CombineLatest(
-                parent.Parent.Settings.ObserveProperty(a => a.Query), CacheManager.Default.Updated, (r, q, _) =>
+            RedmineManager.Default.Where(a => a != null).CombineLatest(
+                SettingsModel.Default.ObserveProperty(a => a.Query), CacheManager.Default.Updated, (r, q, _) =>
             {
                 using (IsBusyTicketList.ProcessStart(Properties.Resources.ProgressMsgGettingIssues))
                 {
@@ -105,13 +106,13 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             // カテゴリ情報を作成する。
             CategoryListBoxViewModel = new CategoryListBoxViewModel(parent).AddTo(disposables);
-            parent.Parent.Redmine.CombineLatest(parent.Parent.Settings.ObserveProperty(a => a.Category), CacheManager.Default.Updated,
+            RedmineManager.Default.CombineLatest(SettingsModel.Default.ObserveProperty(a => a.Category), CacheManager.Default.Updated,
                 (r, c, _) => (r, c)).SubscribeWithErr(p =>
             {
                 if (p.r != null)
                 {
                     p.c.UpdateItems(CacheManager.Default.TimeEntryActivities);
-                    parent.Parent.Settings.Save();
+                    SettingsModel.Default.Save();
                 }
 
                 var settings = p.c.Items.Where(a => a.IsEnabled).ToList();
@@ -140,23 +141,23 @@ namespace RedmineTimePuncher.ViewModels.Input
             }).AddTo(disposables);
 
             // Updaterを作成
-            Timer = parent.Parent.Settings.ObserveProperty(a => a.Appointment.Redmine)
+            Timer = SettingsModel.Default.ObserveProperty(a => a.Appointment.Redmine)
                 .Select(a => Resource.Updater.CreateAutoReloadTimer(a))
                 .DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            QueryTimer = parent.Parent.Settings.ObserveProperty(a => a.Query)
+            QueryTimer = SettingsModel.Default.ObserveProperty(a => a.Query)
                 .Select(a => Resource.Updater.CreateAutoReloadTimer(a, () =>
                     TicketList.Value != null ? Task.WhenAll(TicketList.Value.Select(t => t.ReloadCommand.Command.ExecuteAsync())) : Task.CompletedTask))
                 .DisposePreviousValue().ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            Resource.Updater.SetUpdateCommand(parent.Parent.Redmine.Select(a => a != null), async (ct) =>
+            Resource.Updater.SetUpdateCommand(RedmineManager.Default.Select(a => a != null), async (ct) =>
             {
                 await execUpdateAsync(parent, async () =>
                 {
                     Logger.Info("redmineResource.SetReloadCommand Start");
-                    var result = await parent.Parent.Redmine.Value.GetActivityAposAsync(ct, parent.Redmine.Resource, parent.StartTime.Value, parent.EndTime.Value);
+                    var result = await RedmineManager.Default.Value.GetActivityAposAsync(ct, parent.Redmine.Resource, parent.StartTime.Value, parent.EndTime.Value);
                     parent.Appointments.RemoveAll(a => a.Resources.Contains(parent.Redmine.Resource));
-                    parent.Appointments.AddRange(parent.Parent.Settings.Appointment.Redmine.Filter(result));
+                    parent.Appointments.AddRange(SettingsModel.Default.Appointment.Redmine.Filter(result));
                     Logger.Info("redmineResource.SetReloadCommand End");
                 });
             });
@@ -175,7 +176,7 @@ namespace RedmineTimePuncher.ViewModels.Input
                     if (parent.SelectedAppointments.Value.Count() > 1)
                     {
                         var ids = string.Join(",", parent.SelectedAppointments.Value.Where(a => !string.IsNullOrEmpty(a.TicketNo)).Select(a => a.TicketNo));
-                        var url = new Uri(new Uri(parent.Parent.Redmine.Value.Host), $"issues?status_id=*&set_filter=1&issue_id={ids}");
+                        var url = new Uri(new Uri(RedmineManager.Default.Value.Host), $"issues?status_id=*&set_filter=1&issue_id={ids}");
                         System.Diagnostics.Process.Start(url.AbsoluteUri);
                     }
                     else
@@ -208,7 +209,7 @@ namespace RedmineTimePuncher.ViewModels.Input
             var favorites = FavoriteTickets.Items.Value != null ? FavoriteTickets.Items.Value.ToList() : new List<MyIssue>();
             if (!favorites.Any(t => t.Id == issue.Id))
             {
-                var favorite = getFavoriteIssue(Parent.Parent.Redmine.Value, issue.Id.ToString());
+                var favorite = getFavoriteIssue(RedmineManager.Default.Value, issue.Id.ToString());
                 if (favorite != null)
                 {
                     favorite.ObserveProperty(a => a.IsFavorite).Skip(1).SubscribeWithErr(isF =>

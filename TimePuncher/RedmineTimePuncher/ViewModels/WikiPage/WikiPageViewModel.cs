@@ -75,9 +75,9 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
                 .Select(a => a.First.GetPeriod(a.Second, a.Third, a.Fourth)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             SelectedPeriodType.SubscribeWithErr(_ =>
-                SelectedWikiPages.ToList().ForEach(async wiki => await wiki.UpdateHistoriesAsync(parent.Redmine.Value, selectedPeriod.Value))).AddTo(disposables);
+                SelectedWikiPages.ToList().ForEach(async wiki => await wiki.UpdateHistoriesAsync(Models.Managers.RedmineManager.Default.Value, selectedPeriod.Value))).AddTo(disposables);
             SelectedWikiPages.ObserveAddChanged().SubscribeWithErr(async wiki =>
-                await wiki.UpdateHistoriesAsync(parent.Redmine.Value, selectedPeriod.Value)).AddTo(disposables);
+                await wiki.UpdateHistoriesAsync(Models.Managers.RedmineManager.Default.Value, selectedPeriod.Value)).AddTo(disposables);
             SelectedWikiPages.ObserveRemoveChanged().SubscribeWithErr(wiki => wiki.CtsUpdateHistories?.Cancel()).AddTo(disposables);
             SelectedWikiPages.ObserveResetChanged().SubscribeWithErr(_ => SelectedWikiPages.ToList().ForEach(a  => a.CtsUpdateHistories?.Cancel())).AddTo(disposables);
 
@@ -208,7 +208,7 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             Task getProjectsTask = null;
-            parent.Redmine.Where(r => r != null).SubscribeWithErr(r =>
+            Models.Managers.RedmineManager.Default.Where(r => r != null).SubscribeWithErr(r =>
             {
                 getProjectsTask = Task.Run(() =>
                 {
@@ -245,11 +245,11 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
                     {
                         WikiPages.Clear();
 
-                        var wikiItems = await Task.Run(() => parent.Redmine.Value.GetAllWikiPages(SelectedProject.Value.Identifier));
+                        var wikiItems = await Task.Run(() => Models.Managers.RedmineManager.Default.Value.GetAllWikiPages(SelectedProject.Value.Identifier));
                         foreach (var wikiItem in wikiItems.Where(a => string.IsNullOrEmpty(a.ParentTitle)))
                         {
                             var wiki = new MyWikiPageCount(wikiItem, null, wikiItems);
-                            var _ = wiki.UpdateSummaryAsync(parent.Redmine.Value); // 投げ捨て
+                            var _ = wiki.UpdateSummaryAsync(Models.Managers.RedmineManager.Default.Value); // 投げ捨て
                             WikiPages.Add(wiki);
                         }
                     }

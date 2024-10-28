@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
 using LibRedminePower.Extentions;
 using LibRedminePower.Localization;
+using Reactive.Bindings;
 using RedmineTimePuncher.Enums;
+using RedmineTimePuncher.Models.Managers;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -17,9 +19,48 @@ namespace RedmineTimePuncher.Models.Settings
 {
     public class SettingsModel : Bases.SettingsModelBase<SettingsModel>
     {
+        private static SettingsModel _default = Read();
+        public static SettingsModel Default
+        {
+            get { return _default; }
+            set 
+            {
+                // 変更があったプロパティのみを更新する。
+                if (!_default.Redmine.Equals(value.Redmine)) // ToJsonは個人情報を除去して比較してしまうので、使えない。
+                    _default.Redmine = value.Redmine;
+                if (_default.Schedule.ToJson() != value.Schedule.ToJson())
+                    _default.Schedule = value.Schedule;
+                if (_default.Calendar.ToJson() != value.Calendar.ToJson())
+                    _default.Calendar = value.Calendar;
+                if (_default.Category.ToJson() != value.Category.ToJson())
+                    _default.Category = value.Category;
+                if (_default.Appointment.ToJson() != value.Appointment.ToJson())
+                    _default.Appointment = value.Appointment;
+                if (_default.Query.ToJson() != value.Query.ToJson())
+                    _default.Query = value.Query;
+                if (_default.User.ToJson() != value.User.ToJson())
+                    _default.User = value.User;
+                if (_default.OutputData.ToJson() != value.OutputData.ToJson())
+                    _default.OutputData = value.OutputData;
+                if (_default.CreateTicket.ToJson() != value.CreateTicket.ToJson())
+                    _default.CreateTicket = value.CreateTicket;
+                if (_default.ReviewIssueList.ToJson() != value.ReviewIssueList.ToJson())
+                    _default.ReviewIssueList = value.ReviewIssueList;
+                if (_default.ReviewCopyCustomFields.ToJson() != value.ReviewCopyCustomFields.ToJson())
+                    _default.ReviewCopyCustomFields = value.ReviewCopyCustomFields;
+                if (_default.TranscribeSettings.ToJson() != value.TranscribeSettings.ToJson())
+                    _default.TranscribeSettings = value.TranscribeSettings;
+                if (_default.RequestWork.ToJson() != value.RequestWork.ToJson())
+                    _default.RequestWork = value.RequestWork;
+                if (_default.PersonHourReport.ToJson() != value.PersonHourReport.ToJson())
+                    _default.PersonHourReport = value.PersonHourReport;
+            }
+        }
+
         public RedmineSettingsModel Redmine { get; set; } = new RedmineSettingsModel();
         public ScheduleSettingsModel Schedule { get; set; } = new ScheduleSettingsModel();
         public CategorySettingsModel Category { get; set; } = new CategorySettingsModel();
+        public CalendarSettingsModel Calendar { get; set; } = new CalendarSettingsModel();
         public AppointmentSettingsModel Appointment { get; set; } = new AppointmentSettingsModel();
         public QuerySettingsModel Query { get; set; } = new QuerySettingsModel();
         public UserSettingsModel User { get; set; } = new UserSettingsModel();
@@ -29,7 +70,6 @@ namespace RedmineTimePuncher.Models.Settings
         public ReviewIssueListSettingModel ReviewIssueList { get; set; } = new ReviewIssueListSettingModel();
         public ReviewCopyCustomFieldsSettingModel ReviewCopyCustomFields { get; set; } = new ReviewCopyCustomFieldsSettingModel();
         public RequestWorkSettingsModel RequestWork { get; set; } = new RequestWorkSettingsModel();
-        public CalendarSettingsModel Calendar { get; set; } = new CalendarSettingsModel();
         public PersonHourReportSettingsModel PersonHourReport { get; set; } = new PersonHourReportSettingsModel();
 
         public SettingsModel()
@@ -115,8 +155,11 @@ namespace RedmineTimePuncher.Models.Settings
 
         public override void SetupConfigure(IMapperConfigurationExpression cfg)
         {
+            // 何も指定しないと、インスタンスを維持しながらコピーするので、
+            // 以下のコードを入れることで、プロパティ単位でのコピーを指定している。
             cfg.CreateMap<SettingsModel, SettingsModel>();
 
+            // Redmine設定情報は、個人情報はコピーしない。
             Redmine.SetupConfigure(cfg);
         }
     }
