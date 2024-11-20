@@ -37,6 +37,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review.CustomFields.Bases
         public CustomFieldsViewModelBase(string ticketType, ObservableCollection<CustomFieldValueModel> customFieldValues, TargetTicketModel target)
         {
             TicketType = ticketType;
+            if (target.Ticket == null)
+                customFieldValues.Clear();
 
             this.customFieldValues = customFieldValues;
             this.prev = customFieldValues.ToList();
