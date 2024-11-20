@@ -54,7 +54,7 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
         public ReactivePropertySlim<DateTime> SelectedStartDate { get; set; }
         public ReactivePropertySlim<DateTime> SelectedEndDate { get; set; }
 
-        public WikiPageViewModel(MainWindowViewModel parent) : base(ApplicationMode.WikiPage, parent)
+        public WikiPageViewModel() : base(ApplicationMode.WikiPage)
         {
             IsBusy = new BusyNotifier();
 
@@ -224,7 +224,7 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
                 });
             });
 
-            parent.Mode.Where(m => m == Enums.ApplicationMode.WikiPage).SubscribeWithErr(async _ =>
+            IsSelected.SubscribeWithErr(async _ =>
             {
                 if (getProjectsTask != null && !getProjectsTask.IsCompleted)
                 {
@@ -241,7 +241,6 @@ namespace RedmineTimePuncher.ViewModels.WikiPage
                 {
                     TraceHelper.TrackCommand(nameof(ReloadCommand));
                     using (IsBusy.ProcessStart())
-                    using (parent.IsBusy.ProcessStart(""))
                     {
                         WikiPages.Clear();
 

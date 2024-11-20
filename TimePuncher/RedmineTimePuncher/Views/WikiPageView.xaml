@@ -13,6 +13,7 @@
              xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
              xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
              xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
              xmlns:local="clr-namespace:RedmineTimePuncher.Views.Controls"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
@@ -21,152 +22,142 @@
              xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
              xmlns:telerikExHelper="clr-namespace:TelerikEx.Helpers;assembly=TelerikEx"
              xmlns:treeMap="clr-namespace:Telerik.Windows.Controls.TreeMap;assembly=Telerik.Windows.Controls.DataVisualization"
-             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels"
-             d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel},
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.WikiPage"
+             d:DataContext="{d:DesignInstance {x:Type vm:WikiPageViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
 
-    <telerik1:RadBusyIndicator IsBusy="{Binding WikiPage.IsBusy.IsBusy}"
-                               IsIndeterminate="True">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="AUTO" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+    <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+        <telerik1:RadBusyIndicator IsBusy="{Binding IsBusy.IsBusy}"
+                                   IsIndeterminate="True">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="AUTO" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-            <telerik:RadRibbonView Grid.Row="0"
-                                   ApplicationButtonVisibility="Collapsed"
-                                   HelpButtonVisibility="Collapsed"
-                                   IsEnabled="{Binding IsBusy.IsBusy,
-                                                       Converter={StaticResource InvertedBooleanConverter}}"
-                                   IsMinimized="{Binding Source={x:Static props:Settings.Default},
-                                                         Path=RadRibbonViewIsMinimized,
-                                                         Mode=TwoWay}"
-                                   MinimizeButtonVisibility="Visible"
-                                   TitleBarVisibility="Collapsed">
-                <telerik:RadRibbonView.Resources>
-                    <Style BasedOn="{StaticResource {x:Type telerik:RadRibbonButton}}"
-                           TargetType="telerik:RadRibbonButton">
-                        <Setter Property="CollapseToMedium" Value="WhenGroupIsMedium" />
-                        <Setter Property="CollapseToSmall" Value="WhenGroupIsSmall" />
-                        <Setter Property="Size" Value="Large" />
-                    </Style>
-                </telerik:RadRibbonView.Resources>
-                <telerik:RadRibbonView.Items>
-                    <telerik:RadRibbonTab Header="{x:Static props:Resources.RibbonTabHome}">
-                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.WikiPagePageList}">
-                            <telerik:RadCollapsiblePanel VerticalAlignment="Top">
-                                <TextBlock Grid.Column="0"
-                                           Style="{StaticResource RibbonTextBlockKStyle}"
-                                           Text="{x:Static props:Resources.WikiPageResultProject}" />
-                                <telerik:RadRibbonComboBox Grid.Column="1"
-                                                           MinWidth="100"
-                                                           MinHeight="20"
-                                                           Margin="5,0,0,0"
-                                                           VerticalAlignment="Top"
-                                                           DisplayMemberPath="Name"
-                                                           IsEditable="True"
-                                                           ItemsSource="{Binding WikiPage.Projects}"
-                                                           OpenDropDownOnFocus="True"
-                                                           SelectedItem="{Binding WikiPage.SelectedProject.Value}" />
-                            </telerik:RadCollapsiblePanel>
-                            <telerik:Separator />
-                            <telerik:RadCollapsiblePanel>
-                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding WikiPage.ReloadCommand}" />
-                            </telerik:RadCollapsiblePanel>
-                        </telerik:RadRibbonGroup>
-                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.WikiPageHistories}">
-                            <telerik:RadCollapsiblePanel VerticalAlignment="Top">
-                                <telerik:RadRibbonComboBox x:Name="PeriodTypeCombobox"
-                                                           MinWidth="{Binding ElementName=inputStartDate,
-                                                                              Path=ActualWidth}"
-                                                           VerticalAlignment="Top"
-                                                           IsEditable="False"
-                                                           ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enums:WikiPeriodType}}}"
-                                                           OpenDropDownOnFocus="False"
-                                                           SelectedItem="{Binding WikiPage.SelectedPeriodType.Value}" />
-                                <telerik:RadNumericUpDown MinWidth="{Binding ElementName=PeriodTypeCombobox,
-                                                                             Path=ActualWidth}"
-                                                          HideTrailingZeros="True"
-                                                          Maximum="99"
-                                                          Minimum="1"
-                                                          ValueFormat="Numeric"
-                                                          Visibility="{Binding WikiPage.IsPeriodNumericType.Value,
-                                                                               Converter={StaticResource BooleanToVisibilityConverter}}" />
-                                <StackPanel x:Name="inputStartDate"
-                                            Orientation="Horizontal"
-                                            Visibility="{Binding ElementName=PeriodTypeCombobox,
-                                                                 Path=SelectedItem,
-                                                                 Converter={StaticResource EnumToVisibilityConverter},
-                                                                 ConverterParameter=Between}">
-                                    <TextBlock VerticalAlignment="Center"
-                                               Text="{x:Static props:Resources.WikiPageStartDate}" />
-                                    <telerik:RadDateTimePicker Margin="5,0,0,0"
-                                                               InputMode="DatePicker"
-                                                               IsEnabled="{Binding ElementName=specifyPeriodCheckBox,
-                                                                                   Path=IsChecked}"
-                                                               SelectedDate="{Binding WikiPage.SelectedStartDate.Value,
-                                                                                      Mode=TwoWay}">
-                                        <telerik:RadDateTimePicker.CalendarStyle>
-                                            <Style BasedOn="{StaticResource RadCalendarStyle}"
-                                                   TargetType="{x:Type telerik:RadCalendar}">
-                                                <Setter Property="AreWeekNumbersVisible" Value="False" />
-                                            </Style>
-                                        </telerik:RadDateTimePicker.CalendarStyle>
-                                    </telerik:RadDateTimePicker>
-                                </StackPanel>
-                                <StackPanel x:Name="inputEndDate"
-                                            Orientation="Horizontal"
-                                            Visibility="{Binding ElementName=PeriodTypeCombobox,
-                                                                 Path=SelectedItem,
-                                                                 Converter={StaticResource EnumToVisibilityConverter},
-                                                                 ConverterParameter=Between}">
+                <telerik:RadRibbonView Grid.Row="0"
+                                       ApplicationButtonVisibility="Collapsed"
+                                       HelpButtonVisibility="Collapsed"
+                                       IsMinimized="{Binding Source={x:Static props:Settings.Default},
+                                                             Path=RadRibbonViewIsMinimized,
+                                                             Mode=TwoWay}"
+                                       MinimizeButtonVisibility="Visible"
+                                       TitleBarVisibility="Collapsed">
+                    <telerik:RadRibbonView.Resources>
+                        <Style BasedOn="{StaticResource {x:Type telerik:RadRibbonButton}}"
+                               TargetType="telerik:RadRibbonButton">
+                            <Setter Property="CollapseToMedium" Value="WhenGroupIsMedium" />
+                            <Setter Property="CollapseToSmall" Value="WhenGroupIsSmall" />
+                            <Setter Property="Size" Value="Large" />
+                        </Style>
+                    </telerik:RadRibbonView.Resources>
+                    <telerik:RadRibbonView.Items>
+                        <telerik:RadRibbonTab Header="{x:Static props:Resources.RibbonTabHome}">
+                            <telerik:RadRibbonGroup Header="{x:Static props:Resources.WikiPagePageList}">
+                                <telerik:RadCollapsiblePanel VerticalAlignment="Top">
+                                    <TextBlock Grid.Column="0"
+                                               Style="{StaticResource RibbonTextBlockKStyle}"
+                                               Text="{x:Static props:Resources.WikiPageResultProject}" />
+                                    <telerik:RadRibbonComboBox Grid.Column="1"
+                                                               MinWidth="100"
+                                                               MinHeight="20"
+                                                               Margin="5,0,0,0"
+                                                               VerticalAlignment="Top"
+                                                               DisplayMemberPath="Name"
+                                                               IsEditable="True"
+                                                               ItemsSource="{Binding Projects}"
+                                                               OpenDropDownOnFocus="True"
+                                                               SelectedItem="{Binding SelectedProject.Value}" />
+                                </telerik:RadCollapsiblePanel>
+                                <telerik:Separator />
+                                <telerik:RadCollapsiblePanel>
+                                    <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding ReloadCommand}" />
+                                </telerik:RadCollapsiblePanel>
+                            </telerik:RadRibbonGroup>
+                            <telerik:RadRibbonGroup Header="{x:Static props:Resources.WikiPageHistories}">
+                                <telerik:RadCollapsiblePanel VerticalAlignment="Top">
+                                    <telerik:RadRibbonComboBox x:Name="PeriodTypeCombobox"
+                                                               MinWidth="{Binding ElementName=inputStartDate,
+                                                                                  Path=ActualWidth}"
+                                                               VerticalAlignment="Top"
+                                                               IsEditable="False"
+                                                               ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type enums:WikiPeriodType}}}"
+                                                               OpenDropDownOnFocus="False"
+                                                               SelectedItem="{Binding SelectedPeriodType.Value}" />
+                                    <telerik:RadNumericUpDown MinWidth="{Binding ElementName=PeriodTypeCombobox,
+                                                                                 Path=ActualWidth}"
+                                                              HideTrailingZeros="True"
+                                                              Maximum="99"
+                                                              Minimum="1"
+                                                              ValueFormat="Numeric"
+                                                              Visibility="{Binding IsPeriodNumericType.Value,
+                                                                                   Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                    <StackPanel x:Name="inputStartDate"
+                                                Orientation="Horizontal"
+                                                Visibility="{Binding ElementName=PeriodTypeCombobox,
+                                                                     Path=SelectedItem,
+                                                                     Converter={StaticResource EnumToVisibilityConverter},
+                                                                     ConverterParameter=Between}">
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Text="{x:Static props:Resources.WikiPageStartDate}" />
+                                        <telerik:RadDateTimePicker Margin="5,0,0,0"
+                                                                   InputMode="DatePicker"
+                                                                   SelectedDate="{Binding SelectedStartDate.Value,
+                                                                                          Mode=TwoWay}">
+                                            <telerik:RadDateTimePicker.CalendarStyle>
+                                                <Style BasedOn="{StaticResource RadCalendarStyle}"
+                                                       TargetType="{x:Type telerik:RadCalendar}">
+                                                    <Setter Property="AreWeekNumbersVisible" Value="False" />
+                                                </Style>
+                                            </telerik:RadDateTimePicker.CalendarStyle>
+                                        </telerik:RadDateTimePicker>
+                                    </StackPanel>
+                                    <StackPanel x:Name="inputEndDate"
+                                                Orientation="Horizontal"
+                                                Visibility="{Binding ElementName=PeriodTypeCombobox,
+                                                                     Path=SelectedItem,
+                                                                     Converter={StaticResource EnumToVisibilityConverter},
+                                                                     ConverterParameter=Between}">
 
-                                    <TextBlock VerticalAlignment="Center"
-                                               Text="{x:Static props:Resources.WikiPageEndDate}" />
-                                    <telerik:RadDateTimePicker Margin="5,0,0,0"
-                                                               InputMode="DatePicker"
-                                                               IsEnabled="{Binding ElementName=specifyPeriodCheckBox,
-                                                                                   Path=IsChecked}"
-                                                               SelectedDate="{Binding WikiPage.SelectedEndDate.Value,
-                                                                                      Mode=TwoWay}">
-                                        <telerik:RadDateTimePicker.CalendarStyle>
-                                            <Style BasedOn="{StaticResource RadCalendarStyle}"
-                                                   TargetType="{x:Type telerik:RadCalendar}">
-                                                <Setter Property="AreWeekNumbersVisible" Value="False" />
-                                            </Style>
-                                        </telerik:RadDateTimePicker.CalendarStyle>
-                                    </telerik:RadDateTimePicker>
-                                </StackPanel>
-                            </telerik:RadCollapsiblePanel>
-                        </telerik:RadRibbonGroup>
-                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupExport}">
-                            <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding WikiPage.ExportCommand}" />
-                        </telerik:RadRibbonGroup>
-                    </telerik:RadRibbonTab>
-                </telerik:RadRibbonView.Items>
+                                        <TextBlock VerticalAlignment="Center"
+                                                   Text="{x:Static props:Resources.WikiPageEndDate}" />
+                                        <telerik:RadDateTimePicker Margin="5,0,0,0"
+                                                                   InputMode="DatePicker"
+                                                                   SelectedDate="{Binding SelectedEndDate.Value,
+                                                                                          Mode=TwoWay}">
+                                            <telerik:RadDateTimePicker.CalendarStyle>
+                                                <Style BasedOn="{StaticResource RadCalendarStyle}"
+                                                       TargetType="{x:Type telerik:RadCalendar}">
+                                                    <Setter Property="AreWeekNumbersVisible" Value="False" />
+                                                </Style>
+                                            </telerik:RadDateTimePicker.CalendarStyle>
+                                        </telerik:RadDateTimePicker>
+                                    </StackPanel>
+                                </telerik:RadCollapsiblePanel>
+                            </telerik:RadRibbonGroup>
+                            <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupExport}">
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding ExportCommand}" />
+                            </telerik:RadRibbonGroup>
+                        </telerik:RadRibbonTab>
+                    </telerik:RadRibbonView.Items>
 
-                <b:Interaction.Behaviors>
-                    <behaviors1:RadRibbonViewIsMinimizedSettingAtLoadedBehavior />
-                </b:Interaction.Behaviors>
+                    <b:Interaction.Behaviors>
+                        <behaviors1:RadRibbonViewIsMinimizedSettingAtLoadedBehavior />
+                    </b:Interaction.Behaviors>
 
-            </telerik:RadRibbonView>
+                </telerik:RadRibbonView>
 
-            <telerik1:RadBusyIndicator Grid.Row="1"
-                                       BusyContent="{Binding IsBusy.Text}"
-                                       IsBusy="{Binding IsBusy.IsBusy}"
-                                       IsIndeterminate="True">
-
-                <Grid>
+                <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <extended:RowDefinitionExtended Height="2*" />
                         <extended:RowDefinitionExtended Height="Auto"
-                                                        Visible="{Binding WikiPage.IsHistories.Value,
+                                                        Visible="{Binding IsHistories.Value,
                                                                           Converter={StaticResource InvertedBooleanConverter}}" />
                         <extended:RowDefinitionExtended Height="1*"
-                                                        Visible="{Binding WikiPage.IsHistories.Value,
+                                                        Visible="{Binding IsHistories.Value,
                                                                           Converter={StaticResource InvertedBooleanConverter}}" />
                     </Grid.RowDefinitions>
 
@@ -175,9 +166,9 @@
                         <Grid.ColumnDefinitions>
                             <extended:ColumnDefinitionExtended />
                             <extended:ColumnDefinitionExtended Width="Auto"
-                                                               Visible="{Binding WikiPage.IsHistories.Value,
+                                                               Visible="{Binding IsHistories.Value,
                                                                                  Converter={StaticResource InvertedBooleanConverter}}" />
-                            <extended:ColumnDefinitionExtended Visible="{Binding WikiPage.IsHistories.Value, Converter={StaticResource InvertedBooleanConverter}}" />
+                            <extended:ColumnDefinitionExtended Visible="{Binding IsHistories.Value, Converter={StaticResource InvertedBooleanConverter}}" />
                         </Grid.ColumnDefinitions>
 
                         <Grid>
@@ -193,7 +184,7 @@
 
                             <telerik:RadTreeListView x:Name="radTreeListView"
                                                      Grid.Row="1"
-                                                     telerikExHelper:GridViewSelectionUtilities.SelectedItems="{Binding WikiPage.SelectedWikiPages}"
+                                                     telerikExHelper:GridViewSelectionUtilities.SelectedItems="{Binding SelectedWikiPages}"
                                                      AlternationCount="2"
                                                      AutoExpandItems="True"
                                                      AutoGenerateColumns="False"
@@ -202,7 +193,7 @@
                                                      CanUserInsertRows="False"
                                                      IsFilteringAllowed="False"
                                                      IsReadOnly="True"
-                                                     ItemsSource="{Binding WikiPage.WikiPages}"
+                                                     ItemsSource="{Binding WikiPages}"
                                                      RowIndicatorVisibility="Collapsed"
                                                      SelectionMode="Extended"
                                                      SelectionUnit="FullRow"
@@ -237,7 +228,7 @@
                                       IsTabStop="False" />
 
                         <telerik1:RadBusyIndicator Grid.Column="2"
-                                                   IsBusy="{Binding WikiPage.IsBusyUpdateHistories.Value.Value}"
+                                                   IsBusy="{Binding IsBusyUpdateHistories.Value.Value}"
                                                    IsIndeterminate="True">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -258,7 +249,7 @@
                                                Text="{x:Static props:Resources.WikiPageHistories}" />
 
                                     <telerik:RadGridView Grid.Row="1"
-                                                         telerikExHelper:GridViewSelectionUtilities.SelectedItems="{Binding WikiPage.SelectedHistorySummaries}"
+                                                         telerikExHelper:GridViewSelectionUtilities.SelectedItems="{Binding SelectedHistorySummaries}"
                                                          AlternationCount="2"
                                                          AutoGenerateColumns="False"
                                                          CanUserDeleteRows="False"
@@ -266,7 +257,7 @@
                                                          CanUserInsertRows="False"
                                                          IsFilteringAllowed="False"
                                                          IsReadOnly="True"
-                                                         ItemsSource="{Binding WikiPage.HistorySummaries.Value}"
+                                                         ItemsSource="{Binding HistorySummaries.Value}"
                                                          RowIndicatorVisibility="Collapsed"
                                                          SelectionMode="Extended"
                                                          SelectionUnit="FullRow"
@@ -299,7 +290,7 @@
 
                                         <telerik:RadGridView.ContextMenu>
                                             <ContextMenu>
-                                                <MenuItem helpers:ButtonSetupHelper.Data="{Binding WikiPage.DiffHistoriesCommand}" />
+                                                <MenuItem helpers:ButtonSetupHelper.Data="{Binding DiffHistoriesCommand}" />
                                             </ContextMenu>
                                         </telerik:RadGridView.ContextMenu>
                                     </telerik:RadGridView>
@@ -325,7 +316,7 @@
                                                          CanUserInsertRows="False"
                                                          IsFilteringAllowed="False"
                                                          IsReadOnly="True"
-                                                         ItemsSource="{Binding WikiPage.UserSummaries.Value}"
+                                                         ItemsSource="{Binding UserSummaries.Value}"
                                                          RowIndicatorVisibility="Collapsed"
                                                          SelectionMode="Extended"
                                                          SelectionUnit="FullRow"
@@ -353,7 +344,7 @@
                                     <Grid Grid.Column="2">
                                         <telerik:RadPieChart x:Name="pieChart"
                                                              Palette="Windows8">
-                                            <telerik:PieSeries ItemsSource="{Binding WikiPage.UserSummaries.Value}"
+                                            <telerik:PieSeries ItemsSource="{Binding UserSummaries.Value}"
                                                                ShowLabels="True"
                                                                ValueBinding="InsertNoOfLine">
                                                 <telerik:PieSeries.AngleRange>
@@ -388,7 +379,7 @@
                                   IsTabStop="False" />
 
                     <Grid Grid.Row="2">
-                        <telerik1:RadBusyIndicator IsBusy="{Binding WikiPage.IsBusyUpdateHistories.Value.Value}"
+                        <telerik1:RadBusyIndicator IsBusy="{Binding IsBusyUpdateHistories.Value.Value}"
                                                    IsIndeterminate="True">
                             <Grid>
                                 <Grid.ColumnDefinitions>
@@ -412,7 +403,7 @@
                                     </telerik:RadCartesianChart.VerticalAxis>
 
                                     <telerik:RadCartesianChart.SeriesProvider>
-                                        <telerik:ChartSeriesProvider Source="{Binding WikiPage.Serieses.Value}">
+                                        <telerik:ChartSeriesProvider Source="{Binding Serieses.Value}">
                                             <telerik:ChartSeriesProvider.SeriesDescriptorSelector>
                                                 <charts:CustomSeriesDescriptorSelector>
                                                     <charts:CustomSeriesDescriptorSelector.wikiDescriptor>
@@ -475,7 +466,8 @@
                     </Grid>
                 </Grid>
 
-            </telerik1:RadBusyIndicator>
-        </Grid>
-    </telerik1:RadBusyIndicator>
+            </Grid>
+        </telerik1:RadBusyIndicator>
+    </libCont:OverwrapMessage>
+
 </UserControl>

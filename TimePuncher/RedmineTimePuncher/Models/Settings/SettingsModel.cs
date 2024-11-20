@@ -4,6 +4,7 @@ using LibRedminePower.Localization;
 using Reactive.Bindings;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models.Managers;
+using RedmineTimePuncher.Models.Settings.CreateTicket;
 using System;
 using System.Collections.Generic;
 using System.Globalization;

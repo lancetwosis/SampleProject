@@ -13,7 +13,7 @@
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
              xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
              xmlns:views="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
-             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings.CreateTicket"
              d:DataContext="{d:DesignInstance {x:Type vm:ReviewIssueListSettingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"

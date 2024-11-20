@@ -1,0 +1,241 @@
+﻿<telerik:RadWindow x:Class="RedmineTimePuncher.Views.CreateTicket.Review.TemplatesDialog"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                   xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+                   xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+                   xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+                   xmlns:converters1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+                   xmlns:local="clr-namespace:RedmineTimePuncher.Views.CreateTicket.Review"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+                   xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                   xmlns:telerikEx="clr-namespace:TelerikEx.Behaviors;assembly=TelerikEx"
+                   xmlns:telerikExHelper="clr-namespace:TelerikEx.Helpers;assembly=TelerikEx"
+                   xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket.Review.Templates.Dialogs"
+                   MaxHeight="600"
+                   d:DataContext="{d:DesignInstance {x:Type vm:TemplatesDialogViewModelBase},
+                                                    IsDesignTimeCreatable=True}"
+                   Header="Redmine Studio"
+                   ResizeMode="NoResize"
+                   WindowStartupLocation="CenterOwner"
+                   mc:Ignorable="d">
+
+    <telerik:RadWindow.Resources>
+        <Style BasedOn="{StaticResource RadGridViewStyle}"
+               TargetType="telerik:RadGridView">
+            <Setter Property="AllowDrop" Value="False" />
+            <Setter Property="AlternationCount" Value="2" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="CanUserFreezeColumns" Value="False" />
+            <Setter Property="CanUserInsertRows" Value="False" />
+            <Setter Property="CanUserSearch" Value="False" />
+            <Setter Property="IsFilteringAllowed" Value="False" />
+            <Setter Property="ItemsSource" Value="{Binding Templates}" />
+            <Setter Property="RowIndicatorVisibility" Value="Collapsed" />
+            <Setter Property="SearchPanelCloseButtonVisibility" Value="Collapsed" />
+            <Setter Property="ShowGroupPanel" Value="False" />
+        </Style>
+        <Style x:Key="TemplatesOkButtonStyle"
+               BasedOn="{StaticResource {x:Type telerik:RadButton}}"
+               TargetType="telerik:RadButton">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Command" Value="{Binding OkCommand}" />
+            <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow}, Mode=FindAncestor}}" />
+            <Setter Property="telerik:LocalizationManager.ResourceKey" Value="Ok" />
+            <Setter Property="telerik:RadWindow.ResponseButton" Value="Accept" />
+        </Style>
+        <Style x:Key="TemplatesCancelButtonStyle"
+               BasedOn="{StaticResource {x:Type telerik:RadButton}}"
+               TargetType="telerik:RadButton">
+            <Setter Property="HorizontalAlignment" Value="Right" />
+            <Setter Property="Command" Value="{Binding CancelCommand}" />
+            <Setter Property="CommandParameter" Value="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow}, Mode=FindAncestor}}" />
+            <Setter Property="telerik:LocalizationManager.ResourceKey" Value="Cancel" />
+            <Setter Property="telerik:RadWindow.ResponseButton" Value="Cancel" />
+        </Style>
+    </telerik:RadWindow.Resources>
+
+    <telerik:RadWindow.Style>
+        <Style BasedOn="{StaticResource RadWindowStyle}"
+               TargetType="telerik:RadWindow" />
+    </telerik:RadWindow.Style>
+
+    <ContentControl Content="{Binding}">
+        <ContentControl.Resources>
+            <DataTemplate DataType="{x:Type vm:SingleSelectDialogViewModel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="AUTO" />
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal">
+                        <ContentPresenter x:Name="Icon"
+                                          Margin="10"
+                                          VerticalAlignment="Top"
+                                          ContentTemplate="{StaticResource ConfirmQuestionIconTemplate}" />
+                        <Grid Margin="0,20,10,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="AUTO" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding Message}" />
+                            <telerik:RadGridView Grid.Row="1"
+                                                 Margin="5,10,0,0"
+                                                 CanUserDeleteRows="False"
+                                                 IsReadOnly="True"
+                                                 SelectedItem="{Binding SelectedTemplate.Value}"
+                                                 SelectionMode="Single">
+                                <telerik:RadGridView.Columns>
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Name.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColName}" />
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Project.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColProject}" />
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Created.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColCreated}" />
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Updated.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColUpdated}" />
+                                </telerik:RadGridView.Columns>
+                            </telerik:RadGridView>
+                        </Grid>
+                    </StackPanel>
+                    <StackPanel Grid.Row="1"
+                                Margin="0,10,0,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                        <telerik:RadButton Margin="0,0,10,5"
+                                           Style="{StaticResource TemplatesOkButtonStyle}" />
+                        <telerik:RadButton Margin="0,0,5,5"
+                                           Style="{StaticResource TemplatesCancelButtonStyle}" />
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:MultiSelectDialogViewModel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="AUTO" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <ContentPresenter x:Name="Icon"
+                                          Margin="10"
+                                          VerticalAlignment="Top"
+                                          ContentTemplate="{StaticResource ConfirmQuestionIconTemplate}" />
+                        <Grid Margin="0,20,10,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="AUTO" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock Text="{Binding Message}" />
+                            <telerik:RadGridView Grid.Row="1"
+                                                 Margin="5,10,0,0"
+                                                 telerikExHelper:GridViewSelectionUtilities.SelectedItems="{Binding SelectedTemplates}"
+                                                 CanUserDeleteRows="False"
+                                                 IsReadOnly="True"
+                                                 SelectedItem="{Binding SelectedTemplate.Value}"
+                                                 SelectionMode="Extended">
+                                <telerik:RadGridView.Columns>
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Name.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColName}" />
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Project.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColProject}" />
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Created.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColCreated}" />
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Updated.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColUpdated}" />
+                                </telerik:RadGridView.Columns>
+                            </telerik:RadGridView>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1"
+                                Margin="0,10,0,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                        <telerik:RadButton Margin="0,0,10,5"
+                                           Style="{StaticResource TemplatesOkButtonStyle}" />
+                        <telerik:RadButton Margin="0,0,5,5"
+                                           Style="{StaticResource TemplatesCancelButtonStyle}" />
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+            <DataTemplate DataType="{x:Type vm:ShowListDialogViewModel}">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="AUTO" />
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Orientation="Horizontal">
+                        <ContentPresenter x:Name="Icon"
+                                          Margin="10"
+                                          VerticalAlignment="Top"
+                                          ContentTemplate="{StaticResource ConfirmQuestionIconTemplate}" />
+                        <Grid Margin="0,20,10,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="AUTO" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="AUTO" />
+                                    <ColumnDefinition Width="AUTO" />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="{Binding Message}" />
+                                <telerik:RadButton Grid.Column="1"
+                                                   Height="27"
+                                                   Command="{Binding RenameCommand}"
+                                                   Content="{x:Static props:Resources.ReviewTemplateRename}" />
+                                <telerik:RadButton Grid.Column="2"
+                                                   Height="27"
+                                                   Margin="10,0,0,0"
+                                                   Command="{Binding DeleteCommand}"
+                                                   Content="{x:Static props:Resources.RibbonCmdDelete}" />
+                            </Grid>
+                            <telerik:RadGridView Grid.Row="1"
+                                                 Margin="5,10,0,0"
+                                                 CanUserDeleteRows="True"
+                                                 SelectedItem="{Binding SelectedTemplate.Value}"
+                                                 SelectionMode="Single"
+                                                 ShowGroupPanel="False">
+                                <telerik:RadGridView.Columns>
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Name.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColName}"
+                                                                IsReadOnly="False" />
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Project.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColProject}"
+                                                                IsReadOnly="True" />
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Created.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColCreated}"
+                                                                IsReadOnly="True" />
+                                    <telerik:GridViewDataColumn DataMemberBinding="{Binding Updated.Value}"
+                                                                Header="{x:Static props:Resources.ReviewTemplateColUpdated}"
+                                                                IsReadOnly="True" />
+                                </telerik:RadGridView.Columns>
+                            </telerik:RadGridView>
+                        </Grid>
+                    </StackPanel>
+
+                    <StackPanel Grid.Row="1"
+                                Margin="0,10,0,0"
+                                HorizontalAlignment="Right"
+                                VerticalAlignment="Center"
+                                Orientation="Horizontal">
+                        <telerik:RadButton Margin="0,0,10,5"
+                                           Style="{StaticResource TemplatesOkButtonStyle}" />
+                        <telerik:RadButton Margin="0,0,5,5"
+                                           Style="{StaticResource TemplatesCancelButtonStyle}"
+                                           Visibility="{Binding NeedsCancel,
+                                                                Converter={StaticResource BooleanToVisibilityConverter}}" />
+                    </StackPanel>
+                </Grid>
+            </DataTemplate>
+        </ContentControl.Resources>
+    </ContentControl>
+</telerik:RadWindow>

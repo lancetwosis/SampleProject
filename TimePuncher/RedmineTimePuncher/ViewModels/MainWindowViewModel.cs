@@ -99,25 +99,20 @@ namespace RedmineTimePuncher.ViewModels
                 await tryConnectAsync(s);
             }).AddTo(disposables);
 
-            Input = new InputViewModel(this).AddTo(disposables);
-            TableEditor = new TableEditorViewModel(this).AddTo(disposables);
-            CreateTicket = new CreateTicketViewModel(this).AddTo(disposables);
-            Visualize = new VisualizeViewModel(this).AddTo(disposables);
-            WikiPage = new WikiPageViewModel(this).AddTo(disposables);
+            Input = new InputViewModel().AddTo(disposables);
+            TableEditor = new TableEditorViewModel().AddTo(disposables);
+            CreateTicket = new CreateTicketViewModel().AddTo(disposables);
+            Visualize = new VisualizeViewModel().AddTo(disposables);
+            WikiPage = new WikiPageViewModel().AddTo(disposables);
 
             // 定義の順番が NavigationView での表示順と処理に影響するので注意すること
             Functions = new ObservableCollection<FunctionViewModelBase>() { Input, Visualize, TableEditor, CreateTicket, WikiPage };
 
-            redmine.CombineLatest(Functions.Select(f => f.ErrorMessage).Where(e => e != null).CombineLatest(), (r, errs) => (r, errs)).SubscribeWithErr(p =>
-            {
-                if (p.r != null)
-                {
-                    ErrorMessage.Value = p.errs.FirstOrDefault(e => e != null);
-                }
-            });
-
-            Title = Functions.Select(f => f.Title).CombineLatest().CombineLatest(Mode, (ts, m) => true)
-                .Select(_ => Functions.First(f => f.IsSelected.Value).Title.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            // TODO 例外が発生しないように仮の処理を行う。恒久対処が行われたら置き換えること
+            Title = Functions.Select(f => f.Title).CombineLatest().CombineLatest(Mode, (ts, m) => m)
+                .Select(m => Functions.First(f => f.Mode == m).Title.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            //Title = Functions.Select(f => f.Title).CombineLatest().CombineLatest(Mode, (ts, m) => true)
+            //    .Select(_ => Functions.First(f => f.IsSelected.Value).Title.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             // バージョンダイアログを開く
             ShowVersionDialogCommand = new ReactiveCommand().WithSubscribe(() =>

@@ -1,0 +1,56 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.CreateTicket.Common.PeriodDatePicker"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+             xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:convs="clr-namespace:RedmineTimePuncher.Converters"
+             xmlns:convs1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:lib="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:libProps="clr-namespace:LibRedminePower.Properties;assembly=LibRedminePower"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket.Review"
+             d:DataContext="{d:DesignInstance {x:Type vm:PeriodViewModel},
+                                              IsDesignTimeCreatable=True}"
+             mc:Ignorable="d">
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="AUTO" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <telerik:RadDateTimePicker InputMode="DatePicker"
+                                   SelectedValue="{Binding StartDate.Value,
+                                                           Mode=TwoWay}">
+            <telerik:RadDateTimePicker.CalendarStyle>
+                <Style BasedOn="{StaticResource RadCalendarStyle}"
+                       TargetType="{x:Type telerik:RadCalendar}">
+                    <Setter Property="AreWeekNumbersVisible" Value="False" />
+                </Style>
+            </telerik:RadDateTimePicker.CalendarStyle>
+        </telerik:RadDateTimePicker>
+        <TextBlock Grid.Column="1"
+                   Margin="5,0,0,0"
+                   Text=" - " />
+        <telerik:RadDateTimePicker Grid.Column="2"
+                                   Margin="5,0,0,0"
+                                   InputMode="DatePicker"
+                                   SelectedValue="{Binding DueDate.Value,
+                                                           Mode=TwoWay}">
+            <telerik:RadDateTimePicker.CalendarStyle>
+                <Style BasedOn="{StaticResource RadCalendarStyle}"
+                       TargetType="{x:Type telerik:RadCalendar}">
+                    <Setter Property="AreWeekNumbersVisible" Value="False" />
+                </Style>
+            </telerik:RadDateTimePicker.CalendarStyle>
+        </telerik:RadDateTimePicker>
+    </Grid>
+
+</UserControl>

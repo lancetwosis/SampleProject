@@ -19,23 +19,17 @@ namespace RedmineTimePuncher.ViewModels.Bases
     public abstract class FunctionViewModelBase : LibRedminePower.ViewModels.Bases.ViewModelBase
     {
         public ApplicationMode Mode { get; set; }
-        [JsonIgnore]
         public BitmapSource Icon { get; set; }
 
-        [JsonIgnore]
-        public ReadOnlyReactivePropertySlim<bool> IsSelected { get; set; }
-        [JsonIgnore]
+        public ReactivePropertySlim<bool> IsSelected { get; set; }
         public ReadOnlyReactivePropertySlim<string> ErrorMessage { get; set; }
-        [JsonIgnore]
         public ReadOnlyReactivePropertySlim<string> Title { get; set; }
 
-        public FunctionViewModelBase() { }
-
-        public FunctionViewModelBase(ApplicationMode mode, MainWindowViewModel parent)
+        public FunctionViewModelBase(ApplicationMode mode)
         {
             Mode = mode;
             Icon = mode.GetIcon();
-            IsSelected = parent.Mode.Select(m => m == mode).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            IsSelected = new ReactivePropertySlim<bool>(false);
             Title = CacheManager.Default.Updated.Select(_ => getTitle()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 

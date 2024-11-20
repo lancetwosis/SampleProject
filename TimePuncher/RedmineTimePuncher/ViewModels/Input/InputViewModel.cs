@@ -46,8 +46,6 @@ namespace RedmineTimePuncher.ViewModels.Input
 {
     public class InputViewModel : FunctionViewModelBase
     {
-        public MainWindowViewModel Parent { get; set; }
-
         public ReadOnlyReactivePropertySlim<string> UrlBase { get; set; }
 
         #region "スケジュール"
@@ -138,11 +136,9 @@ namespace RedmineTimePuncher.ViewModels.Input
         private List<MyResourceBase> defaultResouces;
         private BusyNotifier skipLoadAppointments = new BusyNotifier();
 
-        public InputViewModel(MainWindowViewModel parent) : base(ApplicationMode.TimePuncher, parent)
+        public InputViewModel() : base(ApplicationMode.TimePuncher)
         {
             Window = new ReactivePropertySlim<Window>();
-
-            this.Parent = parent;
 
             SelectedDate = new ReactivePropertySlim<DateTime>(DateTime.Today).AddTo(disposables);
             CurrentDate = new ReactivePropertySlim<DateTime>().AddTo(disposables);

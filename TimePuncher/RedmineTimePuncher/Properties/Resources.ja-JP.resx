@@ -434,7 +434,7 @@
     <value>お気に入りから削除</value>
   </data>
   <data name="msgNeedRestart" xml:space="preserve">
-    <value>この設定を反映させるためには、アプリの再起動が必要です。</value>
+    <value>この設定を反映させるためには、アプリケーションの再起動が必要です。</value>
   </data>
   <data name="AppModeInputTime" xml:space="preserve">
     <value>時間入力</value>
@@ -902,14 +902,8 @@ APIアクセスキー</value>
   <data name="ReviewPoints" xml:space="preserve">
     <value>指摘</value>
   </data>
-  <data name="ReviewErrMsgSelectTargetTicket" xml:space="preserve">
-    <value>チケットを選択してください。</value>
-  </data>
   <data name="ReviewErrMsgInvalidTimePeriod" xml:space="preserve">
     <value>期間を正しく設定してください。</value>
-  </data>
-  <data name="ReviewErrMsgSelectReviewer" xml:space="preserve">
-    <value>レビューアを選択してください。</value>
   </data>
   <data name="ReviewMsgReferPointsAtHere" xml:space="preserve">
     <value>ここから指摘の一覧を表示できます。</value>
@@ -960,9 +954,6 @@ APIアクセスキー</value>
   </data>
   <data name="ReviewErrMsgTargetClosed" xml:space="preserve">
     <value>終了したチケットは選択できません。</value>
-  </data>
-  <data name="ReviewErrMsgSelectOrganizer" xml:space="preserve">
-    <value>開催者を選択してください。</value>
   </data>
   <data name="ReviewPointsAdd" xml:space="preserve">
     <value>指摘追加</value>
@@ -1364,9 +1355,6 @@ Outlookの状態を確認してください。</value>
   <data name="SelectedCount" xml:space="preserve">
     <value>選択数: </value>
   </data>
-  <data name="ReviewErrMsgSelectOperator" xml:space="preserve">
-    <value>作業者を選択してください。</value>
-  </data>
   <data name="AppModeVisualize" xml:space="preserve">
     <value>工数分析</value>
   </data>
@@ -1660,7 +1648,8 @@ Outlookの状態を確認してください。</value>
     <value>保存</value>
   </data>
   <data name="VisualizeCmdSaveAs" xml:space="preserve">
-    <value>名前を付けて保存</value>
+    <value>名前を付けて
+保存</value>
   </data>
   <data name="VisualizeCmdUpdateData" xml:space="preserve">
     <value>再取得</value>
@@ -1947,5 +1936,155 @@ Redmine の設定を見直してください。</value>
   </data>
   <data name="MsgPleaseSpecifyXXX" xml:space="preserve">
     <value>{0}を指定してください。</value>
+  </data>
+  <data name="ReviewMsgSelfPrefix" xml:space="preserve">
+    <value>セルフレビュー（</value>
+  </data>
+  <data name="ReviewMsgSelfPostfix" xml:space="preserve">
+    <value>）を実施中です。</value>
+  </data>
+  <data name="ReviewMsgSelfClickContinue" xml:space="preserve">
+    <value>レビューが終了したら「続行」を実行してください。</value>
+  </data>
+  <data name="ReviewSelfContinue" xml:space="preserve">
+    <value>続行</value>
+  </data>
+  <data name="ReviewSelfCancel" xml:space="preserve">
+    <value>キャンセル</value>
+  </data>
+  <data name="ReviewMsgSelfOrganize" xml:space="preserve">
+    <value>セルフレビューを実施する</value>
+  </data>
+  <data name="ReviewErrMsgSelfNotFinished" xml:space="preserve">
+    <value>セルフレビューチケットが終了していません。
+
+他のレビューアへの依頼チケットの作成を続行しますか？</value>
+  </data>
+  <data name="ReviewErrMsgSelfNotFound" xml:space="preserve">
+    <value>セルフレビューチケットのステータスが確認できませんでした。</value>
+  </data>
+  <data name="ReviewMsgSelftConfirmCancel" xml:space="preserve">
+    <value>セルフレビューをキャンセルし、元の状態に戻りますか？
+
+キャンセルするとセルフレビューチケット（{0}）に紐づいた形で、レビューの依頼チケットを作成することができなくなります。</value>
+  </data>
+  <data name="ReviewMsgSelftConfirmAppClosing" xml:space="preserve">
+    <value>セルフレビューを実施中です。アプリケーションを終了しますか？
+
+アプリケーションを終了しても、セルフレビューの情報は保持されます。</value>
+  </data>
+  <data name="ReviewSelfReview" xml:space="preserve">
+    <value>セルフレビュー</value>
+  </data>
+  <data name="ReviewErrMsgSelectXXX" xml:space="preserve">
+    <value>「{0}」を選択してください。</value>
+  </data>
+  <data name="ReviewTargetTicket" xml:space="preserve">
+    <value>対象のチケット</value>
+  </data>
+  <data name="ReviewNewReview" xml:space="preserve">
+    <value>新規レビュー</value>
+  </data>
+  <data name="RibbonCmdNew" xml:space="preserve">
+    <value>新規</value>
+  </data>
+  <data name="ReviewTemplateMsgConfirmProject" xml:space="preserve">
+    <value>テンプレートのプロジェクトと対象チケットのプロジェクトが異なります。そのため、正しくテンプレートを適用できない可能性があります。続行しますか？
+
+テンプレートのプロジェクト : {0}
+対象チケットのプロジェクト : {1}</value>
+  </data>
+  <data name="ReviewTemplateMsgSelectApply" xml:space="preserve">
+    <value>適用するテンプレートを選択してください。</value>
+  </data>
+  <data name="ReviewTemplateMsgSelectSave" xml:space="preserve">
+    <value>保存先のテンプレートを選択してください。</value>
+  </data>
+  <data name="ReviewTemplateMsgEnterName" xml:space="preserve">
+    <value>テンプレートの名前を入力してください。</value>
+  </data>
+  <data name="ReviewTemplateColName" xml:space="preserve">
+    <value>テンプレート名</value>
+  </data>
+  <data name="ReviewTemplateColProject" xml:space="preserve">
+    <value>プロジェクト</value>
+  </data>
+  <data name="ReviewTemplateColCreated" xml:space="preserve">
+    <value>作成日</value>
+  </data>
+  <data name="ReviewTemplateColUpdated" xml:space="preserve">
+    <value>更新日</value>
+  </data>
+  <data name="RibbonCmdApply" xml:space="preserve">
+    <value>適用</value>
+  </data>
+  <data name="RibbonCmdSaveAs" xml:space="preserve">
+    <value>名前を付けて
+保存</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgApply" xml:space="preserve">
+    <value>テンプレートを選択して、その設定を選択中のレビューに反映します。</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgSave" xml:space="preserve">
+    <value>選択されているレビューの設定をテンプレートとして登録します。</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgShowList" xml:space="preserve">
+    <value>登録されているテンプレートの一覧を表示します。</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgDelete" xml:space="preserve">
+    <value>テンプレートを選択して削除します。</value>
+  </data>
+  <data name="ReviewTemplateMsgNotExist" xml:space="preserve">
+    <value>登録されたテンプレートがありません。</value>
+  </data>
+  <data name="ReviewTemplate" xml:space="preserve">
+    <value>テンプレート</value>
+  </data>
+  <data name="RibbonCmdShowList" xml:space="preserve">
+    <value>一覧</value>
+  </data>
+  <data name="ReviewTemplateMsgList" xml:space="preserve">
+    <value>以下のテンプレートが登録されています。
+「名前の変更」または「削除」を実行できます。</value>
+  </data>
+  <data name="RibbonCmdRegister" xml:space="preserve">
+    <value>登録</value>
+  </data>
+  <data name="RibbonCmdRegisterAs" xml:space="preserve">
+    <value>名前を付けて
+登録</value>
+  </data>
+  <data name="ReviewTemplateRename" xml:space="preserve">
+    <value>名前の変更</value>
+  </data>
+  <data name="RibbonCmdExport" xml:space="preserve">
+    <value>エクスポート</value>
+  </data>
+  <data name="RibbonCmdImport" xml:space="preserve">
+    <value>インポート</value>
+  </data>
+  <data name="ReviewTemplateMsgSelectExport" xml:space="preserve">
+    <value>エクスポートするテンプレートを選択してください。</value>
+  </data>
+  <data name="ReviewTemplateMsgNameIsEmpty" xml:space="preserve">
+    <value>名前を空白にはできません。</value>
+  </data>
+  <data name="ReviewTemplateMsgSameName" xml:space="preserve">
+    <value>同名のテンプレートが存在するため設定できません。</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgExport" xml:space="preserve">
+    <value>テンプレートを選択してJSON形式で出力します。</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgImport" xml:space="preserve">
+    <value>エクスポートしたファイルからテンプレートを復元し、登録します。</value>
+  </data>
+  <data name="ReviewTemplateMsgConfirmImport" xml:space="preserve">
+    <value>以下のテンプレートをインポートします。
+「名前の変更」または「削除」を実行できます。</value>
+  </data>
+  <data name="ReviewTemplateMsgConfirmTicket" xml:space="preserve">
+    <value>レビュー対象のチケットが選択されていないため、テンプレートを登録した時のチケットを対象とします。
+
+必要に応じて対象チケットを変更してください。</value>
   </data>
 </root>

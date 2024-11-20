@@ -1,0 +1,77 @@
+﻿<telerik:RadWindow x:Class="RedmineTimePuncher.Views.CreateTicket.Review.TemplateNameDialog"
+                   xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                   xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                   xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+                   xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+                   xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+                   xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
+                   xmlns:converters1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+                   xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                   xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+                   xmlns:local="clr-namespace:RedmineTimePuncher.Views.CreateTicket.Review"
+                   xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                   xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+                   xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                   xmlns:telerikEx="clr-namespace:TelerikEx.Behaviors;assembly=TelerikEx"
+                   xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket.Review.Templates"
+                   MaxHeight="600"
+                   d:DataContext="{d:DesignInstance {x:Type vm:TemplateViewModel},
+                                                    IsDesignTimeCreatable=True}"
+                   Header="Redmine Studio"
+                   ResizeMode="NoResize"
+                   WindowStartupLocation="CenterOwner"
+                   mc:Ignorable="d">
+    <telerik:RadWindow.Style>
+        <Style BasedOn="{StaticResource RadWindowStyle}"
+               TargetType="telerik:RadWindow" />
+    </telerik:RadWindow.Style>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="AUTO" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal">
+            <ContentPresenter x:Name="Icon"
+                              Margin="10"
+                              VerticalAlignment="Top"
+                              ContentTemplate="{StaticResource ConfirmQuestionIconTemplate}" />
+            <Grid Margin="0,20,10,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="AUTO" />
+                    <RowDefinition Height="AUTO" />
+                </Grid.RowDefinitions>
+                <TextBlock Text="{x:Static props:Resources.ReviewTemplateMsgEnterName}" />
+                <TextBox Grid.Row="1"
+                         Margin="0,5,0,0"
+                         Text="{Binding InputedName.Value,
+                                        UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1"
+                    Margin="0,10,0,0"
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    Orientation="Horizontal">
+            <telerik:RadButton Margin="0,0,10,5"
+                               HorizontalAlignment="Right"
+                               telerik:LocalizationManager.ResourceKey="Ok"
+                               telerik:RadWindow.ResponseButton="Accept"
+                               Command="{Binding OkCommand}"
+                               CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                                         Mode=FindAncestor}}"
+                               ToolTip="{Binding OkCommand.ToolTip.Value}"
+                               ToolTipService.ShowOnDisabled="True" />
+            <telerik:RadButton Margin="0,0,5,5"
+                               HorizontalAlignment="Right"
+                               telerik:LocalizationManager.ResourceKey="Cancel"
+                               telerik:RadWindow.ResponseButton="Cancel"
+                               Command="{Binding CancelCommand}"
+                               CommandParameter="{Binding RelativeSource={RelativeSource AncestorType={x:Type telerik:RadWindow},
+                                                                                         Mode=FindAncestor}}" />
+        </StackPanel>
+
+    </Grid>
+</telerik:RadWindow>

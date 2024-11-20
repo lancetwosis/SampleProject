@@ -1,0 +1,40 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation">
+
+    <Style x:Key="LabelStyle"
+           BasedOn="{StaticResource MyTextBlockStyle}"
+           TargetType="TextBlock">
+        <Setter Property="TextAlignment" Value="Right" />
+        <Setter Property="FontWeight" Value="Bold" />
+        <Setter Property="Foreground" Value="Black" />
+    </Style>
+
+    <Style x:Key="DescriptionTextBoxStyle"
+           TargetType="TextBox">
+        <Setter Property="VerticalContentAlignment" Value="Top" />
+        <Setter Property="TextAlignment" Value="Left" />
+        <Setter Property="TextWrapping" Value="Wrap" />
+        <Setter Property="ToolTip" Value="{x:Static props:Resources.ReviewMsgMarkupLangEnable}" />
+        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+    </Style>
+
+    <DataTemplate x:Key="TemplateMenuHeader">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="AUTO"
+                                  SharedSizeGroup="TemplateFirst" />
+                <ColumnDefinition Width="AUTO"
+                                  SharedSizeGroup="TemplateSecond" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{Binding Name.Value, Mode=OneWay}" />
+            <TextBlock Grid.Column="1"
+                       Margin="10,0,0,0">
+                <Run Text="(" />
+                <Run Text="{Binding Project.Value, Mode=OneWay}" />
+                <Run Text=")" />
+            </TextBlock>
+        </Grid>
+    </DataTemplate>
+</ResourceDictionary>

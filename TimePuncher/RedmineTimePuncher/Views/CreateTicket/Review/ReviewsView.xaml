@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.CreateTicket.Review.ReviewsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+             xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:convs="clr-namespace:RedmineTimePuncher.Converters"
+             xmlns:convs1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:lib="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:libProps="clr-namespace:LibRedminePower.Properties;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.CreateTicket.Review"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+             xmlns:vCommon="clr-namespace:RedmineTimePuncher.Views.CreateTicket.Common"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket.Review"
+             d:DataContext="{d:DesignInstance {x:Type vm:ReviewsViewModel},
+                                              IsDesignTimeCreatable=True}"
+             mc:Ignorable="d">
+
+    <telerik:RadTabControl Margin="5,5,0,0"
+                           Background="#F6F6F6"
+                           ItemsSource="{Binding Reviews}"
+                           SelectedIndex="{Binding SelectedIndex.Value,
+                                                   Mode=TwoWay}">
+        <telerik:RadTabControl.ItemTemplate>
+            <DataTemplate>
+                <TextBlock Text="{Binding Name.Value}" />
+            </DataTemplate>
+        </telerik:RadTabControl.ItemTemplate>
+        <telerik:RadTabControl.ContentTemplate>
+            <DataTemplate>
+                <local:ReviewView DataContext="{Binding}" />
+            </DataTemplate>
+        </telerik:RadTabControl.ContentTemplate>
+    </telerik:RadTabControl>
+
+</UserControl>

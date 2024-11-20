@@ -219,7 +219,7 @@ namespace LibRedminePower.ViewModels
             return menu;
         }
 
-        public RadMenuItem ToRadMenuItem()
+        public virtual RadMenuItem ToRadMenuItem()
         {
             var menu = new RadMenuItem();
             menu.Header = text;

@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.CreateTicket.Common.AssigneesTwinListBox"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+             xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:convs="clr-namespace:RedmineTimePuncher.Converters"
+             xmlns:convs1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:lib="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:libProps="clr-namespace:LibRedminePower.Properties;assembly=LibRedminePower"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket.Review"
+             d:DataContext="{d:DesignInstance {x:Type vm:AssigneesViewModel},
+                                              IsDesignTimeCreatable=True}"
+             mc:Ignorable="d">
+
+    <lib:ExpandableTwinListBox DataContext="{Binding TwinList.Value}">
+        <lib:ExpandableTwinListBox.ToItemTemplate>
+            <DataTemplate>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="{Binding Model.Name}" />
+                    <CheckBox Grid.Column="2"
+                              Margin="5,0,0,0"
+                              Content="{x:Static props:Resources.ReviewReviewerRequired}"
+                              IsChecked="{Binding IsRequired.Value}"
+                              Visibility="{Binding Model.IsRequired.IsEnabled,
+                                                   Converter={StaticResource BooleanToVisibilityConverter}}" />
+                </Grid>
+            </DataTemplate>
+        </lib:ExpandableTwinListBox.ToItemTemplate>
+    </lib:ExpandableTwinListBox>
+
+</UserControl>

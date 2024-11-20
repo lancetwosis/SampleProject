@@ -14,6 +14,7 @@
              xmlns:extensions="clr-namespace:LibRedminePower.Extentions;assembly=LibRedminePower"
              xmlns:grid="clr-namespace:Telerik.Windows.Controls.GridView;assembly=Telerik.Windows.Controls.GridView"
              xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
              xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"
@@ -24,65 +25,59 @@
              xmlns:treeMap="clr-namespace:Telerik.Windows.Controls.TreeMap;assembly=Telerik.Windows.Controls.DataVisualization"
              xmlns:views="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
              xmlns:visualizeEnums="clr-namespace:RedmineTimePuncher.ViewModels.Visualize.Enums"
-             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels"
-             d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel},
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Visualize"
+             d:DataContext="{d:DesignInstance {x:Type vm:VisualizeViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"
              d:DesignWidth="800"
              mc:Ignorable="d">
-    <telerik1:RadBusyIndicator IsBusy="{Binding Visualize.IsBusy.IsBusy}"
-                               IsIndeterminate="True">
-        <Grid>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="AUTO" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
+    <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+        <telerik1:RadBusyIndicator IsBusy="{Binding IsBusy.IsBusy}"
+                                   IsIndeterminate="True">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="AUTO" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
 
-            <telerik:RadRibbonView Grid.Row="0"
-                                   ApplicationButtonVisibility="Collapsed"
-                                   HelpButtonVisibility="Collapsed"
-                                   IsEnabled="{Binding IsBusy.IsBusy,
-                                                       Converter={StaticResource InvertedBooleanConverter}}"
-                                   IsMinimized="{Binding Source={x:Static props:Settings.Default},
-                                                         Path=RadRibbonViewIsMinimized,
-                                                         Mode=TwoWay}"
-                                   MinimizeButtonVisibility="Visible"
-                                   TitleBarVisibility="Collapsed">
-                <telerik:RadRibbonView.Resources>
-                    <Style BasedOn="{StaticResource {x:Type telerik:RadRibbonButton}}"
-                           TargetType="telerik:RadRibbonButton">
-                        <Setter Property="CollapseToMedium" Value="WhenGroupIsMedium" />
-                        <Setter Property="CollapseToSmall" Value="WhenGroupIsSmall" />
-                        <Setter Property="Size" Value="Large" />
-                    </Style>
-                </telerik:RadRibbonView.Resources>
-                <telerik:RadRibbonView.Items>
-                    <telerik:RadRibbonTab Header="{x:Static props:Resources.RibbonTabHome}">
-                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.VisualizeRibbonFilter}">
-                            <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.GetTimeEntriesCommand}" />
-                        </telerik:RadRibbonGroup>
-                        <telerik:RadRibbonGroup Header="{x:Static props:Resources.VisualizeRibbonResult}">
-                            <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.OpenResultCommand}" />
-                            <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.SaveResultCommand}" />
-                            <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.SaveAsResultCommand}" />
-                            <telerik:Separator />
-                            <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Visualize.UpdateTimeEntriesCommand}" />
-                        </telerik:RadRibbonGroup>
-                    </telerik:RadRibbonTab>
-                </telerik:RadRibbonView.Items>
+                <telerik:RadRibbonView Grid.Row="0"
+                                       ApplicationButtonVisibility="Collapsed"
+                                       HelpButtonVisibility="Collapsed"
+                                       IsMinimized="{Binding Source={x:Static props:Settings.Default},
+                                                             Path=RadRibbonViewIsMinimized,
+                                                             Mode=TwoWay}"
+                                       MinimizeButtonVisibility="Visible"
+                                       TitleBarVisibility="Collapsed">
+                    <telerik:RadRibbonView.Resources>
+                        <Style BasedOn="{StaticResource {x:Type telerik:RadRibbonButton}}"
+                               TargetType="telerik:RadRibbonButton">
+                            <Setter Property="CollapseToMedium" Value="WhenGroupIsMedium" />
+                            <Setter Property="CollapseToSmall" Value="WhenGroupIsSmall" />
+                            <Setter Property="Size" Value="Large" />
+                        </Style>
+                    </telerik:RadRibbonView.Resources>
+                    <telerik:RadRibbonView.Items>
+                        <telerik:RadRibbonTab Header="{x:Static props:Resources.RibbonTabHome}">
+                            <telerik:RadRibbonGroup Header="{x:Static props:Resources.VisualizeRibbonFilter}">
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding GetTimeEntriesCommand}" />
+                            </telerik:RadRibbonGroup>
+                            <telerik:RadRibbonGroup Header="{x:Static props:Resources.VisualizeRibbonResult}">
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding OpenResultCommand}" />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding SaveResultCommand}" />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding SaveAsResultCommand}" />
+                                <telerik:Separator />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding UpdateTimeEntriesCommand}" />
+                            </telerik:RadRibbonGroup>
+                        </telerik:RadRibbonTab>
+                    </telerik:RadRibbonView.Items>
 
-                <b:Interaction.Behaviors>
-                    <behaviors1:RadRibbonViewIsMinimizedSettingAtLoadedBehavior />
-                </b:Interaction.Behaviors>
+                    <b:Interaction.Behaviors>
+                        <behaviors1:RadRibbonViewIsMinimizedSettingAtLoadedBehavior />
+                    </b:Interaction.Behaviors>
 
-            </telerik:RadRibbonView>
+                </telerik:RadRibbonView>
 
-            <telerik1:RadBusyIndicator Grid.Row="1"
-                                       BusyContent="{Binding IsBusy.Text}"
-                                       IsBusy="{Binding IsBusy.IsBusy}"
-                                       IsIndeterminate="True">
-
-                <Grid>
+                <Grid Grid.Row="1">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="AUTO" />
                         <RowDefinition Height="*" />
@@ -98,7 +93,7 @@
                                   BorderBrush="{telerik1:Office2019Resource ResourceKey=AccentBorderBrush}"
                                   BorderThickness="1"
                                   Header="{Binding}"
-                                  IsExpanded="{Binding Visualize.Filters.IsExpanded.Value}">
+                                  IsExpanded="{Binding Filters.IsExpanded.Value}">
                             <Expander.HeaderTemplate>
                                 <DataTemplate>
                                     <StackPanel Orientation="Horizontal">
@@ -108,25 +103,25 @@
                                                    Foreground="{telerik1:Office2019Resource ResourceKey={x:Static telerik:Office2019ResourceKey.AccentBackgroundBrush}}"
                                                    Text="{x:Static props:Resources.VisualizeRibbonFilter}" />
                                         <charts:FilterLabelView Margin="5,0,0,0"
-                                                                DataContext="{Binding Visualize.Filters.SpecifyParentIssue}"
+                                                                DataContext="{Binding Filters.SpecifyParentIssue}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
                                                                                                                     AncestorType=Expander},
                                                                                      Path=IsExpanded,
                                                                                      Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
                                         <charts:FilterLabelView Margin="5,0,0,0"
-                                                                DataContext="{Binding Visualize.Filters.SpecifyPeriod}"
+                                                                DataContext="{Binding Filters.SpecifyPeriod}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
                                                                                                                     AncestorType=Expander},
                                                                                      Path=IsExpanded,
                                                                                      Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
                                         <charts:FilterLabelView Margin="5,0,0,0"
-                                                                DataContext="{Binding Visualize.Filters.SpecifyUsers}"
+                                                                DataContext="{Binding Filters.SpecifyUsers}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
                                                                                                                     AncestorType=Expander},
                                                                                      Path=IsExpanded,
                                                                                      Converter={StaticResource InvertedBooleanToVisibilityConverter}}" />
                                         <charts:FilterLabelView Margin="5,0,0,0"
-                                                                DataContext="{Binding Visualize.Filters.SpecifyProjects}"
+                                                                DataContext="{Binding Filters.SpecifyProjects}"
                                                                 Visibility="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
                                                                                                                     AncestorType=Expander},
                                                                                      Path=IsExpanded,
@@ -146,11 +141,11 @@
                                         <RowDefinition Height="*" />
                                     </Grid.RowDefinitions>
                                     <GroupBox Margin="5,5,0,0"
-                                              Background="{Binding Visualize.Filters.SpecifyParentIssue.Background}">
+                                              Background="{Binding Filters.SpecifyParentIssue.Background}">
                                         <GroupBox.Header>
                                             <CheckBox x:Name="parentIssueCheckBox"
                                                       Content="{x:Static props:Resources.VisualizeSpecifyParent}"
-                                                      IsChecked="{Binding Visualize.Filters.SpecifyParentIssue.IsEnabled.Value}" />
+                                                      IsChecked="{Binding Filters.SpecifyParentIssue.IsEnabled.Value}" />
                                         </GroupBox.Header>
                                         <Grid Margin="0,3,0,0"
                                               IsEnabled="{Binding ElementName=parentIssueCheckBox,
@@ -162,7 +157,7 @@
                                             <TextBlock Text="{x:Static props:Resources.VisualizeIssueId}" />
                                             <TextBox Grid.Column="1"
                                                      Margin="5,0,0,0"
-                                                     Text="{Binding Visualize.Filters.SpecifyParentIssue.ParentIssueId.Value,
+                                                     Text="{Binding Filters.SpecifyParentIssue.ParentIssueId.Value,
                                                                     UpdateSourceTrigger=PropertyChanged}"
                                                      TextAlignment="Right" />
                                             <telerik:RadButton Grid.Column="1"
@@ -171,17 +166,17 @@
                                                                HorizontalAlignment="Left"
                                                                VerticalAlignment="Center"
                                                                ClickMode="Press"
-                                                               Command="{Binding Visualize.Filters.SpecifyParentIssue.GoToTicketCommand}"
+                                                               Command="{Binding Filters.SpecifyParentIssue.GoToTicketCommand}"
                                                                Style="{StaticResource GotoTicketButtonStyle}" />
                                         </Grid>
                                     </GroupBox>
                                     <GroupBox Grid.Row="1"
                                               Margin="5,5,0,0"
-                                              Background="{Binding Visualize.Filters.SpecifyPeriod.Background}">
+                                              Background="{Binding Filters.SpecifyPeriod.Background}">
                                         <GroupBox.Header>
                                             <CheckBox x:Name="periodCheckBox"
                                                       Content="{x:Static props:Resources.VisualizeSpecifyPeriod}"
-                                                      IsChecked="{Binding Visualize.Filters.SpecifyPeriod.IsEnabled.Value}" />
+                                                      IsChecked="{Binding Filters.SpecifyPeriod.IsEnabled.Value}" />
                                         </GroupBox.Header>
                                         <Grid IsEnabled="{Binding ElementName=periodCheckBox, Path=IsChecked}">
                                             <Grid.RowDefinitions>
@@ -192,14 +187,14 @@
                                             <RadioButton Margin="0,5,0,0"
                                                          Content="{x:Static props:Resources.VisualizePeriodLastWeek}"
                                                          GroupName="SpecifyPeriod"
-                                                         IsChecked="{Binding Visualize.Filters.SpecifyPeriod.PeriodMode.Value,
+                                                         IsChecked="{Binding Filters.SpecifyPeriod.PeriodMode.Value,
                                                                              Converter={StaticResource EnumToBooleanConverter},
                                                                              ConverterParameter=LastWeek}" />
                                             <RadioButton Grid.Row="1"
                                                          Margin="0,5,0,0"
                                                          Content="{x:Static props:Resources.VisualizePeriodLastMonth}"
                                                          GroupName="SpecifyPeriod"
-                                                         IsChecked="{Binding Visualize.Filters.SpecifyPeriod.PeriodMode.Value,
+                                                         IsChecked="{Binding Filters.SpecifyPeriod.PeriodMode.Value,
                                                                              Converter={StaticResource EnumToBooleanConverter},
                                                                              ConverterParameter=LastMonth}" />
                                             <StackPanel Grid.Row="2"
@@ -207,7 +202,7 @@
                                                         Orientation="Horizontal">
                                                 <RadioButton x:Name="specifyPeriodCheckBox"
                                                              GroupName="SpecifyPeriod"
-                                                             IsChecked="{Binding Visualize.Filters.SpecifyPeriod.PeriodMode.Value,
+                                                             IsChecked="{Binding Filters.SpecifyPeriod.PeriodMode.Value,
                                                                                  Converter={StaticResource EnumToBooleanConverter},
                                                                                  ConverterParameter=SpecifyPeriod}" />
                                                 <TextBlock Margin="5,5,0,0"
@@ -216,7 +211,7 @@
                                                                            InputMode="DatePicker"
                                                                            IsEnabled="{Binding ElementName=specifyPeriodCheckBox,
                                                                                                Path=IsChecked}"
-                                                                           SelectedDate="{Binding Visualize.Filters.SpecifyPeriod.Start.Value,
+                                                                           SelectedDate="{Binding Filters.SpecifyPeriod.Start.Value,
                                                                                                   Mode=TwoWay}">
                                                     <telerik:RadDateTimePicker.CalendarStyle>
                                                         <Style BasedOn="{StaticResource RadCalendarStyle}"
@@ -231,7 +226,7 @@
                                                                            InputMode="DatePicker"
                                                                            IsEnabled="{Binding ElementName=specifyPeriodCheckBox,
                                                                                                Path=IsChecked}"
-                                                                           SelectedDate="{Binding Visualize.Filters.SpecifyPeriod.End.Value,
+                                                                           SelectedDate="{Binding Filters.SpecifyPeriod.End.Value,
                                                                                                   Mode=TwoWay}">
                                                     <telerik:RadDateTimePicker.CalendarStyle>
                                                         <Style BasedOn="{StaticResource RadCalendarStyle}"
@@ -255,25 +250,25 @@
                                     </Grid.RowDefinitions>
                                     <GroupBox Grid.Row="0"
                                               Margin="5,5,0,0"
-                                              Background="{Binding Visualize.Filters.SpecifyUsers.Background}">
+                                              Background="{Binding Filters.SpecifyUsers.Background}">
                                         <GroupBox.Header>
                                             <CheckBox x:Name="userCheckBox"
                                                       Content="{x:Static props:Resources.VisualizeSpecifyUser}"
-                                                      IsChecked="{Binding Visualize.Filters.SpecifyUsers.IsEnabled.Value}" />
+                                                      IsChecked="{Binding Filters.SpecifyUsers.IsEnabled.Value}" />
                                         </GroupBox.Header>
-                                        <views:ExpandableTwinListBox DataContext="{Binding Visualize.Filters.SpecifyUsers.Users}"
+                                        <views:ExpandableTwinListBox DataContext="{Binding Filters.SpecifyUsers.Users}"
                                                                      IsEnabled="{Binding ElementName=userCheckBox,
                                                                                          Path=IsChecked}" />
                                     </GroupBox>
                                     <GroupBox Grid.Row="1"
                                               Margin="5,5,0,0"
-                                              Background="{Binding Visualize.Filters.SpecifyProjects.Background}">
+                                              Background="{Binding Filters.SpecifyProjects.Background}">
                                         <GroupBox.Header>
                                             <CheckBox x:Name="projectCheckBox"
                                                       Content="{x:Static props:Resources.VisualizeSpecifyProject}"
-                                                      IsChecked="{Binding Visualize.Filters.SpecifyProjects.IsEnabled.Value}" />
+                                                      IsChecked="{Binding Filters.SpecifyProjects.IsEnabled.Value}" />
                                         </GroupBox.Header>
-                                        <views:ExpandableTwinListBox DataContext="{Binding Visualize.Filters.SpecifyProjects.Projects}"
+                                        <views:ExpandableTwinListBox DataContext="{Binding Filters.SpecifyProjects.Projects}"
                                                                      IsEnabled="{Binding ElementName=projectCheckBox,
                                                                                          Path=IsChecked}" />
                                     </GroupBox>
@@ -310,8 +305,8 @@
                                             BorderBrush="LightGray"
                                             BorderThickness="1"
                                             CornerRadius="5"
-                                            ToolTip="{Binding Visualize.Result.Model.CreateAt}"
-                                            Visibility="{Binding Visualize.Result.Model.HasValue,
+                                            ToolTip="{Binding Result.Model.CreateAt}"
+                                            Visibility="{Binding Result.Model.HasValue,
                                                                  Converter={StaticResource BooleanToVisibilityConverter}}">
                                         <StackPanel Orientation="Horizontal">
                                             <TextBlock Margin="5,0,0,0"
@@ -321,28 +316,28 @@
                                             <TextBlock Margin="0,0,5,0"
                                                        VerticalAlignment="Center"
                                                        Foreground="DimGray"
-                                                       Text="{Binding Visualize.Result.Model.CreateAt,
+                                                       Text="{Binding Result.Model.CreateAt,
                                                                       StringFormat=yy/MM/dd}" />
                                         </StackPanel>
                                     </Border>
 
                                     <charts:FilterLabelView Margin="5,0,0,0"
-                                                            DataContext="{Binding Visualize.Result.Filters.SpecifyParentIssue}"
+                                                            DataContext="{Binding Result.Filters.SpecifyParentIssue}"
                                                             Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
                                                                                  Path=DataContext,
                                                                                  Converter={StaticResource NullToVisibilityConverter}}" />
                                     <charts:FilterLabelView Margin="5,0,0,0"
-                                                            DataContext="{Binding Visualize.Result.Filters.SpecifyPeriod}"
+                                                            DataContext="{Binding Result.Filters.SpecifyPeriod}"
                                                             Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
                                                                                  Path=DataContext,
                                                                                  Converter={StaticResource NullToVisibilityConverter}}" />
                                     <charts:FilterLabelView Margin="5,0,0,0"
-                                                            DataContext="{Binding Visualize.Result.Filters.SpecifyUsers}"
+                                                            DataContext="{Binding Result.Filters.SpecifyUsers}"
                                                             Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
                                                                                  Path=DataContext,
                                                                                  Converter={StaticResource NullToVisibilityConverter}}" />
                                     <charts:FilterLabelView Margin="5,0,0,0"
-                                                            DataContext="{Binding Visualize.Result.Filters.SpecifyProjects}"
+                                                            DataContext="{Binding Result.Filters.SpecifyProjects}"
                                                             Visibility="{Binding RelativeSource={RelativeSource Mode=Self},
                                                                                  Path=DataContext,
                                                                                  Converter={StaticResource NullToVisibilityConverter}}" />
@@ -364,7 +359,7 @@
                                            Text="{x:Static props:Resources.VisualizeFilter}" />
                                 <StackPanel Grid.Column="1"
                                             Orientation="Horizontal">
-                                    <Button Command="{Binding Visualize.AddFilterCommand}"
+                                    <Button Command="{Binding AddFilterCommand}"
                                             Style="{StaticResource GlyphButtonStyle}">
                                         <Button.Content>
                                             <telerik:RadGlyph Foreground="Green"
@@ -372,7 +367,7 @@
                                         </Button.Content>
                                     </Button>
                                     <ItemsControl Grid.Row="1"
-                                                  ItemsSource="{Binding Visualize.Result.ResultFilters.Items}">
+                                                  ItemsSource="{Binding Result.ResultFilters.Items}">
                                         <ItemsControl.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <StackPanel Orientation="Horizontal" />
@@ -395,7 +390,7 @@
                                 </Grid.ColumnDefinitions>
 
                                 <telerik:RadTreeListView Grid.Row="2"
-                                                         telerikExHelper:GridViewSelectionUtilities.SelectedItems="{Binding Visualize.Result.SelectedTickets}"
+                                                         telerikExHelper:GridViewSelectionUtilities.SelectedItems="{Binding Result.SelectedTickets}"
                                                          AlternationCount="2"
                                                          AutoGenerateColumns="False"
                                                          CanUserDeleteRows="False"
@@ -406,34 +401,34 @@
                                                                                      Mode=TwoWay}"
                                                          IsFilteringAllowed="False"
                                                          IsReadOnly="True"
-                                                         ItemsSource="{Binding Visualize.Result.Tickets}"
+                                                         ItemsSource="{Binding Result.Tickets}"
                                                          RowIndicatorVisibility="Collapsed"
                                                          SelectionMode="Extended"
                                                          SelectionUnit="FullRow"
                                                          ShowGroupPanel="False">
                                     <telerik:RadTreeListView.ContextMenu>
                                         <ContextMenu>
-                                            <MenuItem Command="{Binding Visualize.ExpandCommand}"
+                                            <MenuItem Command="{Binding ExpandCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdExpand}" />
-                                            <MenuItem Command="{Binding Visualize.ExpandRecursiveCommand}"
+                                            <MenuItem Command="{Binding ExpandRecursiveCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdExpandRecursive}" />
-                                            <MenuItem Command="{Binding Visualize.CollapseCommand}"
+                                            <MenuItem Command="{Binding CollapseCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdCollapse}" />
-                                            <MenuItem Command="{Binding Visualize.CollapseRecursiveCommand}"
+                                            <MenuItem Command="{Binding CollapseRecursiveCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdCollapse}" />
                                             <Separator />
-                                            <MenuItem Command="{Binding Visualize.ExpandAllCommand}"
+                                            <MenuItem Command="{Binding ExpandAllCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdExpandAll}" />
-                                            <MenuItem Command="{Binding Visualize.CollapseAllCommand}"
+                                            <MenuItem Command="{Binding CollapseAllCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdCollapseAll}" />
                                             <Separator />
-                                            <MenuItem Command="{Binding Visualize.EnableCommand}"
+                                            <MenuItem Command="{Binding EnableCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdAddAggregate}" />
-                                            <MenuItem Command="{Binding Visualize.EnableRecursiveCommand}"
+                                            <MenuItem Command="{Binding EnableRecursiveCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdAddAggregateRecursive}" />
-                                            <MenuItem Command="{Binding Visualize.DisableCommand}"
+                                            <MenuItem Command="{Binding DisableCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdExcludeAggregate}" />
-                                            <MenuItem Command="{Binding Visualize.DisableRecursiveCommand}"
+                                            <MenuItem Command="{Binding DisableRecursiveCommand}"
                                                       Header="{x:Static props:Resources.VisualizeTicketTreeCmdExcludeAggregateRecursive}" />
                                         </ContextMenu>
                                     </telerik:RadTreeListView.ContextMenu>
@@ -452,7 +447,7 @@
                                                                Text="{x:Static props:Resources.VisualizeTicket}"
                                                                TextAlignment="Center" />
                                                     <Button HorizontalAlignment="Right"
-                                                            Command="{Binding Visualize.ScrollToSelectedRowCommand}"
+                                                            Command="{Binding ScrollToSelectedRowCommand}"
                                                             CommandParameter="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
                                                                                                                       AncestorType={x:Type telerik:RadTreeListView}}}"
                                                             DataContext="{Binding RelativeSource={RelativeSource Mode=FindAncestor,
@@ -498,46 +493,46 @@
                                                        Text="{x:Static props:Resources.VisualizeType}" />
                                             <telerik:RadComboBox Margin="5,0,0,0"
                                                                  ItemsSource="{Binding Source={extensions:EnumBindingSource {x:Type visualizeEnums:ViewType}}}"
-                                                                 SelectedItem="{Binding Visualize.Result.ViewType.Value}" />
+                                                                 SelectedItem="{Binding Result.ViewType.Value}" />
                                         </StackPanel>
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.BarChart.XAxisType}" />
+                                                                   DataContext="{Binding Result.BarChart.XAxisType}" />
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.BarChart.CombineType}" />
+                                                                   DataContext="{Binding Result.BarChart.CombineType}" />
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.BarChart.SortType}" />
+                                                                   DataContext="{Binding Result.BarChart.SortType}" />
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.BarChart.ShowTotal}" />
+                                                                   DataContext="{Binding Result.BarChart.ShowTotal}" />
 
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.PieChart.CombineType}" />
+                                                                   DataContext="{Binding Result.PieChart.CombineType}" />
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.PieChart.SecondCombineType}" />
+                                                                   DataContext="{Binding Result.PieChart.SecondCombineType}" />
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.PieChart.SortType}" />
+                                                                   DataContext="{Binding Result.PieChart.SortType}" />
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.PieChart.ShowTotal}" />
+                                                                   DataContext="{Binding Result.PieChart.ShowTotal}" />
 
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.TreeMap.FirstGroupingType}" />
+                                                                   DataContext="{Binding Result.TreeMap.FirstGroupingType}" />
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.TreeMap.SecondGroupingType}" />
+                                                                   DataContext="{Binding Result.TreeMap.SecondGroupingType}" />
                                         <charts:FactorSelectorView Margin="5,0,0,0"
-                                                                   DataContext="{Binding Visualize.Result.TreeMap.ThirdGroupingType}" />
+                                                                   DataContext="{Binding Result.TreeMap.ThirdGroupingType}" />
                                     </StackPanel>
 
                                     <charts:BarChartView Grid.Row="1"
-                                                         DataContext="{Binding Visualize.Result.BarChart}"
+                                                         DataContext="{Binding Result.BarChart}"
                                                          Visibility="{Binding IsEnabled.Value,
                                                                               Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                     <charts:PieChartView Grid.Row="1"
-                                                         DataContext="{Binding Visualize.Result.PieChart}"
+                                                         DataContext="{Binding Result.PieChart}"
                                                          Visibility="{Binding IsEnabled.Value,
                                                                               Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                                     <charts:TreeMapView Grid.Row="1"
-                                                        DataContext="{Binding Visualize.Result.TreeMap}"
+                                                        DataContext="{Binding Result.TreeMap}"
                                                         Visibility="{Binding IsEnabled.Value,
                                                                              Converter={StaticResource BooleanToVisibilityConverter}}" />
 
@@ -548,7 +543,7 @@
                     </Border>
                 </Grid>
 
-            </telerik1:RadBusyIndicator>
-        </Grid>
-    </telerik1:RadBusyIndicator>
+            </Grid>
+        </telerik1:RadBusyIndicator>
+    </libCont:OverwrapMessage>
 </UserControl>

@@ -984,14 +984,8 @@ Please reinstall.</value>
   <data name="ReviewPoints" xml:space="preserve">
     <value>Indicated issue</value>
   </data>
-  <data name="ReviewErrMsgSelectTargetTicket" xml:space="preserve">
-    <value>Please select an issue.</value>
-  </data>
   <data name="ReviewErrMsgInvalidTimePeriod" xml:space="preserve">
     <value>Please set the correct time period.</value>
-  </data>
-  <data name="ReviewErrMsgSelectReviewer" xml:space="preserve">
-    <value>Please select reviewers.</value>
   </data>
   <data name="ReviewMsgReferPointsAtHere" xml:space="preserve">
     <value>You can refer other indicated issues at here.</value>
@@ -1044,9 +1038,6 @@ Please reinstall.</value>
   </data>
   <data name="ReviewErrMsgTargetClosed" xml:space="preserve">
     <value>Closed issues cannot be set.</value>
-  </data>
-  <data name="ReviewErrMsgSelectOrganizer" xml:space="preserve">
-    <value>Please select an organizer.</value>
   </data>
   <data name="ReviewPointsAdd" xml:space="preserve">
     <value>Add an indicated issue</value>
@@ -1452,9 +1443,6 @@ The order of the lines is the order in which the filing conditions are applied.<
   </data>
   <data name="SelectedCount" xml:space="preserve">
     <value>Selected count: </value>
-  </data>
-  <data name="ReviewErrMsgSelectOperator" xml:space="preserve">
-    <value>Please select operators.</value>
   </data>
   <data name="SettingsExpoMsgExternalToolNotExist" xml:space="preserve">
     <value>The selected external tool does not exist.</value>
@@ -2080,5 +2068,174 @@ Please review your settings if you wish to enable the custom field setting featu
   </data>
   <data name="MsgPleaseSpecifyXXX" xml:space="preserve">
     <value>Please specify {0}.</value>
+  </data>
+  <data name="ReviewMsgSelfPrefix" xml:space="preserve">
+    <value>The self-review "</value>
+  </data>
+  <data name="ReviewMsgSelfPostfix" xml:space="preserve">
+    <value>"is in progress.</value>
+  </data>
+  <data name="ReviewMsgSelfClickContinue" xml:space="preserve">
+    <value>When you have completed the review, please click Continue.</value>
+  </data>
+  <data name="ReviewSelfContinue" xml:space="preserve">
+    <value>Continue</value>
+  </data>
+  <data name="ReviewSelfCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="ReviewMsgSelfOrganize" xml:space="preserve">
+    <value>Conducting Self-Review</value>
+  </data>
+  <data name="ReviewErrMsgSelfNotFinished" xml:space="preserve">
+    <value>The self-review issue has not been closed.
+
+Would you like to proceed with creating a issue to request another reviewer?</value>
+  </data>
+  <data name="ReviewErrMsgSelfNotFound" xml:space="preserve">
+    <value>The status of the self-review issue could not be confirmed.</value>
+  </data>
+  <data name="ReviewMsgSelftConfirmCancel" xml:space="preserve">
+    <value>Would you like to cancel the self-review and go back to the original status?
+
+If you cancel, you will no longer be able to create a issue to request a review in a way that is tied to your Self-Review issue "{0}".</value>
+  </data>
+  <data name="ReviewMsgSelftConfirmAppClosing" xml:space="preserve">
+    <value>Self-review is in progress. Would you like to exit the application?
+
+If you close the application, the Self-review information will be retained.</value>
+  </data>
+  <data name="ReviewSelfReview" xml:space="preserve">
+    <value>Self-review</value>
+  </data>
+  <data name="ReviewErrMsgSelectXXX" xml:space="preserve">
+    <value>Please select "{0}".</value>
+  </data>
+  <data name="ReviewTargetTicket" xml:space="preserve">
+    <value>Target Issue</value>
+  </data>
+  <data name="ReviewNewReview" xml:space="preserve">
+    <value>New Review</value>
+  </data>
+  <data name="icons8_add_review_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-add-review-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icons8_delete_review_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-delete-review-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RibbonCmdNew" xml:space="preserve">
+    <value>New</value>
+  </data>
+  <data name="ReviewTemplateMsgConfirmProject" xml:space="preserve">
+    <value>The project of the template is different from the project of the target issue. You may not be able to apply the template correctly. Would you like to continue?
+
+Project of template : {0}
+Project of target issue : {1}</value>
+  </data>
+  <data name="ReviewTemplateMsgSelectApply" xml:space="preserve">
+    <value>Please select the template you wish to apply.</value>
+  </data>
+  <data name="ReviewTemplateMsgSelectSave" xml:space="preserve">
+    <value>Please select the template you wish to save to.</value>
+  </data>
+  <data name="ReviewTemplateMsgEnterName" xml:space="preserve">
+    <value>Please enter a name for the template.</value>
+  </data>
+  <data name="ReviewTemplateColName" xml:space="preserve">
+    <value>Template Name</value>
+  </data>
+  <data name="ReviewTemplateColProject" xml:space="preserve">
+    <value>Project</value>
+  </data>
+  <data name="ReviewTemplateColCreated" xml:space="preserve">
+    <value>Created</value>
+  </data>
+  <data name="ReviewTemplateColUpdated" xml:space="preserve">
+    <value>Updated</value>
+  </data>
+  <data name="apply_icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\apply_icon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icons8_close_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-close-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RibbonCmdApply" xml:space="preserve">
+    <value>Apply</value>
+  </data>
+  <data name="RibbonCmdSaveAs" xml:space="preserve">
+    <value>Save as</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgApply" xml:space="preserve">
+    <value>Select a template and reflect its settings in the review you are selecting.</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgSave" xml:space="preserve">
+    <value>Register the selected review as a template.</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgShowList" xml:space="preserve">
+    <value>Displays a list of registered templates.</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgDelete" xml:space="preserve">
+    <value>Select a template and delete it.</value>
+  </data>
+  <data name="ReviewTemplateMsgNotExist" xml:space="preserve">
+    <value>There are no registered templates.</value>
+  </data>
+  <data name="ReviewTemplate" xml:space="preserve">
+    <value>Template</value>
+  </data>
+  <data name="RibbonCmdShowList" xml:space="preserve">
+    <value>List</value>
+  </data>
+  <data name="ReviewTemplateMsgList" xml:space="preserve">
+    <value>The following templates are registered.
+You can “rename” or “delete” them.</value>
+  </data>
+  <data name="RibbonCmdRegister" xml:space="preserve">
+    <value>Register</value>
+  </data>
+  <data name="RibbonCmdRegisterAs" xml:space="preserve">
+    <value>Register as</value>
+  </data>
+  <data name="ReviewTemplateRename" xml:space="preserve">
+    <value>Rename</value>
+  </data>
+  <data name="icons8_list_48" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-list-48.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icons8_export_50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-export-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="icons8_import_50" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Images\icons8-import-50.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="RibbonCmdExport" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="RibbonCmdImport" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ReviewTemplateMsgSelectExport" xml:space="preserve">
+    <value>Please select the templates you wish to export.</value>
+  </data>
+  <data name="ReviewTemplateMsgNameIsEmpty" xml:space="preserve">
+    <value>The name cannot be left blank.</value>
+  </data>
+  <data name="ReviewTemplateMsgSameName" xml:space="preserve">
+    <value>The name cannot be set because a template with the same name exists.</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgExport" xml:space="preserve">
+    <value>Select templates and export them in JSON format.</value>
+  </data>
+  <data name="ReviewTemplateCmdMsgImport" xml:space="preserve">
+    <value>Restore and register templates from the exported file.</value>
+  </data>
+  <data name="ReviewTemplateMsgConfirmImport" xml:space="preserve">
+    <value>Import the following templates.
+You can “rename” or “delete” them.</value>
+  </data>
+  <data name="ReviewTemplateMsgConfirmTicket" xml:space="preserve">
+    <value>Since the target issue has not been selected, the target issue will be the one when the template is registered.
+
+Please change the target issue if necessary.</value>
   </data>
 </root>

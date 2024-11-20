@@ -30,7 +30,7 @@ namespace RedmineTimePuncher.ViewModels.Input
         public AsyncCommandBase SaveCommand { get; set; }
         public AsyncCommandBase ToExtToolCommand { get; set; }
         public AsyncCommandBase ToCSVCommand { get; set; }
-        public CommandBase<RadScheduleView> RenameCommand { get; set; }
+        public CommandBase RenameCommand { get; set; }
         public CommandBase SplitCommand { get; }
         public CommandBase AlignCommand { get; }
         public CommandBase CopyToMyWorksCommand { get; }
@@ -290,7 +290,6 @@ namespace RedmineTimePuncher.ViewModels.Input
                 Properties.Resources.RibbonCmdSaveTooltip,
                 myWorksWarn,
                 (new[] {
-                    parent.Parent.IsBusy.Select(a => a ? "" : null),
                     RedmineManager.Default.Select(a => a == null ? Properties.Resources.RibbonCmdMsgNeedsRedmineSettings : null),
                     myWorksApos.AnyAsObservable(a => a.IsError.Value, a => a.IsError.Value).Select(a  => a ? Properties.Resources.RibbonCmdMsgExistsUnsavedAppointment : null),
                     myWorksError.Select(a => !string.IsNullOrEmpty(a) ? a : null),
@@ -345,7 +344,6 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             var canExport = (new[]
             {
-                parent.Parent.IsBusy.Select(a => a ? "" : null),
                 RedmineManager.Default.Select(a => a == null ? Properties.Resources.RibbonCmdMsgNeedsRedmineSettings : null),
                 myWorksApos.AnyAsObservable(a => a.IsError.Value, a => a.IsError.Value).Select(a  => a ? Properties.Resources.RibbonCmdMsgExistsUnsavedAppointment : null),
                 myWorksError.Select(a => !string.IsNullOrEmpty(a) ? a : null),
@@ -407,12 +405,12 @@ namespace RedmineTimePuncher.ViewModels.Input
                 else
                     return null;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            RenameCommand = new CommandBase<RadScheduleView>(
+            RenameCommand = new CommandBase(
                 Properties.Resources.RibbonCmdRename, 'M', Properties.Resources.icons8_rename_48,
                 new[] { selectAny, canEdit, notContainsCollab }.CombineLatestFirstOrDefault(a => a != null),
-                scheduleView =>
+                () =>
                 {
-                    RadScheduleViewCommands.BeginInlineEditing.Execute(null, scheduleView);
+                    RadScheduleViewCommands.BeginInlineEditing.Execute(null, null);
                 }).AddTo(disposables);
 
             // 選択された予定を分割する。

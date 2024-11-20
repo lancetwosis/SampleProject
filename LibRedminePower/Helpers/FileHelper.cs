@@ -16,5 +16,11 @@ namespace LibRedminePower.Helpers
             System.IO.File.WriteAllText(fileName, text, System.Text.Encoding.UTF8);
             System.Diagnostics.Process.Start("EXPLORER.EXE", "/select, \"" + fileName + "\"");
         }
+
+        public static T ReadAllText<T>(string fileName) where T : class, new()
+        {
+            var json = System.IO.File.ReadAllText(fileName);
+            return CloneExtentions.ToObject<T>(json);
+        }
     }
 }

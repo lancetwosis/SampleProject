@@ -24,8 +24,7 @@ namespace RedmineTimePuncher.ViewModels.TableEditor
 
         public static string OPTION_KEY = "-eit";
 
-        public TableEditorViewModel(MainWindowViewModel parent)
-            : base(ApplicationMode.TableEditor, parent)
+        public TableEditorViewModel() : base(ApplicationMode.TableEditor)
         {
             var redmine = RedmineManager.Default.Select(r => (r?.Manager, r?.MasterManager, (ICacheManager)CacheManager.Default)).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             ViewModel = new RedmineTableEditor.ViewModels.TableEditorViewModel(redmine).AddTo(disposables);

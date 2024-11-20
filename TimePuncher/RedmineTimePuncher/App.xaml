@@ -22,6 +22,8 @@
                 <ResourceDictionary Source="pack://application:,,,/LibRedminePower;component/Themes/Generic.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/RedmineStudio;component/Themes/Generic.xaml" />
                 <ResourceDictionary Source="pack://application:,,,/RedmineTableEditor;component/Themes/Generic.xaml" />
+
+                <ResourceDictionary Source="pack://application:,,,/RedmineStudio;component/Views/CreateTicket/Themes/Generic.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
     </Application.Resources>

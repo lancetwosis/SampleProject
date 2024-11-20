@@ -91,6 +91,7 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Views\Controls\BindingProxy.cs" />
     <Compile Include="Enums\IssuePropertyType.cs" />
     <Compile Include="EqualsComparer.cs" />
     <Compile Include="Exceptions\ApplicationContinueException.cs" />

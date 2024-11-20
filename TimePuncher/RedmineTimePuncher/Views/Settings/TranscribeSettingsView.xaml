@@ -12,7 +12,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
              xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
-             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings.CreateTicket"
              d:DataContext="{d:DesignInstance {x:Type vm:TranscribeSettingViewModel},
                                               IsDesignTimeCreatable=True}"
              d:DesignHeight="450"

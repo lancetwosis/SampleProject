@@ -58,13 +58,9 @@ namespace RedmineTimePuncher.ViewModels.Visualize
         public ReactiveCommand DisableRecursiveCommand { get; set; }
         public ReactiveCommand<RadTreeListView> ScrollToSelectedRowCommand { get; set; }
         public ReactiveCommand AddFilterCommand { get; set; }
-        public MainWindowViewModel Parent { get; set; }
 
-        public VisualizeViewModel(MainWindowViewModel parent)
-            : base(ApplicationMode.Visualizer, parent)
+        public VisualizeViewModel() : base(ApplicationMode.Visualizer)
         {
-            this.Parent = parent;
-
             ErrorMessage = IsSelected.CombineLatest(RedmineManager.Default, (i, r) => (isSelected: i, r)).Select(t =>
             {
                 // RedmineManager のチェックは MainWindowViewModel で行っているのでスルーする
@@ -116,7 +112,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                 IsSelected.Where(a => a).Take(1).SubscribeWithErr(_ =>
                 {
                     using (IsBusy.ProcessStart())
-                    using (parent.IsBusy.ProcessStart(""))
                     {
                         Result.Initialize();
                     }
@@ -129,7 +124,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                    {
                        TraceHelper.TrackCommand(nameof(GetTimeEntriesCommand));
                        using (IsBusy.ProcessStart())
-                       using (parent.IsBusy.ProcessStart(""))
                        {
                            await Result.GetTimeEntriesAsync(Filters);
                            Filters.IsExpanded.Value = false;
@@ -143,7 +137,6 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                    {
                        TraceHelper.TrackCommand(nameof(UpdateTimeEntriesCommand));
                        using (IsBusy.ProcessStart())
-                       using (parent.IsBusy.ProcessStart(""))
                        {
                            await Result.UpdateTimeEntriesAsync();
                            Filters.IsExpanded.Value = false;
@@ -159,16 +152,12 @@ namespace RedmineTimePuncher.ViewModels.Visualize
                     {
                         TraceHelper.TrackCommand(nameof(OpenResultCommand));
                         using (IsBusy.ProcessStart())
-                        using (parent.IsBusy.ProcessStart(""))
                         {
                             Result.Open();
                         }
                     }).AddTo(myDisposables);
 
-                var hasResult = new[] {
-                    parent.IsBusy.Select(a => !a),
-                    this.ObserveProperty(a => a.Result.Model.HasValue),
-                }.CombineLatestValuesAreAllTrue();
+                var hasResult = this.ObserveProperty(a => a.Result.Model.HasValue);
 
                 SaveResultCommand = new CommandBase(
                     Resources.VisualizeCmdSave, Resources.save,

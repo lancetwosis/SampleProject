@@ -19,7 +19,7 @@ namespace RedmineTimePuncher.Properties {
     // または Visual Studio のようなツールを使用して自動生成されました。
     // メンバーを追加または削除するには、.ResX ファイルを編集して、/str オプションと共に
     // ResGen を実行し直すか、または VS プロジェクトをビルドし直します。
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "17.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class Resources {
@@ -57,6 +57,16 @@ namespace RedmineTimePuncher.Properties {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap apply_icon {
+            get {
+                object obj = ResourceManager.GetObject("apply_icon", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -1007,6 +1017,16 @@ namespace RedmineTimePuncher.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        public static System.Drawing.Bitmap icons8_add_review_48 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_add_review_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         public static System.Drawing.Bitmap icons8_add_user_group_man_man_48 {
             get {
                 object obj = ResourceManager.GetObject("icons8_add_user_group_man_man_48", resourceCulture);
@@ -1067,6 +1087,16 @@ namespace RedmineTimePuncher.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        public static System.Drawing.Bitmap icons8_close_48 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_close_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         public static System.Drawing.Bitmap icons8_compare_16 {
             get {
                 object obj = ResourceManager.GetObject("icons8_compare_16", resourceCulture);
@@ -1097,9 +1127,39 @@ namespace RedmineTimePuncher.Properties {
         /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
+        public static System.Drawing.Bitmap icons8_delete_review_48 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_delete_review_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap icons8_export_50 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_export_50", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
         public static System.Drawing.Bitmap icons8_help_32 {
             get {
                 object obj = ResourceManager.GetObject("icons8_help_32", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap icons8_import_50 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_import_50", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1120,6 +1180,16 @@ namespace RedmineTimePuncher.Properties {
         public static System.Drawing.Bitmap icons8_linking_48 {
             get {
                 object obj = ResourceManager.GetObject("icons8_linking_48", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
+        /// </summary>
+        public static System.Drawing.Bitmap icons8_list_48 {
+            get {
+                object obj = ResourceManager.GetObject("icons8_list_48", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -2259,38 +2329,31 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///   Please select operators. に類似しているローカライズされた文字列を検索します。
+        ///   Please select &quot;{0}&quot;. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ReviewErrMsgSelectOperator {
+        public static string ReviewErrMsgSelectXXX {
             get {
-                return ResourceManager.GetString("ReviewErrMsgSelectOperator", resourceCulture);
+                return ResourceManager.GetString("ReviewErrMsgSelectXXX", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Please select an organizer. に類似しているローカライズされた文字列を検索します。
+        ///   The self-review issue has not been closed.
+        ///
+        ///Would you like to proceed with creating a issue to request another reviewer? に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ReviewErrMsgSelectOrganizer {
+        public static string ReviewErrMsgSelfNotFinished {
             get {
-                return ResourceManager.GetString("ReviewErrMsgSelectOrganizer", resourceCulture);
+                return ResourceManager.GetString("ReviewErrMsgSelfNotFinished", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Please select reviewers. に類似しているローカライズされた文字列を検索します。
+        ///   The status of the self-review issue could not be confirmed. に類似しているローカライズされた文字列を検索します。
         /// </summary>
-        public static string ReviewErrMsgSelectReviewer {
+        public static string ReviewErrMsgSelfNotFound {
             get {
-                return ResourceManager.GetString("ReviewErrMsgSelectReviewer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Please select an issue. に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string ReviewErrMsgSelectTargetTicket {
-            get {
-                return ResourceManager.GetString("ReviewErrMsgSelectTargetTicket", resourceCulture);
+                return ResourceManager.GetString("ReviewErrMsgSelfNotFound", resourceCulture);
             }
         }
         
@@ -2437,11 +2500,78 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   When you have completed the review, please click Continue. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgSelfClickContinue {
+            get {
+                return ResourceManager.GetString("ReviewMsgSelfClickContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Conducting Self-Review に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgSelfOrganize {
+            get {
+                return ResourceManager.GetString("ReviewMsgSelfOrganize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   &quot;is in progress. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgSelfPostfix {
+            get {
+                return ResourceManager.GetString("ReviewMsgSelfPostfix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The self-review &quot; に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgSelfPrefix {
+            get {
+                return ResourceManager.GetString("ReviewMsgSelfPrefix", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Self-review is in progress. Would you like to exit the application?
+        ///
+        ///If you close the application, the Self-review information will be retained. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgSelftConfirmAppClosing {
+            get {
+                return ResourceManager.GetString("ReviewMsgSelftConfirmAppClosing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Would you like to cancel the self-review and go back to the original status?
+        ///
+        ///If you cancel, you will no longer be able to create a issue to request a review in a way that is tied to your Self-Review issue &quot;{0}&quot;. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgSelftConfirmCancel {
+            get {
+                return ResourceManager.GetString("ReviewMsgSelftConfirmCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   The followng strings will be transcribed. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewMsgTranscribeFollowings {
             get {
                 return ResourceManager.GetString("ReviewMsgTranscribeFollowings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   New Review に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewNewReview {
+            get {
+                return ResourceManager.GetString("ReviewNewReview", resourceCulture);
             }
         }
         
@@ -2554,6 +2684,33 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Cancel に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewSelfCancel {
+            get {
+                return ResourceManager.GetString("ReviewSelfCancel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Continue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewSelfContinue {
+            get {
+                return ResourceManager.GetString("ReviewSelfContinue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Self-review に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewSelfReview {
+            get {
+                return ResourceManager.GetString("ReviewSelfReview", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Status Under Review に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewStatusUnderReview {
@@ -2604,6 +2761,229 @@ namespace RedmineTimePuncher.Properties {
         public static string ReviewTargetProcess {
             get {
                 return ResourceManager.GetString("ReviewTargetProcess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Target Issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTargetTicket {
+            get {
+                return ResourceManager.GetString("ReviewTargetTicket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Template に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplate {
+            get {
+                return ResourceManager.GetString("ReviewTemplate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Select a template and reflect its settings in the review you are selecting. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateCmdMsgApply {
+            get {
+                return ResourceManager.GetString("ReviewTemplateCmdMsgApply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Select a template and delete it. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateCmdMsgDelete {
+            get {
+                return ResourceManager.GetString("ReviewTemplateCmdMsgDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Select templates and export them in JSON format. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateCmdMsgExport {
+            get {
+                return ResourceManager.GetString("ReviewTemplateCmdMsgExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Restore and register templates from the exported file. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateCmdMsgImport {
+            get {
+                return ResourceManager.GetString("ReviewTemplateCmdMsgImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Register the selected review as a template. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateCmdMsgSave {
+            get {
+                return ResourceManager.GetString("ReviewTemplateCmdMsgSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Displays a list of registered templates. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateCmdMsgShowList {
+            get {
+                return ResourceManager.GetString("ReviewTemplateCmdMsgShowList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Created に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateColCreated {
+            get {
+                return ResourceManager.GetString("ReviewTemplateColCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Template Name に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateColName {
+            get {
+                return ResourceManager.GetString("ReviewTemplateColName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Project に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateColProject {
+            get {
+                return ResourceManager.GetString("ReviewTemplateColProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Updated に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateColUpdated {
+            get {
+                return ResourceManager.GetString("ReviewTemplateColUpdated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Import the following templates.
+        ///You can “rename” or “delete” them. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgConfirmImport {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgConfirmImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The project of the template is different from the project of the target issue. You may not be able to apply the template correctly. Would you like to continue?
+        ///
+        ///Project of template : {0}
+        ///Project of target issue : {1} に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgConfirmProject {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgConfirmProject", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Since the target issue has not been selected, the target issue will be the one when the template is registered.
+        ///
+        ///Please change the target issue if necessary. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgConfirmTicket {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgConfirmTicket", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please enter a name for the template. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgEnterName {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgEnterName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The following templates are registered.
+        ///You can “rename” or “delete” them. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgList {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgList", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The name cannot be left blank. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgNameIsEmpty {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgNameIsEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   There are no registered templates. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgNotExist {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The name cannot be set because a template with the same name exists. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgSameName {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgSameName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select the template you wish to apply. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgSelectApply {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgSelectApply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select the templates you wish to export. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgSelectExport {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgSelectExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Please select the template you wish to save to. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateMsgSelectSave {
+            get {
+                return ResourceManager.GetString("ReviewTemplateMsgSelectSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Rename に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewTemplateRename {
+            get {
+                return ResourceManager.GetString("ReviewTemplateRename", resourceCulture);
             }
         }
         
@@ -2660,6 +3040,15 @@ namespace RedmineTimePuncher.Properties {
         public static string RibbonCmdAlignmentConfirm {
             get {
                 return ResourceManager.GetString("RibbonCmdAlignmentConfirm", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Apply に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdApply {
+            get {
+                return ResourceManager.GetString("RibbonCmdApply", resourceCulture);
             }
         }
         
@@ -2821,6 +3210,15 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Export に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdExport {
+            get {
+                return ResourceManager.GetString("RibbonCmdExport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   External Tool に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RibbonCmdExternalTool {
@@ -2835,6 +3233,15 @@ namespace RedmineTimePuncher.Properties {
         public static string RibbonCmdExternalToolTooltip {
             get {
                 return ResourceManager.GetString("RibbonCmdExternalToolTooltip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Import に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdImport {
+            get {
+                return ResourceManager.GetString("RibbonCmdImport", resourceCulture);
             }
         }
         
@@ -2922,12 +3329,39 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   New に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdNew {
+            get {
+                return ResourceManager.GetString("RibbonCmdNew", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Open
         ///Issue に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string RibbonCmdOpenIssue {
             get {
                 return ResourceManager.GetString("RibbonCmdOpenIssue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Register に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdRegister {
+            get {
+                return ResourceManager.GetString("RibbonCmdRegister", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Register as に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdRegisterAs {
+            get {
+                return ResourceManager.GetString("RibbonCmdRegisterAs", resourceCulture);
             }
         }
         
@@ -2955,6 +3389,15 @@ namespace RedmineTimePuncher.Properties {
         public static string RibbonCmdSave {
             get {
                 return ResourceManager.GetString("RibbonCmdSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Save as に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdSaveAs {
+            get {
+                return ResourceManager.GetString("RibbonCmdSaveAs", resourceCulture);
             }
         }
         
@@ -3000,6 +3443,15 @@ namespace RedmineTimePuncher.Properties {
         public static string RibbonCmdSettings {
             get {
                 return ResourceManager.GetString("RibbonCmdSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   List に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RibbonCmdShowList {
+            get {
+                return ResourceManager.GetString("RibbonCmdShowList", resourceCulture);
             }
         }
         

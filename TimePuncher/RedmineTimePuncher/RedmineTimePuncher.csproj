@@ -154,16 +154,36 @@
     <Compile Include="Converters\PeriodTypeSelectionConverter.cs" />
     <Compile Include="Enums\ProjectStatusType.cs" />
     <Compile Include="Enums\ApplicationMode.cs" />
-    <Compile Include="Enums\CreateTicketMode.cs" />
+    <Compile Include="Models\CreateTicket\Enums\ReviewStatus.cs" />
+    <Compile Include="Models\CreateTicket\Enums\CreateTicketMode.cs" />
     <Compile Include="Enums\CustomFieldFormat.cs" />
     <Compile Include="Enums\ExportItems.cs" />
     <Compile Include="Enums\AppointmentColorType.cs" />
     <Compile Include="Enums\InputPeriodType.cs" />
+    <Compile Include="Models\CreateTicket\Common\Bases\RequestTicketsModelBase.cs" />
+    <Compile Include="Models\CreateTicket\Common\Bases\PeriodModelBase.cs" />
+    <Compile Include="Models\CreateTicket\Common\Bases\TargetTicketModelBase.cs" />
+    <Compile Include="Models\CreateTicket\Common\Bases\RequestModelBase.cs" />
+    <Compile Include="Models\CreateTicket\Review\TemplateModel.cs" />
+    <Compile Include="Models\CreateTicket\Review\ReviewsModel.cs" />
+    <Compile Include="Models\CreateTicket\Review\SelfReviewModel.cs" />
+    <Compile Include="Models\CreateTicket\Review\CustomFieldValueModel.cs" />
+    <Compile Include="Models\CreateTicket\Common\AssigneeModel.cs" />
+    <Compile Include="Models\CreateTicket\CreateTicketModel.cs" />
+    <Compile Include="Models\CreateTicket\Review\PeriodModel.cs" />
+    <Compile Include="Models\CreateTicket\Review\RequestTicketsModel.cs" />
+    <Compile Include="Models\CreateTicket\Review\CustomFieldsModel.cs" />
+    <Compile Include="Models\CreateTicket\Review\TargetTicketModel.cs" />
+    <Compile Include="Models\CreateTicket\Work\PeriodModel.cs" />
+    <Compile Include="Models\CreateTicket\Work\RequestTicketsModel.cs" />
+    <Compile Include="Models\CreateTicket\Work\TargetTicketModel.cs" />
+    <Compile Include="Models\CreateTicket\Work\WorkModel.cs" />
+    <Compile Include="Models\CreateTicket\Review\ReviewModel.cs" />
     <Compile Include="Models\Managers\CacheTempManager.cs" />
     <Compile Include="Models\MyVersion.cs" />
-    <Compile Include="Models\Settings\ReviewCopyCustomFieldsSettingModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\ReviewCopyCustomFieldsSettingModel.cs" />
     <Compile Include="Models\Managers\CacheManager.cs" />
-    <Compile Include="Models\Settings\ReviewIssueListSettingModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\ReviewIssueListSettingModel.cs" />
     <Compile Include="Models\Visualize\Filters\PeriodType.cs" />
     <Compile Include="Enums\FilterType.cs" />
     <Compile Include="Enums\LocaleType.cs" />
@@ -214,53 +234,99 @@
     <Compile Include="Models\Settings\AppointmentTeamsSettingsModel.cs" />
     <Compile Include="Models\Settings\Bases\AppointmentResouceIgnoreSettingsModelBase.cs" />
     <Compile Include="Models\Settings\Bases\AppointmentResouceSettingsModelBase.cs" />
-    <Compile Include="Models\Settings\Bases\CustomFieldSettingModelBase.cs" />
+    <Compile Include="Models\Settings\CreateTciket\CustomFields\Bases\CustomFieldSettingModelBase.cs" />
     <Compile Include="Models\Settings\CalendarSettingsModel.cs" />
     <Compile Include="Models\Settings\PersonHourReportSettingModel.cs" />
-    <Compile Include="Models\Settings\CreateTicketSettingsModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\CreateTicketSettingsModel.cs" />
     <Compile Include="Models\Settings\OutputCsvExportSettingsModel.cs" />
     <Compile Include="Models\Settings\OutputExtToolSettingsModel.cs" />
     <Compile Include="Models\Settings\QuerySettingsModel.cs" />
-    <Compile Include="Models\Settings\RequestWorkSettingsModel.cs" />
-    <Compile Include="Models\Settings\ReviewDetectionProcessSettingModel.cs" />
-    <Compile Include="Models\Settings\ReviewIsRequiredSettingModel.cs" />
-    <Compile Include="Models\Settings\ReviewMethodSettingModel.cs" />
-    <Compile Include="Models\Settings\ReviewSaveReviewerSettingModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\RequestWorkSettingsModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\CustomFields\ReviewDetectionProcessSettingModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\CustomFields\ReviewIsRequiredSettingModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\CustomFields\ReviewMethodSettingModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\CustomFields\ReviewSaveReviewerSettingModel.cs" />
     <Compile Include="Models\Settings\PersonHourReportSettingsModel.cs" />
-    <Compile Include="Models\Settings\TranscribeSettingModel.cs" />
-    <Compile Include="Models\Settings\TranscribeSettingItemModel.cs" />
-    <Compile Include="Models\Settings\TranscribeSettingsModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\TranscribeSettingModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\TranscribeSettingItemModel.cs" />
+    <Compile Include="Models\Settings\CreateTciket\TranscribeSettingsModel.cs" />
     <Compile Include="Models\Settings\UserSettingsModel.cs" />
     <Compile Include="Models\TicketTreeItemModel.cs" />
     <Compile Include="Models\IssueProperty.cs" />
     <Compile Include="Models\WikiLine.cs" />
     <Compile Include="Models\WikiUserSummary.cs" />
-    <Compile Include="Selectors\CustomFieldTemplateSelector.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\Templates\Dialogs\DialogHelper.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\Templates\Dialogs\ShowListDialogViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\Templates\Dialogs\SingleSelectDialogViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\Templates\Dialogs\MultiSelectDialogViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\Templates\Dialogs\TemplatesDialogViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\Templates\TemplateChildCommand.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\Templates\TemplateViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\Templates\TemplatesViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\ReviewsViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\SelfReviewViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\CustomFields\Bases\BoolCustomFieldSettingViewModelBase.cs" />
+    <Compile Include="Views\CreateTicket\Common\AssigneesTwinListBox.xaml.cs">
+      <DependentUpon>AssigneesTwinListBox.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateTicket\Common\PeriodDatePicker.xaml.cs">
+      <DependentUpon>PeriodDatePicker.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateTicket\Common\TargetTicketSelector.xaml.cs">
+      <DependentUpon>TargetTicketSelector.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateTicket\Review\TemplateNameDialog.xaml.cs">
+      <DependentUpon>TemplateNameDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateTicket\Review\TemplatesDialog.xaml.cs">
+      <DependentUpon>TemplatesDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateTicket\Review\CustomFieldTemplateSelector.cs" />
     <Compile Include="ViewModels\Bases\FunctionViewModelBase.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Bases\CustomFieldsViewModelBase.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Bases\IdNameCustomFieldViewModelBase.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Bases\PopupCustomFieldViewModelBase.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\KeyValueCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\FloatCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\BoolCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\DateCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\PointCustomFieldsViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\RequestCustomFieldsViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\TextCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\VersionCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\UserCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\ListCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\StringCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Fields\IntCustomFieldViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\Bases\CustomFieldViewModelBase.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFields\OpenCustomFieldsViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\DetectionProcessViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\CustomFieldSettingViewModelBase.cs" />
-    <Compile Include="ViewModels\CreateTicket\ReviewMethodViewModel.cs" />
-    <Compile Include="ViewModels\Settings\ReviewCopyCustomFieldsSettingViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\ReviewersTwinListViewModel.cs" />
-    <Compile Include="ViewModels\Settings\ReviewIssueListSettingViewModel.cs" />
-    <Compile Include="ViewModels\Settings\TranscribeSettingItemViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Common\Bases\AssigneesViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Common\IRequestPeriod.cs" />
+    <Compile Include="ViewModels\CreateTicket\Common\Bases\RequestTicketsViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Common\Bases\TargetTicketViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\CustomFieldsViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Work\WorkViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\AssigneesViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\RequestTicketsViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\TargetTicketViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Common\Bases\RequestViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\ReviewViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Bases\CustomFieldsViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Bases\IdNameCustomFieldViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Bases\PopupCustomFieldViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\KeyValueCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\FloatCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\BoolCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\DateCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\PointCustomFieldsViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\RequestCustomFieldsViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\TextCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\VersionCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\UserCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\ListCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\StringCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Fields\IntCustomFieldViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\Bases\CustomFieldViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\CustomFields\OpenCustomFieldsViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\DetectionProcessViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Common\Bases\SavableCustomFieldViewModelBase.cs" />
+    <Compile Include="ViewModels\CreateTicket\Review\PeriodViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Work\AssigneesViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Work\RequestTicketsViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Work\PeriodViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Work\TargetTicketViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\CustomFields\Bases\ListCustomFieldSettingViewModelBase.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\CustomFields\IsRequiredSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\CustomFields\SaveReviewerSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\CustomFields\ReviewerMethodSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\CustomFields\DetectionProcessSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\ReviewCopyCustomFieldsSettingViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Common\AssigneesTwinListViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\ReviewIssueListSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\TranscribeSettingItemViewModel.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\DateItem.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\SeriesViewModelBase.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\UserSeriesViewModel.cs" />
@@ -268,7 +334,7 @@
     <Compile Include="ViewModels\WikiPage\WikiPageViewModel.cs" />
     <Compile Include="ViewModels\WikiPage\Charts\CustomSeriesDescriptorSelector.cs" />
     <Compile Include="ViewModels\CreateTicket\CreateTicketViewModel.cs" />
-    <Compile Include="ViewModels\CreateTicket\MemberViewModel.cs" />
+    <Compile Include="ViewModels\CreateTicket\Common\AssigneeViewModel.cs" />
     <Compile Include="ViewModels\Input\Controls\CustomScheduleViewDialogHostFactory.cs" />
     <Compile Include="ViewModels\Input\MembersViewModel.cs" />
     <Compile Include="ViewModels\Input\MyWorksViewModel.cs" />
@@ -315,18 +381,18 @@
     <Compile Include="ViewModels\Settings\PersonHourReportSettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\CategorySettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\CategorySettingViewModel.cs" />
-    <Compile Include="ViewModels\Settings\CreateTicketSettingsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\CustomFieldSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\CreateTicketSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\CustomFields\Bases\CustomFieldSettingViewModelBase.cs" />
     <Compile Include="ViewModels\Settings\NeedsRestartSettingViewModel.cs" />
     <Compile Include="ViewModels\Settings\OutputCsvExportSettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\OutputDataSettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\OutputExtToolSettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\QuerySettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\RedmineSettingsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\RequestWorkSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\RequestWorkSettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\CalendarSettingsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\TranscribeSettingsViewModel.cs" />
-    <Compile Include="ViewModels\Settings\TranscribeSettingViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\TranscribeSettingsViewModel.cs" />
+    <Compile Include="ViewModels\Settings\CreateTicket\TranscribeSettingViewModel.cs" />
     <Compile Include="ViewModels\Settings\ScheduleSettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\SettingsViewModel.cs" />
     <Compile Include="ViewModels\Settings\TermViewModel.cs" />
@@ -389,7 +455,7 @@
     <Compile Include="Views\Controls\Charts\FactorSelectorView.xaml.cs">
       <DependentUpon>FactorSelectorView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\Controls\CustomFieldsView.xaml.cs">
+    <Compile Include="Views\CreateTicket\Review\CustomFieldsView.xaml.cs">
       <DependentUpon>CustomFieldsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Controls\TicketGridView.xaml.cs">
@@ -397,6 +463,15 @@
     </Compile>
     <Compile Include="Views\Controls\ReportItemsControl.xaml.cs">
       <DependentUpon>ReportItemsControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateTicket\Review\ReviewsView.xaml.cs">
+      <DependentUpon>ReviewsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateTicket\Work\WorkView.xaml.cs">
+      <DependentUpon>WorkView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\CreateTicket\Review\ReviewView.xaml.cs">
+      <DependentUpon>ReviewView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -467,10 +542,13 @@
     <Compile Include="Views\InputView.xaml.cs">
       <DependentUpon>InputView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\TableEditorView.xaml.cs">
+      <DependentUpon>TableEditorView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\WikiPageView.xaml.cs">
       <DependentUpon>WikiPageView.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\CreateTicketView.xaml.cs">
+    <Compile Include="Views\CreateTicket\CreateTicketView.xaml.cs">
       <DependentUpon>CreateTicketView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\VisualizeView.xaml.cs">
@@ -634,7 +712,27 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\Controls\CustomFieldsView.xaml">
+    <Page Include="Views\CreateTicket\Common\AssigneesTwinListBox.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicket\Common\PeriodDatePicker.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicket\Common\TargetTicketSelector.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicket\Review\TemplateNameDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicket\Review\TemplatesDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicket\Review\CustomFieldsView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -643,6 +741,22 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\Controls\ReportItemsControl.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicket\Review\ReviewsView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicket\Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicket\Work\WorkView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\CreateTicket\Review\ReviewView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -738,11 +852,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="Views\TableEditorView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\WikiPageView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Views\CreateTicketView.xaml">
+    <Page Include="Views\CreateTicket\CreateTicketView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -1013,6 +1131,27 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\icons8-about-32.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-add-review-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-delete-review-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\apply_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-close-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-list-48.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-export-50.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Images\icons8-import-50.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

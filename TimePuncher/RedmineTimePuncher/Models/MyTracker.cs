@@ -1,5 +1,6 @@
 ﻿using LibRedminePower.Models;
 using Redmine.Net.Api.Types;
+using RedmineTimePuncher.Models.Managers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,28 +35,26 @@ namespace RedmineTimePuncher.Models
 
 
         /// <summary>
-        /// this が「対象チケットと同じ」の場合、defaultTracker を idName に設定する。それ以外の場合 this を変換したものを設定する。
-        /// this が引数のプロジェクトで無効になっていた場合、false を返す。それ以外の場合、true を返す。
+        /// this が「対象チケットと同じ」の場合、ticket のトラッカーを返す。それ以外の場合 this を変換したものを返す。
+        /// this が ticket のプロジェクトで無効になっていた場合、null を返す。
         /// </summary>
         /// <param name="project">TACKERS を include していること</param>
-        public bool TryGetIdNameOrDefault(Project project, IdentifiableName defaultTracker, out IdentifiableName idName)
+        public IdentifiableName GetIdNameOrDefault(MyIssue ticket)
         {
+            var project = CacheManager.Default.Projects.First(proj => proj.Id == ticket.Project.Id);
             if (this.Equals(USE_PARENT_TRACKER))
             {
-                idName = defaultTracker;
-                return true;
+                return ticket.RawIssue.Tracker;
             }
             else
             {
                 if (project.Trackers.Any(t => t.Id == Id))
                 {
-                    idName = this.ToIdentifiableName();
-                    return true;
+                    return this.ToIdentifiableName();
                 }
                 else
                 {
-                    idName = defaultTracker;
-                    return false;
+                    return null;
                 }
             }
         }

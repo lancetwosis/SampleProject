@@ -8,6 +8,7 @@ using Reactive.Bindings.Notifiers;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Models.Managers;
 using RedmineTimePuncher.Models.Settings;
+using RedmineTimePuncher.ViewModels.Settings.CreateTicket;
 using RedmineTimePuncher.Views;
 using RedmineTimePuncher.Views.Settings;
 using System;

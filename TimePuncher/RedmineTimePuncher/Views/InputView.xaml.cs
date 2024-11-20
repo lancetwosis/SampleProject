@@ -59,7 +59,7 @@ namespace RedmineTimePuncher.Views
             if (DataContext == null)
                 return;
 
-            var vm = (DataContext as MainWindowViewModel).Input;
+            var vm = (InputViewModel)DataContext;
             vm.SelectedDate.SubscribeWithErr(d =>
             {
                 this.calendar.DisplayDate = d;

@@ -1,4 +1,5 @@
 ﻿using RedmineTimePuncher.ViewModels;
+using RedmineTimePuncher.ViewModels.Input;
 using RedmineTimePuncher.Views;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,7 @@ namespace RedmineTimePuncher.Selectors
                 if (view.DataContext == null)
                     return isToDay ? TodayTemplate : DefaultTemplate;
 
-                var vm = (view.DataContext as MainWindowViewModel).Input;
+                var vm = (InputViewModel)view.DataContext;
                 if (vm.SelectedDate.Value.Date == date.Date.Date)
                 {
                     return isToDay ? SelectedTodayTemplate : SelectedTemplate;

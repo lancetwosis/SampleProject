@@ -1,0 +1,142 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.CreateTicket.CreateTicketView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors="clr-namespace:RedmineTimePuncher.Behaviors"
+             xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:convs="clr-namespace:RedmineTimePuncher.Converters"
+             xmlns:convs1="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:helpers="clr-namespace:LibRedminePower.Helpers;assembly=LibRedminePower"
+             xmlns:lib="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:libProps="clr-namespace:LibRedminePower.Properties;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.CreateTicket"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
+             xmlns:vReview="clr-namespace:RedmineTimePuncher.Views.CreateTicket.Review"
+             xmlns:vWork="clr-namespace:RedmineTimePuncher.Views.CreateTicket.Work"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket"
+             xmlns:vmReview="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket.Review"
+             xmlns:vmWork="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket.Work"
+             d:DataContext="{d:DesignInstance {x:Type vm:CreateTicketViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <Style BasedOn="{StaticResource FilterableComboBoxStyleKey}"
+               TargetType="telerik:RadComboBox" />
+        <!--  telerik1:RadBusyIndicator を適用すると Foreground が青色になるので上書きする  -->
+        <Style BasedOn="{StaticResource MyTextBlockStyle}"
+               TargetType="TextBlock">
+            <Setter Property="Foreground" Value="Black" />
+        </Style>
+        <convs1:RelayValueConverterGroup x:Key="ModeToVisivilityConverter">
+            <telerik:EnumToBooleanConverter />
+            <BooleanToVisibilityConverter />
+        </convs1:RelayValueConverterGroup>
+    </UserControl.Resources>
+
+    <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+        <telerik1:RadBusyIndicator BusyContent="{Binding IsBusy.Text}"
+                                   IsBusy="{Binding IsBusy.IsBusy}"
+                                   IsIndeterminate="True">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="AUTO" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <telerik:RadRibbonView Grid.Row="0"
+                                       ApplicationButtonVisibility="Collapsed"
+                                       HelpButtonVisibility="Collapsed"
+                                       IsMinimized="{Binding Source={x:Static props:Settings.Default},
+                                                             Path=RadRibbonViewIsMinimized,
+                                                             Mode=TwoWay}"
+                                       MinimizeButtonVisibility="Visible"
+                                       TitleBarVisibility="Collapsed">
+                    <telerik:RadRibbonView.Resources>
+                        <Style BasedOn="{StaticResource {x:Type telerik:RadRibbonButton}}"
+                               TargetType="telerik:RadRibbonButton">
+                            <Setter Property="CollapseToMedium" Value="WhenGroupIsMedium" />
+                            <Setter Property="CollapseToSmall" Value="WhenGroupIsSmall" />
+                            <Setter Property="Size" Value="Large" />
+                        </Style>
+                    </telerik:RadRibbonView.Resources>
+                    <telerik:RadRibbonView.Items>
+                        <telerik:RadRibbonTab Header="{x:Static props:Resources.RibbonTabHome}">
+                            <telerik:RadRibbonGroup Header="{x:Static props:Resources.RibbonGroupGeneral}">
+                                <telerik:RadCollapsiblePanel>
+                                    <StackPanel Orientation="Vertical">
+                                        <TextBlock Text="{x:Static props:Resources.ReviewRequests}" />
+                                        <RadioButton Margin="5,5,0,0"
+                                                     Content="{x:Static props:Resources.AppModeTicketCreater}"
+                                                     IsChecked="{Binding CreateMode.Value,
+                                                                         Converter={StaticResource EnumToBoolConverter},
+                                                                         ConverterParameter=Review}" />
+                                        <RadioButton Margin="5,0,0,0"
+                                                     Content="{x:Static props:Resources.AppModeTicketCreaterRequestWork}"
+                                                     IsChecked="{Binding CreateMode.Value,
+                                                                         Converter={StaticResource EnumToBoolConverter},
+                                                                         ConverterParameter=Work}" />
+                                    </StackPanel>
+                                </telerik:RadCollapsiblePanel>
+                                <telerik:Separator />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding CreateTicketCommand}" />
+                            </telerik:RadRibbonGroup>
+                            <telerik:RadRibbonGroup Header="{x:Static props:Resources.Review}"
+                                                    Visibility="{Binding CreateMode.Value,
+                                                                         Converter={StaticResource ModeToVisivilityConverter},
+                                                                         ConverterParameter=Review}">
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Review.AddReviewCommand}" />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Review.RemoveReviewCommand}" />
+                                <telerik:Separator Visibility="{Binding Review.SelectedReview.Value.Requests.Period.NeedsOutlookIntegration.Value, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Review.AdjustScheduleCommand}"
+                                                         Visibility="{Binding Review.SelectedReview.Value.Requests.Period.NeedsOutlookIntegration.Value,
+                                                                              Converter={StaticResource BooleanToVisibilityConverter}}" />
+                            </telerik:RadRibbonGroup>
+                            <telerik:RadRibbonGroup Header="{x:Static props:Resources.ReviewTemplate}"
+                                                    Visibility="{Binding CreateMode.Value,
+                                                                         Converter={StaticResource ModeToVisivilityConverter},
+                                                                         ConverterParameter=Review}">
+                                <telerik:RadRibbonDropDownButton helpers:ButtonSetupHelper.Data="{Binding Review.ApplyTemplateCommand}"
+                                                                 Grid.IsSharedSizeScope="True"
+                                                                 Size="Large" />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Review.SaveTemplateCommand}" />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Review.SaveAsTemplateCommand}" />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Review.ShowTemplatesCommand}" />
+                                <telerik:Separator />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Review.ImportTemplatesCommand}" />
+                                <telerik:RadRibbonButton helpers:ButtonSetupHelper.Data="{Binding Review.ExportTemplatesCommand}" />
+                            </telerik:RadRibbonGroup>
+
+                        </telerik:RadRibbonTab>
+                    </telerik:RadRibbonView.Items>
+
+                    <b:Interaction.Behaviors>
+                        <behaviors1:RadRibbonViewIsMinimizedSettingAtLoadedBehavior />
+                    </b:Interaction.Behaviors>
+
+                </telerik:RadRibbonView>
+
+                <Grid Grid.Row="1"
+                      Background="#F6F6F6"
+                      Grid.IsSharedSizeScope="True">
+                    <ContentControl Content="{Binding ActiveViewModel.Value}">
+                        <ContentControl.Resources>
+                            <DataTemplate DataType="{x:Type vmReview:ReviewsViewModel}">
+                                <vReview:ReviewsView />
+                            </DataTemplate>
+                            <DataTemplate DataType="{x:Type vmWork:WorkViewModel}">
+                                <vWork:WorkView />
+                            </DataTemplate>
+                        </ContentControl.Resources>
+                    </ContentControl>
+                </Grid>
+            </Grid>
+        </telerik1:RadBusyIndicator>
+    </libCont:OverwrapMessage>
+</UserControl>

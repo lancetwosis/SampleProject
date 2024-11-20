@@ -22,17 +22,22 @@
                          xmlns:navigation="clr-namespace:Telerik.Windows.Controls.Navigation;assembly=Telerik.Windows.Controls.Navigation"
                          xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
                          xmlns:styleselectors="clr-namespace:RedmineTimePuncher.Selectors"
-                         xmlns:tableEditor="clr-namespace:RedmineTableEditor.Views;assembly=RedmineTableEditor"
                          xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
                          xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
                          xmlns:telerikScheduleView="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.ScheduleView"
                          xmlns:treeMap="clr-namespace:Telerik.Windows.Controls.TreeMap;assembly=Telerik.Windows.Controls.DataVisualization"
-                         xmlns:viewmodels="clr-namespace:RedmineTimePuncher.ViewModels"
+                         xmlns:vCreateTicket="clr-namespace:RedmineTimePuncher.Views.CreateTicket"
                          xmlns:views="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+                         xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels"
+                         xmlns:vmCreateTicket="clr-namespace:RedmineTimePuncher.ViewModels.CreateTicket"
+                         xmlns:vmInput="clr-namespace:RedmineTimePuncher.ViewModels.Input"
+                         xmlns:vmTableEditor="clr-namespace:RedmineTimePuncher.ViewModels.TableEditor"
+                         xmlns:vmVisualize="clr-namespace:RedmineTimePuncher.ViewModels.Visualize"
+                         xmlns:vmWikiPage="clr-namespace:RedmineTimePuncher.ViewModels.WikiPage"
                          Title="{Binding Title.Value}"
                          Width="1000"
                          Height="1050"
-                         d:DataContext="{d:DesignInstance {x:Type viewmodels:MainWindowViewModel}}"
+                         d:DataContext="{d:DesignInstance {x:Type vm:MainWindowViewModel}}"
                          Icon="../RedmineTimePuncher.ico"
                          IsTitleVisible="True"
                          ShowInTaskbar="True"
@@ -91,40 +96,38 @@
                                    PaneHeaderBackground="#F1F1F1"
                                    PaneToggleButtonContentTemplate="{StaticResource MenuIconTemplate}"
                                    SelectedIndex="{Binding SelectedIndex.Value}">
+            <telerik:RadNavigationView.ItemContainerStyle>
+                <Style BasedOn="{StaticResource {x:Type telerik:RadNavigationViewItem}}"
+                       TargetType="telerik:RadNavigationViewItem">
+                    <Setter Property="IsSelected" Value="{Binding IsSelected.Value, Mode=TwoWay}" />
+                </Style>
+            </telerik:RadNavigationView.ItemContainerStyle>
             <telerik:RadNavigationView.Content>
-                <ContentPresenter Content="{Binding}">
-                    <ContentPresenter.ContentTemplate>
-                        <DataTemplate>
-                            <Grid>
-                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
-                                                         Visibility="{Binding Input.IsSelected.Value,
-                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+                    <telerik1:RadBusyIndicator BusyContent="{Binding IsBusy.Text}"
+                                               IsBusy="{Binding IsBusy.IsBusy}"
+                                               IsIndeterminate="True">
+                        <ContentControl Content="{Binding SelectedValue, RelativeSource={RelativeSource AncestorType=telerik:RadNavigationView}}">
+                            <ContentControl.Resources>
+                                <DataTemplate DataType="{x:Type vmInput:InputViewModel}">
                                     <local:InputView />
-                                </libCont:OverwrapMessage>
-                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
-                                                         Visibility="{Binding WikiPage.IsSelected.Value,
-                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type vmWikiPage:WikiPageViewModel}">
                                     <local:WikiPageView />
-                                </libCont:OverwrapMessage>
-                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
-                                                         Visibility="{Binding CreateTicket.IsSelected.Value,
-                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <local:CreateTicketView />
-                                </libCont:OverwrapMessage>
-                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
-                                                         Visibility="{Binding TableEditor.IsSelected.Value,
-                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
-                                    <tableEditor:TableEditorView DataContext="{Binding TableEditor.ViewModel}" />
-                                </libCont:OverwrapMessage>
-                                <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}"
-                                                         Visibility="{Binding Visualize.IsSelected.Value,
-                                                                              Converter={StaticResource BooleanToVisibilityConverter}}">
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type vmCreateTicket:CreateTicketViewModel}">
+                                    <vCreateTicket:CreateTicketView />
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type vmTableEditor:TableEditorViewModel}">
+                                    <local:TableEditorView />
+                                </DataTemplate>
+                                <DataTemplate DataType="{x:Type vmVisualize:VisualizeViewModel}">
                                     <local:VisualizeView />
-                                </libCont:OverwrapMessage>
-                            </Grid>
-                        </DataTemplate>
-                    </ContentPresenter.ContentTemplate>
-                </ContentPresenter>
+                                </DataTemplate>
+                            </ContentControl.Resources>
+                        </ContentControl>
+                    </telerik1:RadBusyIndicator>
+                </libCont:OverwrapMessage>
             </telerik:RadNavigationView.Content>
             <telerik:RadNavigationView.PaneFooter>
                 <StackPanel Orientation="Vertical">

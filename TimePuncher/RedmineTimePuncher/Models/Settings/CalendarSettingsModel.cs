@@ -26,7 +26,7 @@ namespace RedmineTimePuncher.Models.Settings
         public PersonalHolidaySettingModel OffTimeFromCatetories { get; set; }
         public PersonalHolidaySettingModel OffTimeFromSubject { get; set; }
 
-        private WorkingDaySettingModel[] daysOfWeek { get; set; }
+        private WorkingDaySettingModel[] daysOfWeek => new[] { Sun, Mon, Tue, Wed, Thu, Fri, Sat };
 
         public CalendarSettingsModel()
         {
@@ -37,7 +37,6 @@ namespace RedmineTimePuncher.Models.Settings
             Thu = new WorkingDaySettingModel(DayOfWeek.Thursday,  true);
             Fri = new WorkingDaySettingModel(DayOfWeek.Friday,    true);
             Sat = new WorkingDaySettingModel(DayOfWeek.Saturday,  false);
-            daysOfWeek = new[] { Sun, Mon, Tue, Wed, Thu, Fri, Sat };
 
             SpecialDates = new ObservableCollection<DateTime>();
 

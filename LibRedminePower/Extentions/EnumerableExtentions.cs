@@ -85,5 +85,15 @@ namespace LibRedminePower.Extentions
             }
             return result;
         }
+
+        public static bool IsEmpty<T>(this IEnumerable<T> list)
+        {
+            return !list.Any();
+        }
+
+        public static bool IsNotEmpty<T>(this IEnumerable<T> list)
+        {
+            return !list.IsEmpty();
+        }
     }
 }

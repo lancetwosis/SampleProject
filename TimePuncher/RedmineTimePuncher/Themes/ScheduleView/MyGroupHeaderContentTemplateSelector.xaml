@@ -3,6 +3,7 @@
                     xmlns:controls1="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
                     xmlns:converters="clr-namespace:RedmineTimePuncher.Converters"
                     xmlns:selectors="clr-namespace:RedmineTimePuncher.Selectors"
+                    xmlns:settings="clr-namespace:RedmineTimePuncher.Models.Settings"
                     xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
                     xmlns:telerik1="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls"
                     xmlns:telerikScheduleView="clr-namespace:Telerik.Windows.Controls;assembly=Telerik.Windows.Controls.ScheduleView"
@@ -26,9 +27,8 @@
                         <Grid.Background>
                             <MultiBinding Converter="{StaticResource DateTimeToHeaderBackgroundConverter}">
                                 <Binding Path="Name" />
-                                <Binding Path="DataContext.Settings.Calendar"
-                                         RelativeSource="{RelativeSource Mode=FindAncestor,
-                                                                         AncestorType=telerik:RadRibbonWindow}" />
+                                <Binding Path="Calendar"
+                                         Source="{x:Static settings:SettingsModel.Default}" />
                                 <Binding Path="DataContext.Input.SelectedDate.Value"
                                          RelativeSource="{RelativeSource Mode=FindAncestor,
                                                                          AncestorType=telerik:RadRibbonWindow}" />
@@ -236,13 +236,11 @@
                                     Orientation="Horizontal"
                                     Visibility="{Binding Name.Name1,
                                                          Converter={StaticResource NullToVisibilityConverter}}">
-                            <Image Source="{Binding Name.Image}"
-                                   ToolTip="{Binding Name.PersonHours.Tooltip}" />
+                            <Image Source="{Binding Name.Image}" />
                             <StackPanel Margin="4,4,4,0"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center"
-                                        Orientation="Vertical"
-                                        ToolTip="{Binding Name.PersonHours.Tooltip}">
+                                        Orientation="Vertical">
                                 <ContentPresenter MinHeight="18"
                                                   HorizontalAlignment="Center"
                                                   VerticalAlignment="Center"
