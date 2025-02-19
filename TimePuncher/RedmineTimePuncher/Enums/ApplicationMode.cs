@@ -50,5 +50,14 @@ namespace RedmineTimePuncher.Enums
                     throw new NotSupportedException($"mode が {mode} はサポート対象外です。");
             }
         }
+
+        public static ApplicationMode ToMode(this int index)
+        {
+            var mode = (ApplicationMode)index;
+            if (FastEnumUtility.FastEnum.IsDefined(mode))
+                return mode;
+            else
+                return ApplicationMode.Unselected;
+        }
     }
 }

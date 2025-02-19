@@ -55,7 +55,7 @@ namespace RedmineTimePuncher
                 RedmineTableEditor.Properties.Settings.Default.Upgrade();
 
                 RedmineTimePuncher.Properties.Settings.Default.IsUpgrade = true;
-                RedmineTimePuncher.Properties.Settings.Default.Save();
+                RedmineTimePuncher.Properties.Settings.Default.SaveWithErr();
             }
             RedmineTimePuncher.Properties.Settings.Default.AppVersion = ApplicationInfo.Version.ToString();
 

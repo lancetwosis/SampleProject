@@ -48,6 +48,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Work
         public WorkViewModel(WorkModel model)
             : base(new TargetTicketViewModel(model.Target), new RequestTicketsViewModel(model.Requests, model.Target))
         {
+            Requests.Description.SetIsVisible(IsBusy);
+
             CanCreate = new[] {
                 IsBusy.Select(i => i ? "" : null),
                 Target.IsValid,
@@ -85,9 +87,9 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Work
                     c.Subject = $"{Resources.AppModeTicketCreaterRequestWork} : {Target.Ticket.Value.Subject} {a.Model.GetPostFix()}";
                     c.CustomFields = createCustomFields(SettingsModel.Default.ReviewCopyCustomFields.GetCopiedCustomFields(Target.Ticket.Value), a.Model);
                     c.Description = joinIfNotNullOrWhiteSpace(
-                        string.IsNullOrEmpty(Requests.Description.Value) ?
+                        string.IsNullOrEmpty(Requests.Description.InputText.Value) ?
                             string.Format(Resources.ReviewMsgRequestFollowings, CacheManager.Default.MarkupLang.CreateTicketLink(Target.Ticket.Value)) :
-                            Requests.Description.Value,
+                            Requests.Description.InputText.Value,
                         requestTransPrg);
                     await Task.Run(() => RedmineManager.Default.Value.CreateTicket(c));
                 }

@@ -16,7 +16,7 @@ namespace RedmineTimePuncher.Models.CreateTicket.Review
         public MyIssue SelfTicket { get; set; }
         public IdentifiableName RequestTracker { get; set; }
         public IdentifiableName PointTracker { get; set; }
-        public string Desctription { get; set; }
+        public SelfReviewDescriptionModel Desctription { get; set; }
         public string ShowAllUrl { get; set; }
 
         public SelfReviewModel()

@@ -19,3 +19,7 @@ obj/
 /TableEditor/Setup/Output/
 /GoogleAnalytics.Core/project.lock.json
 /LibRedminePower/.vs
+/TableEditor/RedmineTableEditor/.vs
+/TelerikEx/.vs
+/TimePuncher/RedmineTimePuncher/.vs
+/TimePuncher/RedmineTimePuncherTests/.vs

@@ -13,6 +13,7 @@ namespace RedmineTimePuncher.Models.Settings.CreateTicket
     public class TranscribeSettingsModel : Bases.SettingsModelBase<TranscribeSettingsModel>
     {
         public TranscribeSettingModel OpenTranscribe { get; set; } = new TranscribeSettingModel();
+        public TranscribeSettingModel SelfTranscribe { get; set; } = new TranscribeSettingModel();
         public TranscribeSettingModel RequestTranscribe { get; set; } = new TranscribeSettingModel();
 
         public TranscribeSettingsModel()

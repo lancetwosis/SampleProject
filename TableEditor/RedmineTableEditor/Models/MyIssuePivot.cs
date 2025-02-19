@@ -35,9 +35,9 @@ namespace RedmineTableEditor.Models
         [LocalizedDisplayName(nameof(Resources.enumIssuePropertyTypeEstimatedHours), typeof(Resources))]
         public double? EstimatedHours => target.EstimatedHours.Value;
         [LocalizedDisplayName(nameof(Resources.enumIssuePropertyTypeSpentHours), typeof(Resources))]
-        public double? MySpentHours => target.MySpentHours;
+        public double? MySpentHours => target.MySpentHours.Value;
         [LocalizedDisplayName(nameof(Properties.Resources.enumMyIssuePropertyTypeDiffEstimatedSpent), typeof(Properties.Resources))]
-        public double? DiffEstimatedSpent => target.DiffEstimatedSpent;
+        public double? DiffEstimatedSpent => target.DiffEstimatedSpent.Value;
 
         private MySubIssue target;
         public MyIssuePivot(MySubIssue target)

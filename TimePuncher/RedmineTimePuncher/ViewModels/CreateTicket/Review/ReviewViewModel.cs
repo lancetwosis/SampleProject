@@ -40,6 +40,7 @@ using RedmineTimePuncher.Models.CreateTicket.Review;
 using RedmineTimePuncher.ViewModels.CreateTicket.Common;
 using RedmineTimePuncher.Models.CreateTicket.Common;
 using RedmineTimePuncher.Models.CreateTicket.Enums;
+using RedmineTimePuncher.Models.Settings.CreateTicket;
 
 namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
 {
@@ -63,6 +64,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
 
             Status = model.ToReactivePropertySlimAsSynchronized(m => m.Status).AddTo(disposables);
             NowSelfReviewing = Status.Select(s => s == ReviewStatus.SelfReviewIng).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Requests.Description.SetIsVisible(IsBusy, NowSelfReviewing);
+            Requests.ReviewTarget.SetIsVisible(IsBusy, NowSelfReviewing);
 
             Name = model.ToReactivePropertySlimAsSynchronized(m => m.Name).AddTo(disposables);
             Target.Ticket.SubscribeWithErr(t =>
@@ -75,6 +78,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
                 Target.IsValid,
                 Target.Process.IsValid,
                 NowSelfReviewing.Select(s => s ? "" : null),
+                Requests.Organizer.Select(o => o == null ? string.Format(Resources.ReviewErrMsgSelectXXX, Resources.ReviewOrganizer) : null),
                 Requests.Period.IsValid,
                 Requests.Assignee.IsValid,
                 Requests.CustomFields.IsValid,
@@ -89,7 +93,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
                     var status = CacheManager.Default.Statuss.First(s => s.Id == selfTicket.Status.Id);
                     if (!status.IsClosed)
                     {
-                        var r = MessageBoxHelper.ConfirmWarning(Resources.ReviewErrMsgSelfNotFinished, MessageBoxHelper.ButtonType.OkCancel);
+                        var r = MessageBoxHelper.ConfirmWarningOkCancel(Resources.ReviewErrMsgSelfNotFinished);
                         if (!r.HasValue || !r.Value)
                             return;
                     }
@@ -103,6 +107,12 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
                 Status.Value = ReviewStatus.Preparing;
                 using (IsBusy.ProcessStart(Resources.ProgressMsgCreatingIssues))
                 {
+                    // 開催チケットのステータスを「開催中のステータス」に更新する
+                    var openTicket = await Task.Run(() => RedmineManager.Default.Value.GetTicketsById(m.OpenTicket.Id.ToString()));
+                    openTicket.RawIssue.Status = SettingsModel.Default.CreateTicket.OpenStatus.ToIdentifiableName();
+                    await Task.Run(() => RedmineManager.Default.Value.UpdateTicket(openTicket.RawIssue));
+
+                    // 他のレビューアへの依頼チケットを作成する
                     await createRequestTicketsAsync(m.OpenTicket, m.RequestTracker, m.PointTracker, m.Desctription, m.ShowAllUrl);
                 }
             }).AddTo(disposables);
@@ -149,13 +159,19 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
             using (IsBusy.ProcessStart(Resources.ProgressMsgCreatingIssues))
             {
                 // 説明の転記機能のチェック
-                var transPrgs = await transcribeAsync(Target.GetProcess(),
-                                                      SettingsModel.Default.TranscribeSettings.OpenTranscribe,
-                                                      SettingsModel.Default.TranscribeSettings.RequestTranscribe);
+                var transSettings = new List<TranscribeSettingModel>()
+                {
+                    SettingsModel.Default.TranscribeSettings.OpenTranscribe,
+                    SettingsModel.Default.TranscribeSettings.RequestTranscribe
+                };
+                if (Requests.SelfReview.IsEnabled.Value)
+                    transSettings.Add(SettingsModel.Default.TranscribeSettings.SelfTranscribe);
+                var transPrgs = await transcribeAsync(Target.GetProcess(), transSettings.ToArray());
                 if (transPrgs == null)
                     return;
                 var openTransPrg = transPrgs.IsNotEmpty() ? transPrgs[0] : ""; ;
                 var requestTransPrg = transPrgs.IsNotEmpty() ? transPrgs[1] : "";
+                var selfTransPrg = Requests.SelfReview.IsEnabled.Value && transPrgs.IsNotEmpty() ? transPrgs[2] : "";
 
                 // 設定のトラッカーが選択中のチケットのプロジェクトで有効かどうかのチェック
                 var idNames = convertTrackers((Resources.SettingsReviOpenTicket, SettingsModel.Default.CreateTicket.OpenTracker),
@@ -176,7 +192,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
                 p.StartDate = Requests.Period.GetStart().GetDateOnly();
                 p.DueDate = Requests.Period.GetDue().GetDateOnly();
                 p.Description = "";
-                p.Status = SettingsModel.Default.CreateTicket.OpenStatus.ToIdentifiableName();
+                p.Status = SettingsModel.Default.CreateTicket.GetOpenStatus(Requests.SelfReview.IsEnabled.Value);
                 p.CustomFields = createCustomFields(Requests.CustomFields.Open.GetIssueCustomFields());
 
                 var openTicket = new MyIssue(await Task.Run(() => RedmineManager.Default.Value.CreateTicket(p)));
@@ -184,7 +200,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
                 // 開催チケットの説明を更新
                 var detectProcPrg = Target.Process.CreatePrgForTicket();
                 var reviewMethodPrg = Requests.Period.CreatePrgForTicket();
-                var targetPrg = CacheManager.Default.MarkupLang.CreateParagraph(Resources.ReviewDelivarables, Requests.ReviewTarget.Value.SplitLines());
+                var targetPrg = CacheManager.Default.MarkupLang.CreateParagraph(Resources.ReviewDelivarables, Requests.ReviewTarget.InputText.Value.SplitLines());
                 var createPointPrg = createPointParagraph(openTicket, pointTracker, null);
                 var showAllUrl = SettingsModel.Default.ReviewIssueList.CreateShowAllPointIssuesUrl(openTicket.RawIssue, pointTracker.Id);
                 var showAllPointsPrg = CacheManager.Default.MarkupLang.CreateParagraph(Resources.ReviewPointsList, CacheManager.Default.MarkupLang.CreateLink(Resources.ReviewMsgReferPointsAtHere, showAllUrl));
@@ -198,39 +214,36 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
                 await Task.Run(() => RedmineManager.Default.Value.UpdateTicket(openTicket.RawIssue));
 
                 // 依頼チケットの作成
-                description = joinIfNotNullOrWhiteSpace(
-                    string.IsNullOrEmpty(Requests.Description.Value) ? Resources.ReviewPleaseFollwings : Requests.Description.Value,
-                    detectProcPrg,
-                    reviewMethodPrg,
-                    targetPrg,
-                    "{0}",
-                    showAllPointsPrg,
-                    requestTransPrg);
+                var requestDescription = new SelfReviewDescriptionModel(
+                    Requests.Description.InputText.Value, detectProcPrg, reviewMethodPrg, targetPrg,
+                    showAllPointsPrg, requestTransPrg);
 
                 // セルフレビューのチェック
                 if (Requests.SelfReview.IsEnabled.Value)
                 {
                     var organizer = Requests.Organizer.Value.Model.Clone();
                     organizer.IsRequired = true;
-                    var selfTicket = await createRequestTicketAsync(organizer, openTicket, requestTracker, pointTracker, description, true);
+                    var selfDescription = new SelfReviewDescriptionModel(
+                        Requests.Description.InputText.Value, detectProcPrg, reviewMethodPrg, targetPrg, showAllPointsPrg, selfTransPrg);
+                    var selfTicket = await createRequestTicketAsync(organizer, openTicket, requestTracker, pointTracker, selfDescription, true);
 
                     Status.Value = ReviewStatus.SelfReviewIng;
                     Requests.SelfReview.Model.SelfTicket = new MyIssue(selfTicket);
                     Requests.SelfReview.Model.OpenTicket = openTicket;
                     Requests.SelfReview.Model.RequestTracker = requestTracker;
                     Requests.SelfReview.Model.PointTracker = pointTracker;
-                    Requests.SelfReview.Model.Desctription = description;
+                    Requests.SelfReview.Model.Desctription = requestDescription;
                     Requests.SelfReview.Model.ShowAllUrl = showAllUrl;
 
                     Requests.SelfReview.Model.SelfTicket.GoToTicket();
                     return;
                 }
 
-                await createRequestTicketsAsync(openTicket, requestTracker, pointTracker, description, showAllUrl);
+                await createRequestTicketsAsync(openTicket, requestTracker, pointTracker, requestDescription, showAllUrl);
             }
         }
 
-        private async Task createRequestTicketsAsync(MyIssue openTicket, IdentifiableName requestTracker, IdentifiableName pointTracker, string description, string showAllUrl)
+        private async Task createRequestTicketsAsync(MyIssue openTicket, IdentifiableName requestTracker, IdentifiableName pointTracker, SelfReviewDescriptionModel description, string showAllUrl)
         {
             // 各レビューアのチケット作成
             foreach (var r in Requests.Assignee.SelectedAssignees)
@@ -253,7 +266,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
                 failedToCreateAppointment = createOutlookAppointment(
                     Requests.Title.Value,
                     joinIfNotNullOrWhiteSpace(
-                        string.IsNullOrEmpty(Requests.Description.Value) ? Resources.ReviewPleaseFollwings : Requests.Description.Value,
+                        string.IsNullOrEmpty(Requests.Description.InputText.Value) ? Resources.ReviewPleaseFollwings : Requests.Description.InputText.Value,
                         Target.Process.CreatePrgForOutlook(),
                         Requests.Period.CreatePrgForOutlook(),
                         MarkupLangType.None.CreateParagraph(Resources.SettingsReviOpenTicket, openTicket.Url),
@@ -299,16 +312,16 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
             }
         }
 
-        private async Task<Issue> createRequestTicketAsync(AssigneeModel reviewer, MyIssue openTicket, IdentifiableName requestTracker, IdentifiableName pointTracker, string description, bool isSelfReview)
+        private async Task<Issue> createRequestTicketAsync(AssigneeModel reviewer, MyIssue openTicket, IdentifiableName requestTracker, IdentifiableName pointTracker, SelfReviewDescriptionModel description, bool isSelfReview)
         {
             var c = openTicket.CreateChildTicket();
             c.Author = CacheManager.Default.MyUser.ToIdentifiableName();
             c.Tracker = requestTracker;
-            c.Status = SettingsModel.Default.CreateTicket.DefaultStatus.ToIdentifiableName();
+            c.Status = CacheManager.Default.Statuss.First();
             c.AssignedTo = reviewer.ToIdentifiableName();
             c.Subject = $"{Requests.Title.Value} {reviewer.GetPostFix(isSelfReview)}";
             c.CustomFields = createCustomFields(Requests.CustomFields.Request.GetIssueCustomFields(), reviewer);
-            c.Description = string.Format(description, createPointParagraph(openTicket, pointTracker, reviewer));
+            c.Description = description.CreateDescription(createPointParagraph(openTicket, pointTracker, reviewer));
             return await Task.Run(() => RedmineManager.Default.Value.CreateTicket(c));
         }
 

@@ -2217,6 +2217,17 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Failed to expand following include macro in the wiki page &quot;{0}&quot;. If the name of the wiki page differs from the name specified in the macro, the expansion process may fail.
+        ///
+        ///{1} に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewErrMsgFailedExpandInclude {
+            get {
+                return ResourceManager.GetString("ReviewErrMsgFailedExpandInclude", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Failed to find the specified header &quot;{0}&quot; in the wiki page &quot;{1}&quot;. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string ReviewErrMsgFailedFindHeader {
@@ -2458,6 +2469,17 @@ namespace RedmineTimePuncher.Properties {
         public static string ReviewMsgMarkupLangEnable {
             get {
                 return ResourceManager.GetString("ReviewMsgMarkupLangEnable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   The preview function may be available by installing the WebView2 runtime.
+        ///
+        ///https://developer.microsoft.com/microsoft-edge/webview2 に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReviewMsgNotSupportWebView2 {
+            get {
+                return ResourceManager.GetString("ReviewMsgNotSupportWebView2", resourceCulture);
             }
         }
         
@@ -4606,6 +4628,34 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Expand Include Macro に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColExpandInclude {
+            get {
+                return ResourceManager.GetString("SettingsReviColExpandInclude", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   : Select whether or not to expand the include macro in the content you wish to transcribe. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColExpandIncludeMsg {
+            get {
+                return ResourceManager.GetString("SettingsReviColExpandIncludeMsg", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Expand
+        ///Include Macro に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviColExpandIncludeWrap {
+            get {
+                return ResourceManager.GetString("SettingsReviColExpandIncludeWrap", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Target issue に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviColGroupTarget {
@@ -4814,7 +4864,7 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
-        ///    に類似しているローカライズされた文字列を検索します。
+        ///   : Select the project that contains the wiki page whose description you wish to transcribe. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviColWikiProjectMsg {
             get {
@@ -4837,15 +4887,6 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsReviCustomField {
             get {
                 return ResourceManager.GetString("SettingsReviCustomField", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Default Status に類似しているローカライズされた文字列を検索します。
-        /// </summary>
-        public static string SettingsReviDefaultStatus {
-            get {
-                return ResourceManager.GetString("SettingsReviDefaultStatus", resourceCulture);
             }
         }
         
@@ -5057,11 +5098,38 @@ namespace RedmineTimePuncher.Properties {
         }
         
         /// <summary>
+        ///   Transcribe the description of the specified wiki page to the description of the self-review issue. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviMsgTransSelf {
+            get {
+                return ResourceManager.GetString("SettingsReviMsgTransSelf", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Specify the review method に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string SettingsReviNeedsFaceToFace {
             get {
                 return ResourceManager.GetString("SettingsReviNeedsFaceToFace", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Status Under Review に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviOpenStatus {
+            get {
+                return ResourceManager.GetString("SettingsReviOpenStatus", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Status Under Self-Review に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviOpenStatusUnderSelfReview {
+            get {
+                return ResourceManager.GetString("SettingsReviOpenStatusUnderSelfReview", resourceCulture);
             }
         }
         
@@ -5179,6 +5247,15 @@ namespace RedmineTimePuncher.Properties {
         public static string SettingsReviTranscribeRequest {
             get {
                 return ResourceManager.GetString("SettingsReviTranscribeRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Transcribe to a self-review issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string SettingsReviTranscribeSelf {
+            get {
+                return ResourceManager.GetString("SettingsReviTranscribeSelf", resourceCulture);
             }
         }
         

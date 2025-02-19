@@ -48,15 +48,14 @@ namespace RedmineTimePuncher.Models.Settings.CreateTicket
             MyWikiPage wiki = null;
             try
             {
-                wiki = await Task.Run(() => RedmineManager.Default.Value.GetWikiPage(setting.WikiProject.Id.ToString(), setting.WikiPage.Title));
+                wiki = await Task.Run(() => RedmineManager.Default.Value.GetWikiPage(setting.WikiProject.Id.ToString(), setting.WikiPage.Title, null, true));
             }
             catch
             {
                 throw new ApplicationException(string.Format(Resources.ReviewErrMsgFailedFindWikiPage, setting.WikiPage.Title));
             }
 
-            var lines = wiki.GetSectionLines(CacheManager.Default.MarkupLang, setting.Header, setting.IncludesHeader).Select(l => l.Text).ToList();
-            return string.Join(Environment.NewLine, lines);
+            return wiki.GetSection(setting, CacheManager.Default.MarkupLang, CacheManager.Default.Projects, RedmineManager.Default.Value);
         }
     }
 }

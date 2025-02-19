@@ -49,6 +49,8 @@ namespace RedmineTableEditor.ViewModels.FileSettings
                 fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.DiffEstimatedSpent), null));
                 fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.MySpentHours), null));
                 fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.ReplyCount), null));
+                fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.RequiredDays), null));
+                fields.Add(new FieldViewModel(new FieldModel(MyIssuePropertyType.DaysUntilCreated), null));
 
                 // いずれかのプロジェクトで有効なカスタムフィールドをすべて表示する
                 // http://133.242.159.37/issues/1588#note-6

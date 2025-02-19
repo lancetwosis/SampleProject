@@ -23,4 +23,9 @@
         </Setter>
     </Style>
 
+    <DataTemplate x:Key="TicketFieldItemTemplate">
+        <TextBlock Text="{Binding}"
+                   ToolTip="{Binding ToolTip}" />
+    </DataTemplate>
+
 </ResourceDictionary>

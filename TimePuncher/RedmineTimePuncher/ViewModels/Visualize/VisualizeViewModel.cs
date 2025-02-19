@@ -230,8 +230,8 @@ namespace RedmineTimePuncher.ViewModels.Visualize
 
         public override void OnWindowClosed()
         {
-            Filters?.Save();
-            Result?.Save();
+            Filters?.Save(true);
+            Result?.Save(true);
         }
     }
 }

@@ -19,9 +19,10 @@ namespace RedmineTableEditor.Converters
         public override bool Convert(MyIssueBase value, object parameter, CultureInfo culture)
         {
             // チケットに紐づいていなければ編集不可
-            if (value.Issue == null)
+            if (value == null || value.Issue == null)
                 return true;
 
+            // 通常のフィールドなら編集可
             var cf = parameter as CustomField;
             if (cf == null)
                 return false;

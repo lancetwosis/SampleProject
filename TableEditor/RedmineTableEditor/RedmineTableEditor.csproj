@@ -160,6 +160,12 @@
     <Compile Include="Models\FileSettings\AssignedToColorModel.cs" />
     <Compile Include="Models\FileSettings\AssignedToColorsModel.cs" />
     <Compile Include="Models\FileSettings\AutoBackColorModel.cs" />
+    <Compile Include="Models\MyTicketFields\Bases\MyTicketFieldBase.cs" />
+    <Compile Include="Models\MyTicketFields\DiffEstimatedSpent.cs" />
+    <Compile Include="Models\MyTicketFields\MySpentHours.cs" />
+    <Compile Include="Models\MyTicketFields\SpentHours.cs" />
+    <Compile Include="Models\MyTicketFields\DaysUntilCreated.cs" />
+    <Compile Include="Models\MyTicketFields\RequiredDays.cs" />
     <Compile Include="Models\RedmineManager.cs" />
     <Compile Include="Models\FileSettings\StatusColorsModel.cs" />
     <Compile Include="Models\TicketFields\Custom\Bases\CfBase.cs" />
@@ -169,6 +175,7 @@
     <Compile Include="Models\TicketFields\Custom\CfInt.cs" />
     <Compile Include="Models\TicketFields\Custom\CfDate.cs" />
     <Compile Include="Models\TicketFields\Custom\CfStrings.cs" />
+    <Compile Include="Models\MyTicketFields\ReplyCount.cs" />
     <Compile Include="Models\TicketFields\Standard\AssignedTo.cs" />
     <Compile Include="Models\TicketFields\Standard\Tracker.cs" />
     <Compile Include="Models\TicketFields\Bases\FieldBase.cs" />
@@ -397,5 +404,6 @@
   <ItemGroup>
     <Resource Include="FodyWeavers.xml" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

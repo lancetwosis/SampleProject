@@ -478,4 +478,34 @@
   <data name="CellErrInvalidField" xml:space="preserve">
     <value>「{0}」は無効です。</value>
   </data>
+  <data name="enumMyIssuePropertyTypeRequiredDays" xml:space="preserve">
+    <value>作業日数</value>
+  </data>
+  <data name="RequiredDaysNotClosed" xml:space="preserve">
+    <value>未完了（ {0} 時点）</value>
+  </data>
+  <data name="enumMyIssuePropertyTypeDaysUntilCreated" xml:space="preserve">
+    <value>作成までの日数</value>
+  </data>
+  <data name="DaysUntilCreatedParentNotExist" xml:space="preserve">
+    <value>親チケットなし</value>
+  </data>
+  <data name="DaysUntilCreatedParent" xml:space="preserve">
+    <value>親チケット : {0} {1} （ {2} 作成）</value>
+  </data>
+  <data name="DaysUntilCreatedToolTip" xml:space="preserve">
+    <value>親チケットの作成から本チケットの作成までの日数</value>
+  </data>
+  <data name="ReplyCountToolTip" xml:space="preserve">
+    <value>担当者の変更回数</value>
+  </data>
+  <data name="RequiredDaysToolTip" xml:space="preserve">
+    <value>終了までにかかった日数</value>
+  </data>
+  <data name="MySpentHoursToolTip" xml:space="preserve">
+    <value>チケットの担当者の作業時間</value>
+  </data>
+  <data name="DiffEstimatedSpentToolTip" xml:space="preserve">
+    <value>予定工数から担当者の作業時間を差し引いた工数</value>
+  </data>
 </root>

@@ -40,19 +40,19 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Common.Bases
         public TPeriod Period { get; set; }
 
         public ReactivePropertySlim<string> Title { get; set; }
-        public ReactivePropertySlim<string> Description { get; set; }
+        public PreviewViewModel<TRequestsModel, TPeriodModel> Description { get; set; }
 
         protected RequestTicketsViewModelBase(TRequestsModel model)
         {
             Title = model.ToReactivePropertySlimAsSynchronized(m => m.OpenTicketTitle).AddTo(disposables);
-            Description = model.ToReactivePropertySlimAsSynchronized(m => m.Description).AddTo(disposables);
+            Description = new PreviewViewModel<TRequestsModel, TPeriodModel>(model, m => m.Description).AddTo(disposables);
         }
 
         public virtual void Clear()
         {
             Title.Value = "";
             Period.Clear();
-            Description.Value = "";
+            Description.Clear();
         }
     }
 }

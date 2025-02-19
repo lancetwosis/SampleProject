@@ -1,7 +1,6 @@
 ﻿using AngleSharp.Common;
 using LibRedminePower.Enums;
 using LibRedminePower.Extentions;
-using NetOffice.OutlookApi;
 using Reactive.Bindings;
 using Reactive.Bindings.Extensions;
 using Reactive.Bindings.Helpers;
@@ -10,6 +9,7 @@ using Redmine.Net.Api.Types;
 using RedmineTimePuncher.Enums;
 using RedmineTimePuncher.Extentions;
 using RedmineTimePuncher.Models.Managers;
+using RedmineTimePuncher.Models.Settings.CreateTicket;
 using RedmineTimePuncher.Properties;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,6 @@ using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using static NetOffice.OfficeApi.Tools.Contribution.DialogUtils;
 
 namespace RedmineTimePuncher.Models
 {
@@ -38,52 +37,86 @@ namespace RedmineTimePuncher.Models
             this.RawWikiPage = rawWikiPage;
         }
 
-        public List<WikiLine> GetSectionLines(MarkupLangType type, WikiLine header, bool includesHeader)
+        public string GetSection(TranscribeSettingItemModel setting, MarkupLangType type, List<Project> projects, RedmineManager redmine)
         {
-            var lines = getLines();
-            if (header.Equals(WikiLine.NOT_SPECIFIED))
-                return lines;
+            var lines = GetLines(type);
+            if (setting.Header.Equals(WikiLine.NOT_SPECIFIED))
+                return string.Join(Environment.NewLine, lines.SelectMany(l => expandLine(Title, l, setting.ExpandsIncludeMacro, type, projects, redmine)).Select(l => l.Text));
 
-            var startIndex = -1;
-            var startHeaderLevel = HeaderLevel.None;
-            var endIndex = lines.Count - 1;
-
+            var headerLevel = HeaderLevel.None;
+            var results = new List<WikiLine>();
             foreach (var line in lines)
             {
-                if (!line.TryGetHeaderLevel(type, out var level))
-                    continue;
-
-                if (startIndex == -1 && line.Equals(header))
+                var level = line.GetHeaderLevel(type);
+                if (level != HeaderLevel.None)
                 {
-                    startHeaderLevel = level;
-                    startIndex = includesHeader ? line.LineNo - 1 : line.LineNo;
+                    if (headerLevel == HeaderLevel.None && line.Equals(setting.Header))
+                    {
+                        headerLevel = level;
+                        results.Add(line);
+                    }
+                    else
+                    {
+                        if (headerLevel >= level)
+                            break;
+
+                        results.Add(line);
+                    }
                 }
                 else
                 {
-                    if (startHeaderLevel >= level)
+                    if (headerLevel != HeaderLevel.None)
                     {
-                        endIndex = line.LineNo - 2;
-                        break;
+                        results.AddRange(expandLine(Title, line, setting.ExpandsIncludeMacro, type, projects, redmine));
                     }
                 }
             }
 
-            if (startHeaderLevel == HeaderLevel.None)
+            if (headerLevel == HeaderLevel.None)
             {
-                throw new ApplicationException(string.Format(Resources.ReviewErrMsgFailedFindHeader, header, Title));
+                throw new ApplicationException(string.Format(Resources.ReviewErrMsgFailedFindHeader, setting.Header, Title));
             }
 
-            // Textile の場合、ヘッダーのスタイルの適用を外すため、ヘッダーの次は必ず空行を入れる必要がある。
-            // これは、ユーザが転記したい内容に関係がないため、取り除く。
-            if (!includesHeader && string.IsNullOrWhiteSpace(lines[startIndex].Text))
-                startIndex++;
+            if (!setting.IncludesHeader)
+            {
+                if (type == MarkupLangType.Markdown)
+                {
+                    results.RemoveAt(0);
+                }
+                else if (type == MarkupLangType.Textile)
+                {
+                    // Textile の場合、ヘッダーのスタイルの適用を外すため、ヘッダーの次は必ず空行を入れる必要がある。
+                    // これは、ユーザが転記したい内容に関係がないため、取り除く。
+                    results.RemoveAt(0);
+                    results.RemoveAt(0);
+                }
+            }
 
-            return lines.GetRange(startIndex, endIndex - startIndex + 1).ToList();
+            return string.Join(Environment.NewLine, results.Select(l => l.Text));
         }
 
-        private List<WikiLine> getLines()
+        public List<WikiLine> GetLines(MarkupLangType type)
         {
-            var lines = RawWikiPage.Text.SplitLines().Indexed().Select(i => new WikiLine(i.i + 1, i.v)).ToList();
+            var lines = new List<WikiLine>();
+            List<WikiLine> codeBlocks = null;
+            foreach (var i in RawWikiPage.Text.SplitLines().Indexed())
+            {
+                var line = new WikiLine(i.i + 1, i.v);
+                if (i.v.Contains(type.GetCodeBlockStart()))
+                {
+                    codeBlocks = new List<WikiLine>() { line };
+                }
+                else if (codeBlocks != null)
+                {
+                    codeBlocks.Add(line);
+                    if (i.v.Contains(type.GetCodeBlockEnd()))
+                    {
+                        codeBlocks.ForEach(c => c.InCodeBlock = true);
+                        codeBlocks = null;
+                    }
+                }
+                lines.Add(line);
+            }
 
             foreach (var sameLines in lines.GroupBy(h => h.Text))
             {
@@ -115,9 +148,83 @@ namespace RedmineTimePuncher.Models
             return lines;
         }
 
+        private List<WikiLine> expandLine(string wikiName, WikiLine line, bool expandsIncludeMacro, MarkupLangType type,
+            List<Project> projects, RedmineManager redmine, List<string> includeWikiUrls = null)
+        {
+            if (line.InCodeBlock)
+                return new List<WikiLine>() { line };
+
+            var path = line.GetImagePath(type);
+            if (path != null)
+                return convertImageLine(line, path);
+
+            if (!expandsIncludeMacro)
+                return new List<WikiLine>() { line };
+
+            var results = new List<WikiLine>();
+            var include = Regex.Match(line.Text, @"{{include\((.+)\)}}");
+            if (include.Success)
+            {
+                results.AddRange(expandIncludeMacro(wikiName, include.Groups[1].ToString(), type, projects, redmine, includeWikiUrls ?? new List<string>()));
+            }
+            else
+            {
+                results.Add(line);
+            }
+            return results;
+        }
+
+        private List<WikiLine> convertImageLine(WikiLine line, string path)
+        {
+            if (!path.Contains("/"))
+            {
+                var attach = RawWikiPage.Attachments.FirstOrDefault(a => a.FileName == path);
+                if (attach != null)
+                {
+                    line.Text = line.Text.Replace(path, attach.ContentUrl);
+                }
+            }
+            return new List<WikiLine>() { line };
+        }
+
+        private List<WikiLine> expandIncludeMacro(string srcWikiName, string macroPrms, MarkupLangType type,
+            List<Project> projects, RedmineManager redmine, List<string> includeWikiUrls)
+        {
+            MyWikiPage included = null;
+            try
+            {
+                var prms = Regex.Match(macroPrms, @"^(.+):(.+)$");
+                if (prms.Success)
+                {
+                    // Redmine のマクロでは Identifier の大文字小文字の区別しないため以下のようにする
+                    var project = projects.First(p => p.Identifier.ToLower() == prms.Groups[1].ToString().ToLower());
+                    included = redmine.GetWikiPage(project.Id.ToString(), prms.Groups[2].ToString());
+                }
+                else
+                {
+                    included = redmine.GetWikiPage(ProjectId, macroPrms);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new ApplicationException(string.Format(Resources.ReviewErrMsgFailedExpandInclude, srcWikiName, "{{include(" + macroPrms + ")}}"), e);
+            }
+
+            if (includeWikiUrls.Contains(included.Url))
+            {
+                // 循環して参照してしまうのを避ける
+                return new List<WikiLine>();
+            }
+            else
+            {
+                includeWikiUrls.Add(included.Url);
+                return included.GetLines(type).SelectMany(l => expandLine(included.Title, l, true, type, projects, redmine, includeWikiUrls)).ToList();
+            }
+        }
+
         public List<WikiLine> GetHeaders(MarkupLangType type)
         {
-            return getLines().Where(l => l.IsHeader(type)).ToList();
+            return GetLines(type).Where(l => l.IsHeader(type)).ToList();
         }
 
         public override bool Equals(object obj)

@@ -906,8 +906,8 @@ Please reinstall.</value>
   <data name="icons8_review" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Images\icons8-review.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="SettingsReviDefaultStatus" xml:space="preserve">
-    <value>Default Status</value>
+  <data name="SettingsReviOpenStatus" xml:space="preserve">
+    <value>Status Under Review</value>
   </data>
   <data name="SettingsReviOutlookIntegration" xml:space="preserve">
     <value>Integration with Outlook</value>
@@ -2061,7 +2061,7 @@ Please review your settings if you wish to enable the custom field setting featu
     <value>Transcribed wiki page</value>
   </data>
   <data name="SettingsReviColWikiProjectMsg" xml:space="preserve">
-    <value />
+    <value>: Select the project that contains the wiki page whose description you wish to transcribe.</value>
   </data>
   <data name="SettingsTranscibeMsgSelectItem" xml:space="preserve">
     <value>Please select an item.</value>
@@ -2237,5 +2237,34 @@ You can “rename” or “delete” them.</value>
     <value>Since the target issue has not been selected, the target issue will be the one when the template is registered.
 
 Please change the target issue if necessary.</value>
+  </data>
+  <data name="ReviewMsgNotSupportWebView2" xml:space="preserve">
+    <value>The preview function may be available by installing the WebView2 runtime.
+
+https://developer.microsoft.com/microsoft-edge/webview2</value>
+  </data>
+  <data name="ReviewErrMsgFailedExpandInclude" xml:space="preserve">
+    <value>Failed to expand following include macro in the wiki page "{0}". If the name of the wiki page differs from the name specified in the macro, the expansion process may fail.
+
+{1}</value>
+  </data>
+  <data name="SettingsReviColExpandIncludeWrap" xml:space="preserve">
+    <value>Expand
+Include Macro</value>
+  </data>
+  <data name="SettingsReviColExpandInclude" xml:space="preserve">
+    <value>Expand Include Macro</value>
+  </data>
+  <data name="SettingsReviColExpandIncludeMsg" xml:space="preserve">
+    <value>: Select whether or not to expand the include macro in the content you wish to transcribe.</value>
+  </data>
+  <data name="SettingsReviOpenStatusUnderSelfReview" xml:space="preserve">
+    <value>Status Under Self-Review</value>
+  </data>
+  <data name="SettingsReviTranscribeSelf" xml:space="preserve">
+    <value>Transcribe to a self-review issue</value>
+  </data>
+  <data name="SettingsReviMsgTransSelf" xml:space="preserve">
+    <value>Transcribe the description of the specified wiki page to the description of the self-review issue.</value>
   </data>
 </root>

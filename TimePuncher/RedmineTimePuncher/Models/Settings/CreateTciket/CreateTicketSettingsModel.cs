@@ -26,7 +26,7 @@ namespace RedmineTimePuncher.Models.Settings.CreateTicket
 
         public MyTracker OpenTracker { get; set; }
         public IdName OpenStatus { get; set; }
-        public IdName DefaultStatus { get; set; }
+        public IdName OpenStatusUnderSelfReview { get; set; }
         public ReviewMethodSettingModel ReviewMethod { get; set; } = new ReviewMethodSettingModel();
 
         public MyTracker RequestTracker { get; set; }
@@ -59,6 +59,14 @@ namespace RedmineTimePuncher.Models.Settings.CreateTicket
                 result.Add(SaveReviewer.CustomField.Id);
 
             return result;
+        }
+
+        public IdentifiableName GetOpenStatus(bool selfReview)
+        {
+            // 「セルフレビュー中のステータス」が未設定だと null になるため以下の処理とする
+            return selfReview && OpenStatusUnderSelfReview != null ?
+                OpenStatusUnderSelfReview.ToIdentifiableName() :
+                OpenStatus.ToIdentifiableName();
         }
     }
 }

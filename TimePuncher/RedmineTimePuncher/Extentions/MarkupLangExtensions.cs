@@ -135,5 +135,35 @@ namespace RedmineTimePuncher.Extentions
                     throw new NotSupportedException($"type が {type} はサポート対象外です。");
             }
         }
+
+        public static string GetCodeBlockStart(this MarkupLangType type)
+        {
+            switch (type)
+            {
+                case MarkupLangType.Textile:
+                    return "<pre>";
+                case MarkupLangType.Markdown:
+                    return "```";
+                case MarkupLangType.Undefined:
+                case MarkupLangType.None:
+                default:
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
+            }
+        }
+
+        public static string GetCodeBlockEnd(this MarkupLangType type)
+        {
+            switch (type)
+            {
+                case MarkupLangType.Textile:
+                    return "</pre>";
+                case MarkupLangType.Markdown:
+                    return "```";
+                case MarkupLangType.Undefined:
+                case MarkupLangType.None:
+                default:
+                    throw new NotSupportedException($"type が {type} はサポート対象外です。");
+            }
+        }
     }
 }

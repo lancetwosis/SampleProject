@@ -89,13 +89,14 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <telerik:RadNavigationView Grid.Row="0"
-                                   AutoChangeDisplayMode="False"
-                                   ItemsSource="{Binding Functions}"
-                                   PaneBackground="#F1F1F1"
-                                   PaneHeaderBackground="#F1F1F1"
-                                   PaneToggleButtonContentTemplate="{StaticResource MenuIconTemplate}"
-                                   SelectedIndex="{Binding SelectedIndex.Value}">
+        <local:MyNavigationView Grid.Row="0"
+                                AutoChangeDisplayMode="False"
+                                ItemsSource="{Binding Functions}"
+                                PaneBackground="#F1F1F1"
+                                PaneHeaderBackground="#F1F1F1"
+                                PaneToggleButtonContentTemplate="{StaticResource MenuIconTemplate}"
+                                SelectedIndex="{Binding SelectedIndex.Value}"
+                                Style="{StaticResource {x:Type telerik:RadNavigationView}}">
             <telerik:RadNavigationView.ItemContainerStyle>
                 <Style BasedOn="{StaticResource {x:Type telerik:RadNavigationViewItem}}"
                        TargetType="telerik:RadNavigationViewItem">
@@ -215,7 +216,8 @@
                     </Grid>
                 </StackPanel>
             </telerik:RadNavigationView.PaneFooter>
-        </telerik:RadNavigationView>
+        </local:MyNavigationView>
+
     </Grid>
     <b:Interaction.Behaviors>
         <behaviors:WindowMaximizedAdjustmentMaxSizeBehavior />

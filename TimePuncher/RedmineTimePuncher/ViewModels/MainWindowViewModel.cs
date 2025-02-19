@@ -66,7 +66,6 @@ namespace RedmineTimePuncher.ViewModels
         public ReactiveCommand<EventArgs> WindowClosedEventCommand { get; set; }
 
         public ReactivePropertySlim<int> SelectedIndex { get; set; }
-        public ReadOnlyReactivePropertySlim<ApplicationMode> Mode { get; set; }
 
         private string url;
 
@@ -82,7 +81,6 @@ namespace RedmineTimePuncher.ViewModels
         public MainWindowViewModel(string[] args)
         {
             SelectedIndex = new ReactivePropertySlim<int>(0).AddTo(disposables);
-            Mode = SelectedIndex.Select(i => (ApplicationMode)i).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             IsBusy = new BusyTextNotifier();
 
@@ -108,11 +106,11 @@ namespace RedmineTimePuncher.ViewModels
             // 定義の順番が NavigationView での表示順と処理に影響するので注意すること
             Functions = new ObservableCollection<FunctionViewModelBase>() { Input, Visualize, TableEditor, CreateTicket, WikiPage };
 
-            // TODO 例外が発生しないように仮の処理を行う。恒久対処が行われたら置き換えること
-            Title = Functions.Select(f => f.Title).CombineLatest().CombineLatest(Mode, (ts, m) => m)
-                .Select(m => Functions.First(f => f.Mode == m).Title.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            //Title = Functions.Select(f => f.Title).CombineLatest().CombineLatest(Mode, (ts, m) => true)
-            //    .Select(_ => Functions.First(f => f.IsSelected.Value).Title.Value).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            Title = Functions.Select(f => f.Title).CombineLatest().CombineLatestWithErr(SelectedIndex, (_, index) =>
+            {
+                var func = Functions.FirstOrDefault(f => f.Mode == index.ToMode());
+                return func != null ? func.Title.Value : ApplicationInfo.Title;
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
             // バージョンダイアログを開く
             ShowVersionDialogCommand = new ReactiveCommand().WithSubscribe(() =>
@@ -135,7 +133,8 @@ namespace RedmineTimePuncher.ViewModels
             // 設定ダイアログを開く
             ShowSettingDialogCommand = IsBusy.Inverse().ToReactiveCommand().WithSubscribe(() =>
             {
-                TraceHelper.TrackAtomicFeature($"{nameof(ShowSettingDialogCommand)}.Executed@{Mode.Value}");
+                var mode = SelectedIndex.Value.ToMode();
+                TraceHelper.TrackAtomicFeature($"{nameof(ShowSettingDialogCommand)}.Executed@{mode}");
 
                 // 自動更新を止めておく
                 Input.Timers.Where(a => a != null).Select(a => a.Value).Where(a => a != null).ToList().ForEach(a => a.Stop());
@@ -143,7 +142,7 @@ namespace RedmineTimePuncher.ViewModels
                     Input.Redmine.QueryTimer.Value.Stop();
 
                 var clone = SettingsModel.Default.Clone();
-                using (var vm = new SettingsViewModel(this, clone))
+                using (var vm = new SettingsViewModel(mode, clone))
                 {
                     var dialog = new Views.Settings.SettingsDialog();
                     dialog.DataContext = vm;
@@ -183,7 +182,8 @@ namespace RedmineTimePuncher.ViewModels
                 }
                 else
                 {
-                    SelectedIndex.Value = Properties.Settings.Default.LastSelectedIndex;
+                    var mode = Properties.Settings.Default.LastSelectedIndex.ToMode();
+                    SelectedIndex.Value = mode != ApplicationMode.Unselected ? (int)mode : 0;
                 }
                 autoUpdateCheck();
             }).AddTo(disposables);
@@ -197,12 +197,13 @@ namespace RedmineTimePuncher.ViewModels
             {
                 Logger.Info("WindowClosedEventCommand was started.");
 
-                CacheManager.Default.SaveCache(redmine.Value);
-
                 Functions.ToList().ForEach(f => f.OnWindowClosed());
 
                 Properties.Settings.Default.LastSelectedIndex = SelectedIndex.Value;
-                Properties.Settings.Default.Save();
+                Properties.Settings.Default.SaveWithErr(true);
+
+                // キャッシュの更新は時間がかかる場合があるので最後に行う
+                CacheManager.Default.Update(redmine.Value);
 
                 Logger.Info("WindowClosedEventCommand was finished.");
             }).AddTo(disposables);
@@ -267,14 +268,14 @@ namespace RedmineTimePuncher.ViewModels
             if (DateTime.Today >= final)
             {
                 Properties.Settings.Default.NeedsAutoUpdate = false;
-                Properties.Settings.Default.Save();
+                Properties.Settings.Default.SaveWithErr();
                 Process.Start(this.url);
             }
             else if (DateTime.Today >= limit)
             {
                 var needsUpdate = Properties.Settings.Default.NeedsAutoUpdate;
                 Properties.Settings.Default.NeedsAutoUpdate = !needsUpdate;
-                Properties.Settings.Default.Save();
+                Properties.Settings.Default.SaveWithErr();
 
                 if (!needsUpdate)
                 {

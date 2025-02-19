@@ -29,8 +29,18 @@ namespace RedmineTimePuncher.Models.Managers
     {
         [JsonIgnore]
         public static CacheManager Default { get; set; } = createCacheManager();
+
+        /// <summary>
+        /// キャッシュの更新を知らせるトリガー。UI スレッド上で通知。
+        /// </summary>
+        /// <remarks>
+        /// ObserveOnUIDispatcher を外すと Updated をトリガーに画面にバインドされている
+        /// ObserveCollection を更新しようとした際に例外が発生する。
+        /// http://133.242.159.37/issues/2009
+        /// </remarks>
         [JsonIgnore]
-        public ReactivePropertySlim<DateTime> Updated { get; set; } = new ReactivePropertySlim<DateTime>();
+        public ReadOnlyReactivePropertySlim<DateTime> Updated { get; set; }
+        private ReactivePropertySlim<DateTime> updated { get; set; } = new ReactivePropertySlim<DateTime>();
 
         public List<Project> Projects { get; set; }
         public List<Tracker> Trackers { get; set; }
@@ -60,10 +70,16 @@ namespace RedmineTimePuncher.Models.Managers
         /// </summary>
         /// <remarks>
         /// 一定回数のログイン失敗時にRedmineアカウントがロックされることがある。
-        /// その状態にならないように、接続に失敗したアカウントは管理しておき、そのアカウントで接続しようとする場合は、ユーザーに確認をしてから接続確認を行うようにする。
+        /// その状態にならないように、接続に失敗したアカウントは管理しておき、
+        /// そのアカウントで接続しようとする場合は、ユーザーに確認をしてから接続確認を行うようにする。
         /// 接続が成功したら破棄する。
         /// </remarks>
         public List<RedmineSettingsModel> ErrorSettings { get; set; } = new List<RedmineSettingsModel>();
+
+        public CacheManager()
+        {
+            Updated = updated.ObserveOnUIDispatcher().ToReadOnlyReactivePropertySlim();
+        }
 
         private static CacheManager createCacheManager()
         {
@@ -112,39 +128,34 @@ namespace RedmineTimePuncher.Models.Managers
 
         public void UpdateCacheIfNeeded(RedmineManager redmine)
         {
-            // 、前回接続に失敗していた場合、
             if (!HasValue() ||                              // キャッシュが存在しない場合
                 !RedmineSetting.Equals(redmine.Settings) || // Redmine設定が変更された場合
                 (DateTime.Now - UpdatedDate).TotalDays > 10)// 最終更新日から10日間が経過した場合
             {
-                // 初回は同期的に更新する
-                Update(redmine);
+                update(redmine);
             }
         }
 
-        public void SaveCache(RedmineManager redmine)
+        public void Update(RedmineManager redmine)
         {
             if (redmine != null)
             {
                 try
                 {
-                    Update(redmine);
+                    update(redmine, true);
                 }
                 catch (Exception e)
                 {
                     Logger.Warn(e, "Failed to update cache on WindowClosed");
                 }
             }
-
-            Properties.Settings.Default.Cache = Default.ToJson();
-            Properties.Settings.Default.Save();
         }
 
         private CancellationTokenSource cts;
         /// <summary>
         /// キャッシュと設定を更新する
         /// </summary>
-        public void Update(RedmineManager redmine)
+        private void update(RedmineManager redmine, bool onClosed = false)
         {
             try
             {
@@ -220,18 +231,22 @@ namespace RedmineTimePuncher.Models.Managers
 
                 RedmineSetting = redmine.Settings;
 
-                if (valueChanged)
-                    Logger.Info("Updating cache has completed.");
-                else
-                    Logger.Info("Updating cache has completed but there is no change.");
+                UpdatedDate = DateTime.Now;
 
                 if (valueChanged)
                 {
                     ClearShortCache();
-                    Updated.Value = DateTime.Now;
-                }
+                    updated.Value = DateTime.Now;
 
-                UpdatedDate = DateTime.Now;
+                    Properties.Settings.Default.Cache = Default.ToJson();
+                    Properties.Settings.Default.SaveWithErr(onClosed);
+
+                    Logger.Info("Updating cache has completed.");
+                }
+                else
+                {
+                    Logger.Info("Updating cache has completed but there is no change.");
+                }
             }
             catch (Exception e)
             {

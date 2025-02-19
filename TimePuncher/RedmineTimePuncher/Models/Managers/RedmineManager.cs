@@ -27,6 +27,7 @@ using System.Reactive.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web;
 using Telerik.Windows.Controls;
 
 namespace RedmineTimePuncher.Models.Managers
@@ -804,9 +805,11 @@ namespace RedmineTimePuncher.Models.Managers
             return Manager.GetAllWikiPagesWithErrConv(projIdentifier).Select(w => new MyWikiPageItem(Settings.UrlBase, projIdentifier, w)).ToList();
         }
 
-        public MyWikiPage GetWikiPage(string projectId, string title, int? version = null)
+        public MyWikiPage GetWikiPage(string projectId, string title, int? version = null, bool needsAttachments = false)
         {
-            return new MyWikiPage(Settings.UrlBase, projectId, Manager.GetWikiPage(projectId, null, title, version.HasValue ? (uint)version.Value : 0));
+            var prms = needsAttachments ? new NameValueCollection() { { RedmineKeys.INCLUDE, RedmineKeys.ATTACHMENTS } } : null;
+            var wiki = Manager.GetWikiPage(projectId, prms, title, version.HasValue ? (uint)version.Value : 0);
+            return new MyWikiPage(Settings.UrlBase, projectId, wiki);
         }
 
         public Issue CreateTicket(Issue issue)
@@ -823,6 +826,11 @@ namespace RedmineTimePuncher.Models.Managers
         {
             var proj = CacheManager.Default.Projects.First(p => p.Id == projectId);
             return $"{Settings.UrlBase}/projects/{proj.Identifier}/issues";
+        }
+
+        public string CreateNewIssueURL(string description)
+        {
+            return $"{Settings.UrlBase}/issues/new?issue[description]={HttpUtility.UrlEncode(description)}";
         }
 
         public string CreatePointIssueURL(Issue parent, int trackerId, string detectionProcess, string saveReviewer, string reviewMethod, List<string> cfQueries)

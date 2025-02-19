@@ -36,7 +36,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
 
         public SelfReviewViewModel SelfReview { get; set; }
 
-        public ReactivePropertySlim<string> ReviewTarget { get; set; }
+        public PreviewViewModel<RequestTicketsModel, PeriodModel> ReviewTarget { get; set; }
         public ReadOnlyReactivePropertySlim<bool> NeedsGitIntegration { get; set; }
         public ReactivePropertySlim<string> MergeRequestUrl { get; set; }
 
@@ -70,7 +70,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
                     Title.Value = $"{processName}{Resources.Review} : {p.t.Subject}";
                 }).AddTo(disposables);
 
-            ReviewTarget = requests.ToReactivePropertySlimAsSynchronized(m => m.ReviewTarget).AddTo(disposables);
+            ReviewTarget = new PreviewViewModel<RequestTicketsModel, PeriodModel>(requests, m => m.ReviewTarget).AddTo(disposables);
             NeedsGitIntegration = SettingsModel.Default.ObserveProperty(a => a.CreateTicket.NeedsGitIntegration).ToReadOnlyReactivePropertySlim().AddTo(disposables);
             MergeRequestUrl = requests.ToReactivePropertySlimAsSynchronized(m => m.MergeRequestUrl).AddTo(disposables);
             MergeRequestUrl.Pairwise().CombineLatest(NeedsGitIntegration, (url, needsIntegrate) => (url, needsIntegrate)).SubscribeWithErr(p =>
@@ -78,15 +78,16 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
                 if (!p.needsIntegrate || ReviewTarget == null || string.IsNullOrEmpty(p.url.NewItem))
                     return;
 
-                if (!string.IsNullOrEmpty(p.url.OldItem) && ReviewTarget.Value.Contains(p.url.OldItem))
+                var oldTarget = ReviewTarget.InputText.Value;
+                if (!string.IsNullOrEmpty(p.url.OldItem) && oldTarget.Contains(p.url.OldItem))
                 {
-                    ReviewTarget.Value = ReviewTarget.Value.Replace(p.url.OldItem, p.url.NewItem);
+                    ReviewTarget.InputText.Value = oldTarget.Replace(p.url.OldItem, p.url.NewItem);
                 }
                 else
                 {
                     var label = p.url.NewItem.Contains("gitlab") ? "Merge Request URL" : "Pull Request URL";
                     var link = CacheManager.Default.MarkupLang.CreateLink(label, p.url.NewItem);
-                    ReviewTarget.Value = ReviewTarget.Value + $"{Environment.NewLine}{Environment.NewLine}{link}";
+                    ReviewTarget.InputText.Value = oldTarget + $"{Environment.NewLine}{Environment.NewLine}{link}";
                 }
             });
 
@@ -94,7 +95,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
 
             target.ObserveProperty(m => m.Ticket).Skip(1).Where(t => t != null).SubscribeWithErr(t =>
             {
-                ReviewTarget.Value = CacheManager.Default.MarkupLang.CreateTicketLink(t);
+                ReviewTarget.InputText.Value = CacheManager.Default.MarkupLang.CreateTicketLink(t);
                 MergeRequestUrl.Value = "";
             }).AddTo(disposables);
         }
@@ -104,9 +105,8 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
             base.Clear();
 
             Organizer.Value = null;
-            SelfReview.Clear();
             CustomFields.Clear();
-            ReviewTarget.Value = "";
+            ReviewTarget.Clear();
             MergeRequestUrl.Value = "";
         }
 
@@ -117,7 +117,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
             SelfReview.ApplyTemplate(template.SelfReview);
             Period.ApplyTemplate(template.Period);
             CustomFields.ApplyTemplate(template.CustomFields);
-            Description.Value = template.Description;
+            Description.InputText.Value = template.Description;
         }
     }
 }

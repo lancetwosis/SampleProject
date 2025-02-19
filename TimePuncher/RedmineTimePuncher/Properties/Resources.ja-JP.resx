@@ -824,8 +824,8 @@ APIアクセスキー</value>
     <value>環境が正しくありません。
 再インストールをしてください。</value>
   </data>
-  <data name="SettingsReviDefaultStatus" xml:space="preserve">
-    <value>初期ステータス</value>
+  <data name="SettingsReviOpenStatus" xml:space="preserve">
+    <value>レビュー開催中のステータス</value>
   </data>
   <data name="SettingsReviOutlookIntegration" xml:space="preserve">
     <value>Outlookとの連携</value>
@@ -2086,5 +2086,34 @@ Redmine の設定を見直してください。</value>
     <value>レビュー対象のチケットが選択されていないため、テンプレートを登録した時のチケットを対象とします。
 
 必要に応じて対象チケットを変更してください。</value>
+  </data>
+  <data name="ReviewMsgNotSupportWebView2" xml:space="preserve">
+    <value>WebView2のランタイムをインストールすることでプレビュー機能が使用できる可能性があります。
+
+https://developer.microsoft.com/microsoft-edge/webview2</value>
+  </data>
+  <data name="ReviewErrMsgFailedExpandInclude" xml:space="preserve">
+    <value>Wikiページ「{0}」の以下の include マクロの展開に失敗しました。Wikiページの名前とマクロで指定された名前が異なる場合、展開処理に失敗する可能性があります。
+
+{1}</value>
+  </data>
+  <data name="SettingsReviColExpandIncludeWrap" xml:space="preserve">
+    <value>include
+マクロを展開</value>
+  </data>
+  <data name="SettingsReviColExpandInclude" xml:space="preserve">
+    <value>includeマクロを展開</value>
+  </data>
+  <data name="SettingsReviColExpandIncludeMsg" xml:space="preserve">
+    <value>: 転記する内容に含まれるincludeマクロを展開するかどうかを選択してください。</value>
+  </data>
+  <data name="SettingsReviOpenStatusUnderSelfReview" xml:space="preserve">
+    <value>セルフレビュー中のステータス</value>
+  </data>
+  <data name="SettingsReviTranscribeSelf" xml:space="preserve">
+    <value>セルフレビューチケットへの転記</value>
+  </data>
+  <data name="SettingsReviMsgTransSelf" xml:space="preserve">
+    <value>セルフレビューチケットの説明に指定されたWikiページの記述を転記します。</value>
   </data>
 </root>

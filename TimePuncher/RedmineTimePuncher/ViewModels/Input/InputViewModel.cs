@@ -787,7 +787,7 @@ namespace RedmineTimePuncher.ViewModels.Input
 
             // 画面サイズの保存
             Properties.Settings.Default.MinTimeRulerExtent = MinTimeRulerExtent.Value;
-            Properties.Settings.Default.Save();
+            Properties.Settings.Default.SaveWithErr(true);
             this.Dispose();
         }
     }

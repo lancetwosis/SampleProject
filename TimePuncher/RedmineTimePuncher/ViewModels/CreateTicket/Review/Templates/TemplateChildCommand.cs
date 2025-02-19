@@ -54,14 +54,14 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review.Templates
                 var temp = template.Model.Target.Ticket;
                 if (selected == null)
                 {
-                    var r = MessageBoxHelper.ConfirmWarning(Resources.ReviewTemplateMsgConfirmTicket, MessageBoxHelper.ButtonType.OkCancel);
+                    var r = MessageBoxHelper.ConfirmWarningOkCancel(Resources.ReviewTemplateMsgConfirmTicket);
                     if (!r.HasValue || r.Value == false)
                         return;
                 }
                 else if (temp.Project.Id != selected.Project.Id)
                 {
                     var msg = string.Format(Resources.ReviewTemplateMsgConfirmProject, temp.Project.Name, selected.Project.Name);
-                    var r = MessageBoxHelper.ConfirmWarning(msg, MessageBoxHelper.ButtonType.OkCancel);
+                    var r = MessageBoxHelper.ConfirmWarningOkCancel(msg);
                     if (!r.HasValue || r.Value == false)
                         return;
                 }

@@ -354,4 +354,9 @@
   <data name="enumIssuePropertyTypeComment" xml:space="preserve">
     <value>コメント</value>
   </data>
+  <data name="msgErrFailedSaveSettings" xml:space="preserve">
+    <value>設定の保存に失敗しました。 user.config を確認し、アプリケーションを再起動してください。
+
+{0}</value>
+  </data>
 </root>

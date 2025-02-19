@@ -152,6 +152,42 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   Parent task : {0} {1} ( Created on {2} ) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DaysUntilCreatedParent {
+            get {
+                return ResourceManager.GetString("DaysUntilCreatedParent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   No parent task に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DaysUntilCreatedParentNotExist {
+            get {
+                return ResourceManager.GetString("DaysUntilCreatedParentNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of days between the creation of the parent issue and the creation of this issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DaysUntilCreatedToolTip {
+            get {
+                return ResourceManager.GetString("DaysUntilCreatedToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Hours deducted the assignee&apos;s spent time from the estimated hours に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string DiffEstimatedSpentToolTip {
+            get {
+                return ResourceManager.GetString("DiffEstimatedSpentToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Any に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumIssueStatusCompareTypeAny {
@@ -386,6 +422,15 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   Days Until Created に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumMyIssuePropertyTypeDaysUntilCreated {
+            get {
+                return ResourceManager.GetString("enumMyIssuePropertyTypeDaysUntilCreated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Remain Hours に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string enumMyIssuePropertyTypeDiffEstimatedSpent {
@@ -409,6 +454,15 @@ namespace RedmineTableEditor.Properties {
         public static string enumMyIssuePropertyTypeReplyCount {
             get {
                 return ResourceManager.GetString("enumMyIssuePropertyTypeReplyCount", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Required Days に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string enumMyIssuePropertyTypeRequiredDays {
+            get {
+                return ResourceManager.GetString("enumMyIssuePropertyTypeRequiredDays", resourceCulture);
             }
         }
         
@@ -805,6 +859,15 @@ namespace RedmineTableEditor.Properties {
         }
         
         /// <summary>
+        ///   Spent hours of the assignee of the issue に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string MySpentHoursToolTip {
+            get {
+                return ResourceManager.GetString("MySpentHoursToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   型 System.Drawing.Bitmap のローカライズされたリソースを検索します。
         /// </summary>
         public static System.Drawing.Bitmap new_icon {
@@ -921,6 +984,33 @@ namespace RedmineTableEditor.Properties {
             get {
                 object obj = ResourceManager.GetObject("reload_icon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Number of times assignee was changed に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string ReplyCountToolTip {
+            get {
+                return ResourceManager.GetString("ReplyCountToolTip", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Open (at {0}) に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RequiredDaysNotClosed {
+            get {
+                return ResourceManager.GetString("RequiredDaysNotClosed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Number of days it took to close に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string RequiredDaysToolTip {
+            get {
+                return ResourceManager.GetString("RequiredDaysToolTip", resourceCulture);
             }
         }
         

@@ -119,7 +119,9 @@
             <controls:TwinListBox MaxHeight="300"
                                   Margin="5"
                                   VerticalAlignment="top"
-                                  DataContext="{Binding VisibleProps}" />
+                                  DataContext="{Binding VisibleProps}"
+                                  FromItemTemplate="{StaticResource TicketFieldItemTemplate}"
+                                  ToItemTemplate="{StaticResource TicketFieldItemTemplate}" />
         </GroupBox>
     </StackPanel>
 </UserControl>

@@ -18,6 +18,14 @@ namespace RedmineTableEditor.ViewModels.FileSettings
         public CustomField CustomField { get; set; }
         public Models.FileSettings.FieldModel Model { get; set; }
 
+        public string ToolTip
+        {
+            get
+            {
+                return MyField.HasValue ? MyField.Value.GetToolTip() : null;
+            }
+        }
+
         public FieldViewModel(Models.FileSettings.FieldModel model, CustomField customField)
         {
             Model = model;

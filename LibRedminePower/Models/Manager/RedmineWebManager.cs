@@ -279,7 +279,7 @@ namespace LibRedminePower.Models.Manager
             var scripts = doc.Document.QuerySelectorAll("script");
             if (scripts.Any(s => s.OuterHtml.Contains("textile.js")))
                 return MarkupLangType.Textile;
-            else if (scripts.Any(s => s.OuterHtml.Contains("markdown.js")))
+            else if (scripts.Any(s => s.OuterHtml.Contains("markdown.js") || s.OuterHtml.Contains("common_mark.js")))
                 return MarkupLangType.Markdown;
             else
                 return MarkupLangType.None;

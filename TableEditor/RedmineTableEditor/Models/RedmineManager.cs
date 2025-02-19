@@ -3,6 +3,7 @@ using LibRedminePower.Interfaces;
 using Redmine.Net.Api;
 using Redmine.Net.Api.Types;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -26,6 +27,7 @@ namespace RedmineTableEditor.Models
         private IRedmineManager manager { get; set; }
         private IRedmineManager masterManager { get; set; }
         public ICacheManager Cache { get; set; }
+
 
         public RedmineManager((IRedmineManager Manager, IRedmineManager MasterManager, ICacheManager CacheManager) redmine)
         {
@@ -91,6 +93,43 @@ namespace RedmineTableEditor.Models
             return manager.GetObjectWithErrConv<Issue>(id.ToString());
         }
 
+        private ConcurrentBag<Issue> issuesCache { get; set; }
+        private ConcurrentBag<Issue> issuesCacheWithDetail { get; set; }
+        /// <summary>
+        /// 短時間で連続して取得する際、同一チケットへの API 実行を避けるためのキャッシュを初期化する。
+        /// GetIssueFromCache を使った処理の前に実行すること。
+        /// </summary>
+        public void InitCaches(List<Issue> issues = null)
+        {
+            issuesCache = issues == null ? new ConcurrentBag<Issue>() : new ConcurrentBag<Issue>(issues);
+            issuesCacheWithDetail = new ConcurrentBag<Issue>();
+        }
+
+        /// <summary>
+        /// 短時間に連続でチケットを取得するときに、同一チケットへの API 実行を避けるため使用する。
+        /// 実行前に InitCaches を実行すること。
+        /// </summary>
+        public Issue GetIssueFromCache(int id, bool needsDetail)
+        {
+            if (needsDetail)
+            {
+                var result = issuesCacheWithDetail.FirstOrDefault(i => i.Id == id);
+                if (result != null)
+                    return result;
+            }
+            else
+            {
+                var result = issuesCache.FirstOrDefault(i => i.Id == id);
+                if (result != null)
+                    return result;
+            }
+
+            var issue = GetIssue(id);
+            issuesCache.Add(issue);
+            issuesCacheWithDetail.Add(issue);
+            return issue;
+        }
+
         public List<Issue> GetIssues(IEnumerable<int> ids)
         {
             return manager.GetObjectsWithErrConv<Issue>(new NameValueCollection
@@ -154,7 +193,15 @@ namespace RedmineTableEditor.Models
 
         public Issue GetIssueIncludeJournals(int id)
         {
-            return manager.GetObjectWithErrConv<Issue>(id.ToString(), new NameValueCollection { { RedmineKeys.INCLUDE, RedmineKeys.JOURNALS } });
+            var issue = manager.GetObjectWithErrConv<Issue>(id.ToString(), new NameValueCollection { { RedmineKeys.INCLUDE, RedmineKeys.JOURNALS } });
+
+            // キャッシュが有効の場合、追加する
+            if (issuesCache != null)
+                issuesCache.Add(issue);
+            if (issuesCacheWithDetail != null)
+                issuesCacheWithDetail.Add(issue);
+
+            return issue;
         }
 
         public void UpdateTicket(Issue issue)

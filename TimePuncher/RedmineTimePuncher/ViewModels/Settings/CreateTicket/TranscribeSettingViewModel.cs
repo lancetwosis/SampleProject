@@ -65,19 +65,27 @@ namespace RedmineTimePuncher.ViewModels.Settings.CreateTicket
 
             PossibleProjects = CacheTempManager.Default.MyProjects.ToReadOnlyReactivePropertySlim().AddTo(disposables);
             PossibleWikiProjects = CacheTempManager.Default.MyProjectsWiki.ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            PossibleProcesses =
-                detectionProcessCustomField.CombineLatest(IsEnabledDetectionProcess, (proc, isEnabled) => {
-                    return isEnabled ?
-                    new List<MyCustomFieldPossibleValue> { TranscribeSettingModel.NOT_SPECIFIED_PROCESS }.Concat(proc.PossibleValues).ToList():
-                    new List<MyCustomFieldPossibleValue>();
-                }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            PossibleProcesses.SubscribeWithErr(procs =>
+            PossibleProcesses = detectionProcessCustomField.CombineLatest(IsEnabledDetectionProcess, (customField, isEnabled) =>
+            {
+                if (!isEnabled || customField == null) return null;
+
+                var processes = customField.PossibleValues.ToList();
+                processes.Insert(0, TranscribeSettingModel.NOT_SPECIFIED_PROCESS);
+                return processes;
+            }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            PossibleProcesses.Where(a => a != null).SubscribeWithErr(procs =>
             {
                 foreach (var item in model.Items)
-                    item.Process = procs?.FirstOrFirst(p => p.Equals(item.Process));
+                    item.Process = procs.FirstOrFirst(p => p.Equals(item.Process));
             }).AddTo(disposables);
-            PossibleTrackers = CacheTempManager.Default.MyTrackers.Where(a => a != null).Select(a => 
-            new List<MyTracker>(new[] { MyTracker.NOT_SPECIFIED }).Concat(a).ToList()).ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            PossibleTrackers = CacheTempManager.Default.MyTrackers.Where(a => a != null)
+                .Select(a => new List<MyTracker>(new[] { MyTracker.NOT_SPECIFIED }).Concat(a).ToList())
+                .ToReadOnlyReactivePropertySlim().AddTo(disposables);
+            PossibleTrackers.Where(a => a != null).SubscribeWithErr(trackers =>
+            {
+                foreach (var item in model.Items)
+                    item.Tracker = trackers.FirstOrFirst(p => p.Equals(item.Tracker));
+            });
 
             IsEnabled = model.ToReactivePropertySlimAsSynchronized(m => m.IsEnabled).AddTo(disposables);
             Items = model.ToReadOnlyViewModel(a => a.Items, 
@@ -92,8 +100,9 @@ namespace RedmineTimePuncher.ViewModels.Settings.CreateTicket
                 {
                     foreach (var item in e.NewItems.Cast<TranscribeSettingItemViewModel>())
                     {
-                        item.Process.Value = PossibleProcesses.Value?.FirstOrDefault();
                         item.Project.Value = PossibleProjects.Value?.FirstOrDefault();
+                        item.Process.Value = PossibleProcesses.Value?.FirstOrDefault();
+                        item.Tracker.Value = PossibleTrackers.Value?.FirstOrDefault();
                         item.WikiProject.Value = PossibleWikiProjects.Value?.FirstOrDefault();
                     }
                 }
@@ -101,33 +110,35 @@ namespace RedmineTimePuncher.ViewModels.Settings.CreateTicket
 
             var selected = Items.SelectMany(a => a.SelectedItem);
             var canTestCommand = new[] {
-                selected.Select(a => a == null ? Properties.Resources.SettingsTranscibeMsgSelectItem : null),
+                selected.Select(a => a == null ? Resources.SettingsTranscibeMsgSelectItem : null),
                 selected.SelectManyIfNotNull(a => a.WikiProject)
-                    .Select(a => a == null ? string.Format(Properties.Resources.MsgPleaseSpecifyXXX, Properties.Resources.SettingsReviColWikiProject)  : null),
+                    .Select(a => a == null ? string.Format(Resources.MsgPleaseSpecifyXXX, Resources.SettingsReviColWikiProject) : null),
                 selected.SelectManyIfNotNull(a => a.WikiPage)
-                    .Select(a => a == null ?  string.Format(Properties.Resources.MsgPleaseSpecifyXXX, Properties.Resources.SettingsReviColWikiPage)  : null),
+                    .Select(a => a == null ? string.Format(Resources.MsgPleaseSpecifyXXX, Resources.SettingsReviColWikiPage) : null),
                 selected.SelectManyIfNotNull(a => a.Header)
-                    .Select(a => a == null ?  string.Format(Properties.Resources.MsgPleaseSpecifyXXX, Properties.Resources.SettingsReviColHeader)  : null),
+                    .Select(a => a == null ? string.Format(Resources.MsgPleaseSpecifyXXX, Resources.SettingsReviColHeader) : null),
             }.CombineLatest().Select(strings => strings.FirstOrDefault(s => s != null)).ToReactiveProperty();
             TestCommand = canTestCommand.ToReactiveCommandToolTipSlim().WithSubscribe(() =>
             {
-                var selectedItem = Items.Value.SelectedItem.Value.Model;
+                var setting = Items.Value.SelectedItem.Value.Model;
                 MyWikiPage wiki = null;
                 try
                 {
-                    wiki = CacheTempManager.Default.Redmine.Value.GetWikiPage(selectedItem.WikiProject.Id.ToString(), selectedItem.WikiPage.Title);
+                    wiki = CacheTempManager.Default.Redmine.Value.GetWikiPage(setting.WikiProject.Id.ToString(), setting.WikiPage.Title, null, true);
                 }
-                catch
+                catch (Exception e)
                 {
-                    throw new ApplicationException(string.Format(Resources.ReviewErrMsgFailedFindWikiPage, selectedItem.WikiPage.Title));
+                    throw new ApplicationException(string.Format(Resources.ReviewErrMsgFailedFindWikiPage, setting.WikiPage.Title), e);
                 }
 
-                var lines = wiki.GetSectionLines(CacheTempManager.Default.MarkupLang.Value, selectedItem.Header, selectedItem.IncludesHeader);
-                MessageBoxHelper.Input(Resources.ReviewMsgTranscribeFollowings, string.Join(Environment.NewLine, lines.Select(l => l.Text)), true);
+                var section = wiki.GetSection(setting, CacheTempManager.Default.MarkupLang.Value,
+                    CacheTempManager.Default.Projects.Value, CacheTempManager.Default.Redmine.Value);
+                MessageBoxHelper.Input(Resources.ReviewMsgTranscribeFollowings, section, true);
             }).AddTo(disposables);
 
             // Itemsが空の状態で、IsEnabledが有効にされたら、空のModelを追加する。
-            IsEnabled.Pairwise().Where(a => !a.OldItem && a.NewItem && !Items.Value.Any()).SubscribeWithErr(_ => model.Items.Add(new TranscribeSettingItemModel())).AddTo(disposables);
+            IsEnabled.Pairwise().Where(a => !a.OldItem && a.NewItem && !Items.Value.Any())
+                .SubscribeWithErr(_ => model.Items.Add(new TranscribeSettingItemModel())).AddTo(disposables);
         }
     }
 }

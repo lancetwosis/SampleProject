@@ -27,5 +27,10 @@ namespace RedmineTimePuncher.ViewModels.Settings
             Outlook = model.ToReadOnlyViewModel(a => a.Outlook, a => new AppointmentOutlookSettingsViewModel(a)).AddTo(disposables);
             Teams = model.ToReadOnlyViewModel(a => a.Teams, a => new AppointmentTeamsSettingsViewModel(a)).AddTo(disposables);
         }
+
+        public bool NeedsRestart()
+        {
+            return Outlook.Value.IsEnabled.NeedsRestart || Teams.Value.IsEnabled.NeedsRestart;
+        }
     }
 }

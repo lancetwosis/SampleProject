@@ -1,6 +1,7 @@
 ﻿using GoogleAnalytics;
 using LibRedminePower.Applications;
 using LibRedminePower.Exceptions;
+using LibRedminePower.Extentions;
 using LibRedminePower.Helpers;
 using LibRedminePower.Localization;
 using LibRedminePower.Logging;
@@ -45,7 +46,7 @@ namespace LibRedminePower
             {
                 Properties.Settings.Default.Upgrade();
                 Properties.Settings.Default.IsUpgrade = true;
-                Properties.Settings.Default.Save();
+                Properties.Settings.Default.SaveWithErr();
             }
         }
 

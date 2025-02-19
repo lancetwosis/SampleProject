@@ -7,6 +7,7 @@
                    xmlns:myHelpers="clr-namespace:RedmineTimePuncher.Helpers"
                    xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
                    xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+                   xmlns:vCreateTicket="clr-namespace:RedmineTimePuncher.Views.Settings.CreateTicket"
                    xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings"
                    Width="800"
                    Height="700"
@@ -38,83 +39,83 @@
                 <local:RedmineSettingsView Margin="5"
                                            DataContext="{Binding}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
-                                Header="{x:Static props:Resources.SettingsCategorySchedule}">
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategorySchedule}"
+                                Visibility="{Binding Schedule.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
                 <local:ScheduleSettingsView Margin="5"
                                             DataContext="{Binding Schedule.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
-                                Header="{x:Static props:Resources.SettingsCategoryCalendar}">
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryCalendar}"
+                                Visibility="{Binding Calendar.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
                 <local:CalendarSettingsView Margin="5"
                                             DataContext="{Binding Calendar.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
-                                Header="{x:Static props:Resources.SettingsCategoryCategory}">
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryCategory}"
+                                Visibility="{Binding Category.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
                 <local:CategorySettingsView Margin="5"
                                             DataContext="{Binding Category.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
-                                Header="{x:Static props:Resources.SettingsCategoryAppointments}">
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryAppointments}"
+                                Visibility="{Binding Appointment.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
                 <local:AppointmentSettingsView Margin="5"
                                                DataContext="{Binding Appointment.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
-                                Header="{x:Static props:Resources.SettingsCategoryIssueLists}">
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryIssueLists}"
+                                Visibility="{Binding Query.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
                 <local:QuerySettingsView Margin="5"
                                          DataContext="{Binding Query.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
-                                Header="{x:Static props:Resources.SettingsCategoryUsers}">
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryUsers}"
+                                Visibility="{Binding User.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
                 <local:UserSettingsView Margin="5"
                                         DataContext="{Binding User.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
-                                Header="{x:Static props:Resources.SettingsCategoryExport}">
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryExport}"
+                                Visibility="{Binding OutputData.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
                 <local:OutputDataSettingsView Margin="5"
                                               DataContext="{Binding OutputData.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TimePuncher"
-                                Header="{x:Static props:Resources.SettingsCategoryReport}">
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryReport}"
+                                Visibility="{Binding PersonHourReport.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
                 <local:PersonHourReportSettingsView Margin="5"
                                                     DataContext="{Binding PersonHourReport.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
-                                Header="{x:Static props:Resources.SettingsCategoryReview}">
-                <local:CreateTicketSettingsView Margin="5"
-                                                DataContext="{Binding CreateTicket.Value}" />
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryReview}"
+                                Visibility="{Binding CreateTicket.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
+                <vCreateTicket:CreateTicketSettingsView Margin="5"
+                                                        DataContext="{Binding CreateTicket.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
-                                Header="{x:Static props:Resources.SettingsCategoryReviewIssueList}">
-                <local:CreateTicketIssueListSettingsView Margin="5"
-                                                         DataContext="{Binding ReviewIssueList.Value}" />
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryReviewIssueList}"
+                                Visibility="{Binding ReviewIssueList.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
+                <vCreateTicket:IssueListColumnSettingsView Margin="5"
+                                                           DataContext="{Binding ReviewIssueList.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
-                                Header="{x:Static props:Resources.SettingsCategoryCopyCustomFields}">
-                <local:CreateTicketCopyCustomFieldsSettingsView Margin="5"
-                                                                DataContext="{Binding ReviewCopyCustomFields.Value}" />
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryCopyCustomFields}"
+                                Visibility="{Binding ReviewCopyCustomFields.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
+                <vCreateTicket:CopyCustomFieldsSettingsView Margin="5"
+                                                            DataContext="{Binding ReviewCopyCustomFields.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
-                                Header="{x:Static props:Resources.SettingsCategoryReviewDescription}">
-                <local:CreateTicketDescriptionSettingsView Margin="5"
-                                                           DataContext="{Binding TranscribeDescription.Value}" />
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryReviewDescription}"
+                                Visibility="{Binding TranscribeDescription.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
+                <vCreateTicket:DescriptionSettingsView Margin="5"
+                                                       DataContext="{Binding TranscribeDescription.Value}" />
             </telerik:RadTabItem>
-            <telerik:RadTabItem myHelpers:TabVisibleHelper.CurrentMode="{Binding Mode.Value}"
-                                myHelpers:TabVisibleHelper.EnableModes="TicketCreater"
-                                Header="{x:Static props:Resources.SettingsCategoryRequestWork}">
-                <local:RequestWorkSettingsView Margin="5"
-                                               DataContext="{Binding RequestWork.Value}" />
+            <telerik:RadTabItem Header="{x:Static props:Resources.SettingsCategoryRequestWork}"
+                                Visibility="{Binding RequestWork.Value,
+                                                     Converter={StaticResource NullToVisibilityConverter}}">
+                <vCreateTicket:RequestWorkSettingsView Margin="5"
+                                                       DataContext="{Binding RequestWork.Value}" />
             </telerik:RadTabItem>
         </telerik:RadTabControl>
         <Grid Grid.Row="2"

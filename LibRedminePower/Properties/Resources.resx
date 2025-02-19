@@ -354,4 +354,9 @@ Please check the network status and Redmine connection settings.</value>
   <data name="enumIssuePropertyTypeComment" xml:space="preserve">
     <value>Comment</value>
   </data>
+  <data name="msgErrFailedSaveSettings" xml:space="preserve">
+    <value>Failed to save configuration. Please check user.config and restart the application.
+
+{0}</value>
+  </data>
 </root>

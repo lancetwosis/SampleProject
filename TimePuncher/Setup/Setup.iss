@@ -2,7 +2,7 @@
 ; SEE THE DOCUMENTATION FOR DETAILS ON CREATING INNO SETUP SCRIPT FILES!
 
 #define MyAppName "Redmine Studio"
-#define MyAppVersion "8.2.2"
+#define MyAppVersion "8.3.0"
 #define MyAppPublisher "Redmine Power"
 #define MyAppURL "https://www.redmine-power.com/"
 #define MyAppExeName "RedmineStudio.exe"
@@ -48,6 +48,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Files]
 Source: "..\RedmineTimePuncher\bin\Release\*"; DestDir: "{app}"; Flags: ignoreversion
+Source: "..\RedmineTimePuncher\bin\Release\runtimes\*"; DestDir: "{app}\runtimes"; Flags: recursesubdirs
 Source: "..\RedmineTimePuncher\bin\Release\ja-JP\*"; DestDir: "{app}\ja-JP"; Flags: ignoreversion
 Source: "..\..\forensicsim\Pint-34287\*"; DestDir: "{commonappdata}\Pint-34287"; Flags: recursesubdirs
 ; NOTE: Don't use "Flags: ignoreversion" on any shared system files

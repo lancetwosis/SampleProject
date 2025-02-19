@@ -11,9 +11,12 @@ using RedmineTableEditor.Extentions;
 using RedmineTableEditor.Models;
 using RedmineTableEditor.Models.Bases;
 using RedmineTableEditor.Models.FileSettings;
+using RedmineTableEditor.Models.MyTicketFields;
+using RedmineTableEditor.Models.TicketFields.Standard;
 using RedmineTableEditor.Properties;
 using RedmineTableEditor.Views;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -117,6 +120,9 @@ namespace RedmineTableEditor.ViewModels
                         var allIssues = IssuesView.SelectMany(i => i.ChildrenDic.Values).Where(a => a != null).Cast<MyIssueBase>()
                             .Concat(parentIssues.ToList()).Where(a => a.Issue != null).ToList();
                         var rawIssues = await Task.Run(() => Redmine.Value.GetIssues(allIssues.Select(a => a.Id.Value)));
+
+                        Redmine.Value.InitCaches(rawIssues);
+
                         allIssues.ToList().AsParallel().ForAll(a => a.SetIssue(rawIssues.SingleOrDefault(b => b.Id == a.Id)));
                     }
                 }).AddTo(disposables);
@@ -191,6 +197,7 @@ namespace RedmineTableEditor.ViewModels
                 {
                     using (parent.IsBusy.ProcessStart())
                     {
+                        Redmine.Value.InitCaches();
                         await Task.Run(() => SelectedIsuues.ToList().AsParallel().ForAll(a => a.Read()));
                     }
                 }
@@ -253,6 +260,8 @@ namespace RedmineTableEditor.ViewModels
                 else
                     return;
 
+                Redmine.Value.InitCaches(rawIssues);
+
                 parent.CTS.Token.ThrowIfCancellationRequested();
 
                 // 自動色設定
@@ -269,11 +278,11 @@ namespace RedmineTableEditor.ViewModels
                     parentIssues.AddRange(issues);
                 else
                     parentIssues.AddRange(issues.OrderBy(i => i.Id));
-                    // TODO: 親子関係でのソートを対応するときに整理すること！
-                    //if (fileSettings.ParentIssues.Recoursive)
-                    //    parentIssues.AddRange(orderByParentChild(fileSettings.ParentIssues, issues));
-                    //else
-                    //    parentIssues.AddRange(issues.OrderBy(i => i.Id));
+                // TODO: 親子関係でのソートを対応するときに整理すること！
+                //if (fileSettings.ParentIssues.Recoursive)
+                //    parentIssues.AddRange(orderByParentChild(fileSettings.ParentIssues, issues));
+                //else
+                //    parentIssues.AddRange(issues.OrderBy(i => i.Id));
 
                 // 子チケットの情報を取得する。
                 await Task.WhenAll(parentIssues.Select(a => a.UpdateChildrenAsync(parent.CTS.Token)));
@@ -339,10 +348,11 @@ namespace RedmineTableEditor.ViewModels
             parentIssues.Clear();
             IssuesView.Clear();
             allChildren.Clear();
-            MyIssueBase.EstimatedHoursMax = 0;
-            MyIssueBase.SpentHoursMax = 0;
-            MyIssueBase.MySpentHoursMax = 0;
-            MyIssueBase.DiffEstimatedSpentMax = 0;
+
+            EstimatedHours.MAX = 0;
+            SpentHours.MAX = 0;
+            MySpentHours.MAX = 0;
+            DiffEstimatedSpent.MAX = 0;
         }
     }
 }

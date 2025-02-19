@@ -46,11 +46,6 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Review
             TicketUrl = model.ObserveProperty(m => m.SelfTicket).Select(t => t?.Url).ToReadOnlyReactivePropertySlim().AddTo(disposables);
         }
 
-        public void Clear()
-        {
-            IsEnabled.Value = false;
-        }
-
         public void ApplyTemplate(SelfReviewModel template)
         {
             IsEnabled.Value = template.IsEnabled;

@@ -94,6 +94,7 @@
                 <RowDefinition Height="AUTO" />
                 <RowDefinition Height="AUTO" />
                 <RowDefinition Height="*" />
+                <RowDefinition Height="AUTO" />
                 <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
@@ -309,23 +310,27 @@
                        Margin="0,5,0,0"
                        Style="{StaticResource LabelStyle}"
                        Text="{x:Static props:Resources.ReviewDelivarables}" />
-            <TextBox Grid.Row="11"
-                     Grid.Column="1"
-                     Margin="5,5,0,0"
-                     Style="{StaticResource DescriptionTextBoxStyle}"
-                     Text="{Binding Requests.ReviewTarget.Value,
-                                    UpdateSourceTrigger=PropertyChanged}" />
+            <vCommon:PreviewView Grid.Row="11"
+                                 Grid.Column="1"
+                                 Margin="5,5,0,0"
+                                 DataContext="{Binding Requests.ReviewTarget}" />
 
-            <TextBlock Grid.Row="12"
-                       Margin="0,5,0,0"
+            <GridSplitter Grid.Row="12"
+                          Grid.Column="1"
+                          Height="5"
+                          Margin="0,2,0,0"
+                          HorizontalAlignment="Stretch"
+                          Background="#F6F6F6" />
+
+            <TextBlock Grid.Row="13"
+                       Margin="0,2,0,0"
                        Style="{StaticResource LabelStyle}"
                        Text="{x:Static props:Resources.ReviewDesctiptionOfRequestIssue}" />
-            <TextBox Grid.Row="12"
-                     Grid.Column="1"
-                     Margin="5,5,0,0"
-                     Style="{StaticResource DescriptionTextBoxStyle}"
-                     Text="{Binding Requests.Description.Value,
-                                    UpdateSourceTrigger=PropertyChanged}" />
+            <vCommon:PreviewView Grid.Row="13"
+                                 Grid.Column="1"
+                                 Margin="5,2,0,0"
+                                 DataContext="{Binding Requests.Description}" />
+
         </Grid>
 
     </telerik1:RadBusyIndicator>

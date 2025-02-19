@@ -88,7 +88,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Common.Bases
             }
             catch (ApplicationException e)
             {
-                var r = MessageBoxHelper.ConfirmWarning(string.Format(Resources.ReviewErrMsgFailedTranscribeDescription, e.Message), MessageBoxHelper.ButtonType.OkCancel);
+                var r = MessageBoxHelper.ConfirmWarningOkCancel(string.Format(Resources.ReviewErrMsgFailedTranscribeDescription, e.Message), e);
                 return r.HasValue && r.Value ? new List<string>() : null;
             }
         }
@@ -100,10 +100,15 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Common.Bases
             foreach (var t in trackers)
             {
                 var idName = t.Tracker.GetIdNameOrDefault(Target.Ticket.Value);
-                if (idName == null)
+                if (idName != null)
+                {
+                    results.Add(idName);
+                }
+                else
+                {
                     disableTrackers.Add((t.Tracker.Name, t.TicketType));
-
-                results.Add(idName);
+                    results.Add(Target.Ticket.Value.RawIssue.Tracker);
+                }
             }
             if (disableTrackers.IsEmpty())
                 return results;
@@ -111,7 +116,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket.Common.Bases
             var tns = string.Join(", ", disableTrackers.Select(pair => pair.TrackerName));
             var tts = string.Join(", ", disableTrackers.Select(pair => pair.TicketType));
             var msg = string.Format(Resources.ReviewMsgConfirmDisableTrackers, Target.Ticket.Value.Project.Name, tns, tts, Target.Ticket.Value.RawIssue.Tracker.Name);
-            var r = MessageBoxHelper.ConfirmWarning(msg, MessageBoxHelper.ButtonType.OkCancel);
+            var r = MessageBoxHelper.ConfirmWarningOkCancel(msg);
             return r.HasValue && r.Value ? results : null;
         }
 

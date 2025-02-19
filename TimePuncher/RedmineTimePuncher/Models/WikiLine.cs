@@ -18,6 +18,7 @@ namespace RedmineTimePuncher.Models
         /// 一つのページ内での繰り返しの回数を表す
         /// </summary>
         public int RepeatCount { get; set; } = 1;
+        public bool InCodeBlock { get; set; }
         public string Text { get; set; }
 
         public static WikiLine NOT_SPECIFIED = new WikiLine(-1, LibRedminePower.Properties.Resources.SettingsNotSpecified) { RepeatCount = 0 };
@@ -32,23 +33,56 @@ namespace RedmineTimePuncher.Models
 
         public bool IsHeader(MarkupLangType type)
         {
-            return matchHeader(type).Success;
+            return InCodeBlock ? false : matchHeader(type).Success;
         }
 
-        public bool TryGetHeaderLevel(MarkupLangType type, out HeaderLevel level)
+        public HeaderLevel GetHeaderLevel(MarkupLangType type)
         {
+            if (InCodeBlock)
+                return HeaderLevel.None;
+
             var m = matchHeader(type);
             if (m.Success)
-                level = type.GetHeaderLevel(m.Groups[1].ToString());
+                return type.GetHeaderLevel(m.Groups[1].ToString());
             else
-                level = HeaderLevel.None;
-
-            return m.Success;
+                return HeaderLevel.None;
         }
 
         private Match matchHeader(MarkupLangType type)
         {
             return Regex.Match(Text, $"({type.GetHeaderPattern()})");
+        }
+
+        public string GetImagePath(MarkupLangType type)
+        {
+            if (type == MarkupLangType.Textile)
+            {
+                // !{width:300px}clipboard-202412251448-difsc.png!
+                var m1 = Regex.Match(Text, @"!(.+)!");
+                if (m1.Success)
+                {
+                    var path = m1.Groups[1].ToString();
+                    var m2 = Regex.Match(path, @"{.+}(.+)");
+                    return m2.Success ? m2.Groups[1].ToString() : path;
+                }
+
+                return null;
+            }
+            else if (type == MarkupLangType.Markdown)
+            {
+                // ![テスト](clipboard-202412251448-difsc.png)
+                var m1 = Regex.Match(Text, @"!\[.+\]\((.+)\)");
+                if (m1.Success)
+                    return m1.Groups[1].ToString();
+
+                // Markdown でサイズを指定するには以下のように記述する必要がある
+                // <img src="clipboard-202412251448-difsc.png" width="300px">
+                var m2 = Regex.Match(Text, @"<img.* src=" + "\"(.+)\" ");
+                if (m2.Success)
+                    return m2.Groups[1].ToString();
+            }
+
+            return null;
         }
 
         public override string ToString()

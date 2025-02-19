@@ -408,10 +408,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize
             ResultFilters?.AddNewFilter();
         }
 
-        public void Save()
+        public void Save(bool onClosed)
         {
             Properties.Settings.Default.VisualizeResult = Model.ToJson();
-            Properties.Settings.Default.Save();
+            Properties.Settings.Default.SaveWithErr(onClosed);
         }
     }
 }

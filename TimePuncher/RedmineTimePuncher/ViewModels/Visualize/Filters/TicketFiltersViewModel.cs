@@ -105,10 +105,10 @@ namespace RedmineTimePuncher.ViewModels.Visualize.Filters
             return new TicketFiltersViewModel(parent, Model.Clone(), createAt);
         }
 
-        public void Save()
+        public void Save(bool onClosed)
         {
             Properties.Settings.Default.VisualizeFilters = Model.ToJson();
-            Properties.Settings.Default.Save();
+            Properties.Settings.Default.SaveWithErr(onClosed);
         }
     }
 }

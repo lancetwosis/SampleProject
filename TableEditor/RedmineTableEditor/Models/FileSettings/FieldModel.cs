@@ -7,6 +7,7 @@ using RedmineTableEditor.Converters;
 using RedmineTableEditor.Enums;
 using RedmineTableEditor.Extentions;
 using RedmineTableEditor.Models.Bases;
+using RedmineTableEditor.Models.MyTicketFields.Bases;
 using RedmineTableEditor.Models.TicketFields.Bases;
 using RedmineTableEditor.Models.TicketFields.Standard;
 using RedmineTableEditor.ViewModels;
@@ -132,6 +133,19 @@ namespace RedmineTableEditor.Models.FileSettings
                             IsCellMergingEnabled = prop == IssuePropertyType.Subject,
                         };
                     case IssuePropertyType.SpentHours:
+                        return new GridViewDataColumn()
+                        {
+                            Header = prop.GetDescription(),
+                            Tag = key,
+                            ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
+                            DataMemberBinding = new Binding(bindingBase + getPropertyName(prop) + ".Value"),
+                            TextAlignment = prop.ToFieldFormat().GetTextAlignment(),
+                            IsReadOnly = true,
+                            DataFormatString = prop.ToFieldFormat().GetDataFormatString(),
+                            CellStyle = getCellStyle(getAutoBackColorPropertyStatus(bindingBase)),
+                            CellTemplate = getDataTemplate(prop, bindingBase),
+                            IsCellMergingEnabled = false,
+                        };
                     case IssuePropertyType.TotalSpentHours:
                     case IssuePropertyType.TotalEstimatedHours:
                         return new GridViewDataColumn()
@@ -143,8 +157,7 @@ namespace RedmineTableEditor.Models.FileSettings
                             TextAlignment = prop.ToFieldFormat().GetTextAlignment(),
                             IsReadOnly = true,
                             DataFormatString = prop.ToFieldFormat().GetDataFormatString(),
-                            CellStyle = getCellStyle(
-                                getAutoBackColorPropertyStatus(bindingBase)),
+                            CellStyle = getCellStyle(getAutoBackColorPropertyStatus(bindingBase)),
                             CellTemplate = getDataTemplate(prop, bindingBase),
                             IsCellMergingEnabled = false,
                         };
@@ -202,26 +215,15 @@ namespace RedmineTableEditor.Models.FileSettings
                 {
                     case MyIssuePropertyType.MySpentHours:
                     case MyIssuePropertyType.DiffEstimatedSpent:
-                        return new GridViewDataColumn()
-                        {
-                            Header = prop.GetDescription(),
-                            Tag = key,
-                            ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
-                            DataMemberBinding = new Binding(bindingBase + getPropertyName(prop)),
-                            TextAlignment = prop.ToFieldFormat().GetTextAlignment(),
-                            IsReadOnly = true,
-                            DataFormatString = prop.ToFieldFormat().GetDataFormatString(),
-                            CellStyle = getCellStyle(getAutoBackColorPropertyStatus(bindingBase)),
-                            CellTemplate = getDataTemplate(prop, bindingBase),
-                            IsCellMergingEnabled = false,
-                        };
                     case MyIssuePropertyType.ReplyCount:
+                    case MyIssuePropertyType.RequiredDays:
+                    case MyIssuePropertyType.DaysUntilCreated:
                         return new GridViewDataColumn()
                         {
-                            Header = prop.GetDescription(),
+                            Header = new TextBlock() { Text = prop.GetDescription(), ToolTip = prop.GetToolTip() },
                             Tag = key,
                             ColumnGroupName = key.HasValue ? key.Value.ToString() : null,
-                            DataMemberBinding = new Binding(bindingBase + getPropertyName(prop)),
+                            DataMemberBinding = new Binding(bindingBase + getPropertyName(prop) + ".Value"),
                             TextAlignment = prop.ToFieldFormat().GetTextAlignment(),
                             IsReadOnly = true,
                             DataFormatString = prop.ToFieldFormat().GetDataFormatString(),
@@ -354,40 +356,6 @@ namespace RedmineTableEditor.Models.FileSettings
             }
         }
 
-        private string getPropertyMax(IssuePropertyType prop)
-        {
-            switch (prop)
-            {
-                case IssuePropertyType.EstimatedHours:     return nameof(MyIssueBase.EstimatedHoursMax);
-                case IssuePropertyType.SpentHours:         return nameof(MyIssueBase.SpentHoursMax);
-                case IssuePropertyType.Status:
-                case IssuePropertyType.AssignedTo:
-                case IssuePropertyType.FixedVersion:
-                case IssuePropertyType.Category:
-                case IssuePropertyType.Priority:
-                case IssuePropertyType.Id:
-                case IssuePropertyType.Subject:
-                case IssuePropertyType.StartDate:
-                case IssuePropertyType.DueDate:
-                case IssuePropertyType.DoneRatio:
-                case IssuePropertyType.TotalSpentHours:
-                case IssuePropertyType.TotalEstimatedHours:
-                default:
-                    throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
-            }
-        }
-
-        private string getPropertyMax(MyIssuePropertyType prop)
-        {
-            switch (prop)
-            {
-                case MyIssuePropertyType.MySpentHours:       return nameof(MyIssueBase.MySpentHoursMax);
-                case MyIssuePropertyType.DiffEstimatedSpent: return nameof(MyIssueBase.DiffEstimatedSpentMax);
-                default:
-                    throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
-            }
-        }
-
         private string getPropertyName(IssuePropertyType prop)
         {
             switch (prop)
@@ -424,6 +392,8 @@ namespace RedmineTableEditor.Models.FileSettings
                 case MyIssuePropertyType.MySpentHours:       return nameof(MyIssueBase.MySpentHours);
                 case MyIssuePropertyType.DiffEstimatedSpent: return nameof(MyIssueBase.DiffEstimatedSpent);
                 case MyIssuePropertyType.ReplyCount:         return nameof(MyIssueBase.ReplyCount);
+                case MyIssuePropertyType.RequiredDays:       return nameof(MyIssueBase.RequiredDays);
+                case MyIssuePropertyType.DaysUntilCreated:   return nameof(MyIssueBase.DaysUntilCreated);
                 default:
                     throw new NotSupportedException($"prop が {prop} は、サポート対象外です。");
             }
@@ -509,7 +479,7 @@ namespace RedmineTableEditor.Models.FileSettings
             {
                 case IssuePropertyType.EstimatedHours:
                 case IssuePropertyType.SpentHours:
-                    return createSpentHoursTemplate(bindingBase, getPropertyName(prop), getPropertyMax(prop), prop.ToFieldFormat().GetDataFormatString());
+                    return createProgressTemplate(bindingBase, getPropertyName(prop), prop.ToFieldFormat().GetDataFormatString());
                 default:
                     return null;
             }
@@ -521,16 +491,24 @@ namespace RedmineTableEditor.Models.FileSettings
             {
                 case MyIssuePropertyType.MySpentHours:
                 case MyIssuePropertyType.DiffEstimatedSpent:
-                    return createSpentHoursTemplate(bindingBase, getPropertyName(prop), getPropertyMax(prop), prop.ToFieldFormat().GetDataFormatString());
+                    return createProgressTemplate(bindingBase, getPropertyName(prop), prop.ToFieldFormat().GetDataFormatString());
                 case MyIssuePropertyType.ReplyCount:
+                case MyIssuePropertyType.RequiredDays:
+                case MyIssuePropertyType.DaysUntilCreated:
                     var template = new DataTemplate();
                     var textBlock = new FrameworkElementFactory(typeof(TextBlock));
                     textBlock.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Right);
-                    textBlock.SetBinding(TextBlock.TextProperty, new Binding(bindingBase + nameof(MyIssueBase.ReplyCount)));
+                    var path = bindingBase + getPropertyName(prop);
+                    textBlock.SetBinding(TextBlock.TextProperty, new Binding($"{path}.{nameof(MyTicketFieldBase<int?>.Value)}")
+                    {
+                        StringFormat = prop.ToFieldFormat().GetDataFormatString(), TargetNullValue = "----"
+                    });
+                    textBlock.SetBinding(TextBlock.FontStyleProperty, new Binding($"{path}.{nameof(MyTicketFieldBase<int?>.FontStyle)}"));
 
-                    textBlock.SetBinding(RadToolTipService.ToolTipContentProperty, new Binding(bindingBase + nameof(MyIssueBase.ReplyCountToolTip)));
+                    textBlock.SetBinding(RadToolTipService.ToolTipContentProperty, new Binding($"{path}.{nameof(MyTicketFieldBase<int?>.ToolTip)}"));
                     var tooltip = new FrameworkElementFactory(typeof(TextBlock));
                     tooltip.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Left);
+                    tooltip.SetValue(TextBlock.FontStyleProperty, FontStyles.Normal);
                     tooltip.SetBinding(TextBlock.TextProperty, new Binding());
                     var tooltipView = new FrameworkElementFactory(typeof(RadToolTipContentView));
                     tooltipView.AppendChild(tooltip);
@@ -548,7 +526,7 @@ namespace RedmineTableEditor.Models.FileSettings
         }
 
         private static NullToVisibilityConverter NULL_TO_VISIBLE = new NullToVisibilityConverter();
-        private DataTemplate createSpentHoursTemplate(string bindingBase, string propName, string maxPropName, string stringFormat)
+        private DataTemplate createProgressTemplate(string bindingBase, string propName, string stringFormat)
         {
             // 子チケットの場合のみ設定する
             if (string.IsNullOrEmpty(bindingBase))
@@ -557,21 +535,18 @@ namespace RedmineTableEditor.Models.FileSettings
             var template = new DataTemplate();
             var grid = new FrameworkElementFactory(typeof(Grid));
 
-            var propInfo = typeof(MyIssueBase).GetProperty(propName);
-            var valuePath = bindingBase + propName;
-            if (propInfo.CanWrite) valuePath += ".Value";
-
-            var maxPropInfo = typeof(MyIssueBase).GetProperty(maxPropName);
-            var maxPropPath = new PropertyPath("(0)", maxPropInfo);
+            var path = bindingBase + propName;
             var progressBar = new FrameworkElementFactory(typeof(ProgressBar));
-            progressBar.SetBinding(ProgressBar.ValueProperty, new Binding(valuePath) { Mode = BindingMode.OneWay, TargetNullValue = (double)0, FallbackValue = (double)0 });
-            progressBar.SetBinding(ProgressBar.MaximumProperty, new Binding() { Path = maxPropPath });
-            progressBar.SetBinding(ProgressBar.VisibilityProperty, new Binding(valuePath) { Converter = NULL_TO_VISIBLE, TargetNullValue = Visibility.Collapsed, FallbackValue = Visibility.Collapsed });
+            progressBar.SetBinding(ProgressBar.ValueProperty, new Binding($"{path}.Value")
+                { Mode = BindingMode.OneWay, TargetNullValue = (double)0, FallbackValue = (double)0 });
+            progressBar.SetBinding(ProgressBar.MaximumProperty, new Binding($"{path}.Max"));
+            progressBar.SetBinding(ProgressBar.VisibilityProperty, new Binding($"{path}.Value")
+                { Converter = NULL_TO_VISIBLE, TargetNullValue = Visibility.Collapsed, FallbackValue = Visibility.Collapsed });
             grid.AppendChild(progressBar);
 
             var textBlock = new FrameworkElementFactory(typeof(TextBlock));
             textBlock.SetValue(TextBlock.TextAlignmentProperty, TextAlignment.Right);
-            textBlock.SetBinding(TextBlock.TextProperty, new Binding(valuePath) { StringFormat = stringFormat });
+            textBlock.SetBinding(TextBlock.TextProperty, new Binding($"{path}.Value") { StringFormat = stringFormat });
             grid.AppendChild(textBlock);
 
             template.VisualTree = grid;

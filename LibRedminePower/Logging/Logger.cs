@@ -12,7 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 
 namespace LibRedminePower.Logging
 {
@@ -21,7 +21,7 @@ namespace LibRedminePower.Logging
         public static string DECRYPT_KEY = "--decrypt-log-file";
 
         private static NLog.Logger _logger;
-        private static int pId = -1;
+        private static string pId { get; set; }
 
         public static void Init()
         {
@@ -46,7 +46,7 @@ namespace LibRedminePower.Logging
             LogManager.Configuration = config;
             _logger = LogManager.GetCurrentClassLogger();
 
-            pId = Process.GetCurrentProcess().Id;
+            pId = Process.GetCurrentProcess().Id.ToString().PadLeft(5);
         }
 
         public static void Error(string message,
@@ -97,12 +97,11 @@ namespace LibRedminePower.Logging
         {
             if (_logger == null) return;
 
-            var msg =  $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")} [{pId.ToString().PadLeft(5)}][{level.ToString().PadLeft(5)}] {message} - {Path.GetFileNameWithoutExtension(callerFilePath)}.{callerMemberName}() : {callerLineNumber} (v{Applications.ApplicationInfo.Version})";
-            if (exception != null)
-            {
-                msg = msg + $" {exception.GetType().Name}: {exception.Message}{Environment.NewLine}{exception.StackTrace}";
-            }
-
+            var tId = Thread.CurrentThread.ManagedThreadId.ToString().PadLeft(2);
+            var header = $"{DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss.fff")} [{pId}][{tId}][{level.ToString().PadLeft(5)}]";
+            var footer = $"{Path.GetFileNameWithoutExtension(callerFilePath)}.{callerMemberName}() : {callerLineNumber} (v{Applications.ApplicationInfo.Version})";
+            var ex = exception != null ? $" {exception.GetType().Name}: {exception.Message}{Environment.NewLine}{exception.StackTrace}" : "";
+            var msg =  $"{header} {message} - {footer}{ex}";
 #if DEBUG
 #else
             msg = msg.Encrypt();

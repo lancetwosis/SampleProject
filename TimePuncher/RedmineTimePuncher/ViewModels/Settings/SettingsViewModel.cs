@@ -27,8 +27,6 @@ namespace RedmineTimePuncher.ViewModels.Settings
 {
     public class SettingsViewModel : LibRedminePower.ViewModels.Bases.ViewModelBase
     {
-        public ReadOnlyReactivePropertySlim<ApplicationMode> Mode { get; }
-
         public ReactivePropertySlim<int> SelectedIndex { get; set; }
         public AsyncReactiveCommand TryConnectCommand { get; set; }
 
@@ -53,34 +51,32 @@ namespace RedmineTimePuncher.ViewModels.Settings
         public ReactiveCommand<SettingsDialog> OkCommand { get; set; }
         public ReactiveCommand<SettingsDialog> CancelCommand { get; set; }
 
-        private const string defaultFileName = "TimePuncherSetting";
+        private const string defaultFileName = "RedmineStudioSetting";
 
-        private SettingsModel model { get; set; }
-
-        public SettingsViewModel(MainWindowViewModel parent, SettingsModel model)
+        public SettingsViewModel(ApplicationMode mode, SettingsModel model)
         {
-            this.model = model;
-            Mode = parent.Mode;
-
             //------------------------
             // ModelからViewModelを生成する
             //------------------------
             // Redmine接続情報は、現在の設定は残しつつ上書きする仕様のため、Modelを丸ごと上書きしない運用のため、Reactive化はしない。
             Redmine = new RedmineSettingsViewModel(model.Redmine).AddTo(disposables);
 
-            Schedule = model.ToReadOnlyViewModel(a => a.Schedule, a => new ScheduleSettingsViewModel(a)).AddTo(disposables);
-            Calendar = model.ToReadOnlyViewModel(a => a.Calendar, a => new CalendarSettingsViewModel(a)).AddTo(disposables);
-            Category = model.ToReadOnlyViewModel(a => a.Category, a => new CategorySettingsViewModel(a)).AddTo(disposables);
-            Appointment = model.ToReadOnlyViewModel(a => a.Appointment, a => new AppointmentSettingsViewModel(a)).AddTo(disposables);
-            Query = model.ToReadOnlyViewModel(a => a.Query, a => new QuerySettingsViewModel(a)).AddTo(disposables);
-            User = model.ToReadOnlyViewModel(a => a.User, a => new UserSettingsViewModel(a)).AddTo(disposables);
-            OutputData = model.ToReadOnlyViewModel(a => a.OutputData, a => new OutputDataSettingsViewModel(a)).AddTo(disposables);
-            CreateTicket = model.ToReadOnlyViewModel(a => a.CreateTicket, a => new CreateTicketSettingsViewModel(a)).AddTo(disposables);
-            ReviewIssueList = model.ToReadOnlyViewModel(a => a.ReviewIssueList, a => new ReviewIssueListSettingViewModel(a)).AddTo(disposables);
-            ReviewCopyCustomFields = model.ToReadOnlyViewModel(a => a.ReviewCopyCustomFields, a => new ReviewCopyCustomFieldsSettingViewModel(a)).AddTo(disposables);
-            TranscribeDescription = model.ToReadOnlyViewModel(a => a.TranscribeSettings, a => new TranscribeSettingsViewModel(a)).AddTo(disposables);
-            RequestWork = model.ToReadOnlyViewModel(a => a.RequestWork, a => new RequestWorkSettingsViewModel(a)).AddTo(disposables);
-            PersonHourReport = model.ToReadOnlyViewModel(a => a.PersonHourReport, a => new PersonHourReportSettingsViewModel(a)).AddTo(disposables);
+            var isInput = mode == ApplicationMode.TimePuncher;
+            Schedule = model.ToReadOnlyViewModel(a => a.Schedule, a => isInput ? new ScheduleSettingsViewModel(a) : null).AddTo(disposables);
+            Calendar = model.ToReadOnlyViewModel(a => a.Calendar, a => isInput ? new CalendarSettingsViewModel(a) : null).AddTo(disposables);
+            Category = model.ToReadOnlyViewModel(a => a.Category, a => isInput ? new CategorySettingsViewModel(a) : null).AddTo(disposables);
+            Appointment = model.ToReadOnlyViewModel(a => a.Appointment, a => isInput ? new AppointmentSettingsViewModel(a) : null).AddTo(disposables);
+            Query = model.ToReadOnlyViewModel(a => a.Query, a => isInput ? new QuerySettingsViewModel(a) : null).AddTo(disposables);
+            User = model.ToReadOnlyViewModel(a => a.User, a => isInput ? new UserSettingsViewModel(a) : null).AddTo(disposables);
+            OutputData = model.ToReadOnlyViewModel(a => a.OutputData, a => isInput ? new OutputDataSettingsViewModel(a) : null).AddTo(disposables);
+            PersonHourReport = model.ToReadOnlyViewModel(a => a.PersonHourReport, a => isInput ? new PersonHourReportSettingsViewModel(a) : null).AddTo(disposables);
+
+            var isReview = mode == ApplicationMode.TicketCreater;
+            CreateTicket = model.ToReadOnlyViewModel(a => a.CreateTicket, a => isReview ? new CreateTicketSettingsViewModel(a) : null).AddTo(disposables);
+            ReviewIssueList = model.ToReadOnlyViewModel(a => a.ReviewIssueList, a => isReview ? new ReviewIssueListSettingViewModel(a) : null).AddTo(disposables);
+            ReviewCopyCustomFields = model.ToReadOnlyViewModel(a => a.ReviewCopyCustomFields, a => isReview ? new ReviewCopyCustomFieldsSettingViewModel(a) : null).AddTo(disposables);
+            TranscribeDescription = model.ToReadOnlyViewModel(a => a.TranscribeSettings, a => isReview ? new TranscribeSettingsViewModel(a) : null).AddTo(disposables);
+            RequestWork = model.ToReadOnlyViewModel(a => a.RequestWork, a => isReview ? new RequestWorkSettingsViewModel(a) : null).AddTo(disposables);
 
             model.ObserveProperty(a => a.CreateTicket).Subscribe(a => MessageBroker.Default.Publish(a)).AddTo(disposables);
 
@@ -102,7 +98,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                     MessageBoxHelper.ConfirmWarning(CacheTempManager.Default.Message.Value);
             }).AddTo(disposables);
 
-            ImportAllCommand = new ReactiveCommand<SettingsDialog>().WithSubscribe(async win =>
+            ImportAllCommand = new ReactiveCommand<SettingsDialog>().WithSubscribe(win =>
             {
                 var dialog = new OpenFileDialog();
                 dialog.FileName = defaultFileName;
@@ -149,17 +145,16 @@ namespace RedmineTimePuncher.ViewModels.Settings
             OkCommand = new ReactiveCommand<SettingsDialog>().WithSubscribe(dialog =>
             {
                 if (Redmine.Locale.NeedsRestart ||
-                    Appointment.Value.Outlook.Value.IsEnabled.NeedsRestart ||
-                    Appointment.Value.Teams.Value.IsEnabled.NeedsRestart)
+                    (Appointment.Value != null && Appointment.Value.NeedsRestart()))
                 {
                     var r = MessageBoxHelper.ConfirmQuestion(Properties.Resources.SettingsGenMsgRestartToChange, MessageBoxHelper.ButtonType.OkCancel);
                     if (r.Value)
                     {
-                        Category.Value.ApplyOrders();
+                        Category.Value?.ApplyOrders();
                         model.Save();
 
                         Logger.Info($"Exit to change the settings required restart.");
-                        Environment.Exit(1);
+                        Environment.Exit(0);
                     }
                     else
                     {
@@ -167,7 +162,7 @@ namespace RedmineTimePuncher.ViewModels.Settings
                     }
                 }
 
-                Category.Value.ApplyOrders();
+                Category.Value?.ApplyOrders();
 
                 dialog.DialogResult = true;
                 dialog.Close();

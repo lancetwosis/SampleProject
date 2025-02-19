@@ -640,6 +640,15 @@ namespace LibRedminePower.Properties {
         }
         
         /// <summary>
+        ///   Failed to save configuration. Please check user.config and restart the application. に類似しているローカライズされた文字列を検索します。
+        /// </summary>
+        public static string msgErrFailedSaveSettings {
+            get {
+                return ResourceManager.GetString("msgErrFailedSaveSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Failed to delete {0}. に類似しているローカライズされた文字列を検索します。
         /// </summary>
         public static string msgErrRedmineFailedToDelete {

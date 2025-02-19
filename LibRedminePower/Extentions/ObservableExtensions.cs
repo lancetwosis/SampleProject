@@ -24,6 +24,22 @@ namespace LibRedminePower.Extentions
             });
         }
 
+        public static IObservable<TResult> CombineLatestWithErr<TSource1, TSource2, TResult>(this IObservable<TSource1> first, IObservable<TSource2> second, Func<TSource1, TSource2, TResult> resultSelector)
+        {
+            return first.CombineLatest(second, (f, s) =>
+            {
+                try
+                {
+                    return resultSelector.Invoke(f, s);
+                }
+                catch (Exception ex)
+                {
+                    ErrorHandler.Instance.HandleError(ex);
+                    return default(TResult);
+                }
+            });
+        }
+
         public static IObservable<TResult> SelectManyIfNotNull<TSource, TResult>(
             this IObservable<TSource> source,
             Func<TSource, IObservable<TResult>> selector)

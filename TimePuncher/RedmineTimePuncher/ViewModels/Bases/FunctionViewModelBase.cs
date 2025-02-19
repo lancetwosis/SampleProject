@@ -35,8 +35,9 @@ namespace RedmineTimePuncher.ViewModels.Bases
 
         protected string getTitle(string prefix = null)
         {
-            var title = $"{CacheManager.Default.MyUser?.Name}  -  {ApplicationInfo.Title}";
-            return string.IsNullOrEmpty(prefix) ? title : $"{prefix}  {title}";
+            var pre = !string.IsNullOrEmpty(prefix) ? $"{prefix}  " : "";
+            var user = CacheManager.Default.MyUser != null ? $"{CacheManager.Default.MyUser.Name}  -  " : "";
+            return $"{pre}{user}{ApplicationInfo.Title}";
         }
 
         /// <summary>

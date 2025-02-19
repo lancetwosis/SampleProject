@@ -10,6 +10,7 @@ using RedmineTableEditor.Converters;
 using RedmineTableEditor.Enums;
 using RedmineTableEditor.Extentions;
 using RedmineTableEditor.Models.FileSettings;
+using RedmineTableEditor.Models.MyTicketFields;
 using RedmineTableEditor.Models.TicketFields.Bases;
 using RedmineTableEditor.Models.TicketFields.Custom;
 using RedmineTableEditor.Models.TicketFields.Custom.Bases;
@@ -26,6 +27,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Diagnostics;
 using System.Linq;
+using System.Reactive.Disposables;
 using System.Reactive.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -36,54 +38,6 @@ namespace RedmineTableEditor.Models.Bases
 {
     public abstract class MyIssueBase : LibRedminePower.Models.Bases.ModelBase
     {
-        private static double estimatedHoursMax;
-        public static double EstimatedHoursMax 
-        { 
-            get { return estimatedHoursMax; }
-            set
-            {
-                estimatedHoursMax = value;
-                NotifyStaticPropertyChanged();
-            }
-        }
-
-        private static double spentHoursMax;
-        public static double SpentHoursMax
-        {
-            get { return spentHoursMax; }
-            set 
-            {
-                spentHoursMax = value;
-                NotifyStaticPropertyChanged();
-            }
-        }
-
-        private static double mySpentHoursMax;
-        public static double MySpentHoursMax
-        {
-            get { return mySpentHoursMax; }
-            set
-            {
-                mySpentHoursMax = value;
-                NotifyStaticPropertyChanged();
-            }
-        }
-
-        private static double diffEstimatedSpentMax;
-        public static double DiffEstimatedSpentMax
-        {
-            get { return diffEstimatedSpentMax; }
-            set
-            {
-                diffEstimatedSpentMax = value;
-                NotifyStaticPropertyChanged();
-            }
-        }
-
-        public static event EventHandler<PropertyChangedEventArgs> StaticPropertyChanged;
-        public static void NotifyStaticPropertyChanged([CallerMemberName] string propertyName = "") =>
-            StaticPropertyChanged?.Invoke(null, new PropertyChangedEventArgs(propertyName));
-
         public Issue Issue { get; set; }
         public int? Id => Issue?.Id;
         public int Depth { get; set; }
@@ -102,7 +56,7 @@ namespace RedmineTableEditor.Models.Bases
         public DueDate DueDate { get; set; }
         public DoneRatio DoneRatio { get; set; }
         public EstimatedHours EstimatedHours { get; set; }
-        public float? SpentHours { get; set; }
+        public SpentHours SpentHours { get; set; }
         public float? TotalSpentHours { get; set; }
         public float? TotalEstimatedHours { get; set; }
 
@@ -112,75 +66,11 @@ namespace RedmineTableEditor.Models.Bases
         public DateTime? Created { get; set; }
         public DateTime? Updated { get; set; }
 
-        protected List<TimeEntry> timeEntries { get; set; }
-        public double? MySpentHours
-        {
-            get
-            {
-                if (Issue == null) return null;
-                if (timeEntries == null) return null;
-                if (AssignedTo.Value == null) return null;
-
-                var myDeci = timeEntries.Where(a => a.User.Id == AssignedTo.Value.Value).Sum(a => a.Hours);
-                var result = decimal.ToDouble(myDeci);
-                if (MySpentHoursMax < result)
-                    MySpentHoursMax = result;
-                return result;
-            }
-        }
-
-        public double? DiffEstimatedSpent
-        {
-            get
-            {
-                // 両方NULLならばNULLにする
-                if (!EstimatedHours.Value.HasValue && !MySpentHours.HasValue) return null;
-
-                var esimated = EstimatedHours.Value.HasValue ? EstimatedHours.Value.Value : 0;
-                var spent = MySpentHours.HasValue ? MySpentHours.Value : 0;
-                var result = esimated - spent;
-                if (result <= 0 || Status.SelectedItem.IsClosed) result = 0;
-                if (DiffEstimatedSpentMax < result)
-                    DiffEstimatedSpentMax = result;
-                return result;
-            }
-        }
-
-        private List<Detail> assignJournals { get; set; }
-        public int? ReplyCount
-        {
-            get
-            {
-                if (assignJournals == null)
-                    return null;
-
-                return assignJournals.Count;
-            }
-        }
-        public string ReplyCountToolTip
-        {
-            get
-            {
-                if (assignJournals == null || assignJournals.Count == 0)
-                    return null;
-
-                var sb = new StringBuilder();
-                if (assignJournals[0].OldValue != null)
-                    sb.AppendLine($"{redmine.Users.First(u => u.Id.ToString() == assignJournals[0].OldValue).Name}");
-                else
-                    sb.AppendLine(Properties.Resources.UserNoAssignee);
-                var assignees = assignJournals.Select(d =>
-                {
-                    if (d.NewValue == null)
-                        return Properties.Resources.UserNoAssignee;
-
-                    var user = redmine.Users.FirstOrDefault(u => u.Id.ToString() == d.NewValue);
-                    return user != null ? user.Name : Properties.Resources.UserInvalid;
-                }).ToList();
-                sb.Append(string.Join(Environment.NewLine, assignees.Select(a => $"  > {a}")));
-                return sb.ToString();
-            }
-        }
+        public MySpentHours MySpentHours { get; set; }
+        public DiffEstimatedSpent DiffEstimatedSpent { get; set; }
+        public ReplyCount ReplyCount { get; set; }
+        public RequiredDays RequiredDays { get; set; }
+        public DaysUntilCreated DaysUntilCreated { get; set; }
 
         // 当初は、カスタムフィールドのプロパティは、型毎に作らずに、一つのプロパティにまとめるため、Generic型のプロパティを定義していた。
         // Generic型のプロパティの場合、GridView側が型判断が出来ずに、コピペができないことがわかった。
@@ -203,8 +93,12 @@ namespace RedmineTableEditor.Models.Bases
             SetIssue(issue);
         }
 
+        private CompositeDisposable myDisposables { get; set; }
         public void SetIssue(Issue issue)
         {
+            myDisposables?.Dispose();
+            myDisposables = new CompositeDisposable().AddTo(disposables);
+
             this.Issue = issue;
             this.Url = issue != null ? redmine.GetIssueUrl(issue.Id) : "";
             this.Project = issue != null ? issue.Project?.Name : "";
@@ -231,7 +125,7 @@ namespace RedmineTableEditor.Models.Bases
             editableProps.Add(StartDate = new StartDate(issue));
             editableProps.Add(DueDate = new DueDate(issue));
             editableProps.Add(DoneRatio = new DoneRatio(issue));
-            editableProps.Add(EstimatedHours = new EstimatedHours(issue));
+            editableProps.Add(EstimatedHours = new EstimatedHours(issue).AddTo(myDisposables));
 
             if (issue != null && issue.CustomFields != null && issue.CustomFields.Any())
             {
@@ -268,26 +162,17 @@ namespace RedmineTableEditor.Models.Bases
                 }
             }
 
-            EstimatedHours.ObserveProperty(a => a.Value).Where(a => a.HasValue).SubscribeWithErr(v =>
-            {
-                if (EstimatedHoursMax < v)
-                    EstimatedHoursMax = v.Value;
-            }).AddTo(disposables);
-            this.ObserveProperty(a => a.SpentHours).Where(a => a.HasValue).SubscribeWithErr(v =>
-            {
-                if (SpentHoursMax < v)
-                    SpentHoursMax = v.Value;
-            }).AddTo(disposables);
-
             editableProps.ObserveElementProperty(a => a.IsEdited).SubscribeWithErr(a =>
             {
                 MyIssueEditedListener.EditedChanged?.Invoke(this, a.Value);
-            });
+            }).AddTo(myDisposables);
 
-            var editedProps = editableProps.ToFilteredReadOnlyObservableCollection(a => a.IsEdited).AddTo(disposables);
+            var editedProps = editableProps.ToFilteredReadOnlyObservableCollection(a => a.IsEdited).AddTo(myDisposables);
 
-            IsEdited = editableProps.Select(a => a.ObserveProperty(b => b.IsEdited)).CombineLatestValuesAreAllFalse().Inverse().ToReactiveProperty().AddTo(disposables);
+            IsEdited = editableProps.Select(a => a.ObserveProperty(b => b.IsEdited)).CombineLatestValuesAreAllFalse().Inverse().ToReactiveProperty().AddTo(myDisposables);
             IsEdited.Where(a => !a).SubscribeWithErr(_ => editableProps.ToList().ForEach(a => a.IsEdited = false));
+
+            RequiredDays = new RequiredDays(Issue, redmine).AddTo(myDisposables);
 
             if (Issue == null)
                 return;
@@ -298,14 +183,9 @@ namespace RedmineTableEditor.Models.Bases
             {
                 var _ = Task.Run(() =>
                 {
-                    timeEntries = redmine.GetTimeEntries(Issue.Id);
-                    RaisePropertyChanged(nameof(MySpentHours));
-                    RaisePropertyChanged(nameof(DiffEstimatedSpent));
+                    MySpentHours = new MySpentHours(Issue, redmine, AssignedTo).AddTo(myDisposables);
+                    DiffEstimatedSpent = new DiffEstimatedSpent(Issue, EstimatedHours, MySpentHours, Status).AddTo(myDisposables);
                 });
-
-                // アサインが変更された場合は、合計時間の変更通知を行う。
-                this.ObserveProperty(a => a.AssignedTo.Value).SubscribeWithErr(__ => RaisePropertyChanged(nameof(MySpentHours))).AddTo(disposables);
-                this.ObserveProperty(a => a.EstimatedHours.Value).SubscribeWithErr(__ => RaisePropertyChanged(nameof(DiffEstimatedSpent))).AddTo(disposables);
             }
 
             var needsJournal = properties.Any(p => p.IsType(MyIssuePropertyType.ReplyCount) ||
@@ -318,23 +198,9 @@ namespace RedmineTableEditor.Models.Bases
                 var _ = Task.Run(() =>
                 {
                     var i = redmine.GetIssueIncludeJournals(Issue.Id);
-                    if (i.Journals == null)
-                    {
-                        this.assignJournals = new List<Detail>();
-                        LastUpdater = null;
-                    }
-                    else
-                    {
-                        this.assignJournals = i.Journals.Select(j => j.Details?.FirstOrDefault(d => d.Name == "assigned_to_id"))
-                                                        .Where(a => a != null).ToList();
-                        var last = i.Journals.LastOrDefault(j => j.User != null);
-                        if (last != null)
-                            LastUpdater = last.User.Name;
-                    }
-                    RaisePropertyChanged(nameof(ReplyCount));
-                    RaisePropertyChanged(nameof(ReplyCountToolTip));
-
-                    SpentHours = i.SpentHours;
+                    ReplyCount = new ReplyCount(i, redmine).AddTo(myDisposables);
+                    LastUpdater = i.Journals?.LastOrDefault(j => j.User != null)?.User.Name;
+                    SpentHours = new SpentHours(i).AddTo(myDisposables);
                     TotalSpentHours = i.TotalSpentHours;
                     TotalEstimatedHours = i.TotalEstimatedHours;
                 });
@@ -343,10 +209,18 @@ namespace RedmineTableEditor.Models.Bases
             {
                 var _ = Task.Run(() =>
                 {
-                    var i = redmine.GetIssue(Issue.Id);
-                    SpentHours = i.SpentHours;
+                    var i = redmine.GetIssueFromCache(Issue.Id, true);
+                    SpentHours = new SpentHours(i).AddTo(myDisposables);
                     TotalSpentHours = i.TotalSpentHours;
                     TotalEstimatedHours = i.TotalEstimatedHours;
+                });
+            }
+
+            if (properties.Any(p => p.IsType(MyIssuePropertyType.DaysUntilCreated)))
+            {
+                var _ = Task.Run(() =>
+                {
+                    DaysUntilCreated = new DaysUntilCreated(Issue, redmine).AddTo(myDisposables);
                 });
             }
         }

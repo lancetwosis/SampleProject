@@ -35,7 +35,7 @@ namespace RedmineTimePuncher.ViewModels.Settings.CreateTicket
 
         public ReactivePropertySlim<MyTracker> OpenTracker { get; set; }
         public ReactivePropertySlim<IdName> OpenStatus { get; set; }
-        public ReactivePropertySlim<IdName> DefaultStatus { get; set; }
+        public ReactivePropertySlim<IdName> OpenStatusUnderSelfReview { get; set; }
         public ReadOnlyReactivePropertySlim<ReviewerMethodSettingViewModel> ReviewMethod { get; set; }
 
         public ReactivePropertySlim<MyTracker> RequestTracker { get; set; }
@@ -57,7 +57,7 @@ namespace RedmineTimePuncher.ViewModels.Settings.CreateTicket
 
             OpenTracker = model.ToReactivePropertySlimAsSynchronized(m => m.OpenTracker).AddTo(disposables);
             OpenStatus = model.ToReactivePropertySlimAsSynchronized(m => m.OpenStatus).AddTo(disposables);
-            DefaultStatus = model.ToReactivePropertySlimAsSynchronized(m => m.DefaultStatus).AddTo(disposables);
+            OpenStatusUnderSelfReview = model.ToReactivePropertySlimAsSynchronized(m => m.OpenStatusUnderSelfReview).AddTo(disposables);
             ReviewMethod = model.ToReadOnlyViewModel(a => a.ReviewMethod, a => new ReviewerMethodSettingViewModel(a)).AddTo(disposables);
 
             RequestTracker = model.ToReactivePropertySlimAsSynchronized(m => m.RequestTracker).AddTo(disposables);
@@ -79,7 +79,7 @@ namespace RedmineTimePuncher.ViewModels.Settings.CreateTicket
             Statuses.Where(a => a != null).Subscribe(statuses =>
             {
                 OpenStatus.Value = statuses.FirstOrDefault(OpenStatus.Value);
-                DefaultStatus.Value = statuses.FirstOrDefault(DefaultStatus.Value);
+                OpenStatusUnderSelfReview.Value = statuses.FirstOrDefault(OpenStatusUnderSelfReview.Value);
             }).AddTo(disposables);
         }
     }

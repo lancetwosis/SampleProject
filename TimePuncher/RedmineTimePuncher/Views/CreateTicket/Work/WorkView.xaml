@@ -76,12 +76,10 @@
                    Margin="0,5,0,0"
                    Style="{StaticResource LabelStyle}"
                    Text="{x:Static props:Resources.ReviewDesctiptionOfRequestIssue}" />
-        <TextBox Grid.Row="4"
-                 Grid.Column="1"
-                 Margin="5,5,0,0"
-                 Style="{StaticResource DescriptionTextBoxStyle}"
-                 Text="{Binding Requests.Description.Value,
-                                UpdateSourceTrigger=PropertyChanged}" />
+        <vCommon:PreviewView Grid.Row="4"
+                             Grid.Column="1"
+                             Margin="5,5,0,0"
+                             DataContext="{Binding Requests.Description}" />
     </Grid>
 
 </UserControl>

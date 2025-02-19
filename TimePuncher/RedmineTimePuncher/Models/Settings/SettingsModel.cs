@@ -135,14 +135,14 @@ namespace RedmineTimePuncher.Models.Settings
             {
                 current = LocaleTypeEx.GetCurrent();
                 Properties.Settings.Default.CurrentLocale = current.ToString();
-                Properties.Settings.Default.Save();
+                Properties.Settings.Default.SaveWithErr();
             }
 
             if (result.Redmine.Locale == LocaleType.Unselected || result.Redmine.Locale != current)
             {
                 result.Redmine.Locale = current;
                 Properties.Settings.Default.Setting = result.ToJson();
-                Properties.Settings.Default.Save();
+                Properties.Settings.Default.SaveWithErr();
             }
 
             return result;
@@ -151,7 +151,7 @@ namespace RedmineTimePuncher.Models.Settings
         public void Save()
         {
             Properties.Settings.Default.Setting = this.ToJson();
-            Properties.Settings.Default.Save();
+            Properties.Settings.Default.SaveWithErr();
         }
 
         public override void SetupConfigure(IMapperConfigurationExpression cfg)

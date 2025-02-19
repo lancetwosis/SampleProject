@@ -128,7 +128,7 @@ namespace RedmineTimePuncher.ViewModels.CreateTicket
         public override void OnWindowClosed()
         {
             Properties.Settings.Default.CreateTicket = model.ToJson();
-            Properties.Settings.Default.Save();
+            Properties.Settings.Default.SaveWithErr(true);
         }
     }
 }

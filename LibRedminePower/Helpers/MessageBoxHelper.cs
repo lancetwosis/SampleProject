@@ -1,5 +1,6 @@
 ﻿using LibRedminePower.Applications;
 using LibRedminePower.Extentions;
+using LibRedminePower.Logging;
 using System;
 using System.Linq;
 using System.Windows;
@@ -30,6 +31,13 @@ namespace LibRedminePower.Helpers
 
         public static bool? ConfirmWarning(string message, ButtonType button = ButtonType.Ok)
             => Show(message, IconType.Warning, button);
+
+        public static bool? ConfirmWarningOkCancel(string message, Exception e = null)
+        {
+            var result = Show(message, IconType.Warning, ButtonType.OkCancel);
+            Logger.Warn(e, $"User select " + (result.HasValue && result.Value == true ? "'Ok'" : "'Cancel'") + $". Message={message}");
+            return result;
+        }
 
         public static bool? ConfirmError(string message, ButtonType button = ButtonType.Ok)
             => Show(message, IconType.Error, button);

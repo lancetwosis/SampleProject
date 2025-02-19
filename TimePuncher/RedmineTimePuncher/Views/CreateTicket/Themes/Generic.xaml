@@ -11,15 +11,6 @@
         <Setter Property="Foreground" Value="Black" />
     </Style>
 
-    <Style x:Key="DescriptionTextBoxStyle"
-           TargetType="TextBox">
-        <Setter Property="VerticalContentAlignment" Value="Top" />
-        <Setter Property="TextAlignment" Value="Left" />
-        <Setter Property="TextWrapping" Value="Wrap" />
-        <Setter Property="ToolTip" Value="{x:Static props:Resources.ReviewMsgMarkupLangEnable}" />
-        <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
-    </Style>
-
     <DataTemplate x:Key="TemplateMenuHeader">
         <Grid>
             <Grid.ColumnDefinitions>

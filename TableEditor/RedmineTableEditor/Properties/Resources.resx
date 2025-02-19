@@ -493,4 +493,34 @@ To update the contents of the displayed issues, please execute "Update Contents"
   <data name="CellErrInvalidField" xml:space="preserve">
     <value>"{0}" is invalid.</value>
   </data>
+  <data name="enumMyIssuePropertyTypeRequiredDays" xml:space="preserve">
+    <value>Required Days</value>
+  </data>
+  <data name="RequiredDaysNotClosed" xml:space="preserve">
+    <value>Open (at {0})</value>
+  </data>
+  <data name="enumMyIssuePropertyTypeDaysUntilCreated" xml:space="preserve">
+    <value>Days Until Created</value>
+  </data>
+  <data name="DaysUntilCreatedParentNotExist" xml:space="preserve">
+    <value>No parent task</value>
+  </data>
+  <data name="DaysUntilCreatedParent" xml:space="preserve">
+    <value>Parent task : {0} {1} ( Created on {2} )</value>
+  </data>
+  <data name="DaysUntilCreatedToolTip" xml:space="preserve">
+    <value>Number of days between the creation of the parent issue and the creation of this issue</value>
+  </data>
+  <data name="ReplyCountToolTip" xml:space="preserve">
+    <value>Number of times assignee was changed</value>
+  </data>
+  <data name="RequiredDaysToolTip" xml:space="preserve">
+    <value>Number of days it took to close</value>
+  </data>
+  <data name="MySpentHoursToolTip" xml:space="preserve">
+    <value>Spent hours of the assignee of the issue</value>
+  </data>
+  <data name="DiffEstimatedSpentToolTip" xml:space="preserve">
+    <value>Hours deducted the assignee's spent time from the estimated hours</value>
+  </data>
 </root>

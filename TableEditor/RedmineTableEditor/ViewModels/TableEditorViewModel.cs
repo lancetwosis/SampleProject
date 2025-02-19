@@ -169,7 +169,7 @@ namespace RedmineTableEditor.ViewModels
             }
 
             Settings.Default.LastFileName = FileSettings.FileName;
-            Settings.Default.Save();
+            Settings.Default.SaveWithErr(true);
         }
     }
 }

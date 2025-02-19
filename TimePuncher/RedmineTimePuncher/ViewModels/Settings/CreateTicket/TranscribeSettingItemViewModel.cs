@@ -22,14 +22,15 @@ namespace RedmineTimePuncher.ViewModels.Settings.CreateTicket
         public ReadOnlyReactivePropertySlim<List<MyWikiPageItem>> WikiPages { get; set; }
         public ReadOnlyReactivePropertySlim<List<WikiLine>> Headers { get; set; }
 
-        public ReactivePropertySlim<MyCustomFieldPossibleValue> Process { get; set; }
         public ReactivePropertySlim<MyProject> Project { get; set; }
+        public ReactivePropertySlim<MyCustomFieldPossibleValue> Process { get; set; }
         public ReactivePropertySlim<MyTracker> Tracker { get; set; }
         public ReactivePropertySlim<string> Title { get; set; }
         public ReactivePropertySlim<MyProject> WikiProject { get; set; }
         public ReactivePropertySlim<MyWikiPageItem> WikiPage { get; set; }
         public ReactivePropertySlim<bool> IncludesHeader { get; set; }
         public ReactivePropertySlim<WikiLine> Header { get; set; }
+        public ReactivePropertySlim<bool> ExpandsIncludeMacro { get; set; }
 
         public TranscribeSettingItemModel Model { get; set; }
 
@@ -40,46 +41,43 @@ namespace RedmineTimePuncher.ViewModels.Settings.CreateTicket
         {
             Model = model;
 
-            Process = model.ToReactivePropertySlimAsSynchronized(a => a.Process).AddTo(disposables);
             Project = model.ToReactivePropertySlimAsSynchronized(a => a.Project).AddTo(disposables);
+            Process = model.ToReactivePropertySlimAsSynchronized(a => a.Process).AddTo(disposables);
             Tracker = model.ToReactivePropertySlimAsSynchronized(a => a.Tracker).AddTo(disposables);
             Title = model.ToReactivePropertySlimAsSynchronized(a => a.Title).AddTo(disposables);
             WikiProject = model.ToReactivePropertySlimAsSynchronized(a => a.WikiProject).AddTo(disposables);
             WikiPage = model.ToReactivePropertySlimAsSynchronized(a => a.WikiPage).AddTo(disposables);
             IncludesHeader = model.ToReactivePropertySlimAsSynchronized(a => a.IncludesHeader).AddTo(disposables);
             Header = model.ToReactivePropertySlimAsSynchronized(a => a.Header).AddTo(disposables);
+            ExpandsIncludeMacro = model.ToReactivePropertySlimAsSynchronized(a => a.ExpandsIncludeMacro).AddTo(disposables);
 
             WikiPages = WikiProject.CombineLatest(CacheTempManager.Default.Redmine, (p, redmine) =>
             {
-                if (p == null || redmine == null)
-                    return new List<MyWikiPageItem>();
+                if (redmine == null)
+                    return null;
                 else
-                    return redmine.GetAllWikiPages(p.Identifier);
+                    return p != null ? redmine.GetAllWikiPages(p.Identifier) : new List<MyWikiPageItem>();
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
-            WikiPages.SubscribeWithErr(pages =>
+            WikiPages.Where(a => a != null).SubscribeWithErr(pages =>
             {
-                if (pages == null || !pages.Any())
-                    WikiPage.Value = null;
-                else
-                    WikiPage.Value = pages.FirstOrFirst(w => w.Title == WikiPage.Value?.Title);
+                WikiPage.Value = pages.FirstOrFirst(w => w.Title == WikiPage.Value?.Title);
             }).AddTo(disposables);
 
             Headers = WikiPage.CombineLatest(CacheTempManager.Default.Redmine, (w, redmine) =>
             {
+                if (redmine == null)
+                    return null;
+
                 var headers = new List<WikiLine>() { WikiLine.NOT_SPECIFIED };
-                if (w == null || redmine == null)
-                {
+                if (w == null)
                     return headers;
-                }
-                else
-                {
-                    var wiki = redmine.GetWikiPage(w.ProjectId, w.Title);
-                    headers.AddRange(wiki.GetHeaders(CacheTempManager.Default.MarkupLang.Value));
-                    return headers;
-                }
+
+                var wiki = redmine.GetWikiPage(w.ProjectId, w.Title);
+                headers.AddRange(wiki.GetHeaders(CacheTempManager.Default.MarkupLang.Value));
+                return headers;
             }).ToReadOnlyReactivePropertySlim().AddTo(disposables);
 
-            Headers.SubscribeWithErr(headers =>
+            Headers.Where(a => a != null).SubscribeWithErr(headers =>
             {
                 Header.Value = headers.FirstOrFirst(h => h.Equals(Header.Value));
             }).AddTo(disposables);

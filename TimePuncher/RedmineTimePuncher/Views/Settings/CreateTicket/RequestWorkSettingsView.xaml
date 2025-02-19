@@ -1,0 +1,125 @@
+﻿<UserControl x:Class="RedmineTimePuncher.Views.Settings.CreateTicket.RequestWorkSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:b="http://schemas.microsoft.com/xaml/behaviors"
+             xmlns:behaviors1="clr-namespace:LibRedminePower.Behaviors;assembly=LibRedminePower"
+             xmlns:controls="clr-namespace:LibRedminePower.Views;assembly=LibRedminePower"
+             xmlns:conv="clr-namespace:LibRedminePower.Converters;assembly=LibRedminePower"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:libCont="clr-namespace:LibRedminePower.Views.Controls;assembly=LibRedminePower"
+             xmlns:local="clr-namespace:RedmineTimePuncher.Views.Settings.CreateTicket"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:props="clr-namespace:RedmineTimePuncher.Properties"
+             xmlns:settings="clr-namespace:RedmineTimePuncher.Views.Settings"
+             xmlns:telerik="http://schemas.telerik.com/2008/xaml/presentation"
+             xmlns:vm="clr-namespace:RedmineTimePuncher.ViewModels.Settings.CreateTicket"
+             d:DataContext="{d:DesignInstance {x:Type vm:RequestWorkSettingsViewModel},
+                                              IsDesignTimeCreatable=True}"
+             d:DesignHeight="450"
+             d:DesignWidth="800"
+             mc:Ignorable="d">
+    <UserControl.Resources>
+        <conv:StringIsNullOrEmptyToBooleanConverter x:Key="StringIsNullOrEmptyToBooleanConverter" />
+        <Style BasedOn="{StaticResource FilterableComboBoxStyleKey}"
+               TargetType="telerik:RadComboBox" />
+    </UserControl.Resources>
+
+    <libCont:OverwrapMessage Message="{Binding ErrorMessage.Value}">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <ScrollViewer Margin="0,0,0,5"
+                          BorderThickness="0"
+                          HorizontalScrollBarVisibility="Disabled">
+                <StackPanel Grid.IsSharedSizeScope="True">
+                    <GroupBox Margin="5,5,0,0"
+                              Header="{x:Static props:Resources.SettingsReviRequestTicket}">
+                        <StackPanel Orientation="Vertical">
+                            <Grid Margin="5,0,0,0">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"
+                                                      SharedSizeGroup="FirstColumn" />
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition />
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Grid.Column="0"
+                                           VerticalAlignment="Center"
+                                           Text="{x:Static props:Resources.SettingsReviTracker}" />
+                                <TextBlock Grid.Column="1"
+                                           Text=" : " />
+                                <telerik:RadComboBox Grid.Column="2"
+                                                     Margin="5,0,0,0"
+                                                     DisplayMemberPath="Name"
+                                                     ItemsSource="{Binding PossibleTrackers.Value}"
+                                                     SelectedItem="{Binding RequestTracker.Value}">
+                                    <b:Interaction.Behaviors>
+                                        <behaviors1:RadComboBoxNotNullableBehavior />
+                                    </b:Interaction.Behaviors>
+                                </telerik:RadComboBox>
+                            </Grid>
+                            <GroupBox Grid.Row="1"
+                                      Margin="0,5,0,0">
+                                <GroupBox.Header>
+                                    <CheckBox x:Name="useIsRequiredCheckBox"
+                                              Content="{x:Static props:Resources.SettingsReviIsRequired}"
+                                              IsChecked="{Binding IsRequired.Value.IsEnabled.Value}" />
+                                </GroupBox.Header>
+                                <StackPanel IsEnabled="{Binding ElementName=useIsRequiredCheckBox,
+                                                                Path=IsChecked}"
+                                            Orientation="Vertical"
+                                            ToolTip="{Binding IsRequired.Value.NoCustomFieldErrMsg.Value}">
+                                    <Grid IsEnabled="{Binding IsRequired.Value.NoCustomFieldErrMsg.Value, Converter={StaticResource StringIsNullOrEmptyToBooleanConverter}}">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto"
+                                                              SharedSizeGroup="FirstColumn" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition />
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="AUTO" />
+                                            <RowDefinition Height="AUTO" />
+                                        </Grid.RowDefinitions>
+                                        <CheckBox x:Name="needsSaveIsRequiredCheckBox"
+                                                  Grid.Column="0"
+                                                  Content="{x:Static props:Resources.SettingsReviCustomField}"
+                                                  IsChecked="{Binding IsRequired.Value.NeedsSaveToCustomField.Value}" />
+
+                                        <TextBlock Grid.Column="1"
+                                                   Text=" : " />
+                                        <telerik:RadComboBox Grid.Column="2"
+                                                             Margin="5,0,0,0"
+                                                             DisplayMemberPath="Name"
+                                                             IsEnabled="{Binding ElementName=needsSaveIsRequiredCheckBox,
+                                                                                 Path=IsChecked}"
+                                                             ItemsSource="{Binding IsRequired.Value.PossibleCustomFields.Value}"
+                                                             SelectedItem="{Binding IsRequired.Value.CustomField.Value}">
+                                            <b:Interaction.Behaviors>
+                                                <behaviors1:RadComboBoxNotNullableBehavior />
+                                            </b:Interaction.Behaviors>
+                                        </telerik:RadComboBox>
+                                        <TextBlock Grid.Row="1"
+                                                   Grid.Column="2"
+                                                   Style="{StaticResource SettingHelpTextBlockStyle}"
+                                                   Text="{Binding IsRequired.Value.HelpMsg}" />
+                                    </Grid>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <local:TranscribeSettingsView Grid.Row="2"
+                                                          Margin="0,15,0,0"
+                                                          DataContext="{Binding RequestTranscribe.Value}" />
+                        </StackPanel>
+                    </GroupBox>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <settings:SettingsButtonsPanel Grid.Row="1"
+                                           DataContext="{Binding}" />
+        </Grid>
+    </libCont:OverwrapMessage>
+
+</UserControl>
